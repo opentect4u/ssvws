@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<% if(path != '/login' && path != '/404'){ %>
+    <%- include('header.ejs') %>
+<% }else{ %>
+    <%- include('login_header.ejs') %>
+<% } %>
+    <body>
+        <div class="container-scroller">
+            <% if(path != '/login' && path != '/404'){ %> 
+                <%- include('topbar.ejs') %>
+                <div class="container-fluid page-body-wrapper">
+                    <%- include('sidenav.ejs') %>
+                    <div class="main-panel">
+                        <div class="content-wrapper">
+                            <%- body %>
+                        </div>
+                        <%- include('footer.ejs') %>
+                    </div>
+                </div>
+            <% }else{ %>
+                <%- body %>
+            <% } %>
+        </div>
+        <% if(path != '/login' && path != '/404'){ %>
+            <%- include('footer_link.ejs') %>
+        <% }else{ %>
+            <%- include('login_footer_link.ejs') %>
+        <% } %>
+    </body>
+</html>

@@ -1,0 +1,23 @@
+{
+  "name": "admin_template",
+  "version": "1.0.0",
+  "description": "Integrating Admin Template with Node js and EJS",
+  "main": "server.js",
+  "scripts": {
+    "test": "nodemon server"
+  },
+  "author": "Sayantika Dhar",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dateformat": "^4.5.1",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.0",
+    "express-fileupload": "^1.5.1",
+    "mysql": "^2.18.1"
+  }
+}
