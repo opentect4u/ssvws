@@ -267,7 +267,7 @@ module.exports = {
               ifsc =  '${data.ifsc}', micr = '${data.micr}', acc_no1 = '${data.acc_no1}', acc_no2 = '${data.acc_no2}',
                ac_open_dt =  '${datetime}', modified_by = '${data.modified_by}', modified_at =  '${datetime}'`,
             values = null,
-            whr = `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}' AND co_id = '${data.co_id}'`,
+            whr = `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
             var edit_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
             console.log(edit_grp_dt,'dt');
