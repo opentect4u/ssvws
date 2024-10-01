@@ -202,10 +202,28 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     try {
         // Assuming db_Select is a function that handles the query execution
         var res_dt = await db_Select(select, table_name, whr, order);
-        res.send(res_dt);
+        var response_set = {}
+        if(res_dt.suc > 0){
+            if(res_dt.msg.length > 0){
+                var default_chk = await db_Select('outstanding', 'td_loan', `sub_customer_id=${res_dt.msg[0].member_code}`, `HAVING outstanding > 0`)
+                if(default_chk.suc > 0){
+                    if(default_chk.msg.length > 0){
+                        response_set = {suc: 0, msg: [], status: `You are not eligible to get a new Loan. You have Rs. ${default_chk.msg[0].outstanding} outstanding.`}
+                    }else{
+                        response_set = {suc: 1, msg: res_dt.msg, status: 'Existing User. Eligible to apply a new loan.'}
+                    }
+                }else{
+                    response_set = {suc: 1, msg: res_dt.msg, status: 'Error to fetch outstanding data'}
+                }
+                
+            }else{
+                response_set = {suc: 1, msg: [], status: 'Fresh User'}
+            }
+        }
+        res.send(response_set);
     } catch (error) {
         // Handle errors
-        res.status(500).send({ error: 'Database query failed' });
+        res.send({ suc: 0, msg: [], status: 'Error to fect user data' });
     }
 });
 

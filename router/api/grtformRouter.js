@@ -85,17 +85,18 @@ grtformRouter.post("/search_group", async (req, res) => {
 
 if(data.user_type == 1){
     var select = "a.*, b.block_name",
-    table_name = "md_group a, md_block b",
-    whr = `a.block = b.block_id AND a.branch_code = '${data.branch_code}' AND a.co_id = '${data.co_id}' AND a.approval_status = '${data.flag}' AND a.group_name like '%${data.group_name}%'`,
+    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id",
+    whr = `a.branch_code = '${data.branch_code}' AND a.co_id = '${data.co_id}' AND a.approval_status = '${data.flag}' AND a.group_name like '%${data.group_name}%'`,
     order = null;
     var search_grp = await db_Select(select,table_name,whr,order);
 } else {
     var select = "a.*, b.block_name",
-    table_name = "md_group a, md_block b",
-    whr = `a.block = b.block_id AND a.branch_code = '${data.branch_code}' AND a.approval_status = '${data.flag}' AND a.group_name like '%${data.group_name}%'`,
+    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id",
+    whr = `a.branch_code = '${data.branch_code}' AND a.approval_status = '${data.flag}' AND a.group_name like '%${data.group_name}%'`,
     order = null;
     var search_grp = await db_Select(select,table_name,whr,order);
 }
+//    console.log(search_grp);
    
 
     // if(data.grp_code > 0){
