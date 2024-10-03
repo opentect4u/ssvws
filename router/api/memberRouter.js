@@ -9,10 +9,11 @@ memberRouter.post("/search_member", async (req, res) => {
     var data = req.body;
 
     var select = "a.*, b.group_name",
-    table_name = "td_grt_basic a JOIN md_group b ON a.prov_grp_code = b.group_code",
-    whr = `a.branch_code = '${data.branch_code}' 
-    AND a.approval_status = '${data.flag}'
-    AND a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%'`,
+    table_name = "td_grt_basic a LEFT JOIN md_group b ON a.prov_grp_code = b.group_code",
+    // whr = `a.branch_code = '${data.branch_code}' 
+    // AND a.approval_status = '${data.flag}'
+    // AND a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%'`,
+    whr = `a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%'`,
     order = null;
     var search_mem = await db_Select(select,table_name,whr,order);
 
