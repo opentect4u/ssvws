@@ -1,5 +1,5 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
-const { save_basic_dtls, grp_save, save_occu_dtls, edit_grt_data, edit_basic_dt, edit_occup_dt, edit_household_dt, edit_family_dt, edit_grp_save } = require('../../modules/api/grtformModule');
+const { save_basic_dtls, grp_save, save_occu_dtls, edit_grt_data, edit_basic_dt, edit_occup_dt, edit_household_dt, edit_family_dt, edit_grp_save, final } = require('../../modules/api/grtformModule');
 
 const express = require('express'),
 grtformRouter = express.Router(),
@@ -206,6 +206,13 @@ grtformRouter.get("/fetch_family_dtls", async (req, res) => {
     order = null;
     var family_dtls = await db_Select(select,table_name,whr,order)
     res.send(family_dtls)
+});
+
+grtformRouter.post("/final_submit", async (req, res) => {
+    var data = req.body;
+
+    var final_dt = await final(data);
+    res.send(final_dt)
 });
 
 module.exports = {grtformRouter}
