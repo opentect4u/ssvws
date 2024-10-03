@@ -108,7 +108,7 @@ module.exports = {
 
             var table_name = "td_grt_basic",
             fields = `branch_code = '${data.branch_code}', grt_date = '${datetime}', prov_grp_code = '${data.prov_grp_code}', gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
-             religion = '${data.religion}', caste = '${data.caste}', education = '${data.education}', dob = '${data.dob}', lat_val = '${data.lat_val}', long_val = '${data.long_val}', gps_address = '${data.gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+             religion = '${data.religion}', caste = '${data.caste}', education = '${data.education}', dob = '${data.dob}', approval_status = 'S', bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
