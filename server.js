@@ -3,6 +3,7 @@ const express = require("express"),
     session = require("express-session"),
     expressLayouts = require("express-ejs-layouts"),
     path = require("path"),
+    cors = require('cors')
     port = process.env.PORT || 3014;
 
 app.use(express.json());
@@ -14,7 +15,7 @@ app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
 app.use(expressLayouts);
-
+app.use(cors());
 app.set("layout", "templates/layout");
 
 // SET ASSETS AS A STATIC PATH //
