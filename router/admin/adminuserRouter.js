@@ -36,7 +36,7 @@ adminuserRouter.post('/password_change', async (req, res) => {
             }catch (error) {
                 console.log(err);
             }
-            res.send({ suc: 1, msg: `${log_dt.msg[0].user_type} changhed password successfully`});
+            res.send({ suc: 1, msg: "MIS changhed password successfully"});
           } else {
             result = {
               suc: 0,
