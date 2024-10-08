@@ -4,7 +4,7 @@ const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
 
 fetchRouter.get("/fetch_bmfwd_dtls_web", async (req, res) => {
-    var data = req.post;
+    var data = req.query;
     console.log(data,'dd');
     
     var select = 'a.*, b.group_name, c.user_type',
