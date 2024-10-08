@@ -13,8 +13,8 @@ adminuserRouter.post('/save_profile_web', async (req, res) => {
     phone_mobile = '${data.phone_mobile}', email = '${data.email}', gender = '${data.gender}', modified_by = '${data.emp_name}', modified_dt = '${datetime}'`,
     values = null
     whr = `emp_id = '${data.emp_id}'`,
-    order = null;
-    var res_dt = await db_Insert(table_name,fields,values,whr,order)
+    flag = 1;
+    var res_dt = await db_Insert(table_name,fields,values,whr,flag)
     res.send(res_dt)
 })
 
