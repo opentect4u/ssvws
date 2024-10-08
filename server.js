@@ -41,6 +41,7 @@ app.use((req, res, next) => {
   next();
 });
 
+const { adminRouter } = require("./router/adminRouter");
 const { grtformRouter } = require("./router/api/grtformRouter");
 const { masterRouter } = require("./router/api/masterRouter");
 const { memberRouter } = require("./router/api/memberRouter");
@@ -54,6 +55,7 @@ app.use(masterRouter)
 app.use(grtformRouter)
 app.use(userRouter)
 app.use(memberRouter)
+app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
 //   var user = req.session.user;
