@@ -3,7 +3,7 @@ const { db_Select } = require('../../model/mysqlModel');
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
 
-fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
+fetchRouter.get("/fetch_bmfwd_dtls_web", async (req, res) => {
     var data = req.post;
     console.log(data,'dd');
     
