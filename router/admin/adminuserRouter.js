@@ -5,6 +5,13 @@ const { db_Insert, db_Select } = require('../../model/mysqlModel');
 
 adminuserRouter.post('/fetch_branch', async (req, res) => {
     var data = req.body;
+
+    var select = "branch_code,branch_name,brn_addr",
+    table_name = "md_branch",
+    whr = null,
+    order = null;
+    var branch_dt = await db_Select(select,table_name,whr,order)
+    res.send(branch_dt);
 })
 
 adminuserRouter.post('/save_profile_web', async (req, res) => {
