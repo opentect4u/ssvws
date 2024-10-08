@@ -13,7 +13,15 @@ fetchRouter.get("/fetch_bmfwd_dtls_web", async (req, res) => {
     AND a.approval_status = 'S' ${data.prov_grp_code > 0 ? `AND a.prov_grp_code = ${data.prov_grp_code}` : ''}`,
     order = null;
     var res_dt = await db_Select(select,table_name,whr,order);
-    res.send(res_dt)
+
+    if(res_dt.suc > 0){
+        var select = '*',
+        table_name = 'td_grt_basic',
+        whr = `a.approval_status = 'S'`,
+        order = null;
+        var mem_dt = await db_Select(select,table_name,whr,order);
+    }
+    res.send(mem_dt)
 });
 
 module.exports = {fetchRouter}
