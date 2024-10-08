@@ -3,6 +3,10 @@ dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
 
+adminuserRouter.post('/fetch_branch', async (req, res) => {
+    var data = req.body;
+})
+
 adminuserRouter.post('/save_profile_web', async (req, res) => {
     var data = req.body;
     console.log(data);
@@ -26,34 +30,25 @@ adminuserRouter.post('/password_change', async (req, res) => {
     var select = "emp_id,password",
     table_name = "md_user",
     whr = `emp_id='${data.emp_id}'`;
-    var log_dt = await db_Select(select,table_name,whr,null)
+    var res_dt = await db_Select(select,table_name,whr,null)
 
-    if (log_dt.suc > 0) {
-        if (log_dt.msg.length > 0) {
-          if (await bcrypt.compare(data.password.toString(), log_dt.msg[0].password)) {
-            try{
-                await db_Insert('md_user', `modified_by = "${data.emp_id}", modified_at="${datetime}"`, null, `emp_id='${log_dt.msg[0].emp_id}'`, 1)
-            }catch (error) {
-                console.log(err);
-            }
-            res.send({ suc: 1, msg: "MIS changhed password successfully"});
-          } else {
-            result = {
-              suc: 0,
-              msg: "Please check your userid or password",
-            };
-            res.send(result)
-          }
-          } else {
-            result = { suc: 2, msg: "No data found", dt: log_dt };
-            res.send(result)
-          }
-        }  else {
-          result = { suc: 0, msg: log_dt.msg, dt: log_dt };
-          res.send(result)
-        }
+    if(res_dt.suc > 0 && res_dt.msg.length > 0) {
+          if (await bcrypt.compare(data.old_pwd, res_dt.msg[0].password)) {
+            var pass = bcrypt.hashSync(data.new_pwd, 10);
+            var table_name = "md_user",
+            fields = `password = '${pass}', modified_by='${data.emp_name}', modified_dt='${datetime}'`,
+            whr = `emp_id = '${data.emp_id}'`,
+            flag = 1;
+            var reset_pass = await db_Insert(table_name,fields,null,whr,flag)
+            result = reset_pass     
+      }else {
+       
+      }
+    }else {
+
+    }
+});
     
-})
 
 
 module.exports = {adminuserRouter}
