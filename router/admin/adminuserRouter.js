@@ -3,7 +3,7 @@ dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
 
-adminuserRouter.post('/fetch_branch', async (req, res) => {
+adminuserRouter.get('/fetch_branch', async (req, res) => {
     var data = req.body;
 
     var select = "branch_code,branch_name,brn_addr",
