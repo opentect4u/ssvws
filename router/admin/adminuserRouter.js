@@ -44,7 +44,7 @@ adminuserRouter.post('/password_change_user', async (req, res) => {
           if (await bcrypt.compare(data.old_pwd, res_dt.msg[0].password)) {
                 var pass = bcrypt.hashSync(data.new_pwd, 10);
                 var table_name = "md_user",
-                fields = `password = '${pass}', modified_by='${data.emp_name}', modified_dt='${datetime}'`,
+                fields = `password = '${pass}', modified_by='${data.emp_name}', modified_at='${datetime}'`,
                 whr = `emp_id = '${data.emp_id}'`,
                 flag = 1;
                 var reset_pass = await db_Insert(table_name,fields,null,whr,flag);
