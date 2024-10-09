@@ -1,4 +1,5 @@
 const { db_Select } = require('../../model/mysqlModel');
+const { edit_grp_web } = require('../../modules/admin/fetchModule');
 
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
@@ -58,6 +59,16 @@ fetchRouter.get("/fetch_family_dt_web", async (req, res) => {
     order = null;
     var family_dt = await db_Select(select,table_name,whr,order)
     res.send(family_dt)
+});
+
+fetchRouter.post("/edit_group_web", async (req, res) => {
+    var data = req.body;
+    // console.log(data,'grp_dt');
+
+    var edit_grp_dt = await edit_grp_web(data);
+    // console.log(grp_dt,'grp');
+    
+    res.send(edit_grp_dt);
 });
 
 module.exports = {fetchRouter}
