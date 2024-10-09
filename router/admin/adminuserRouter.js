@@ -21,7 +21,7 @@ adminuserRouter.post('/save_profile_web', async (req, res) => {
 
     var table_name = "md_employee",
     fields = `emp_name = '${data.emp_name != '' ? `'${data.emp_name}'` : ''}', 
-              branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : ''}, 
+              branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : ''}', 
               phone_mobile = '${data.phone_mobile != '' ? `'${data.phone_mobile}'` : ''}', 
               email = '${data.email != '' ? `'${data.email}'` : ''}', 
               gender = '${data.gender != '' ? `'${data.gender}'` : ''}', 
