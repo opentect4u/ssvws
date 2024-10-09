@@ -180,7 +180,7 @@ grtformRouter.get("/fetch_occup_dtls", async (req, res) => {
     table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
     whr = `a.loan_purpose = b.purp_id 
     AND a.sub_pupose = c.sub_purp_id 
-    AND a.form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
+    AND a.form_no = '${data.form_no}' AND a.branch_code = '${data.branch_code}'`,
     order = null;
     var occup_dtls = await db_Select(select,table_name,whr,order)
     res.send(occup_dtls)
