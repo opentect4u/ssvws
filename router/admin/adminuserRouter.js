@@ -20,11 +20,11 @@ adminuserRouter.post('/save_profile_web', async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var table_name = "md_employee",
-    fields = `emp_name = '${data.emp_name != '' ? data.emp_name : ''}', 
-              branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : 'NULL'},  -- Correct handling for NULL
-              phone_mobile = '${data.phone_mobile != '' ? data.phone_mobile : ''}', 
-              email = '${data.email != '' ? data.email : ''}', 
-              gender = '${data.gender != '' ? data.gender : ''}', 
+    fields = `emp_name = '${data.emp_name != '' ? `'${data.emp_name}'` : ''}', 
+              branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : ''}, 
+              phone_mobile = '${data.phone_mobile != '' ? `'${data.phone_mobile}'` : ''}', 
+              email = '${data.email != '' ? `'${data.email}'` : ''}', 
+              gender = '${data.gender != '' ? `'${data.gender}'` : ''}', 
               modified_by = '${data.emp_name}', 
               modified_dt = '${datetime}'`,
     values = null,
