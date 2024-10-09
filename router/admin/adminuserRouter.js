@@ -20,11 +20,11 @@ adminuserRouter.post('/save_profile_web', async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var table_name = "md_employee",
-    fields = `emp_name = ${data.emp_name != '' ? `'${data.emp_name}'` : ''}, 
-              branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : ''}, 
-              phone_mobile = ${data.phone_mobile != '' ? `'${data.phone_mobile}'` : ''}, 
-              email = ${data.email != '' ? `'${data.email}'` : ''}, 
-              gender = ${data.gender != '' ? `'${data.gender}'` : ''}, 
+    fields = `emp_name = ${data.emp_name != '' ? `'${data.emp_name}'` : 'NULL'}, 
+              branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : 'NULL'}, 
+              phone_mobile = ${data.phone_mobile != '' ? `'${data.phone_mobile}'` : 'NULL'}, 
+              email = ${data.email != '' ? `'${data.email}'` : 'NULL'}, 
+              gender = ${data.gender != '' ? `'${data.gender}'` : 'NULL'}, 
               modified_by = '${data.emp_name}', 
               modified_dt = '${datetime}'`,
     values = null,
@@ -34,6 +34,7 @@ adminuserRouter.post('/save_profile_web', async (req, res) => {
     var res_dt = await db_Insert(table_name, fields, values, whr, flag);
     res.send(res_dt);
 });
+
 
 
 adminuserRouter.post('/password_change_user', async (req, res) => {
