@@ -1,5 +1,5 @@
 const { db_Select } = require('../../model/mysqlModel');
-const { edit_grp_web } = require('../../modules/admin/fetchModule');
+const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web } = require('../../modules/admin/fetchModule');
 
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
@@ -70,5 +70,26 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
     
     res.send(edit_grp_dt);
 });
+
+fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
+    var data = req.body;
+  
+    var basic_dt_web = await edit_basic_dt_web(data);
+    res.send(basic_dt_web);
+  });
+  
+  fetchRouter.post("/edit_occup_dtls_web", async (req, res) => {
+    var data = req.body;
+  
+    var occup_dt_web = await edit_occup_dt_web(data);
+    res.send(occup_dt_web);
+  });
+  
+  fetchRouter.post("/edit_household_dtls_web", async (req, res) => {
+    var data = req.body;
+  
+    var household_dt_web = await edit_household_dt_web(data);
+    res.send(household_dt_web);
+  });
 
 module.exports = {fetchRouter}
