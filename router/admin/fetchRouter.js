@@ -1,4 +1,4 @@
-const { db_Select } = require('../../model/mysqlModel');
+const { db_Select, db_Insert } = require('../../model/mysqlModel');
 const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web } = require('../../modules/admin/fetchModule');
 
 const fetchRouter = require('express').Router();
@@ -103,5 +103,19 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
     res.send(res_data);
 })
   });
+
+
+  fetchRouter.post("/delete_member_mis", async (req, res) => {
+    var data = req.body;
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    var table_name = "td_grt_basic",
+    fields = `approval_status = '${data.approval_status}', remarks = '${data.remarks.split("'").join("\\'")}', rejected_by = '${data.rejected_by}', rejected_at = '${datetime}'`,
+    values = null,
+    whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+    flag = 1;
+    var delete_mem_dt = await db_Insert(table_name, fields, values, whr, flag);
+    res.send(delete_mem_dt)
+});  
 
 module.exports = {fetchRouter}

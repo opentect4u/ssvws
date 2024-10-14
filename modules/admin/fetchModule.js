@@ -115,7 +115,7 @@ module.exports = {
                 resolve(family_dt);
             } else {
                 reject({ "suc": 0, "msg": "No member details provided" });
-            }
+            } 
         });
     },
 }
