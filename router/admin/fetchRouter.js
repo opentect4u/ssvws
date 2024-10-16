@@ -126,35 +126,35 @@ fetchRouter.post("/forward_mis_asst", async (req, res) => {
 });
 
 fetchRouter.post("/verify_by_mis", async (req, res) => {
-    const data = req.body;
+    const data = req.body, value = '';
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     switch (data.flag) {
         case "PH":
-            phone_verify_flag = data.verify_value;
+            value = `phone_verify_flag = '${data.verify_value}'`;
             break;
         case "A":
-            aadhar_verify_flag = data.verify_value;
+            value = `aadhar_verify_flag = '${data.verify_value}'`;
             break;
         case "P":
-            pan_verify_flag = data.verify_value;
+            value = `pan_verify_flag = '${data.verify_value}'`;
             break;
         default:
             return res.status(400).send({ suc: 0, msg: [], status: 'Invalid flag provided' });
     }
 
     try {
-        var verify_dtls = await db_Insert('td_grt_basic', 
-            `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`, 
+        var verify_dtls = await db_Insert('td_grt_basic', value, null,
+            `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`, 1
         );
 
-        if (verify_dtls) {
-            return res.send({ suc: 1, msg: 'Verification details updated successfully', data: verify_dtls });
+        if (verify_dtls.suc > 0) {
+            return res.send({ suc: 1, msg: 'Verification details updated successfully', data: verify_dtls.msg });
         } else {
-            return res.status(500).send({ suc: 0, msg: 'Failed to update verification details', data: [] });
+            return res.send(verify_dtls);
         }
     } catch (error) {
-        return res.status(500).send({ suc: 0, msg: 'Error occurred', error: error.message });
+        return res.send({ suc: 0, msg: 'Error occurred', error: error.message });
     }
 });
 
