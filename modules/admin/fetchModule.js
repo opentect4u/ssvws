@@ -124,9 +124,9 @@ module.exports = {
         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
         var table_name = "td_grt_basic",
-        fields = `approval_status = 'A', approved_by = '${data.approved_by}', approved_at =  '${datetime}'`,
+        fields = `approval_status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
         values = null,
-        whr = `form_no = '${data.form_no}'`,
+        whr = `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`,
         flag = 1;
         var fwd_dt = await db_Insert(table_name, fields, values, whr, flag);
         console.log(fwd_dt,'dt');
