@@ -126,7 +126,9 @@ fetchRouter.post("/forward_mis_asst", async (req, res) => {
 });
 
 fetchRouter.post("/verify_by_mis", async (req, res) => {
-    const data = req.body, value = '';
+    const data = req.body;
+    let value = '';
+    
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     switch (data.flag) {
