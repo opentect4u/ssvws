@@ -133,13 +133,13 @@ fetchRouter.post("/verify_by_mis", async (req, res) => {
 
     switch (data.flag) {
         case "PH":
-            value = phone_verify_flag = '${data.verify_value}';
+            value = `phone_verify_flag = '${data.verify_value}'`;
             break;
         case "A":
-            value = aadhar_verify_flag = '${data.verify_value}';
+            value = `aadhar_verify_flag = '${data.verify_value}'`;
             break;
         case "P":
-            value = pan_verify_flag = '${data.verify_value}';
+            value = `pan_verify_flag = '${data.verify_value}'`;
             break;
         default:
             return res.status(400).send({ suc: 0, msg: [], status: 'Invalid flag provided' });
