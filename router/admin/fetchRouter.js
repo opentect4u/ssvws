@@ -11,7 +11,7 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     var select = data.prov_grp_code > 0 ? 'a.prov_grp_code, b.*' : 'DISTINCT a.prov_grp_code, b.group_name, b.group_type',
     table_name = 'td_grt_basic a, md_group b',
     whr = `a.prov_grp_code = b.group_code
-    AND a.approval_status = 'S' ${data.prov_grp_code > 0 ? `AND a.prov_grp_code = ${data.prov_grp_code}` : ''} ${data.user_type == 2 && data.branch_code > 0 ? `branch_code = '${data.branch_code}'` : ''}`,
+    AND a.approval_status = 'S' ${data.prov_grp_code > 0 ? `AND a.prov_grp_code = ${data.prov_grp_code}` : ''} ${data.user_type == 2 && data.branch_code > 0 ? `branch_code = ${data.branch_code}` : ''}`,
     order = null;
     var res_dt = await db_Select(select,table_name,whr,order);
 
