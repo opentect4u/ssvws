@@ -180,5 +180,16 @@ fetchRouter.post("/verify_by_mis", async (req, res) => {
     }
 });
 
+fetchRouter.get("/fetch_verify_flag", async (req, res) => {
+    var data = req.query;
+
+    var select = "phone_verify_flag,aadhar_verify_flag,pan_verify_flag",
+    table_name = "td_grt_basic",
+    whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+    order = null;
+    var fetch_dt = await db_Select(select,table_name,whr,order);
+    res.send(fetch_dt)
+})
+
 
 module.exports = {fetchRouter}
