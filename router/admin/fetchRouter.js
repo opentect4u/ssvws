@@ -4,8 +4,8 @@ const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_we
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
 
-fetchRouter.get("/fetch_bmfwd_dtls_web", async (req, res) => {
-    var data = req.query;
+fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
+    var data = req.body;
     console.log(data,'dd');
     
     if(data.id == 3){
