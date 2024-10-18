@@ -3,7 +3,9 @@ const express = require("express"),
     session = require("express-session"),
     expressLayouts = require("express-ejs-layouts"),
     path = require("path"),
-    cors = require('cors')
+    https = require('https'),
+    fs = require('fs'),
+    cors = require('cors'),
     port = process.env.PORT || 3014;
 
 app.use(express.json());
@@ -32,6 +34,13 @@ app.use(
     }
   })
 );
+
+const options = {
+  key: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/private-key.txt')),
+  cert: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/ssvwsadmin.crt')),
+};
+
+var server = https.createServer(options, app);
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user;
@@ -76,7 +85,12 @@ app.get('*', function(req, res){
 })
 
 
-app.listen(port, (err) => {
-    if (err) throw new Error(err);
-    else console.log(`App is running at http://localhost:${port}`);
+// app.listen(port, (err) => {
+//     if (err) throw new Error(err);
+//     else console.log(`App is running at http://localhost:${port}`);
+// });
+
+server.listen(port, (err) => {
+  if (err) throw new Error(err);
+  else console.log(`App is running at http://localhost:${port}`);
 });
