@@ -35,12 +35,12 @@ app.use(
   })
 );
 
-const options = {
-  key: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/private-key.txt')),
-  cert: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/ssvwsadmin.crt')),
-};
+// const options = {
+//   key: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/private-key.txt')),
+//   cert: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/ssvwsadmin.crt')),
+// };
 
-var server = https.createServer(options, app);
+// var server = https.createServer(options, app);
 
 app.use((req, res, next) => {
   res.locals.user = req.session.user;
@@ -85,12 +85,12 @@ app.get('*', function(req, res){
 })
 
 
-// app.listen(port, (err) => {
-//     if (err) throw new Error(err);
-//     else console.log(`App is running at http://localhost:${port}`);
-// });
-
-server.listen(port, (err) => {
-  if (err) throw new Error(err);
-  else console.log(`App is running at http://localhost:${port}`);
+app.listen(port, (err) => {
+    if (err) throw new Error(err);
+    else console.log(`App is running at http://localhost:${port}`);
 });
+
+// server.listen(port, (err) => {
+//   if (err) throw new Error(err);
+//   else console.log(`App is running at http://localhost:${port}`);
+// });
