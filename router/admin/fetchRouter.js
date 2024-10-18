@@ -207,7 +207,7 @@ fetchRouter.get("/fetch_verify_flag", async (req, res) => {
 fetchRouter.get("/mis_approve_dtls", async (req, res) => {
     var data = req.query
 
-    var select = "member_code,member_name,remarks",
+    var select = "member_code,client_name,remarks",
     table_name = "td_grt_basic",
     whr = `approval_status = 'A'`,
     order = null;
