@@ -209,7 +209,7 @@ fetchRouter.get("/mis_approve_dtls", async (req, res) => {
 
     var select = "member_code,client_name,remarks",
     table_name = "td_grt_basic",
-    whr = `approval_status = 'A'`,
+    whr = `approval_status = 'A' AND form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
     order = null;
 
     var res_dt = await db_Select(select,table_name,whr,order);
