@@ -47,7 +47,7 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     if (res_dt.suc > 0 && res_dt.msg.length > 0 && data.prov_grp_code > 0) {
         var select = '*',
             table_name = 'td_grt_basic',
-            whr = `approval_status ='${data.user_type == 3 ? 'S' : ''}' AND prov_grp_code = ${data.prov_grp_code}`,
+            whr = `approval_status ='${data.user_type == 3 ? 'S' : 'U' && 'A'}' AND prov_grp_code = ${data.prov_grp_code}`,
             // whr = `prov_grp_code = ${data.prov_grp_code}`,
             order = null;
         
