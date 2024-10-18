@@ -202,6 +202,18 @@ fetchRouter.get("/fetch_verify_flag", async (req, res) => {
     order = null;
     var fetch_dt = await db_Select(select,table_name,whr,order);
     res.send(fetch_dt)
+});
+
+fetchRouter.get("/mis_approve_dtls", async (req, res) => {
+    var data = req.query
+
+    var select = "member_code,member_name,remarks",
+    table_name = "td_grt_basic",
+    whr = `approval_status = 'A'`,
+    order = null;
+
+    var res_dt = await db_Select(select,table_name,whr,order);
+    res.send(res_dt)
 })
 
 
