@@ -33,12 +33,12 @@ dateFormat = require('dateformat');
 fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     var data = req.body;
     console.log(data, 'dd');
-    
+
     var select = data.prov_grp_code > 0 ? 'a.prov_grp_code, b.*' : 'DISTINCT a.prov_grp_code, b.group_name, b.group_type',
         table_name = 'td_grt_basic a, md_group b',
         whr = `a.prov_grp_code = b.group_code
-               ${data.user_type == 2 && data.branch_code > 0 ?  `AND a.approval_status = U` :  `AND a.approval_status = S`}'
-               ${data.prov_grp_code > 0 ? `AND a.prov_grp_code = ${data.prov_grp_code}` : ''} 
+               ${data.user_type == 2 && data.branch_code > 0 ? `AND a.approval_status = 'U'` : `AND a.approval_status = 'S'`}
+               ${data.prov_grp_code > 0 ? `AND a.prov_grp_code = ${data.prov_grp_code}` : ''}
                ${data.user_type == 2 && data.branch_code > 0 ? `AND a.branch_code = ${data.branch_code}` : ''}`,
         order = null;
     
@@ -47,8 +47,7 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     if (res_dt.suc > 0 && res_dt.msg.length > 0 && data.prov_grp_code > 0) {
         var select = '*',
             table_name = 'td_grt_basic',
-            whr = `prov_grp_code = ${data.prov_grp_code} ${data.user_type == 3 ? `AND approval_status != S` : `AND approval_status != ''`}`,
-            // whr = `prov_grp_code = ${data.prov_grp_code}`,
+            whr = `prov_grp_code = ${data.prov_grp_code} ${data.user_type == 3 ? `AND approval_status != 'S'` : `AND approval_status != ''`}`,
             order = null;
         
         var mem_dt = await db_Select(select, table_name, whr, order);
@@ -57,6 +56,7 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     
     res.send(res_dt);
 });
+
 
 
 fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
