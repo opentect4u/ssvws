@@ -11,10 +11,14 @@ grtformRouter.post("/save_basic_dtls", async (req, res) =>{
     save_basic_dtls(data).then(data => {
         console.log(data);
         res_data = data
+        console.log(res_data,'ttttt');
+        
         // res.send(data)
     }).catch(err => {
-        console.log(err);
+        // console.log(err);
         res_data = err
+        console.log(res_data);
+
         // res.send(err)
     }).finally(() => {
         res.send(res_data)
