@@ -28,9 +28,11 @@ module.exports = {
                     flag = data.member_code > 0 ? 1 : 0;
                     var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
 
+                    var current_member_code = data.member_code ? data.member_code : member_code;
+
                     var table_name = "td_grt_basic",
                     fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
-                    values = `('${form_no}', '${datetime}', '${data.branch_code}', '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}', '${data.member_code > 0 ? data.member_code : basic_dt[0].msg.member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+                    values = `('${form_no}', '${datetime}', '${data.branch_code}', '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
                     whr = null,
                     flag =  0;
                     var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
