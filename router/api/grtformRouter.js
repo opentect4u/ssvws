@@ -180,7 +180,7 @@ grtformRouter.post("/save_family_dtls", async (req, res) => {
 grtformRouter.get("/fetch_occup_dtls", async (req, res) => {
     var data = req.query;
 
-    var select = "a.form_no,a.grt_date,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
+    var select = "a.form_no,a.branch_code,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
     table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
     whr = `a.loan_purpose = b.purp_id 
     AND a.sub_pupose = c.sub_purp_id 
@@ -193,7 +193,7 @@ grtformRouter.get("/fetch_occup_dtls", async (req, res) => {
 grtformRouter.get("/fetch_household_dtls", async (req, res) => {
     var data = req.query;
 
-    var select = "form_no,house_type,own_rent,no_of_rooms,land,tv_flag,bike_flag,fridge_flag,wm_flag,poltical_flag,parental_addr,parental_phone",
+    var select = "form_no,branch_code,house_type,own_rent,no_of_rooms,land,tv_flag,bike_flag,fridge_flag,wm_flag,poltical_flag,parental_addr,parental_phone",
     table_name = "td_grt_occupation_household",
     whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
     order = null;
@@ -204,7 +204,7 @@ grtformRouter.get("/fetch_household_dtls", async (req, res) => {
 grtformRouter.get("/fetch_family_dtls", async (req, res) => {
     var data = req.query;
 
-    var select = "form_no,sl_no,grt_date,family_name name,relation,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
+    var select = "form_no,sl_no,branch_code,family_name name,relation,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
     table_name = "td_grt_family",
     whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
     order = null;
