@@ -38,7 +38,7 @@ const getFormNo = () => {
   //   });
   // };
 
-  const getMemberCode = () => {
+  const getMemberCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
 
         var select = "max(substr(member_code,3)) + 1 member_code",
@@ -47,8 +47,8 @@ const getFormNo = () => {
         order = null;
         var res_dt = await db_Select(select, table_name, whr, order);
 
-        let newMemberCode = res_dt[0].member_code;
-        let memberCode = `${data.branch_code}` + newMemberCode;
+        let newMemberCode = res_dt.msg[0].member_code;
+        let memberCode = `${branch_code}` + newMemberCode;
         console.log(memberCode,'code');
         
       resolve(memberCode);
