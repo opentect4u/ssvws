@@ -11,13 +11,13 @@ module.exports = {
             let form_no = await getFormNo()
             let member_code = await getMemberCode(data.branch_code)
 
-            var select = "client_mobile",
-            table_name = "md_member",
-            whr = `client_mobile = '${data.client_mobile}'`,
-            order = null;
-            var mobile_dt = await db_Select(select,table_name,whr,order)
+            // var select = "client_mobile",
+            // table_name = "md_member",
+            // whr = `client_mobile = '${data.client_mobile}'`,
+            // order = null;
+            // var mobile_dt = await db_Select(select,table_name,whr,order)
 
-            if(mobile_dt.suc > 0 && mobile_dt.msg.length == 0){
+            // if(mobile_dt.suc > 0 && mobile_dt.msg.length == 0){
                
                     var table_name = "md_member",
                     fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr}',
@@ -37,9 +37,9 @@ module.exports = {
                     basic_dt["member_code"] = member_code;
 
                 resolve(basic_dt);
-            }else {
-                reject({ "suc": 0, "msg": "Mobile number already exists." });
-            }
+            // }else {
+            //     reject({ "suc": 0, "msg": "Mobile number already exists." });
+            // }
         }catch(error){
             reject({"suc": 2, "msg": "Error occurred during saving details", details: error });
         } 
