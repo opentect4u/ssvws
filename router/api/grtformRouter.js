@@ -55,8 +55,8 @@ grtformRouter.post("/fetch_basic_dtls", async (req, res) => {
     whr = `a.branch_code = b.branch_code 
     AND a.member_code = b.member_code 
     AND a.branch_code = '${data.branch_code}' 
-    AND a.form_no = '${data.form_no}' 
-    AND a.approval_status = '${data.approval_status}'`,
+    AND b.form_no = '${data.form_no}' 
+    AND b.approval_status = '${data.approval_status}'`,
     order = null;
     var fetch_basic = await db_Select(select,table_name,whr,order)
 
