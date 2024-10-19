@@ -9,7 +9,7 @@ memberRouter.post("/search_member", async (req, res) => {
     var data = req.body;
 
     // var select = "a.*, b.group_name",
-    var select = "a.*,",
+    var select = "a.*",
     // table_name = "md_member a LEFT JOIN md_group b ON a.branch_code = b.branch_code",
     table_name = "md_member a",
     // whr = `a.branch_code = '${data.branch_code}' 
