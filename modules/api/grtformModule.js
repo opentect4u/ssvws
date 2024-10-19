@@ -21,7 +21,7 @@ module.exports = {
                 var table_name = "md_member",
                 fields = "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, client_addr, pin_no, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
                 values =  `('${data.branch_code}', '${member_code}', '${data.gender}', '${data.client_name}', '${datetime}',
-                '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.client_addr}', '${data.pin_no}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.religion}', '${data.religion == 'others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
+                '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.client_addr}', '${data.pin_no}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.religion}', '${data.religion == 'Others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'Others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'Others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
                 whr = null,
                 flag = 0;
                 var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
