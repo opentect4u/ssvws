@@ -188,7 +188,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     var select = "a.*, b.group_name";
     var table_name = "td_grt_basic a, md_group b";
     
-    var whr = `a.prov_grp_code = b.group_code `;
+    var whr = `a.branch_code = b.branch_code `;
     if (data.flag == 'M') {
         whr += `AND a.client_mobile = '${data.user_dt}'`;
     } else if (data.flag == 'A') {
@@ -200,7 +200,6 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     var order = null;
 
     try {
-        // Assuming db_Select is a function that handles the query execution
         var res_dt = await db_Select(select, table_name, whr, order);
         var response_set = {}
         if(res_dt.suc > 0){
