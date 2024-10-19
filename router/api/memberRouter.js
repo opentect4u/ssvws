@@ -8,8 +8,10 @@ dateFormat = require('dateformat');
 memberRouter.post("/search_member", async (req, res) => {
     var data = req.body;
 
-    var select = "a.*, b.group_name",
-    table_name = "md_member a LEFT JOIN md_group b ON a.branch_code = b.branch_code",
+    // var select = "a.*, b.group_name",
+    var select = "a.*",
+    // table_name = "md_member a LEFT JOIN md_group b ON a.branch_code = b.branch_code",
+    table_name = "md_member a",
     // whr = `a.branch_code = '${data.branch_code}' 
     // AND a.approval_status = '${data.flag}'
     // AND a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%'`,
