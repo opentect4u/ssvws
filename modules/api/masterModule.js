@@ -26,16 +26,34 @@ const getFormNo = () => {
     });
   };
 
+  // const getMemberCode = () => {
+  //   return new Promise(async (resolve, reject) => {
+
+  //       var select = "IF(COUNT(member_code) > 0, MAX(member_code)+1, 1) member_code",
+  //       table_name = "td_grt_basic",
+  //       whr = null,
+  //       order = null;
+  //       var res_dt = await db_Select(select, table_name, whr, order);
+  //     resolve(res_dt);
+  //   });
+  // };
+
   const getMemberCode = () => {
     return new Promise(async (resolve, reject) => {
 
-        var select = "IF(COUNT(member_code) > 0, MAX(member_code)+1, 1) member_code",
-        table_name = "td_grt_basic",
+        var select = "max(substr(member_code,3)) + 1 member_code",
+        table_name = "md_member",
         whr = null,
         order = null;
         var res_dt = await db_Select(select, table_name, whr, order);
-      resolve(res_dt);
+
+        let newMemberCode = res_dt[0].member_code;
+        let memberCode = `${data.branch_code}` + newMemberCode;
+        console.log(memberCode,'code');
+        
+      resolve(memberCode);
     });
   };
+
 
   module.exports = {getFormNo, groupCode, getMemberCode}

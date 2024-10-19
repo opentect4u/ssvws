@@ -8,7 +8,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-            let form_no = await getFormNo()
+            // let form_no = await getFormNo()
             let member_code = await getMemberCode()
 
             var select = "client_mobile",
@@ -18,14 +18,22 @@ module.exports = {
             var mobile_dt = await db_Select(select,table_name,whr,order)
 
             if(mobile_dt.suc > 0 && mobile_dt.msg.length == 0){
-                var table_name = "td_grt_basic",
-                fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, gender, client_name, client_mobile, gurd_name, gurd_mobile, client_addr, pin_no, aadhar_no, pan_no, religion, caste, education, dob, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
-                values =  `('${form_no}', '${datetime}', '${data.branch_code}', '${data.prov_grp_code}', '${member_code.msg[0].member_code}', '${data.gender}', '${data.client_name}', '${data.client_mobile}', '${data.gurd_name}', '${data.gurd_mobile}', '${data.client_addr}', '${data.pin_no}', '${data.aadhar_no}', '${data.pan_no}', '${data.religion}', '${data.caste}', '${data.education}', '${data.dob}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+                var table_name = "md_member",
+                fields = "(branch_code, member_code, gender, client_name, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, client_addr, pin_no, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
+                values =  `('${data.branch_code}', '${member_code.msg[0].memberCode}', '${data.gender}', '${data.client_name}', 
+                '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name}', '${data.gurd_mobile}', '${data.client_addr}', '${data.pin_no}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.religion}', '${data.other_religion}', '${data.caste}', '${data.other_caste}', '${data.education}', '${data.other_education}', '${data.dob}', '${data.created_by}', '${datetime}')`,
                 whr = null,
                 flag = 0;
                 var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
-                basic_dt["form_no"] = form_no;
-                basic_dt["member_code"] = member_code.msg[0].member_code;
+
+
+                var table_name = "td_grt_basic",
+                fields = "(grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
+                values =  `('${datetime}', '${data.branch_code}', '0', '${member_code.msg[0].memberCode}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+                whr = null,
+                flag = 0;
+                var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
+                basic_dt["member_code"] = member_code.msg[0].memberCode;
 
     
                 resolve(basic_dt);

@@ -7,13 +7,13 @@ dateFormat = require('dateformat');
 
 grtformRouter.post("/save_basic_dtls", async (req, res) =>{
     var data = req.body, res_data;
-    // console.log(data,'dt');
+    console.log(data,'dt');
     save_basic_dtls(data).then(data => {
-        // console.log(data);
+        console.log(data);
         res_data = data
         // res.send(data)
     }).catch(err => {
-        // console.log(err);
+        console.log(err);
         res_data = err
         // res.send(err)
     }).finally(() => {
