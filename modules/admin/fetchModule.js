@@ -53,9 +53,12 @@ module.exports = {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
           var table_name = "td_grt_occupation_household",
-            fields = `branch_code = '${data.branch_code}', self_occu = '${data.self_occu}', self_income = '${data.self_income}', spouse_occu = '${data.spouse_occu}', spouse_income = '${data.spouse_income}', loan_purpose = '${data.loan_purpose}', sub_pupose = '${data.sub_pupose}', applied_amt = '${data.applied_amt}', other_loan_flag = '${data.other_loan_flag}', other_loan_amt = '${data.other_loan_amt}', other_loan_emi = '${data.other_loan_emi}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `self_occu = '${data.self_occu}', self_income = '${data.self_income > 0 ? data.self_income : 0}', spouse_occu = '${data.spouse_occu}', spouse_income = '${data.spouse_income > 0 ? data.spouse_income : 0}', 
+                loan_purpose = '${data.loan_purpose}', sub_pupose = '${data.sub_pupose}', applied_amt = '${data.applied_amt > 0 ? data.applied_amt : 0}', other_loan_flag = '${data.other_loan_flag}',
+                 other_loan_amt = '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', other_loan_emi = '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}',
+                 modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
-            whr = `form_no = '${data.form_no}'`,
+            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
           var edit_occup_dt = await db_Insert(
             table_name,
@@ -73,9 +76,11 @@ module.exports = {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
           var table_name = "td_grt_occupation_household",
-            fields = `house_type = '${data.house_type}', own_rent = '${data.own_rent}', no_of_rooms = '${data.no_of_rooms}', land = '${data.land}', tv_flag = '${data.tv_flag}', bike_flag = '${data.bike_flag}', fridge_flag = '${data.fridge_flag}', wm_flag = '${data.wm_flag}', poltical_flag = '${data.poltical_flag}', parental_addr = '${data.parental_addr}', parental_phone = '${data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `no_of_rooms = '${data.no_of_rooms}', house_type = '${data.house_type}', own_rent = '${data.own_rent}', land = '${data.land}', tv_flag = '${data.tv_flag}', 
+                    bike_flag = '${data.bike_flag}', fridge_flag = '${data.fridge_flag}', wm_flag = '${data.wm_flag}', poltical_flag = '${data.poltical_flag}',
+                 parental_addr = '${data.parental_addr}', parental_phone = '${data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
-            whr = `form_no = '${data.form_no}'`,
+            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
           var edit_household_dt = await db_Insert(
             table_name,
@@ -96,9 +101,9 @@ module.exports = {
                 for (let dt of data.memberdtls) {
                     if (dt.sl_no && dt.sl_no > 0) { 
                         var table_name = "td_grt_family",
-                            fields = `branch_code = '${data.branch_code}', family_name = '${dt.name}', relation = '${dt.relation}', age = '${dt.age}', sex = '${dt.sex}', education = '${dt.education}', stu_work_flag = '${dt.studyingOrWorking}', monthly_income = '${dt.monthlyIncome}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                            fields = `family_name = '${dt.name}', relation = '${dt.relation}', family_dob = '${dt.familyDob}', age = '${dt.age}', sex = '${dt.sex}', education = '${dt.education}', stu_work_flag = '${dt.studyingOrWorking}', monthly_income = '${dt.monthlyIncome}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                             values = null,
-                            whr = `form_no = '${data.form_no}' AND sl_no = '${dt.sl_no}'`,
+                            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND sl_no = '${dt.sl_no}'`,
                             flag = 1;
                         var family_dt = await db_Insert(table_name, fields, values, whr, flag);
                     } else {
@@ -110,8 +115,8 @@ module.exports = {
                         );
                         var next_sl_no = get_next_sl_no.suc > 0 ? get_next_sl_no.msg[0].next_sl_no : 1
                         var table_name = "td_grt_family",
-                            fields = `(form_no, sl_no, branch_code, grt_date, family_name, relation, age, sex, education, stu_work_flag, monthly_income, created_by, created_at)`,
-                            values = `('${data.form_no}', '${next_sl_no}', '${data.branch_code}', '${datetime}', '${dt.name}', '${dt.relation}', '${dt.age}', '${dt.sex}', '${dt.education}', '${dt.studyingOrWorking}', '${dt.monthlyIncome}', '${data.created_by}', '${datetime}')`,
+                            fields = `(form_no, sl_no, branch_code, family_name, relation, age, sex, education, stu_work_flag, monthly_income, created_by, created_at)`,
+                            values = `('${data.form_no}', '${next_sl_no}', '${data.branch_code}', '${dt.name}', '${dt.relation}', '${dt.age}', '${dt.sex}', '${dt.education}', '${dt.studyingOrWorking}', '${dt.monthlyIncome}', '${data.created_by}', '${datetime}')`,
                             whr = null,
                             flag = 0;
                         var family_dt = await db_Insert(table_name, fields, values, whr, flag);
