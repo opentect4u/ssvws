@@ -229,7 +229,7 @@ module.exports = {
                 for (let dt of data.memberdtls) {
                     if (dt.sl_no && dt.sl_no > 0) { 
                         var table_name = "td_grt_family",
-                            fields = `grt_date = '${datetime}', family_name = '${dt.name}', relation = '${dt.relation}', age = '${dt.age}', sex = '${dt.sex}', education = '${dt.education}', stu_work_flag = '${dt.studyingOrWorking}', monthly_income = '${dt.monthlyIncome}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                            fields = `family_name = '${dt.name}', relation = '${dt.relation}', family_dob = '${dt.family_dob}', age = '${dt.age}', sex = '${dt.sex}', education = '${dt.education}', stu_work_flag = '${dt.studyingOrWorking}', monthly_income = '${dt.monthlyIncome}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                             values = null,
                             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND sl_no = '${dt.sl_no}'`,
                             flag = 1;
@@ -243,8 +243,8 @@ module.exports = {
                         );
                         var next_sl_no = get_next_sl_no.suc > 0 ? get_next_sl_no.msg[0].next_sl_no : 1
                         var table_name = "td_grt_family",
-                            fields = `(form_no, sl_no, branch_code, grt_date, family_name, relation, age, sex, education, stu_work_flag, monthly_income, created_by, created_at)`,
-                            values = `('${data.form_no}', '${next_sl_no}', '${data.branch_code}', '${datetime}', '${dt.name}', '${dt.relation}', '${dt.age}', '${dt.sex}', '${dt.education}', '${dt.studyingOrWorking}', '${dt.monthlyIncome}', '${data.created_by}', '${datetime}')`,
+                            fields = `(form_no, sl_no, branch_code, family_name, relation, family_dob, age, sex, education, stu_work_flag, monthly_income, created_by, created_at)`,
+                            values = `('${data.form_no}', '${next_sl_no}', '${data.branch_code}', '${dt.name}', '${dt.relation}', '${dt.family_dob}', '${dt.age}', '${dt.sex}', '${dt.education}', '${dt.studyingOrWorking}', '${dt.monthlyIncome}', '${data.created_by}', '${datetime}')`,
                             whr = null,
                             flag = 0;
                         var family_dt = await db_Insert(table_name, fields, values, whr, flag);
