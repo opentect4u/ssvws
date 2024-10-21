@@ -93,6 +93,7 @@ fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
     whr = `a.loan_purpose = b.purp_id 
     AND a.sub_pupose = c.sub_purp_id 
+    AND a.branch_code = '${data.branch_code}'
     AND a.form_no = '${data.form_no}'`,
     order = null;
     var occup_dt = await db_Select(select,table_name,whr,order)
