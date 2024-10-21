@@ -203,7 +203,7 @@ grtformRouter.get("/fetch_household_dtls", async (req, res) => {
 grtformRouter.get("/fetch_family_dtls", async (req, res) => {
     var data = req.query;
 
-    var select = "form_no,sl_no,branch_code,family_name name,relation,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
+    var select = "form_no,sl_no,branch_code,family_name name,relation,family_dob,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
     table_name = "td_grt_family",
     whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
     order = null;
