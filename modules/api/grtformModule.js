@@ -127,7 +127,7 @@ module.exports = {
 
             if(edit_basic_dt.suc > 0){
                 var table_name = "td_grt_basic",
-                fields = `grt_date = '${datetime}', branch_code = '${data.branch_code}', prov_grp_code = '${data.prov_grp_code}',
+                fields = `grt_date = '${datetime}', branch_code = '${data.branch_code}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
                 bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
