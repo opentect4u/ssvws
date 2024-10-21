@@ -89,7 +89,7 @@ fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
 fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     var data = req.query;
 
-    var select = "a.form_no,a.grt_date,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
+    var select = "a.form_no,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
     table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
     whr = `a.loan_purpose = b.purp_id 
     AND a.sub_pupose = c.sub_purp_id 
