@@ -74,7 +74,7 @@ fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
     AND b.approval_status = '${data.approval_status}'`,
     order = null;
     var fetch_basic = await db_Select(select,table_name,whr,order)
-    res_dt.msg[0]['memb_dt'] = fetch_basic.suc > 0 ? (fetch_basic.msg.length > 0 ? fetch_basic.msg : []) : [];
+    fetch_dtls_web.msg[0]['memb_dt'] = fetch_basic.suc > 0 ? (fetch_basic.msg.length > 0 ? fetch_basic.msg : []) : [];
 
     res.send(fetch_dtls_web);
 });
