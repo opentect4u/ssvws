@@ -69,6 +69,21 @@ fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
     res.send(fetch_dtls_web);
 });
 
+fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.*,b.*",
+    table_name = "md_member a, td_grt_basic b",
+    whr = `a.branch_code = b.branch_code 
+    AND a.member_code = b.member_code 
+    AND a.branch_code = '${data.branch_code}' 
+    AND b.form_no = '${data.form_no}' 
+    AND b.approval_status = '${data.approval_status}'`,
+    order = null;
+    var fetch_basic = await db_Select(select,table_name,whr,order)
+
+    res.send(fetch_basic);
+});
 
 
 fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
