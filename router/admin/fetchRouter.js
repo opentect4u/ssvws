@@ -105,7 +105,7 @@ fetchRouter.get("/fetch_household_dt_web", async (req, res) => {
 
     var select = "form_no,house_type,own_rent,no_of_rooms,land,tv_flag,bike_flag,fridge_flag,wm_flag,poltical_flag,parental_addr,parental_phone",
     table_name = "td_grt_occupation_household",
-    whr = `form_no = '${data.form_no}'`,
+    whr = `branch_code = '${data.branch_code}' AND form_no = '${data.form_no}'`,
     order = null;
     var household_dt = await db_Select(select,table_name,whr,order)
     res.send(household_dt)
@@ -114,9 +114,9 @@ fetchRouter.get("/fetch_household_dt_web", async (req, res) => {
 fetchRouter.get("/fetch_family_dt_web", async (req, res) => {
     var data = req.query;
 
-    var select = "form_no,sl_no,grt_date,family_name name,relation,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
+    var select = "form_no,sl_no,family_name name,relation,family_dob,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
     table_name = "td_grt_family",
-    whr = `form_no = '${data.form_no}'`,
+    whr = `branch_code = '${data.branch_code}' AND form_no = '${data.form_no}'`,
     order = null;
     var family_dt = await db_Select(select,table_name,whr,order)
     res.send(family_dt)
