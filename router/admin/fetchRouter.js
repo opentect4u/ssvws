@@ -60,7 +60,7 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
 fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
     var data = req.query;
 
-    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date",
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
     order = null;
