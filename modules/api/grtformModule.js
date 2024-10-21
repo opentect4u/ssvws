@@ -116,13 +116,24 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-            var table_name = "td_grt_basic",
-            fields = `branch_code = '${data.branch_code}', grt_date = '${datetime}', prov_grp_code = '${data.prov_grp_code}', gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
-             religion = '${data.religion}', caste = '${data.caste}', education = '${data.education}', dob = '${data.dob}', bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            var table_name = "md_member",
+            fields = `branch_code = '${data.branch_code}', gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
+             religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
+              dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
             var edit_basic_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+            if(edit_basic_dt.suc > 0){
+                var table_name = "td_grt_basic",
+                fields = `grt_date = '${datetime}', branch_code = '${data.branch_code}', prov_grp_code = '${data.prov_grp_code}',
+                bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                values = null,
+                whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
+                flag = 1;
+                var final_dt = await db_Insert(table_name,fields,values,whr,flag);
+            }
             resolve(edit_basic_dt)
         });
     },
