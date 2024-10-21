@@ -121,7 +121,7 @@ module.exports = {
              religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
               dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
-            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
+            whr = `member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
             var edit_basic_dt = await db_Insert(table_name, fields, values, whr, flag);
 
@@ -130,7 +130,7 @@ module.exports = {
                 fields = `grt_date = '${datetime}', branch_code = '${data.branch_code}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
                 bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
-                whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
+                whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,
                 flag = 1;
                 var final_dt = await db_Insert(table_name,fields,values,whr,flag);
             }
