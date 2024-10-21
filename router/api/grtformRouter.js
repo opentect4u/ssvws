@@ -37,10 +37,9 @@ grtformRouter.post("/edit_grt_dtls", async (req, res) => {
 grtformRouter.get("/fetch_form_dtls", async (req, res) => {
     var data = req.query;
 
-    var select = "a.branch_code,a.form_no,a.prov_grp_code,a.member_code,a.client_name,b.group_name",
-    table_name = "td_grt_basic a, md_group b",
-    whr = `a.prov_grp_code = b.group_code
-    AND a.branch_code = '${data.branch_code}' AND a.approval_status = 'U' AND a.delete_flag = 'N'`,
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U' AND b.delete_flag = 'N'`,
     order = null;
     var fetch_dtls = await db_Select(select,table_name,whr,order)
 
