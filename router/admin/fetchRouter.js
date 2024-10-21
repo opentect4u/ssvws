@@ -57,6 +57,18 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     res.send(res_dt);
 });
 
+fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
+    var data = req.query;
+
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
+    order = null;
+    var fetch_dtls_web = await db_Select(select,table_name,whr,order)
+
+    res.send(fetch_dtls_web);
+});
+
 
 
 fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
