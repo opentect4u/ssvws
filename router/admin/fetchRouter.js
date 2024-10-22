@@ -271,21 +271,21 @@ fetchRouter.post("/approved_dtls", async (req, res) => {
         table_name = "td_grt_basic",
         whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
         order = null;
-        var approve_dt = await db_Select(select,table_name,whr,order);
+        var approve_dt1 = await db_Select(select,table_name,whr,order);
 
     }else if (data.user_type == '3' && data.approval_status == 'S'){
         var select = "modified_by,modified_at,bm_lat_val,bm_long_val,bm_gps_address",
         table_name = "td_grt_basic",
         whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
         order = null;
-        var approve_dt = await db_Select(select,table_name,whr,order);
+        var approve_dt2 = await db_Select(select,table_name,whr,order);
 
     }else {
         var select = "approved_by,approved_at",
         table_name = "td_grt_basic",
         whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
         order = null;
-        var approve_dt = await db_Select(select,table_name,whr,order);
+        var approve_dt3 = await db_Select(select,table_name,whr,order);
 
     }
    
