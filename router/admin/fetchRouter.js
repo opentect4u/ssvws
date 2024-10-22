@@ -260,7 +260,7 @@ fetchRouter.post("/approved_dtls", async (req, res) => {
     var data = req.body
 
     var select = "created_by,created_at,modified_by,modified_at,approved_by,approved_at,co_lat_val,co_long_val,co_gps_address,bm_lat_val,bm_long_val,bm_gps_address",
-    table_name = "md_member a, td_grt_basic b",
+    table_name = "td_grt_basic",
     whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
     order = null;
     var approve_dt = await db_Select(select,table_name,whr,order);
