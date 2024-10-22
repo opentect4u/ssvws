@@ -259,11 +259,36 @@ fetchRouter.get("/mis_approve_dtls", async (req, res) => {
 fetchRouter.post("/approved_dtls", async (req, res) => {
     var data = req.body
 
-    var select = "created_by,created_at,modified_by,modified_at,approved_by,approved_at,co_lat_val,co_long_val,co_gps_address,bm_lat_val,bm_long_val,bm_gps_address",
-    table_name = "td_grt_basic",
-    whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
-    order = null;
-    var approve_dt = await db_Select(select,table_name,whr,order);
+    if(data.user_type == '2' && data.approval_status == 'U'){
+        var select = "created_by,created_at,co_lat_val,co_long_val,co_gps_address",
+        table_name = "td_grt_basic",
+        whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+        order = null;
+        var approve_dt = await db_Select(select,table_name,whr,order);
+
+    } else if (data.user_type == '2' && data.approval_status == 'S'){
+        var select = "modified_by,modified_at,bm_lat_val,bm_long_val,bm_gps_address",
+        table_name = "td_grt_basic",
+        whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+        order = null;
+        var approve_dt = await db_Select(select,table_name,whr,order);
+
+    }else if (data.user_type == '3' && data.approval_status == 'S'){
+        var select = "modified_by,modified_at,bm_lat_val,bm_long_val,bm_gps_address",
+        table_name = "td_grt_basic",
+        whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+        order = null;
+        var approve_dt = await db_Select(select,table_name,whr,order);
+
+    }else {
+        var select = "approved_by,approved_at",
+        table_name = "td_grt_basic",
+        whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+        order = null;
+        var approve_dt = await db_Select(select,table_name,whr,order);
+
+    }
+   
 
     res.send(approve_dt);
 })
