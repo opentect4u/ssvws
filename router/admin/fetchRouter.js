@@ -76,7 +76,7 @@ fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
     table_name = "md_member a, td_grt_basic b",
     whr = `a.branch_code = b.branch_code 
     AND a.member_code = b.member_code 
-    AND a.branch_code = '${data.branch_code}' 
+    AND a.branch_code IN (${data.branch_code})
     AND b.form_no = '${data.form_no}' 
     AND b.approval_status = '${data.approval_status}'`,
     order = null;
@@ -93,7 +93,7 @@ fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
     whr = `a.loan_purpose = b.purp_id 
     AND a.sub_pupose = c.sub_purp_id 
-    AND a.branch_code = '${data.branch_code}'
+    AND a.branch_code IN (${data.branch_code})
     AND a.form_no = '${data.form_no}'`,
     order = null;
     var occup_dt = await db_Select(select,table_name,whr,order)
@@ -105,7 +105,7 @@ fetchRouter.get("/fetch_household_dt_web", async (req, res) => {
 
     var select = "form_no,house_type,own_rent,no_of_rooms,land,tv_flag,bike_flag,fridge_flag,wm_flag,poltical_flag,parental_addr,parental_phone",
     table_name = "td_grt_occupation_household",
-    whr = `branch_code = '${data.branch_code}' AND form_no = '${data.form_no}'`,
+    whr = `branch_code IN (${data.branch_code}) AND form_no = '${data.form_no}'`,
     order = null;
     var household_dt = await db_Select(select,table_name,whr,order)
     res.send(household_dt)
@@ -116,7 +116,7 @@ fetchRouter.get("/fetch_family_dt_web", async (req, res) => {
 
     var select = "form_no,sl_no,family_name name,relation,family_dob,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
     table_name = "td_grt_family",
-    whr = `branch_code = '${data.branch_code}' AND form_no = '${data.form_no}'`,
+    whr = `branch_code IN (${data.branch_code}) AND form_no = '${data.form_no}'`,
     order = null;
     var family_dt = await db_Select(select,table_name,whr,order)
     res.send(family_dt)
