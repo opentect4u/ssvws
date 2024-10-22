@@ -218,8 +218,8 @@ fetchRouter.post("/verify_by_mis", async (req, res) => {
     }
 
     try {
-        var verify_dtls = await db_Insert('td_grt_basic', value, null,
-            `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`, 1
+        var verify_dtls = await db_Insert('md_member', value, null,
+            `member_code = '${data.member_id}'`, 1
         );
 
         if (verify_dtls.suc > 0) {
