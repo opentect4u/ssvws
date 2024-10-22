@@ -31,7 +31,7 @@ module.exports = {
            religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
             dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
           values = null,
-          whr = `member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
+          whr = `member_code = '${data.member_code}'`,
           flag = 1;
           var edit_basic_dt_web = await db_Insert(table_name, fields, values, whr, flag);
 
@@ -40,7 +40,7 @@ module.exports = {
             fields = `grt_date = '${datetime}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
             bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
-            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,
+            whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
             flag = 1;
             var final_dt = await db_Insert(table_name,fields,values,whr,flag);
         }
@@ -58,7 +58,7 @@ module.exports = {
                  other_loan_amt = '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', other_loan_emi = '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}',
                  modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
-            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
+            whr = `form_no = '${data.form_no}'`,
             flag = 1;
           var edit_occup_dt = await db_Insert(
             table_name,
@@ -80,7 +80,7 @@ module.exports = {
                     bike_flag = '${data.bike_flag}', fridge_flag = '${data.fridge_flag}', wm_flag = '${data.wm_flag}', poltical_flag = '${data.poltical_flag}',
                  parental_addr = '${data.parental_addr}', parental_phone = '${data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
-            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
+            whr = `form_no = '${data.form_no}'`,
             flag = 1;
           var edit_household_dt = await db_Insert(
             table_name,
@@ -105,7 +105,7 @@ module.exports = {
                         var table_name = "td_grt_family",
                             fields = `family_name = '${dt.name}', relation = '${dt.relation}', family_dob = '${dt.familyDob}', age = '${dt.age}', sex = '${dt.sex}', education = '${dt.education}', stu_work_flag = '${dt.studyingOrWorking}', monthly_income = '${dt.monthlyIncome}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                             values = null,
-                            whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND sl_no = '${dt.sl_no}'`,
+                            whr = `form_no = '${data.form_no}' AND sl_no = '${dt.sl_no}'`,
                             flag = 1;
                         var family_dt = await db_Insert(table_name, fields, values, whr, flag);
                     } else {
