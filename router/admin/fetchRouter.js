@@ -257,7 +257,7 @@ fetchRouter.get("/mis_approve_dtls", async (req, res) => {
 });
 
 fetchRouter.post("/approved_dtls", async (req, res) => {
-    var data = req.post
+    var data = req.body
 
     var select = "created_by,created_at,modified_by,modified_at,approved_by,approved_at,co_lat_val,co_long_val,co_gps_address,bm_lat_val,bm_long_val,bm_gps_address",
     table_name = "md_member a, td_grt_basic b",
