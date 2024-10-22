@@ -165,7 +165,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
 })
   });
 
-  fetchRouter.get("/fetch_form_fwd_bm", async (req, res) => {
+  fetchRouter.get("/fetch_form_fwd_bm_web", async (req, res) => {
     var data = req.query;
 
     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status",
