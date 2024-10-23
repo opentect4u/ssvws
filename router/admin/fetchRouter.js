@@ -295,10 +295,22 @@ fetchRouter.post("/approved_dtls", async (req, res) => {
         var approve_dt = await db_Select(select,table_name,whr,order);
 
     }
-   
 
     res.send(approve_dt);
-})
+});
+
+
+fetchRouter.post("/search_application", async (req, res) => {
+    var data = req.query;
+
+    var select = "a.*,b.*",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    whr = `a.client_name like '%${data.search_appl}%' OR a.client_mobile like '%${data.search_appl}%' OR a.member_code like '%${data.search_appl}%' OR a.form_no like '%${data.search_appl}%'`,
+    order = null;
+    var search_app = await db_Select(select,table_name,whr,order);
+
+    res.send(search_app)
+});
 
 
 module.exports = {fetchRouter}
