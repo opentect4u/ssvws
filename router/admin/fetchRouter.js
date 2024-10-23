@@ -322,7 +322,7 @@ fetchRouter.post("/search_group_web", async (req, res) => {
     var search_group_web = await db_Select(select,table_name,whr,order);
 
     res.send(search_group_web)
-})
+});
 
 fetchRouter.post("/edit_search_group_web", async (req, res) => {
     var data = req.body;
@@ -334,6 +334,18 @@ fetchRouter.post("/edit_search_group_web", async (req, res) => {
     var edit_search_group_web = await db_Select(select,table_name,whr,order);
 
     res.send(edit_search_group_web)
+});
+
+fetchRouter.post("/search_member_web", async (req, res) => {
+    var data = req.body;
+
+    var select = "member_code,client_name",
+    table_name = "md_member",
+    whr = `client_name like '%${data.client_name}%'`,
+    order = null;
+    var search_member_web = await db_Select(select,table_name,whr,order);
+
+    res.send(search_member_web)
 });
 
 module.exports = {fetchRouter}
