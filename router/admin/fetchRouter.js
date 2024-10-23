@@ -301,7 +301,7 @@ fetchRouter.post("/approved_dtls", async (req, res) => {
 
 
 fetchRouter.post("/search_application", async (req, res) => {
-    var data = req.query;
+    var data = req.body;
 
     var select = "a.*,b.*",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
