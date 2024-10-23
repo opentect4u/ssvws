@@ -315,13 +315,25 @@ fetchRouter.post("/search_application", async (req, res) => {
 fetchRouter.post("/search_group_web", async (req, res) => {
     var data = req.body;
 
-    var select = "a.*, b.block_name,c.emp_name",
-    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id",
-    whr = `a.group_name like '%${data.group_name}%'`,
+    var select = "group_code,group_name,group_type",
+    table_name = "md_group",
+    whr = `group_name like '%${data.group_name}%'`,
     order = null;
     var search_group_web = await db_Select(select,table_name,whr,order);
 
     res.send(search_group_web)
 })
+
+fetchRouter.post("/edit_search_group_web", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.*, b.block_name,c.emp_name",
+    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id",
+    whr = `a.group_code = '${data.group_code}'`,
+    order = null;
+    var edit_search_group_web = await db_Select(select,table_name,whr,order);
+
+    res.send(edit_search_group_web)
+});
 
 module.exports = {fetchRouter}
