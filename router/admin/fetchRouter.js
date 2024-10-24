@@ -401,7 +401,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
         response_set = {suc: 1, msg: [], status: 'Fresh User'}
     }
 
-    res.send(search_loan)
+    res.send(response_set)
 });
 
 module.exports = {fetchRouter}
