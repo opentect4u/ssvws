@@ -334,7 +334,7 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     var fetch_search_group_web = await db_Select(select,table_name,whr,order);
 
     if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
-        var select = "a.member_code,a.client_name,b.form_no",
+        var select = "a.member_code,a.client_name,b.form_no,b.approval_status",
         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
         whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}'`,
         order = null;
