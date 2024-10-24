@@ -369,4 +369,27 @@ fetchRouter.get("/branch_name_mis", async (req, res) => {
     res.send(branch_dt)
 });
 
+fetchRouter.post("/grp_ass_member", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.*,b.*",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    whr = `a.client_name like '%${data.search_name}%' OR a.member_code like '%${data.search_name}%'`,
+    order = null;
+    var assign_member = await db_Select(select,table_name,whr,order);
+
+    if(assign_member.suc > 0 && assign_member.msg.length > 0){
+        for(let dt of assign_member){
+            var select = "loan_id,outstanding",
+            table_name = "td_loan",
+            whr = `sub_customer_id = '${dt.member_code}'`,
+            order = null;
+            var search_loan = await db_Select(select,table_name,whr,order);
+            dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
+        }
+    }
+
+    res.send(assign_member)
+});
+
 module.exports = {fetchRouter}
