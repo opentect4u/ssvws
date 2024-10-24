@@ -383,7 +383,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
             var select = "loan_id,outstanding",
             table_name = "td_loan",
             whr = `sub_customer_id = '${dt.member_code}'`,
-            order = null;
+            order = `HAVING outstanding > 0`;
             var search_loan = await db_Select(select,table_name,whr,order);
             dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
         }
