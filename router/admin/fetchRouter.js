@@ -379,7 +379,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
     var assign_member = await db_Select(select,table_name,whr,order);
 
     if(assign_member.suc > 0 && assign_member.msg.length > 0){
-        for(let dt of assign_member){
+        for(let dt of assign_member.msg){
             var select = "loan_id,outstanding",
             table_name = "td_loan",
             whr = `sub_customer_id = '${dt.member_code}'`,
