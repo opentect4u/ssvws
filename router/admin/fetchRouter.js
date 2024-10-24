@@ -333,12 +333,13 @@ fetchRouter.post("/edit_search_group_web", async (req, res) => {
     order = null;
     var edit_search_group_web = await db_Select(select,table_name,whr,order);
 
-    if(edit_search_group_web.suc > 0){
+    if(edit_search_group_web.suc > 0 && edit_search_group_web.msg.length > 0){
         var select = "a.member_code,a.client_name,b.form_no",
         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
         whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}'`,
         order = null;
         var grp_mem_dt = await db_Select(select,table_name,whr,order);
+        edit_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
     }
 
     res.send(edit_search_group_web)
