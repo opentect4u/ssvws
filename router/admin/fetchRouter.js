@@ -391,7 +391,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
                 if(search_loan.msg.length > 0){
                     response_set = {suc: 0, msg: [], status: `You are not eligible. You have Rs. ${search_loan.msg[0].outstanding} outstanding.`}
                 }else{
-                    response_set = {suc: 1, msg: assign_member.msg, status: 'Existing User. Eligible to apply a new loan.'}
+                    response_set = {suc: 1, msg: assign_member.msg, status: 'Existing User. Eligible for new group.'}
                 }
             }else{
                 response_set = {suc: 1, msg: assign_member.msg, status: 'Error to fetch outstanding data'}
