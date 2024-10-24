@@ -360,7 +360,7 @@ fetchRouter.post("/search_member_web", async (req, res) => {
 fetchRouter.get("/branch_name_mis", async (req, res) => {
     var data = req.query;
 
-    var select = "dist_code,branch_name",
+    var select = "branch_code,dist_code,branch_name",
     table_name = "md_branch",
     whr = `branch_code IN (${data.branch_code})`,
     order = null;
