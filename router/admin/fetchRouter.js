@@ -324,25 +324,25 @@ fetchRouter.post("/search_group_web", async (req, res) => {
     res.send(search_group_web)
 });
 
-fetchRouter.post("/edit_search_group_web", async (req, res) => {
+fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     var data = req.body;
 
     var select = "a.*, b.block_name,c.emp_name",
     table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id",
     whr = `a.group_code = '${data.group_code}'`,
     order = null;
-    var edit_search_group_web = await db_Select(select,table_name,whr,order);
+    var fetch_search_group_web = await db_Select(select,table_name,whr,order);
 
-    if(edit_search_group_web.suc > 0 && edit_search_group_web.msg.length > 0){
+    if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
         var select = "a.member_code,a.client_name,b.form_no",
         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
         whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}'`,
         order = null;
         var grp_mem_dt = await db_Select(select,table_name,whr,order);
-        edit_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
+        fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
     }
 
-    res.send(edit_search_group_web)
+    res.send(fetch_search_group_web)
 });
 
 fetchRouter.post("/search_member_web", async (req, res) => {
