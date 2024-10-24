@@ -357,4 +357,16 @@ fetchRouter.post("/search_member_web", async (req, res) => {
     res.send(search_member_web)
 });
 
+fetchRouter.get("/branch_name_mis", async (req, res) => {
+    var data = req.query;
+
+    var select = "dist_code,branch_name",
+    table_name = "md_branch",
+    whr = `branch_code IN (${data.branch_code})`,
+    order = null;
+    var branch_dt = await db_Select(select,table_name,whr,order);
+
+    res.send(branch_dt)
+});
+
 module.exports = {fetchRouter}
