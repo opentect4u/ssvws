@@ -383,10 +383,22 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
             var select = "loan_id,outstanding",
             table_name = "td_loan",
             whr = `sub_customer_id = '${dt.member_code}'`,
-            order = `HAVING outstanding < 0`;
+            order = `HAVING outstanding > 0`;
             var search_loan = await db_Select(select,table_name,whr,order);
-            dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
+            // dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
+
+            if(search_loan.suc > 0){
+                if(search_loan.msg.length > 0){
+                    response_set = {suc: 0, msg: [], status: `You are not eligible. You have Rs. ${search_loan.msg[0].outstanding} outstanding.`}
+                }else{
+                    response_set = {suc: 1, msg: res_dt.msg, status: 'Existing User. Eligible to apply a new loan.'}
+                }
+            }else{
+                response_set = {suc: 1, msg: res_dt.msg, status: 'Error to fetch outstanding data'}
+            }
         }
+    }else {
+        response_set = {suc: 1, msg: [], status: 'Fresh User'}
     }
 
     res.send(assign_member)
