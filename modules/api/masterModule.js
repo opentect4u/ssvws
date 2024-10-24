@@ -14,17 +14,17 @@ const getFormNo = () => {
     });
   };
 
-  const groupCode = () => {
-    return new Promise(async (resolve, reject) => {
+  // const groupCode = () => {
+  //   return new Promise(async (resolve, reject) => {
 
-        var select = "IF(COUNT(group_code) > 0, MAX(group_code)+1, 1) group_code",
-        table_name = "md_group",
-        whr = null,
-        order = null;
-        var res_dt = await db_Select(select, table_name, whr, order);
-      resolve(res_dt);
-    });
-  };
+  //       var select = "IF(COUNT(group_code) > 0, MAX(group_code)+1, 1) group_code",
+  //       table_name = "md_group",
+  //       whr = null,
+  //       order = null;
+  //       var res_dt = await db_Select(select, table_name, whr, order);
+  //     resolve(res_dt);
+  //   });
+  // };
 
   // const getMemberCode = () => {
   //   return new Promise(async (resolve, reject) => {
@@ -37,6 +37,22 @@ const getFormNo = () => {
   //     resolve(res_dt);
   //   });
   // };
+
+  const groupCode = (branch_code) => {
+    return new Promise(async (resolve, reject) => {
+
+        var select = "max(substr(group_code,3)) + 1 group_code",
+        table_name = "md_group",
+        whr = null,
+        order = null;
+        var res_dt = await db_Select(select, table_name, whr, order);
+
+        let newGroupCode = res_dt.msg[0].group_code;
+        let groupCode = `${branch_code}` + newGroupCode;
+
+      resolve(groupCode);
+    });
+  };
 
   const getMemberCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
