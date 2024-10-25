@@ -178,23 +178,26 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   
-      if (data.member_codes?.length > 0) {
-        let assign_grp_dt;
-        for (let member_code of data.member_codes) {
-          const table_name = "td_grt_basic",
-                fields = `prov_grp_code = '${data.group_code}', grp_added_by = '${data.added_by}', grp_added_at = '${datetime}'`,
-                values = null,
-                whr = `member_code = '${member_code}'`,
-                flag = 1;
-          
-          // Await the database insert operation for each member code
-          assign_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
+      if (data.memDtls?.length > 0) {
+        for (let dt of data.memDtls) {
+          if (dt.member_codes?.length > 0) {
+            let assign_grp_dt;
+            for (let member_code of dt.member_codes) {
+              const table_name = "td_grt_basic",
+                    fields = `prov_grp_code = '${dt.group_code}', grp_added_by = '${dt.added_by}', grp_added_at = '${datetime}'`,
+                    values = null,
+                    whr = `member_code = '${member_code}'`,
+                    flag = 1;
+              
+              assign_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
+            }
+          }
         }
-        resolve(assign_grp_dt); // Resolve with the result of the last insert
+        resolve({ "suc": 1, "msg": "Group assigned to all members successfully" });
       } else {
-        reject({ "suc": 0, "msg": "No member codes provided" });
+        reject({ "suc": 0, "msg": "No details provided" });
       }
     });
-  }
+  },  
   
 }
