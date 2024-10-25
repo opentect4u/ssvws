@@ -374,7 +374,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
 
     var select = "a.branch_code,a.member_code,a.client_name,b.form_no",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
-    whr = `a.client_name like '%${data.search_name}%' OR a.member_code like '%${data.search_name}%'`,
+    whr = b.prov_grp_code > 0 ? `a.client_name like '%${data.search_name}%' OR a.member_code like '%${data.search_name}%'` : null,
     order = null;
     var assign_member = await db_Select(select,table_name,whr,order);
 
