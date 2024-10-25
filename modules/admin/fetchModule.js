@@ -155,8 +155,8 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   
-          if (data?.memDtls?.length > 0) {
-              for (let dt of data?.memDtls) {
+          if (data.memDtls?.length > 0) {
+              for (let dt of data.memDtls) {
                 console.log(dt,'dttt');
               
                       var table_name = "td_grt_basic",
