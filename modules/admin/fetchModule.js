@@ -151,67 +151,28 @@ module.exports = {
       });
     },
 
-  //   assign_group_to_member: (data) => {
-  //     return new Promise(async (resolve, reject) => {
-  //         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    assign_group_to_member: (data) => {
+      return new Promise(async (resolve, reject) => {
+          let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   
-  //         // if (data.memDtls) {
-  //             for (let dt of data.memDtls.msg) {
-  //               console.log(dt,'dttt');
+          if (data.memDtls.length > 0) {
+              for (let dt of data.memDtls) {
+                console.log(dt,'dttt');
               
-  //                     var table_name = "td_grt_basic",
-  //                         fields = `prov_grp_code = '${dt.group_code}', grp_added_by = '${dt.added_by}', grp_added_at = '${datetime}'`,
-  //                         values = null,
-  //                         whr = `member_code = '${dt.member_code}'`,
-  //                         flag = 1;
-  //                     var assign_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
+                      var table_name = "td_grt_basic",
+                          fields = `prov_grp_code = '${dt.group_code}', grp_added_by = '${dt.added_by}', grp_added_at = '${datetime}'`,
+                          values = null,
+                          whr = `member_code = '${dt.member_code}'`,
+                          flag = 1;
+                      var assign_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
                   
-  //             }
-  //             resolve(assign_grp_dt);
-  //         // } else {
-  //         //     reject({ "suc": 0, "msg": "No details provided" });
-  //         // } 
-  //     });
-  // },
+              }
+              resolve(assign_grp_dt);
+          } else {
+              reject({ "suc": 0, "msg": "No details provided" });
+          } 
+      });
+  },
 
-  assign_group_to_member: (data) => {
-    return new Promise(async (resolve, reject) => {
-        try {
-            let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
-            // Check if data.memDtls exists and has a msg array
-            if (!data.memDtls || !Array.isArray(data.memDtls.msg) || data.memDtls.msg.length === 0) {
-                return reject({ "suc": 0, "msg": "No details provided" });
-            }
-
-            let results = [];
-
-            // Loop through each member detail in data.memDtls.msg
-            for (let dt of data.memDtls.msg) {
-                console.log(dt, 'dttt');
-                
-                const table_name = "td_grt_basic";
-                const fields = `prov_grp_code = '${dt.group_code}', grp_added_by = '${dt.added_by}', grp_added_at = '${datetime}'`;
-                const values = null;
-                const whr = `member_code = '${dt.member_code}'`;
-                const flag = 1;
-
-                try {
-                    // Await db_Insert for each member
-                    const assign_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
-                    results.push(assign_grp_dt);
-                } catch (error) {
-                    console.error(`Failed to assign group for member_code ${dt.member_code}:`, error);
-                    results.push({ "member_code": dt.member_code, "error": error });
-                }
-            }
-
-            // Resolve the results after processing all members
-            resolve(results);
-        } catch (error) {
-            reject({ "suc": 0, "msg": "Error processing request", error });
-        }
-    });
-},
 
 }
