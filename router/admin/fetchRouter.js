@@ -1,5 +1,5 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
-const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst } = require('../../modules/admin/fetchModule');
+const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member } = require('../../modules/admin/fetchModule');
 
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
@@ -404,4 +404,15 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
     res.send(response_set)
 });
 
+fetchRouter.post("/assign_group_to_mem", async (req, res) => {
+    var data = req.body, res_data;
+
+    assign_group_to_member(data).then(data => {
+        res_data = data
+    }).catch(err => {
+        res_data = err
+    }).finally(() => {
+    res.send(res_data);
+})
+  });
 module.exports = {fetchRouter}

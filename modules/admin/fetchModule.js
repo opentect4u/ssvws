@@ -150,4 +150,27 @@ module.exports = {
         resolve(fwd_dt);
       });
     },
+
+    assign_group_to_member: (data) => {
+      return new Promise(async (resolve, reject) => {
+          let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  
+          if (data.memDtls.length > 0) {
+              for (let dt of data.memDtls) {
+                console.log(dt,'dttt');
+              
+                      var table_name = "td_grt_basic",
+                          fields = `prov_grp_code = '${dt.group_code}', grp_added_by = '${dt.added_by}', grp_added_at = '${datetime}'`,
+                          values = null,
+                          whr = `member_code = '${dt.member_code}'`,
+                          flag = 1;
+                      var assign_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
+                  
+              }
+              resolve(assign_grp_dt);
+          } else {
+              reject({ "suc": 0, "msg": "No details provided" });
+          } 
+      });
+  },
 }
