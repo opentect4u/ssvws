@@ -369,36 +369,77 @@ fetchRouter.get("/branch_name_mis", async (req, res) => {
     res.send(branch_dt)
 });
 
+// fetchRouter.post("/grp_ass_member", async (req, res) => {
+//     var data = req.body;
+
+//     var select = "a.branch_code,a.member_code,a.client_name,b.form_no",
+//     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+//     whr = `a.client_name like '%${data.search_name}%' OR a.member_code like '%${data.search_name}%'`,
+//     order = null;
+//     var assign_member = await db_Select(select,table_name,whr,order);
+
+//     if(assign_member.suc > 0 && assign_member.msg.length > 0){
+//         for(let dt of assign_member.msg){
+//             var select = "loan_id,outstanding",
+//             table_name = "td_loan",
+//             whr = `sub_customer_id = '${dt.member_code}'`,
+//             order = `HAVING outstanding > 0`;
+//             var search_loan = await db_Select(select,table_name,whr,order);
+//             // dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
+
+//             if(search_loan.suc > 0){
+//                 if(search_loan.msg.length > 0){
+//                     response_set = {suc: 0, msg: [], status: `You are not eligible. You have Rs. ${search_loan.msg[0].outstanding} outstanding.`}
+//                 }else{
+//                     response_set = {suc: 1, msg: assign_member.msg, status: 'Existing User. Eligible for new group.'}
+//                 }
+//             }else{
+//                 response_set = {suc: 1, msg: assign_member.msg, status: 'Error to fetch outstanding data'}
+//             }
+//         }
+//     }else {
+//         response_set = {suc: 1, msg: [], status: 'Already existing in a group'}
+//     }
+
+//     res.send(response_set)
+// });
+
 fetchRouter.post("/grp_ass_member", async (req, res) => {
     var data = req.body;
 
-    var select = "a.branch_code,a.member_code,a.client_name,b.form_no",
-    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
-    whr = `a.client_name like '%${data.search_name}%' OR a.member_code like '%${data.search_name}%'`,
-    order = null;
+    var select =
+        "a.branch_code,a.member_code,a.client_name,b.form_no,IF(c.group_code > 0, c.group_code, 0) grp_code, c.group_name",
+      table_name =
+        "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code=c.group_code AND c.open_close_flag = 'O'",
+      whr = `a.client_name like '%${data.search_name}%' OR a.member_code like '%${data.search_name}%'`,
+      order = null;
     var assign_member = await db_Select(select,table_name,whr,order);
 
     if(assign_member.suc > 0 && assign_member.msg.length > 0){
         for(let dt of assign_member.msg){
-            var select = "loan_id,outstanding",
-            table_name = "td_loan",
-            whr = `sub_customer_id = '${dt.member_code}'`,
-            order = `HAVING outstanding > 0`;
-            var search_loan = await db_Select(select,table_name,whr,order);
-            // dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
-
-            if(search_loan.suc > 0){
-                if(search_loan.msg.length > 0){
-                    response_set = {suc: 0, msg: [], status: `You are not eligible. You have Rs. ${search_loan.msg[0].outstanding} outstanding.`}
-                }else{
-                    response_set = {suc: 1, msg: assign_member.msg, status: 'Existing User. Eligible for new group.'}
-                }
+            if(dt.grp_code > 0){
+                response_set = {suc: 0, msg: assign_member.msg, status: `${dt.client_name} is alrady assigned to a active group, ${dt.group_name}.`}
             }else{
-                response_set = {suc: 1, msg: assign_member.msg, status: 'Error to fetch outstanding data'}
+                var select = "loan_id,outstanding",
+                table_name = "td_loan",
+                whr = `sub_customer_id = '${dt.member_code}'`,
+                order = `HAVING outstanding > 0`;
+                var search_loan = await db_Select(select,table_name,whr,order);
+                // dt['search_dt'] = search_loan.suc > 0 ? (search_loan.msg.length > 0 ? search_loan.msg : []) : [];
+    
+                if(search_loan.suc > 0){
+                    if(search_loan.msg.length > 0){
+                        response_set = {suc: 0, msg: [], status: `You are not eligible. You have Rs. ${search_loan.msg[0].outstanding} outstanding.`}
+                    }else{
+                        response_set = {suc: 1, msg: assign_member.msg, status: 'Existing User. Eligible for new group.'}
+                    }
+                }else{
+                    response_set = {suc: 1, msg: assign_member.msg, status: 'Error to fetch outstanding data'}
+                }
             }
         }
     }else {
-        response_set = {suc: 1, msg: [], status: 'Already existing in a group'}
+        response_set = assign_member
     }
 
     res.send(response_set)
