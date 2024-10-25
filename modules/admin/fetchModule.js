@@ -180,9 +180,9 @@ module.exports = {
   
       if (data.memDtls?.length > 0) {
         for (let dt of data.memDtls) {
-          if (dt.member_codes?.length > 0) {
-            let assign_grp_dt;
-            for (let member_code of dt.member_codes) {
+          if (dt.member_code?.length > 0) {
+            // let assign_grp_dt;
+            for (let member_code of dt.member_code) {
               const table_name = "td_grt_basic",
                     fields = `prov_grp_code = '${dt.group_code}', grp_added_by = '${dt.added_by}', grp_added_at = '${datetime}'`,
                     values = null,
