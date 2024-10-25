@@ -155,7 +155,7 @@ module.exports = {
       return new Promise(async (resolve, reject) => {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   
-          if (data.memDtls.length > 0) {
+          // if (data.memDtls) {
               for (let dt of data.memDtls) {
                 console.log(dt,'dttt');
               
@@ -168,9 +168,9 @@ module.exports = {
                   
               }
               resolve(assign_grp_dt);
-          } else {
-              reject({ "suc": 0, "msg": "No details provided" });
-          } 
+          // } else {
+          //     reject({ "suc": 0, "msg": "No details provided" });
+          // } 
       });
   },
 }
