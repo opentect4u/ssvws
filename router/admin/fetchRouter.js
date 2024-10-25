@@ -398,7 +398,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
             }
         }
     }else {
-        response_set = {suc: 1, msg: [], status: 'Fresh User'}
+        response_set = {suc: 1, msg: [], status: 'Already existing in a group'}
     }
 
     res.send(response_set)
