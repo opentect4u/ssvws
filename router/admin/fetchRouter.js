@@ -417,7 +417,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
 
     if(assign_member.suc > 0 && assign_member.msg.length > 0){
         for(let dt of assign_member.msg){
-            if(dt.grp_code > 0){
+            if(dt.group_code > 0){
                 response_set = {suc: 0, msg: assign_member.msg, status: `${dt.client_name} is alrady assigned to a active group, ${dt.group_name}.`}
             }else{
                 var select = "loan_id,outstanding",
