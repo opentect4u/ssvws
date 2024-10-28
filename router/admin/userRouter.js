@@ -15,7 +15,7 @@ userRouter.post("/sign_up", async (req, res) => {
 
     if(emp_dt.suc > 0) {
         if(emp_dt.msg.length > 0){
-                var pass = bcrypt.hashSync(data.pwd, 10);
+                var pass = bcrypt.hashSync(data.pwd.toString(), 10);
                 var table_name = "md_user",
                 fields = `(emp_id, brn_code, password, user_status, created_by, created_at)`,
                 values = `('${data.emp_id}', '${data.brn_code}', '${pass}', 'A', '${data.created_by}', '${datetime}')`,
