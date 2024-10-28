@@ -43,7 +43,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
     whr = `emp_id = '${data.emp_id}'`;
     var emp_dt = await db_Select(select,table_name,whr,null)
     
-    if(emp_dt.suc > 0) {
+    if(emp_dt.suc > 0 && emp_dt.msg.length > 0) { 
             var select = "emp_id,brn_code",
             table_name = "md_user",
             whr = `emp_id = '${data.emp_id}'`;
