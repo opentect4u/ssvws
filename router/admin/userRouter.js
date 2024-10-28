@@ -8,7 +8,7 @@ userRouter.post("/sign_up", async (req, res) => {
     console.log(data,'yyy');
      const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-    var select = "emp_id,branch_id,emp-name",
+    var select = "emp_id,branch_id,emp_name",
     table_name = "md_employee",
     whr = null;
     var emp_dt = await db_Select(select,table_name,whr,null)
