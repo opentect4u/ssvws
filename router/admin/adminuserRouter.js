@@ -65,11 +65,11 @@ adminuserRouter.post('/password_change_user', async (req, res) => {
           res.send(result)
       }
     }else {
-        result = { suc: 2, msg: "No data found", dt: log_dt };
+        result = { suc: 2, msg: "No data found", dt: reset_pass };
         res.send(result)
     }
     }else {
-        result = { suc: 0, msg: log_dt.msg, dt: log_dt };
+        result = { suc: 0, msg: reset_pass.msg, dt: reset_pass };
         res.send(result)
     }
 });
