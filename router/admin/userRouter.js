@@ -49,7 +49,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
             table_name = "md_user",
             whr = `emp_id = '${data.emp_id}'`;
             var sign_data = await db_Select(select,table_name,whr,null)
-            res.send({ suc: 1, msg: "Employee registered successfully",  dtls: sign_data.msg[0] });     
+            res.send({ suc: 1, msg: "Already registered",  dtls: sign_data.msg[0] });     
             }else {
                 result = { suc: 2, msg: "No data found", dt: emp_dt };
                 res.send(result)
