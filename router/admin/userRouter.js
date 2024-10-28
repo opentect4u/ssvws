@@ -57,7 +57,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
                 res.send(result)
             }
            }else{
-             result = { suc: 2, msg: "error to fetch data", dt: emp_dt };
+             result = { suc: 2, msg: "error to fetch data" };
              res.send(result)
            }
     }else{
