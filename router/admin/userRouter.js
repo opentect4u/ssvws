@@ -52,7 +52,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
            if (sign_data.suc > 0){
               res.send({ suc: 1, msg: "Already registered",  dtls: sign_data.msg[0] }); 
            }else {
-             result = { suc: 2, msg: sign_data.msg, dt: sign_data };
+             result = { suc: 2, msg: "No data found", dt: sign_data };
              res.send(result)
            }
     }else{
