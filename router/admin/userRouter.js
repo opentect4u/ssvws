@@ -53,7 +53,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
             if(sign_data.msg.length > 0){
                 res.send({ suc: 1, msg: "Already registered",  dtls: sign_data.msg[0] }); 
             }else{
-                result = { suc: 1, msg: emp_dt.msg, dt: emp_dt };
+                result = { suc: 1, msg: "details", dt: emp_dt };
                 res.send(result)
             }
            }else{
