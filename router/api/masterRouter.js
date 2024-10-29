@@ -204,7 +204,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
         var response_set = {}
         if(res_dt.suc > 0){
             if(res_dt.msg.length > 0){
-                var default_chk = await db_Select('a.outstanding,b.branch_name', 'td_loan a , md_branch b', `a.branch_id = b.branch_code AND a.sub_customer_id=${res_dt.msg[0].member_code}`, `HAVING a.outstanding > 0`)
+                var default_chk = await db_Select('a.outstanding,b.branch_name', 'td_loan a , md_branch b', `a.branch_id = b.branch_code AND a.sub_customer_id=${res_dt.msg[0].member_code}`, `HAVING outstanding > 0`)
                 if(default_chk.suc > 0){
                     if(default_chk.msg.length > 0){
                         response_set = {suc: 0, msg: [], status: `You are in ${default_chk.msg[0].branch_name} Branch and You are not eligible to get a new Loan. You have Rs. ${default_chk.msg[0].outstanding} outstanding.`}
