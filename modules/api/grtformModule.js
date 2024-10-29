@@ -10,6 +10,7 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let form_no = await getFormNo()
             let member_code = await getMemberCode(data.branch_code)
+            let group_code = await groupCode(data.branch_code)
 
             // var select = "client_mobile",
             // table_name = "md_member",
@@ -32,7 +33,7 @@ module.exports = {
 
                     var table_name = "td_grt_basic",
                     fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
-                    values = `('${form_no}', '${datetime}', '${data.branch_code}', '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+                    values = `('${form_no}', '${datetime}', '${data.branch_code}', '${group_code}', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
                     whr = null,
                     flag =  0;
                     var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
