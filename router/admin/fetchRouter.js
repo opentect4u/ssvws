@@ -260,37 +260,37 @@ fetchRouter.post("/approved_dtls", async (req, res) => {
     var data = req.body
 
     if(data.user_type == '2' && data.approval_status == 'U'){
-        var select = "created_by,created_at,co_gps_address",
-        table_name = "td_grt_basic",
-        whr = `form_no = '${data.form_no}'`,
+        var select = "a.created_by,a.created_at,a.co_gps_address,b.emp_name",
+        table_name = "td_grt_basic a LEFT JOIN md_employee b ON a.branch_code = b.branch_id AND a.created_by = b.emp_id",
+        whr = `a.form_no = '${data.form_no}'`,
         order = null;
         var approve_dt = await db_Select(select,table_name,whr,order);
 
     } else if (data.user_type == '2' && data.approval_status == 'S'){
-        var select = "created_by,created_at,co_gps_address,modified_by,modified_at,bm_gps_address",
-        table_name = "td_grt_basic",
-        whr = `form_no = '${data.form_no}'`,
+        var select = "a.created_by,a.created_at,a.co_gps_address,a.modified_by,a.modified_at,a.bm_gps_address,b.emp_name",
+        table_name = "td_grt_basic a LEFT JOIN md_employee b ON a.branch_code = b.branch_id AND a.created_by = b.emp_id AND a.modified_by = b.emp_id",
+        whr = `a.form_no = '${data.form_no}'`,
         order = null;
         var approve_dt = await db_Select(select,table_name,whr,order);
 
     }else if (data.user_type == '3' && data.approval_status == 'S'){
-        var select = "created_by,created_at,co_gps_address,modified_by,modified_at,bm_gps_address",
-        table_name = "td_grt_basic",
-        whr = `form_no = '${data.form_no}'`,
+        var select = "a.created_by,a.created_at,a.co_gps_address,a.modified_by,a.modified_at,a.bm_gps_address,b.emp_name",
+        table_name = "td_grt_basic a LEFT JOIN md_employee b ON a.branch_code = b.branch_id AND a.created_by = b.emp_id AND a.modified_by = b.emp_id",
+        whr = `a.form_no = '${data.form_no}'`,
         order = null;
         var approve_dt = await db_Select(select,table_name,whr,order);
 
     } else if (data.approval_status == 'A'){
-        var select = "created_by,created_at,co_gps_address,modified_by,modified_at,bm_gps_address,approved_by,approved_at",
-        table_name = "td_grt_basic",
-        whr = `form_no = '${data.form_no}'`,
+        var select = "a.created_by,a.created_at,a.co_gps_address,a.modified_by,a.modified_at,a.bm_gps_address,a.approved_by,a.approved_at,b.emp_name",
+        table_name = "td_grt_basic a LEFT JOIN md_employee b ON a.branch_code = b.branch_id AND a.created_by = b.emp_id AND a.modified_by = b.emp_id",
+        whr = `a.form_no = '${data.form_no}'`,
         order = null;
         var approve_dt = await db_Select(select,table_name,whr,order);
     }
     else {
-        var select = "created_by,created_at,co_gps_address,modified_by,modified_at,bm_gps_address,rejected_by,rejected_at",
-        table_name = "td_grt_basic",
-        whr = `form_no = '${data.form_no}'`,
+        var select = "a.created_by,a.created_at,a.co_gps_address,a.modified_by,a.modified_at,a.bm_gps_address,a.rejected_by,a.rejected_at,b.emp_name",
+        table_name = "td_grt_basic a LEFT JOIN md_employee b ON a.branch_code = b.branch_id AND a.created_by = b.emp_id AND a.modified_by = b.emp_id",
+        whr = `a.form_no = '${data.form_no}'`,
         order = null;
         var approve_dt = await db_Select(select,table_name,whr,order);
 
