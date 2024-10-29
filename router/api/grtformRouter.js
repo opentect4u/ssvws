@@ -228,4 +228,16 @@ grtformRouter.post("/search_co", async (req, res) => {
 res.send(search_co)
 });
 
+grtformRouter.post("/get_form_against_co", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.*,b.*",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    whr = `a.branch_code = '${data.branch_code}' AND a.created_by = '${data.created_by}'`,
+    order = null;
+    var search_co = await db_Select(select,table_name,whr,order);
+
+res.send(search_co)
+});
+
 module.exports = {grtformRouter}
