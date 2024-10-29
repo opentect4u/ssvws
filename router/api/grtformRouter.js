@@ -49,11 +49,9 @@ grtformRouter.get("/fetch_form_dtls", async (req, res) => {
 grtformRouter.post("/fetch_basic_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = "a.*,b.*",
-    table_name = "md_member a, td_grt_basic b",
-    whr = `a.branch_code = b.branch_code 
-    AND a.member_code = b.member_code 
-    AND a.branch_code = '${data.branch_code}' 
+    var select = "a.*,b.*,c.group_name",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code = c.group_code",
+    whr = `a.branch_code = '${data.branch_code}' 
     AND b.form_no = '${data.form_no}' 
     AND b.approval_status = '${data.approval_status}'`,
     order = null;
