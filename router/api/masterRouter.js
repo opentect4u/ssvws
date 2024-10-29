@@ -222,7 +222,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
         res.send(response_set);
     } catch (error) {
         // Handle errors
-        res.send({ suc: 0, msg: [], status: 'Error to fect user data' });
+        res.send({ suc: 0, msg: [], status: 'Error to fetch user data' });
     }
 });
 
