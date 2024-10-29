@@ -302,7 +302,7 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
             var table_name = "td_grt_basic",
-            fields = `approval_status = 'S', modified_by = '${data.modified_by}', modified_at =  '${datetime}'`,
+            fields = `approval_status = 'S', remarks = '${data.remarks.split("'").join("\\'")}', modified_by = '${data.modified_by}', modified_at =  '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
