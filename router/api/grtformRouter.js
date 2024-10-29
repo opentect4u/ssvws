@@ -216,4 +216,16 @@ grtformRouter.post("/final_submit", async (req, res) => {
     res.send(final_dt)
 });
 
+grtformRouter.post("/search_co", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.emp_name,a.guardian_name,a.addr,a.pin_code",
+    table_name = "md_employee a LEFT JOIN md_user b ON a.branch_id = b.brn_code AND a.emp_id = b.emp_id",
+    whr = `a.emp_id like '%${data.co_search}%' OR a.emp_name like '%${data.co_search}%'`,
+    order = null;
+    var search_co = await db_Select(select,table_name,whr,order);
+
+res.send(search_co)
+});
+
 module.exports = {grtformRouter}
