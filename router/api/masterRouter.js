@@ -188,7 +188,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     var select = "a.*, b.group_name";
     var table_name = "md_member a, md_group b";
     
-    var whr = `a.branch_code = b.branch_code `;
+    var whr = `a.branch_code = b.branch_code`;
     if (data.flag == 'M') {
         whr += `AND a.client_mobile = '${data.user_dt}'`;
     } else if (data.flag == 'A') {
@@ -209,7 +209,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
                     if(default_chk.msg.length > 0){
                         response_set = {suc: 0, msg: [], status: `You are in ${default_chk.msg[0].branch_name} Branch and You are not eligible to get a new Loan. You have Rs. ${default_chk.msg[0].outstanding} outstanding.`}
                     }else{
-                        response_set = {suc: 1, msg: res_dt.msg, status: `Existing User in ${default_chk.msg[0].branch_name} Branch and Eligible to apply a new loan.`}
+                        response_set = {suc: 1, msg: res_dt.msg, status: 'Existing User. Eligible to apply a new loan.'}
                     }
                 }else{
                     response_set = {suc: 1, msg: res_dt.msg, status: 'Error to fetch outstanding data'}
