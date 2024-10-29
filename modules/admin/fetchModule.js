@@ -9,7 +9,7 @@ module.exports = {
             let group_code = await groupCode(data.branch_code)
 
             var table_name = "md_group",
-            fields = data.group_code > 0 ? `branch_code = '${data.branch_code}', group_name = '${data.group_name}', group_type = '${data.group_type}',
+            fields = data.group_code > 0 ? `group_name = '${data.group_name}', group_type = '${data.group_type}',
              phone1 = '${data.phone1 == '' ? 0 : data.phone1}', phone2 = '${data.phone2 == '' ? 0 : data.phone2}', email_id = '${data.email_id}', grp_addr = '${data.grp_addr}',
              disctrict = '${data.district}', block = '${data.block}', pin_no = '${data.pin_no}', bank_name =  '${data.bank_name}', branch_name = '${data.branch_name}',
               ifsc =  '${data.ifsc}', micr = '${data.micr}', acc_no1 = '${data.acc_no1 == '' ? 0 : data.acc_no1}', acc_no2 = '${data.acc_no2 == '' ? 0 : data.acc_no2}',
@@ -17,7 +17,7 @@ module.exports = {
             values = `('${group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1 == '' ? 0 : data.phone1}', '${data.phone2 == '' ? 0 : data.phone2}',
             '${data.email_id}', '${data.grp_addr}', '${data.district}', '${data.block}', '${data.pin_no}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc}', '${data.micr}', '${data.acc_no1 == '' ? 0 : data.acc_no1}',
             '${data.acc_no2 == '' ? 0 : data.acc_no2}', 'O', '${datetime}', 'U', '${data.modified_by}', '${datetime}')`,
-            whr = data.group_code > 0 ? `group_code = '${data.group_code}' AND branch_code IN (${data.branch_code})` : null,
+            whr = data.group_code > 0 ? `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'` : null,
             flag = data.group_code > 0 ? 1 : 0;
             var edit_grp_dtls = await db_Insert(table_name, fields, values, whr, flag);
             // console.log(edit_grp_dt,'dt');

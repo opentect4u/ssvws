@@ -124,7 +124,7 @@ fetchRouter.get("/fetch_family_dt_web", async (req, res) => {
 
 fetchRouter.post("/edit_group_web", async (req, res) => {
     var data = req.body;
-    // console.log(data,'grp_dt');
+    console.log(data,'grp_dt');
 
     var edit_grp_dt = await edit_grp_web(data);
     // console.log(grp_dt,'grp');
