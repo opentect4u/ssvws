@@ -69,6 +69,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
 
 userRouter.post("/submit_sign_up", async (req, res) => {
     var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var pass = bcrypt.hashSync(data.pwd.toString(), 10);
     var table_name = "md_user",
