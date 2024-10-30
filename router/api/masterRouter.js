@@ -317,4 +317,15 @@ masterRouter.get("/get_scheme", async (req, res) => {
     res.send(scheme_dt) 
    });
 
+masterRouter.get("/get_fund", async (req, res) => {
+    var data = req.query;
+   
+    var select = "fund_id,fund_name",
+    table_name = "md_fund",
+    whr = null,
+    order = null;
+    var fund_dt = await db_Select(select,table_name,whr,order);
+    res.send(fund_dt) 
+   });
+
 module.exports = {masterRouter}
