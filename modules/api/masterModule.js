@@ -71,5 +71,22 @@ const getFormNo = () => {
     });
   };
 
+  const getLoanCode = (branch_code) => {
+    return new Promise(async (resolve, reject) => {
 
-  module.exports = {getFormNo, groupCode, getMemberCode}
+        var select = "max(substr(loan_id,3)) + 1 loan_code",
+        table_name = "td_loan",
+        whr = null,
+        order = null;
+        var res_dt = await db_Select(select, table_name, whr, order);
+
+        let newLoanCode = res_dt.msg[0].loan_id;
+        let loanCode = `${branch_code}` + newLoanCode;
+        console.log(loanCode,'code');
+        
+      resolve(loanCode);
+    });
+  };
+
+
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode}

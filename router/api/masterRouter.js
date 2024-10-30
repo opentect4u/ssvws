@@ -306,4 +306,15 @@ masterRouter.get("/get_sub_purpose", async (req, res) => {
 //     res.send(edu_dt) 
 //    }); 
 
+masterRouter.get("/get_scheme", async (req, res) => {
+    var data = req.query;
+   
+    var select = "scheme_id,scheme_name,min_amt,max_amt,min_period,max_period,payment_mode,roi",
+    table_name = "md_scheme",
+    whr = `active_flag = 'A'`,
+    order = null;
+    var scheme_dt = await db_Select(select,table_name,whr,order);
+    res.send(scheme_dt) 
+   });
+
 module.exports = {masterRouter}
