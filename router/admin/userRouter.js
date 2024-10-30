@@ -67,4 +67,17 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
            
 });
 
+userRouter.post("/submit_sign_up", async (req, res) => {
+    var data = req.body;
+
+    var pass = bcrypt.hashSync(data.pwd.toString(), 10);
+    var table_name = "md_user",
+    fields = `(emp_id, brn_code, password, user_status, created_by, created_at)`,
+    values = `('${data.emp_id}', '${data.brn_code}', '${pass}', 'I', '${data.created_by}', '${datetime}')`,
+    whr = null,
+    flag = 0;
+    var sign_data = await db_Insert(table_name,fields,values,whr,flag);
+    res.send(sign_data)
+})
+
 module.exports = {userRouter}
