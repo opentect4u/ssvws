@@ -15,4 +15,16 @@ loanRouter.post("/scheme_dtls", async (req, res) => {
     res.send(scheme_dt)
 });
 
+loanRouter.post("/save_loan_transaction", async (req, res) => {
+    var data = req.body,res_dt;
+    loan_trans(data).then(data => {
+        res_dt = data
+    }).catch(err => {
+        res_dt = err
+    }).finally (() => {
+        res.send(res_dt)
+    })
+
+});
+
 module.exports = {loanRouter}
