@@ -1,4 +1,5 @@
 const { db_Select } = require('../../model/mysqlModel');
+const { loan_trans } = require('../../modules/admin/loanModule');
 
 const loanRouter = require('express').Router();
 dateFormat = require('dateformat');

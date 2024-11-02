@@ -3,7 +3,7 @@ const { getLoanCode } = require("../api/masterModule");
 const { db_Insert } = require("../../model/mysqlModel");
 
 module.exports = {
-    loan_transa: (data) => {
+    loan_trans: (data) => {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let loan_code = await getLoanCode(data.branch_code)
