@@ -93,7 +93,14 @@ module.exports = {
       edit_household_dt_web: (data) => {
         return new Promise(async (resolve, reject) => {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+          var select = "form_no",
+            table_name = "td_grt_occupation_household",
+            whr = `form_no = '${data.form_no}'`,
+            order = null;
+            var res_dt = await db_Select(select,table_name,whr,order)
     
+            if(res_dt.msg.length > 0 && res_dt.suc > 0){  
           var table_name = "td_grt_occupation_household",
             fields = `no_of_rooms = '${data.no_of_rooms}', house_type = '${data.house_type}', own_rent = '${data.own_rent}', land = '${data.land == '' ? 0 : data.land}', tv_flag = '${data.tv_flag}', 
                     bike_flag = '${data.bike_flag}', fridge_flag = '${data.fridge_flag}', wm_flag = '${data.wm_flag}', poltical_flag = '${data.poltical_flag}',
@@ -108,6 +115,14 @@ module.exports = {
             whr,
             flag
           );
+        }else {
+          var table_name = "td_grt_occupation_household",
+          fields = `(no_of_rooms, house_type, own_rent, land, tv_flag, bike_flag, fridge_flag, wm_flag,poltical_flag,parental_addr,parental_phone,created_by,created_at)`,
+          values = `('${data.no_of_rooms}', '${data.house_type}', '${data.own_rent}', '${data.land == '' ? 0 : data.land}', '${data.tv_flag}', '${data.bike_flag}', '${data.fridge_flag}', '${data.wm_flag}','${data.poltical_flag}', '${data.parental_addr}', '${data.parental_phone == '' ? 0 : data.parental_phone}', '${data.created_by}', ${datetime})`,
+          whr = null,
+          flag = 0;
+          var edit_household_dt = await db_Insert(table_name, fields, values, whr, flag);
+  }
           resolve(edit_household_dt);
         });
       },
