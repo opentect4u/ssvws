@@ -88,5 +88,39 @@ const getFormNo = () => {
     });
   };
 
+  const interest_cal_amt = (principal, rate, time) => {
+    return new Promise((resolve, reject) => {
+        let interest;
+        
+          interest = ((principal * rate / 100) / 12) * time;
+          console.log(interest);
+          
+        
+        resolve(interest);
+    });
+  };
 
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode}
+  const total_emi = (principal, interest, period) => {
+    return new Promise((resolve, reject) => {
+      let emi;
+
+      emi = (interest / period) + (principal / period);
+      console.log(emi);
+      
+       resolve(emi);
+    });
+  };
+
+  const installment_end_date = (startDate,period,periodmode) => {
+    return new Promise((resolve, reject) => {
+        try {
+            const end_date = `SELECT DATE_ADD('${startDate}', INTERVAL '${period}' '${periodmode}' ) AS endDate`;
+            resolve(end_date);
+        } catch (error) {
+            reject("Error calculating installment end date");
+        }
+    });
+};
+
+  
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, total_emi, installment_end_date}
