@@ -80,7 +80,7 @@ const getFormNo = () => {
         order = null;
         var res_dt = await db_Select(select, table_name, whr, order);
 
-        let newLoanCode = res_dt.msg[0].loan_id;
+        let newLoanCode = res_dt.msg[0].loan_code;        
         let loanCode = `${branch_code}` + newLoanCode;
         console.log(loanCode,'code');
         
@@ -114,32 +114,45 @@ const getFormNo = () => {
   //   });
   // };
 
- const periodMode = () => {
-  return new Promise((resolve, reject) => {
-    var modes_period = [
-        {
-            id: "Monthly",
-            name: "12"
-        },
-        {
-            id: "Weekly",
-            name: "48"
-        },
-    ]
-    resolve(modes_period) 
-  });
-   }; 
+//  const periodMode = () => {
+//   return new Promise((resolve, reject) => {
+//     var modes_period = [
+//         {
+//             id: "Monthly",
+//             name: "12"
+//         },
+//         {
+//             id: "Weekly",
+//             name: "48"
+//         },
+//     ]
+//     resolve(modes_period) 
+//   });
+//    }; 
+  const periodic = [
+    {
+      id: "Monthly",
+      name: "month",
+      div_period: 1,
+      tot_period: 12
+    },
+    {
+      id: "Weekly",
+      name: "week",
+      div_period: 4,
+      tot_period: 48
+    },
+  ]
 
-   const interest_cal_amt = async (principal, rate, time, period_mode) => {
+   const interest_cal_amt = async (principal, time, rate, period_mode) => {
     try {
-      const mode_period = await periodMode();
-      const period = mode_period.find((p) => p.id === period_mode);
+      const period = periodic.filter((p) => p.id == period_mode);
   
-      const periodValue = parseFloat(period?.name); 
-      const interest = ((principal * rate) / 100 / periodValue) * time;
+      const periodValue = period[0].tot_period
+      const interest = (((principal * rate) / 100) / periodValue) * time;
   
       console.log(interest);
-      return interest;
+      return Math.round(interest);
     } catch (error) {
       console.error(error.message);
       throw error;
@@ -164,7 +177,7 @@ const getFormNo = () => {
       emi_intt = (interest / period);
       console.log(emi_intt);
       
-       resolve(emi_intt);
+       resolve(Math.round(emi_intt));
     });
   };
 
@@ -197,19 +210,6 @@ const getFormNo = () => {
   //   });
   //    }; 
 
-     const periodic = [
-      {
-        id: "Monthly",
-        name: "month",
-        div_period: 1
-      },
-      {
-        id: "Weekly",
-        name: "week",
-        div_period: 4
-      },
-     ]
-
      const installment_end_date = async (startDate, period, periodModeId) => {
       try {
           const modes_periodic = periodic;
@@ -239,4 +239,4 @@ const getFormNo = () => {
 
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodMode, periodic, payment_code}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code}
