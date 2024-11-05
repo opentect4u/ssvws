@@ -327,6 +327,28 @@ masterRouter.get("/get_fund", async (req, res) => {
     var fund_dt = await db_Select(select,table_name,whr,order);
     res.send(fund_dt) 
    });
+
+masterRouter.get("/get_tr_type", async (req, res) => {
+    var data = req.query;
+   
+    var select = "tr_type",
+    table_name = "td_loan_transactions",
+    whr = null,
+    order = null;
+    var tr_dt = await db_Select(select,table_name,whr,order);
+    res.send(tr_dt) 
+   });  
+   
+masterRouter.get("/get_tr_mode", async (req, res) => {
+    var data = req.query;
+   
+    var select = "tr_mode",
+    table_name = "td_loan_transactions",
+    whr = null,
+    order = null;
+    var tr_mode_dt = await db_Select(select,table_name,whr,order);
+    res.send(tr_mode_dt) 
+   });   
    
 
 module.exports = {masterRouter}
