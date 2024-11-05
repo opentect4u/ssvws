@@ -327,5 +327,6 @@ masterRouter.get("/get_fund", async (req, res) => {
     var fund_dt = await db_Select(select,table_name,whr,order);
     res.send(fund_dt) 
    });
+   
 
 module.exports = {masterRouter}

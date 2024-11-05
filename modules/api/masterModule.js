@@ -88,39 +88,128 @@ const getFormNo = () => {
     });
   };
 
-  const interest_cal_amt = (principal, rate, time) => {
-    return new Promise((resolve, reject) => {
-        let interest;
+  // const interest_cal_amt = (principal, rate, time) => {
+  //   return new Promise((resolve, reject) => {
+  //       let interest;
         
-          interest = ((principal * rate / 100) / 12) * time;
-          console.log(interest);
+  //         interest = ((principal * rate / 100) / 12) * time;
+  //         console.log(interest);
           
         
-        resolve(interest);
-    });
+  //       resolve(interest);
+  //   });
+  // };
+
+ const periodMode = () => {
+  return new Promise((resolve, reject) => {
+    var modes_period = [
+        {
+            id: "Monthly",
+            name: "12"
+        },
+        {
+            id: "Weekly",
+            name: "48"
+        },
+    ]
+    resolve(modes_period) 
+  });
+   }; 
+
+   const interest_cal_amt = async (principal, rate, time, period_mode) => {
+    try {
+      const mode_period = await periodMode();
+      const period = mode_period.find((p) => p.id === period_mode);
+  
+      const periodValue = parseFloat(period.name); 
+      const interest = ((principal * rate) / 100 / periodValue) * time;
+  
+      console.log(interest);
+      return interest;
+    } catch (error) {
+      console.error(error.message);
+      throw error;
+    }
   };
 
-  const total_emi = (principal, interest, period) => {
+  const calculate_prn_emi = (principal, period) => {
     return new Promise((resolve, reject) => {
-      let emi;
+      let emi_prn;
 
-      emi = (interest / period) + (principal / period);
-      console.log(emi);
+      emi_prn = (principal / period);
+      console.log(emi_prn);
       
-       resolve(emi);
+       resolve(emi_prn);
     });
   };
 
-  const installment_end_date = (startDate,period,periodmode) => {
+  const calculate_intt_emi = (interest, period) => {
     return new Promise((resolve, reject) => {
-        try {
-            const end_date = `SELECT DATE_ADD('${startDate}', INTERVAL '${period}' '${periodmode}' ) AS endDate`;
-            resolve(end_date);
-        } catch (error) {
-            reject("Error calculating installment end date");
-        }
+      let emi_intt;
+
+      emi_intt = (interest / period);
+      console.log(emi_intt);
+      
+       resolve(emi_intt);
     });
-};
+  };
+
+
+
+  // const total_emi = (principal, interest, period) => {
+  //   return new Promise((resolve, reject) => {
+  //     let emi;
+
+  //     emi = (interest / period) + (principal / period);
+  //     console.log(emi);
+      
+  //      resolve(emi);
+  //   });
+  // };
+
+  const  periodic = () => {
+    return new Promise((resolve, reject) => {
+      var modes_periodic = [
+          {
+              id: "Monthly",
+              name: "month"
+          },
+          {
+              id: "Weekly",
+              name: "week"
+          },
+      ]
+      resolve(modes_periodic) 
+    });
+     }; 
+
+     const installment_end_date = async (startDate, period, periodModeId) => {
+      try {
+          const modes_periodic = await periodic();
+          
+          const selectedMode = modes_periodic.find(mode => mode.id === periodModeId);
+  
+          const periodmode = selectedMode.name;
+  
+          const end_date_query = `SELECT DATE_ADD('${startDate}', INTERVAL '${period}' '${periodmode}') AS endDate`;
+          return end_date_query;
+      } catch (error) {
+          throw new Error("Error calculating installment end date: " + error.message);
+      }
+  };     
+
+//   const installment_end_date = (startDate,period,periodmode) => {
+//     return new Promise((resolve, reject) => {
+//         try {
+//             const end_date = `SELECT DATE_ADD('${startDate}', INTERVAL '${period}' '${periodmode}' ) AS endDate`;
+//             resolve(end_date);
+//         } catch (error) {
+//             reject("Error calculating installment end date");
+//         }
+//     });
+// };
+
+
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, total_emi, installment_end_date}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodMode, periodic}
