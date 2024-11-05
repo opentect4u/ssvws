@@ -1,5 +1,5 @@
 var dateFormat = require("dateformat");
-const { getLoanCode, interest_cal_amt, total_emi, installment_end_date, calculate_prn_emi, calculate_intt_emi } = require("../api/masterModule");
+const { getLoanCode, interest_cal_amt, total_emi, installment_end_date, calculate_prn_emi, calculate_intt_emi, payment_code } = require("../api/masterModule");
 const { db_Insert } = require("../../model/mysqlModel");
 
 module.exports = {
@@ -14,6 +14,7 @@ module.exports = {
             let prn_emi = await calculate_prn_emi(data.prn_disb_amt,data.period);
             let intt_emi = await calculate_intt_emi(data.intt_cal_amt,data.period);
             let tot_emi = prn_emi + intt_emi
+            let payment_id = await payment_code()
 
             var table_name = "td_loan",
             fields = data.loan_code > 0 ? `purpose = '${data.purpose}', sub_purpose = '${data.sub_purpose}', applied_amt = '${data.applied_amt == '' ? 0 : data.applied_amt}', applied_dt = '${datetime}',
@@ -22,11 +23,12 @@ module.exports = {
             whr = data.loan_code > 0 ? `loan_id = ${data.loan_code}` : null,
             flag = data.loan_code > 0 ? 1 : 0;
             var trans_dt = await db_Insert(table_name,fields,values,whr,flag);
+            trans_dt["loan_id"] = loan_code;
 
             if(trans_dt.suc > 0 && trans_dt.msg.length > 0){
                 var table_name = "td_loan_transactions",
                 fields = data.loan_code > 0 ? `payment_date = '${datetime}', particulars = '${data.particulars.split("'").join("\\'")}', credit = '0', debit = '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', bank_charge = '${data.bank_charge}', proc_charge = '${data.proc_charge}', prn_recov = '0', intt_recov = '0', balance = '0', recov_upto = '0', tr_type = '${data.tr_type}', tr_mode = '${data.tr_mode}', cheque_id = '${data.cheque_id == '' ? 0 : data.cheque_id}', chq_dt = '${data.chq_dt == '' ? null : data.chq_dt}', deposit_by = '${data.deposit_by}', bill_no = '${data.bill_no = '' ? 0 : data.bill_no}', modified_by = '${data.created_by}', modified_at = '${datetime}'` : `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,recov_upto,tr_type,tr_mode,cheque_id,chq_dt,deposit_by,bill_no,status,created_by,created_at,trn_lat,trn_long)`,
-                values = `('${datetime}', '${payment_id}', '${data.branch_code == '' ? 0 : data.branch_code}', '${loan_code}', '${data.particulars.split("'").join("\\'")}', '0', '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', '${data.bank_charge}', '${data.proc_charge}', '0', '0', '0', '${datetime}', '${data.tr_type}', '${data.tr_mode}', '${data.cheque_id == '' ? 0 : data.cheque_id}', '${data.chq_dt == '' ? null : data.chq_dt}', '${data.deposit_by}', '${data.bill_no = '' ? 0 : data.bill_no}', 'U', '${data.created_at}', '${datetime}', '${data.trn_lat}', '${data.trn_long}')`,
+                values = `('${datetime}', '${payment_id}', '${data.branch_code == '' ? 0 : data.branch_code}', '${data.loan_code}', '${data.particulars.split("'").join("\\'")}', '0', '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', '${data.bank_charge}', '${data.proc_charge}', '0', '0', '0', '${datetime}', '${data.tr_type}', '${data.tr_mode}', '${data.cheque_id == '' ? 0 : data.cheque_id}', '${data.chq_dt == '' ? null : data.chq_dt}', '${data.deposit_by}', '${data.bill_no = '' ? 0 : data.bill_no}', 'U', '${data.created_by}', '${datetime}', '${data.trn_lat}', '${data.trn_long}')`,
                 whr = data.loan_code > 0 ? `loan_id = ${data.loan_code}` : null,
                 flag = data.loan_code > 0 ? 1 : 0;
                 var dtls = await db_Insert(table_name,fields,values,whr,flag);

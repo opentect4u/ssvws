@@ -88,6 +88,20 @@ const getFormNo = () => {
     });
   };
 
+  const payment_code = () => {
+    return new Promise(async (resolve, reject) => {
+        year = new Date().getFullYear();
+
+        var select = "IF(MAX(SUBSTRING(payment_id, -5)) > 0, LPAD(MAX(cast(SUBSTRING(payment_id, -5) as unsigned))+1, 5, '0'), '01') max_pay_id",
+        table_name = "td_loan_transactions",
+        whr = `SUBSTRING(payment_id, 1, 4) = YEAR(now())`,
+        order = null;
+        var res_dt = await db_Select(select, table_name, whr, order);
+        var newId = `${year}${res_dt.msg[0].max_pay_id}`        
+      resolve(newId);
+    });
+  };
+
   // const interest_cal_amt = (principal, rate, time) => {
   //   return new Promise((resolve, reject) => {
   //       let interest;
@@ -212,4 +226,4 @@ const getFormNo = () => {
 
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodMode, periodic}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodMode, periodic, payment_code}
