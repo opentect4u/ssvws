@@ -135,7 +135,7 @@ const getFormNo = () => {
       const mode_period = await periodMode();
       const period = mode_period.find((p) => p.id === period_mode);
   
-      const periodValue = parseFloat(period.name); 
+      const periodValue = parseFloat(period?.name); 
       const interest = ((principal * rate) / 100 / periodValue) * time;
   
       console.log(interest);
