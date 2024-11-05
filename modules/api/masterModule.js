@@ -200,11 +200,13 @@ const getFormNo = () => {
      const periodic = [
       {
         id: "Monthly",
-        name: "month"
+        name: "month",
+        div_period: 1
       },
       {
         id: "Weekly",
-        name: "week"
+        name: "week",
+        div_period: 4
       },
      ]
 

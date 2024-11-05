@@ -1,5 +1,5 @@
 var dateFormat = require("dateformat");
-const { getLoanCode, interest_cal_amt, total_emi, installment_end_date, calculate_prn_emi, calculate_intt_emi, payment_code } = require("../api/masterModule");
+const { getLoanCode, interest_cal_amt, total_emi, installment_end_date, calculate_prn_emi, calculate_intt_emi, payment_code, periodic } = require("../api/masterModule");
 const { db_Insert } = require("../../model/mysqlModel");
 
 module.exports = {
@@ -8,12 +8,20 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
             var curr_date = new Date()
-            var last_date = dateFormat(new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0), "yyyy-mm-dd")
+            var last_date = new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0)
+            
+            var selectedMode = periodic.filter(dt => dt.id == data.period_mode)
+            
+            var inst_end_date = new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0)
+            inst_end_date.setMonth((last_date.getMonth() + (data.period / selectedMode[0].div_period)) + 1)
+
+
+
+            // let instl_end_dt = await installment_end_date(last_date,data.period_mode,data.period);
 
             let loan_code = await getLoanCode(data.branch_code);
             let intt_cal_amt = await interest_cal_amt(data.prn_disb_amt,data.period,data.curr_roi);
             // let tot_emi = await total_emi(data.prn_disb_amt,data.period,data.intt_cal_amt);
-            let instl_end_dt = await installment_end_date(last_date,data.period_mode,data.period);
             let prn_emi = await calculate_prn_emi(data.prn_disb_amt,data.period);
             let intt_emi = await calculate_intt_emi(data.intt_cal_amt,data.period);
             let tot_emi = prn_emi + intt_emi
@@ -21,8 +29,8 @@ module.exports = {
 
             var table_name = "td_loan",
             fields = data.loan_code > 0 ? `purpose = '${data.purpose}', sub_purpose = '${data.sub_purpose}', applied_amt = '${data.applied_amt == '' ? 0 : data.applied_amt}', applied_dt = '${datetime}',
-            scheme_id = '${data.scheme_id}', fund_id = '${data.fund_id}', period = '${data.period == '' ? 0 : data.period}', curr_roi = '${data.curr_roi == '' ? 0 : data.curr_roi}', od_roi = '${data.od_roi == '' ? 0 : data.od_roi}', disb_dt = '${datetime}', prn_disb_amt = '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', intt_cal_amt = '${intt_cal_amt}', prn_amt = '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', old_prn_amt = '${data.old_prn_amt == '' ? 0 : data.old_prn_amt}', od_dt = '0', intt_amt = '${intt_cal_amt}', od_intt_amt = '${data.od_intt_amt == '' ? 0 : data.od_intt_amt}', prn_emi = '${prn_emi == '' ? 0 : prn_emi}', intt_emi = '${intt_emi == '' ? 0 : intt_emi}', tot_emi = '${tot_emi == '' ? 0 : tot_emi}', period_mode = '${data.period_mode}', instl_start_dt = LAST_DAY(NOW()), instl_end_dt = '${instl_end_dt}', last_trn_dt = '${datetime}', modified_by = '${data.created_by}', modified_dt = '${datetime}'` : `(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,old_prn_amt,od_dt,intt_amt,od_intt_amt,prn_emi,intt_emi,tot_emi,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_at)`,
-            values = `('${loan_code}','${data.branch_code == '' ? 0 : data.branch_code}','${data.group_code == '' ? 0 : data.group_code}','${data.member_code == '' ? 0 : data.member_code}','${data.grt_form_no == '' ? 0 : data.grt_form_no}','${data.purpose}','${data.sub_purpose}','${data.applied_amt == '' ? 0 : data.applied_amt}','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == '' ? 0 : data.period}','${data.curr_roi == '' ? 0 : data.curr_roi}','${data.od_roi == '' ? 0 : data.od_roi}','${datetime}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${intt_cal_amt}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${data.old_prn_amt == '' ? 0 : data.old_prn_amt}','0','${intt_cal_amt}','${data.od_intt_amt == '' ? 0 : data.od_intt_amt}','${prn_emi == '' ? 0 : prn_emi}','${intt_emi == '' ? 0 : intt_emi}','${tot_emi == '' ? 0 : tot_emi}','${data.period_mode}',LAST_DAY(NOW()),'${instl_end_dt}','${datetime}','${data.created_by}','${datetime}')`,
+            scheme_id = '${data.scheme_id}', fund_id = '${data.fund_id}', period = '${data.period == '' ? 0 : data.period}', curr_roi = '${data.curr_roi == '' ? 0 : data.curr_roi}', od_roi = '${data.od_roi == '' ? 0 : data.od_roi}', disb_dt = '${datetime}', prn_disb_amt = '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', intt_cal_amt = '${intt_cal_amt}', prn_amt = '${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}', od_prn_amt = '${data.old_prn_amt == '' ? 0 : data.old_prn_amt}', od_dt = '0', intt_amt = '${intt_cal_amt}', od_intt_amt = '${data.od_intt_amt == '' ? 0 : data.od_intt_amt}', prn_emi = '${prn_emi == '' ? 0 : prn_emi}', intt_emi = '${intt_emi == '' ? 0 : intt_emi}', tot_emi = '${tot_emi == '' ? 0 : tot_emi}', period_mode = '${data.period_mode}', instl_start_dt = LAST_DAY(NOW()), instl_end_dt = '${dateFormat(inst_end_date, "yyyy-mm-dd")}', last_trn_dt = '${datetime}', modified_by = '${data.created_by}', modified_dt = '${datetime}'` : `(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,old_prn_amt,od_dt,intt_amt,od_intt_amt,prn_emi,intt_emi,tot_emi,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_at)`,
+            values = `('${loan_code}','${data.branch_code == '' ? 0 : data.branch_code}','${data.group_code == '' ? 0 : data.group_code}','${data.member_code == '' ? 0 : data.member_code}','${data.grt_form_no == '' ? 0 : data.grt_form_no}','${data.purpose}','${data.sub_purpose}','${data.applied_amt == '' ? 0 : data.applied_amt}','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == '' ? 0 : data.period}','${data.curr_roi == '' ? 0 : data.curr_roi}','${data.od_roi == '' ? 0 : data.od_roi}','${datetime}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${intt_cal_amt}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${data.old_prn_amt == '' ? 0 : data.old_prn_amt}','0','${intt_cal_amt}','${data.od_intt_amt == '' ? 0 : data.od_intt_amt}','${prn_emi == '' ? 0 : prn_emi}','${intt_emi == '' ? 0 : intt_emi}','${tot_emi == '' ? 0 : tot_emi}','${data.period_mode}',LAST_DAY(NOW()),'${dateFormat(inst_end_date, "yyyy-mm-dd")}','${datetime}','${data.created_by}','${datetime}')`,
             whr = data.loan_code > 0 ? `loan_id = ${data.loan_code}` : null,
             flag = data.loan_code > 0 ? 1 : 0;
             var trans_dt = await db_Insert(table_name,fields,values,whr,flag);
