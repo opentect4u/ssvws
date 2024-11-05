@@ -181,31 +181,42 @@ const getFormNo = () => {
   //   });
   // };
 
-  const  periodic = () => {
-    return new Promise((resolve, reject) => {
-      var modes_periodic = [
-          {
-              id: "Monthly",
-              name: "month"
-          },
-          {
-              id: "Weekly",
-              name: "week"
-          },
-      ]
-      resolve(modes_periodic) 
-    });
-     }; 
+  // const  periodic = () => {
+  //   return new Promise((resolve, reject) => {
+  //     var modes_periodic = [
+  //         {
+  //             id: "Monthly",
+  //             name: "month"
+  //         },
+  //         {
+  //             id: "Weekly",
+  //             name: "week"
+  //         },
+  //     ]
+  //     resolve(modes_periodic) 
+  //   });
+  //    }; 
+
+     const periodic = [
+      {
+        id: "Monthly",
+        name: "month"
+      },
+      {
+        id: "Weekly",
+        name: "week"
+      },
+     ]
 
      const installment_end_date = async (startDate, period, periodModeId) => {
       try {
-          const modes_periodic = await periodic();
+          const modes_periodic = periodic;
           
           const selectedMode = modes_periodic.find(mode => mode.id === periodModeId);
   
           const periodmode = selectedMode.name;
   
-          const end_date_query = `SELECT DATE_ADD('${startDate}', INTERVAL '${period}' '${periodmode}') AS endDate`;
+          const end_date_query = `SELECT DATE_ADD('${startDate}', INTERVAL ${period} ${periodmode}) AS endDate`;
           return end_date_query;
       } catch (error) {
           throw new Error("Error calculating installment end date: " + error.message);

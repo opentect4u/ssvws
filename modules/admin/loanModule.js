@@ -7,10 +7,13 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+            var curr_date = new Date()
+            var last_date = dateFormat(new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0), "yyyy-mm-dd")
+
             let loan_code = await getLoanCode(data.branch_code);
             let intt_cal_amt = await interest_cal_amt(data.prn_disb_amt,data.period,data.curr_roi);
             // let tot_emi = await total_emi(data.prn_disb_amt,data.period,data.intt_cal_amt);
-            let instl_end_dt = await installment_end_date(LAST_DAY(NOW()),data.period_mode,data.period);
+            let instl_end_dt = await installment_end_date(last_date,data.period_mode,data.period);
             let prn_emi = await calculate_prn_emi(data.prn_disb_amt,data.period);
             let intt_emi = await calculate_intt_emi(data.intt_cal_amt,data.period);
             let tot_emi = prn_emi + intt_emi
