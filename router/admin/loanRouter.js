@@ -1,4 +1,4 @@
-const { db_Select } = require('../../model/mysqlModel');
+const { db_Select, db_Insert } = require('../../model/mysqlModel');
 const { loan_trans } = require('../../modules/admin/loanModule');
 
 const loanRouter = require('express').Router();
@@ -110,6 +110,18 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 
 });
 
+loanRouter.post("/approve_loan_disbursement", async (req, res) => {
+    var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    var table_name = "td_loan_transactions",
+    fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
+    values = null,
+    whr = `loan_id = '${data.loan_id}'`,
+    flag = 1;
+    var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+    res.send(approve_dt)
+})
 
 module.exports = {loanRouter}
