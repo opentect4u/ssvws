@@ -14,7 +14,7 @@ module.exports = {
             var selectedMode = periodic.filter(dt => dt.id == data.period_mode)
             
             var inst_end_date = new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0)
-            inst_end_date.setMonth((last_date.getMonth() + (data.period / selectedMode[0].div_period)) + 1)
+            inst_end_date.setMonth((last_date.getMonth() + (data.period / selectedMode[0].div_period)))
 
 
 
@@ -25,8 +25,8 @@ module.exports = {
             // let tot_emi = await total_emi(data.prn_disb_amt,data.period,data.intt_cal_amt);
             let prn_emi = await calculate_prn_emi(data.prn_disb_amt,data.period);
             let intt_emi = await calculate_intt_emi(intt_cal_amt,data.period);
-            let tot_emi = prn_emi + intt_emi
-            let payment_id = await payment_code()
+            let tot_emi =  Math.round(prn_emi + intt_emi);
+            let payment_id = await payment_code(data.branch_code)
 
             var table_name = "td_loan",
             fields =`(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,prn_emi,intt_emi,tot_emi,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,

@@ -31,7 +31,7 @@ loanRouter.post("/fetch_loan_application_dtls", async (req, res) => {
 loanRouter.post("/fetch_existing_loan", async (req, res) => {
     var data = req.body;
 
-    var select = "loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,disb_dt,prn_disb_amt,period_mode",
+    var select = "loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,disb_dt,prn_disb_amt,period_mode,last_trn_dt",
     table_name = "td_loan",
     whr = `grt_form_no = '${data.form_no}' AND last_trn_dt <= date(now()) AND instl_end_dt >= date(now());`,
     order = null;
@@ -50,6 +50,13 @@ loanRouter.post("/fetch_existing_loan", async (req, res) => {
     }
 
 res.send(loan_dtls)
+})
+
+loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.loan_id, a.tr_type, a.debit, b.client_name",
+    table_name = "td_loan_transaction a LEFT JOIN md_member b ON a."
 })
 
 loanRouter.post("/save_loan_transaction", async (req, res) => {

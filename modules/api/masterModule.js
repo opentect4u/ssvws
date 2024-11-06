@@ -88,17 +88,13 @@ const getFormNo = () => {
     });
   };
 
-  const payment_code = () => {
+  const payment_code = (branch_code) => {
     return new Promise(async (resolve, reject) => {
         year = new Date().getFullYear();
 
-        var select = "IF(MAX(SUBSTRING(payment_id, -5)) > 0, LPAD(MAX(cast(SUBSTRING(payment_id, -5) as unsigned))+1, 5, '0'), '01') max_pay_id",
-        table_name = "td_loan_transactions",
-        whr = `SUBSTRING(payment_id, 1, 4) = YEAR(now())`,
-        order = null;
-        var res_dt = await db_Select(select, table_name, whr, order);
-        var newId = `${year}${res_dt.msg[0].max_pay_id}`        
-      resolve(newId);
+        var select = ""
+        var newPayId = `${year}+${branch_code}`        
+      resolve(newPayId);
     });
   };
 
@@ -164,9 +160,9 @@ const getFormNo = () => {
       let emi_prn;
 
       emi_prn = (principal / period);
-      console.log(emi_prn);
+      console.log(emi_prn.toFixed(2));
       
-       resolve(emi_prn);
+       resolve(emi_prn.toFixed(2));
     });
   };
 
@@ -175,9 +171,10 @@ const getFormNo = () => {
       let emi_intt;
 
       emi_intt = (interest / period);
-      console.log(emi_intt);
+      console.log(emi_intt.toFixed(2));
       
-       resolve(Math.round(emi_intt));
+       resolve(emi_intt.toFixed(2));
+      //  resolve(Math.round(emi_intt));
     });
   };
 
