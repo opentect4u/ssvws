@@ -17,7 +17,6 @@ module.exports = {
             inst_end_date.setMonth((last_date.getMonth() + (data.period / selectedMode[0].div_period)))
 
 
-
             // let instl_end_dt = await installment_end_date(last_date,data.period_mode,data.period);
 
             let loan_code = await getLoanCode(data.branch_code);
