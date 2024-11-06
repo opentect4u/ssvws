@@ -92,8 +92,14 @@ const getFormNo = () => {
     return new Promise(async (resolve, reject) => {
         year = new Date().getFullYear();
 
-        var select = ""
-        var newPayId = `${year}+${branch_code}`        
+        var select = "IF(MAX(SUBSTRING(payment_id, 8)) > 0, MAX(cast(SUBSTRING(payment_id, 8) as unsigned))+1, 1) max_pay_id",
+        table_name = "td_loan_transaction",
+        whr = ` YEAR(payment_date) = YEAR(NOW());`,
+        order = null;
+        var pay_dt = await db_Select(select,table_name,whr,order);
+
+        let newPayCode = pay_dt.msg[0].max_pay_id;    
+        var newPayId = `${year} + ${branch_code}` + newPayCode        
       resolve(newPayId);
     });
   };

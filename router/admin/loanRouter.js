@@ -38,7 +38,7 @@ loanRouter.post("/fetch_existing_loan", async (req, res) => {
     var loan_dtls = await db_Select(select,table_name,whr,order);
 
     if(loan_dtls.suc > 0 && loan_dtls.msg.length > 0){
-        var select = "particulars,bank_charge,proc_charge,tr_type,tr_mode,cheque_id,chq_dt,status",
+        var select = "particulars,bank_charge,proc_charge,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status",
         table_name = "td_loan_transactions",
         whr = `loan_id = ${loan_dtls.msg[0].loan_id} AND branch_id = '${loan_dtls.msg[0].branch_code}'`,
         order = `ORDER BY payment_date ASC LIMIT 1`;
@@ -55,8 +55,13 @@ res.send(loan_dtls)
 loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.loan_id, a.tr_type, a.debit, b.client_name",
-    table_name = "td_loan_transaction a LEFT JOIN md_member b ON a."
+    var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.loan_id, a.tr_type, a.debit, b.member_code, c.client_name",
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id  LEFT JOIN md_member c ON b.branch_code = c.branch_code AND b.member_code = c.member_code",
+    whr = `a.status = 'U'`,
+    order = null;
+    var fetch_trans_dt = await db_Select(select,table_name,whr,order);
+
+    res.send(fetch_trans_dt)
 })
 
 loanRouter.post("/save_loan_transaction", async (req, res) => {
