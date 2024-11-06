@@ -62,6 +62,39 @@ loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
     var fetch_trans_dt = await db_Select(select,table_name,whr,order);
 
     res.send(fetch_trans_dt)
+});
+
+loanRouter.post("/fetch_unapprove_loan_dtls", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,b.prov_grp_code,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.branch_name,d.group_name,e.applied_amt,e.loan_purpose,e.sub_pupose,f.purpose_id,g.sub_purp_name",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.branch_code = d.branch_code AND b.prov_grp_code = d.group_code LEFT JOIN td_grt_occupation_household e ON a.branch_code = e.branch_code AND b.form_no = e.form_no LEFT JOIN md_purpose f ON e.loan_purpose = f.purp_id LEFT JOIN md_sub_purpose g ON e.sub_pupose = g.sub_purp_id",
+    whr = `a.member_code = ${data.member_code}`,
+    order = null;
+    var member_dtls = await db_Select(select,table_name,whr,order);
+
+    if(member_dtls.suc > 0 && member_dtls.msg.length > 0){
+        var select = "a.loan_id,a.branch_code,a.group_code,a.member_code,a.grt_form_no,a.purpose,a.sub_purpose,a.applied_amt,a.applied_dt,a.scheme_id,a.fund_id,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period_mode,a.instl_start_dt,a.instl_end_dt,a.last_trn_dt,b.scheme_name,c.fund_name",
+        table_name = "td_loan a LEFT JOIN md_scheme b ON a.scheme_id = b.scheme_id LEFT JOIN md_fund c ON a.fund_id = c.fund_id",
+        whr = `a.grt_form_no = ${member_dtls.msg[0].form_no}`,
+        order = null;
+        var loan_dtls = await db_Select(select,table_name,whr,order);
+    
+        if(loan_dtls.suc > 0 && loan_dtls.msg.length > 0){
+            var select = "payment_date transaction_date, payment_id transaction_id, particulars,debit, bank_charge,proc_charge,balance,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status",
+            table_name = "td_loan_transactions",
+            whr = `loan_id = ${loan_dtls.msg[0].loan_id} AND branch_id = '${loan_dtls.msg[0].branch_code}' AND status = 'U'`,
+            order = null;
+            var loan_trans_dt = await db_Select(select,table_name,whr,order);
+    
+            loan_dtls = {suc: loan_dtls.suc, loan_dt: loan_dtls.msg[0], loan_trans: loan_trans_dt.msg[0], msg: true}
+        }else {
+            loan_dtls = {suc: loan_dtls.suc, loan_dt: loan_dtls.msg, loan_trans: {}, msg: false}
+        }
+    }else {
+        member_dtls = {suc: member_dtls.suc, member_dt: member_dtls.msg,  msg: false}
+    }
+    res.send(member_dtls)
 })
 
 loanRouter.post("/save_loan_transaction", async (req, res) => {
