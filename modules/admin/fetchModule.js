@@ -104,7 +104,7 @@ module.exports = {
           var table_name = "td_grt_occupation_household",
             fields = `no_of_rooms = '${data.no_of_rooms}', house_type = '${data.house_type}', own_rent = '${data.own_rent}', land = '${data.land == '' ? 0 : data.land}', tv_flag = '${data.tv_flag}', 
                     bike_flag = '${data.bike_flag}', fridge_flag = '${data.fridge_flag}', wm_flag = '${data.wm_flag}', poltical_flag = '${data.poltical_flag}',
-                 parental_addr = '${data.parental_addr}', parental_phone = '${data.parental_phone == '' ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                 parental_addr = '${data.parental_addr}', parental_phone = '${data.parental_phone > 0 ? data.parental_phone : 0}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}'`,
             flag = 1;
