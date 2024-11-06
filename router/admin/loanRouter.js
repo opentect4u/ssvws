@@ -1,4 +1,4 @@
-const { db_Select, db_Insert } = require('../../model/mysqlModel');
+const { db_Select, db_Insert, db_Delete } = require('../../model/mysqlModel');
 const { loan_trans } = require('../../modules/admin/loanModule');
 
 const loanRouter = require('express').Router();
@@ -122,6 +122,16 @@ loanRouter.post("/approve_loan_disbursement", async (req, res) => {
     var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
 
     res.send(approve_dt)
-})
+});
+
+loanRouter.post("/delete_apply_loan", async (req, res) => {
+    var data = req.body;
+
+    var table_name = "td_loan a, td_loan_transactions b",
+    whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.loan_id = '${data.loan_id}'`
+    var del_loan_dt = await db_Delete(table_name,whr);
+
+    res.send(del_loan_dt);
+});
 
 module.exports = {loanRouter}
