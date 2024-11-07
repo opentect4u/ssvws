@@ -37,7 +37,7 @@ module.exports = {
             
             let payment_id = await payment_code(data.branch_code)
 
-            let outstanding = (data.prn_disb_amt+data.old_prn_amt+intt_cal_amt+data.od_intt_amt)
+            let outstanding = (parseFloat(data.prn_disb_amt)+parseFloat(data.old_prn_amt)+parseFloat(intt_cal_amt)+parseFloat(data.od_intt_amt))
             console.log(outstanding,'outstanding');
             
 
