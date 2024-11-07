@@ -127,9 +127,15 @@ loanRouter.post("/approve_loan_disbursement", async (req, res) => {
 loanRouter.post("/delete_apply_loan", async (req, res) => {
     var data = req.body;
 
-    var table_name = "td_loan a, td_loan_transactions b",
-    whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.loan_id = '${data.loan_id}'`
+    var table_name = "td_loan",
+    whr = `loan_id = '${data.loan_id}'`
     var del_loan_dt = await db_Delete(table_name,whr);
+
+    if(del_loan_dt.suc > 0 && del_loan_dt.msg.length > 0){
+        var table_name = "td_loan_transactions",
+        whr = `loan_id = '${data.loan_id}'`
+        var del_loan_dtls = await db_Delete(table_name,whr);
+    }
 
     res.send(del_loan_dt);
 });
