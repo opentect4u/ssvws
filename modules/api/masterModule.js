@@ -98,8 +98,10 @@ const getFormNo = () => {
         order = null;
         var pay_dt = await db_Select(select,table_name,whr,order);
 
-        let newPayCode = pay_dt.msg[0].max_pay_id;    
-        var newPayId = `${year} + ${branch_code}` + newPayCode        
+        let newPayCode = pay_dt.msg[0].max_pay_id;   
+        console.log(newPayCode,'paycode');
+         
+        var newPayId = `${year}` + `${branch_code}` + newPayCode        
       resolve(newPayId);
     });
   };
