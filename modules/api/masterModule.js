@@ -93,7 +93,7 @@ const getFormNo = () => {
         year = new Date().getFullYear();
 
         var select = "IF(MAX(SUBSTRING(payment_id, 8)) > 0, MAX(cast(SUBSTRING(payment_id, 8) as unsigned))+1, 1) max_pay_id",
-        table_name = "td_loan_transaction",
+        table_name = "td_loan_transactions",
         whr = ` YEAR(payment_date) = YEAR(NOW());`,
         order = null;
         var pay_dt = await db_Select(select,table_name,whr,order);
