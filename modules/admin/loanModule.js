@@ -28,7 +28,7 @@ module.exports = {
             if (isNaN(prn_emi) || isNaN(intt_emi)) {
                 console.error("One of the values is not a number. Please check the calculate functions.");
             } else {
-                let tot_emi = Math.round(prn_emi + intt_emi);
+                var tot_emi = Math.round(prn_emi + intt_emi);
                 console.log("Total EMI:", tot_emi);
             }
             // let tot_emi = Math.round(prn_emi + intt_emi);
