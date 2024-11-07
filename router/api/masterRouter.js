@@ -208,7 +208,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
 
                   var select = "a.outstanding, b.branch_name",
                   table_name = "td_loan a,md_branch b",
-                  whr = `a.branch_id = b.branch_code AND a.sub_customer_id = '${res_dt.msg[0].member_code}'`
+                  whr = `a.branch_code = b.branch_code AND a.sub_customer_id = '${res_dt.msg[0].member_code}'`
                   order = `HAVING a.outstanding > 0`;
                   var default_chk = await db_Select(select,table_name,whr,order);
                   console.log(default_chk);
