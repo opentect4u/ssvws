@@ -24,9 +24,15 @@ module.exports = {
             // let tot_emi = await total_emi(data.prn_disb_amt,data.period,data.intt_cal_amt);
             let prn_emi = await calculate_prn_emi(data.prn_disb_amt,data.period);
             let intt_emi = await calculate_intt_emi(intt_cal_amt,data.period);
-            let tot_emi_calculate =  prn_emi + intt_emi;
-            let tot_emi = Math.round(tot_emi_calculate)
-            console.log(tot_emi_calculate,tot_emi,'emi');
+
+            if (isNaN(prn_emi) || isNaN(intt_emi)) {
+                console.error("One of the values is not a number. Please check the calculate functions.");
+            } else {
+                let tot_emi = Math.round(prn_emi + intt_emi);
+                console.log("Total EMI:", tot_emi);
+            }
+            // let tot_emi = Math.round(prn_emi + intt_emi);
+            // console.log(tot_emi,'emi');
             
             let payment_id = await payment_code(data.branch_code)
 
