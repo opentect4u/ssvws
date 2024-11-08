@@ -1,4 +1,5 @@
 const { db_Select } = require('../../model/mysqlModel');
+const { recovery_trans } = require('../../modules/api/recoveryModule');
 
 const express = require('express'),
 recoveryRouter = express.Router(),
@@ -24,6 +25,18 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     }
 
 res.send(search_grp)
+});
+
+recoveryRouter.post("/recovery_transaction", async (req, res) => {
+    var data = req.body,res_dt;
+    recovery_trans(data).then(data => {
+        res_dt = data
+    }).catch(err => {
+        res_dt = err
+    }).finally (() => {
+        res.send(res_dt)
+    })
+
 });
 
 module.exports = {recoveryRouter}
