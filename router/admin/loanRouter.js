@@ -140,4 +140,16 @@ loanRouter.post("/delete_apply_loan", async (req, res) => {
     res.send(del_loan_dt);
 });
 
+// loanRouter.post("/fetch_grp_member_dtls", async (req, res) => {
+//     var data = req.body;
+
+//         var select = "a.branch_code,a.member_code,a.client_name,a.client_mobile,b.form_no,b.prov_grp_code,c.group_name",
+//         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_group c ON b.branch_code = c.branch_code AND b.prov_grp_code = c.group_code",
+//         whr = `b.prov_grp_code like '%${data.grp_dtls}%' OR c.group_name like '%${data.grp_dtls}%'`,
+//         order = null;
+//         var fetch_grp_mem_dtls = await db_Select(select,table_name,whr,order);
+   
+//     res.send(fetch_grp_mem_dtls)
+// });
+
 module.exports = {loanRouter}
