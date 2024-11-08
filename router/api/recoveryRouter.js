@@ -13,14 +13,14 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     order = `GROUP BY a.group_code, b.group_name, b.group_type`;
     var search_grp = await db_Select (select,table_name,whr,order);
 
-    // if(search_grp.suc > 0){
-    //     var select = "a.loan_id,b.client_name",
-    //     table_name = "td_loan a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
-    //     whr = "a.group_code = ",
-    //     order = null;
-    //     var mem_dt = await db_Select(select,table_name,whr,order);
-    //     search_grp.msg[0]['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
-    // }
+    if(search_grp.suc > 0 && search_grp.msg.length > 0){
+        var select = "a.loan_id,b.client_name",
+        table_name = "td_loan a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+        whr = `a.group_code = ${search_grp.msg[0].group_code}`,
+        order = null;
+        var mem_dt = await db_Select(select,table_name,whr,order);
+        search_grp.msg[0]['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
+    }
 
 res.send(search_grp)
 });
