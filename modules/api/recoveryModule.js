@@ -23,12 +23,12 @@ module.exports = {
                 remaining_credit = 0;
             }
 
-            let rec_outstanding = (parseFloat(data.rec_prn_amt)+parseFloat(data.rec_intt_amt))
+            let rec_outstanding = (parseFloat(rec_prn_amt)+parseFloat(rec_intt_amt))
 
             let instl_paid = data.instl_paid + 1;
 
             var table_name = "td_loan",
-            fields = `prn_amt = '${rec_prn_amt}', intt_amt = '${data.rec_intt_amt}', outstanding = '${rec_outstanding}', instl_paid = '${instl_paid}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `prn_amt = '${rec_prn_amt}', intt_amt = '${rec_intt_amt}', outstanding = '${rec_outstanding}', instl_paid = '${instl_paid}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
             values = null,
             whr = `loan_id = '${data.loan_id}'`,
             flag = 1;
@@ -37,7 +37,7 @@ module.exports = {
             if(recovery_dt.suc > 0 && recovery_dt.msg.length > 0){
 
                 var table_name = "td_loan_transactions",
-                fields = `credit = '${data.credit}', prn_recov = '${data.prn_recov}', intt_recov = '${data.intt_recov}', recov_upto = '${data.recov_upto}', tr_type = 'R', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                fields = `credit = '${data.credit}', prn_recov = '${rec_prn_amt}', intt_recov = '${rec_intt_amt}', recov_upto = '${datetime}', tr_type = 'R', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
