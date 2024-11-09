@@ -25,7 +25,7 @@ module.exports = {
 
             let rec_outstanding = (parseFloat(rec_prn_amt)+parseFloat(rec_intt_amt))
 
-            let instl_paid = data.instl_paid + 1;
+            let instl_paid = SUM(data.instl_paid + 1);
 
             var table_name = "td_loan",
             fields = `prn_amt = '${rec_prn_amt}', intt_amt = '${rec_intt_amt}', outstanding = '${rec_outstanding}', instl_paid = '${instl_paid}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
