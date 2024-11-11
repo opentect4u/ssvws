@@ -223,7 +223,23 @@ module.exports = {
         reject({ "suc": 0, "msg": "No member codes provided" });
       }
     });
-  }
+  },
+
+  back_dt_to_bm: (data) => {
+    return new Promise(async (resolve, reject) => {
+      let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+      var table_name = "td_grt_basic",
+      fields = `approval_status = 'U', remarks = '${data.remarks.split("'").join("\\'")}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+      values = null,
+      whr = `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`,
+      flag = 1;
+      var back_dt_bm = await db_Insert(table_name, fields, values, whr, flag);
+      // console.log(back_dt_bm,'dt');
+
+      resolve(back_dt_bm);
+    });
+  },
   
   
 }
