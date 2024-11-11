@@ -65,8 +65,8 @@ module.exports = {
             if(rec_dt.suc > 0 && rec_dt.msg.length > 0){
 
                 var table_name = "td_loan_transactions",
-                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,created_by,created_at)`,
-                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_code}','${data.credit}','0','${data.bank_charge > 0 ? data.bank_charge : 0}','${data.proc_charge > 0 ? data.proc_charge : 0}','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${data.balance > 0 ? data.balance : 0}','${datetime}','${data.tr_type}','${data.tr_mode}','${data.bank_name}','${data.cheque_id == '' ? 0 : data.cheque_id}','${data.chq_dt == '' ? null : data.chq_dt}','${data.created_by}','${datetime}')`,
+                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,recov_upto,tr_type,created_by,created_at)`,
+                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${data.balance > 0 ? data.balance : 0}','${datetime}','${data.tr_type}','${data.created_by}','${datetime}')`,
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
                 var rec_dtls = await db_Insert(table_name,fields,values,whr,flag);
