@@ -72,7 +72,7 @@ module.exports = {
                 var rec_dtls = await db_Insert(table_name,fields,values,whr,flag);
             }
 
-            resolve(recovery_dt)
+            resolve(rec_dt)
         });
     }
 }
