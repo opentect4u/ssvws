@@ -110,6 +110,20 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 
 });
 
+loanRouter.post("/fetch_recovery_day", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.loan_id,a.grt_form_no,a.member_code,a.recovery_day,b.client_name",
+    table_name = "td_loan a , md_member b",
+    whr = `a.branch_code = b.branch_code
+    AND a.member_code = b.member_code
+    AND a.recovery_day between '${data.start_day}' AND '${data.end_day}'`,
+    order = null;
+    var fetch_rec_dt = await db_Select(select,table_name,whr,order);
+
+    res.send(fetch_rec_dt)
+});
+
 loanRouter.post("/approve_loan_disbursement", async (req, res) => {
     var data = req.body;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
