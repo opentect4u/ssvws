@@ -106,6 +106,42 @@ const getFormNo = () => {
     });
   };
 
+  // const getBankCode = () => {
+  //   return new Promise(async (resolve, reject) => {
+
+  //       var select = "max(bank_code) + 1 as bank_code",
+  //           table_name = "md_bank",
+  //           whr = null,
+  //           order = null;
+  //       var result = await db_Select(select, table_name, whr, order);
+
+  //       let newBankCode = result.msg[0].bank_code; 
+        
+  //       resolve(newBankCode)
+  //   });
+  // };
+
+  const getBankCode = () => {
+    return new Promise(async (resolve, reject) => {
+
+        var select = "max(bank_code) as max_bank_code",
+            table_name = "md_bank",
+            whr = null,
+            order = null;
+        try {
+            var result = await db_Select(select, table_name, whr, order);
+            
+            let newBankCode = result.msg[0].max_bank_code ? parseInt(result.msg[0].max_bank_code) + 1 : 1001;
+
+            resolve(newBankCode);
+        } catch (error) {
+            reject(error);
+        }
+    });
+};
+
+  
+
   // const interest_cal_amt = (principal, rate, time) => {
   //   return new Promise((resolve, reject) => {
   //       let interest;
@@ -244,4 +280,4 @@ const getFormNo = () => {
 
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode}

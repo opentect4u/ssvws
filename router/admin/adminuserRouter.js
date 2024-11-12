@@ -2,6 +2,7 @@ const adminuserRouter = require('express').Router();
 dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
+const { getBankCode } = require('../../modules/api/masterModule');
 
 adminuserRouter.get('/fetch_branch', async (req, res) => {
     var data = req.body;
@@ -74,6 +75,20 @@ adminuserRouter.post('/password_change_user', async (req, res) => {
     }
 });
     
+adminuserRouter.post("/save_bank_dtls", async (req, res) => {
+    var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    let bank_code = await getBankCode()
+
+    var table_name = "md_bank",
+    fields = data.bank_code > 0 ? `bank_name = '${data.bank_name}', branch_name = '${data.branch_name}', ifsc = '${data.ifsc > 0 ? data.ifsc : 0}', branch_addr = '${data.branch_addr.split("'").join("\\'")}', sol_id = '${data.sol_id > 0 ? data.sol_id : 0}', phone_no = '${data.phone_no > 0 ? data.phone_no : 0}', modified_by = '${data.modified_by}', modified_at = '${datetime}'` : `(bank_code, bank_name, branch_name, ifsc, branch_addr, sol_id, phone_no, created_by, created_at)`,
+    values = `('${bank_code}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc == '' ? 0 : data.ifsc}', '${data.branch_addr.split("'").join("\\'")}', '${data.sol_id == '' ? 0 : data.sol_id}', '${data.phone_no == '' ? 0 : data.phone_no}', '${data.created_by}', '${datetime}')`,
+    whr = data.bank_code > 0 ? `bank_code = ${data.bank_code}` : null,
+    flag = data.bank_code > 0 ? 1 : 0;
+    var bank_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+    res.send(bank_dt);
+})
 
 module.exports = {adminuserRouter}
