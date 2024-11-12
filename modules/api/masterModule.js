@@ -179,7 +179,7 @@ const getFormNo = () => {
     {
       id: "Weekly",
       name: "week",
-      div_period: 4,
+      div_period: 1,
       tot_period: 48
     },
   ]
