@@ -363,7 +363,7 @@ masterRouter.get("/get_tr_mode", async (req, res) => {
 masterRouter.get("/get_bank", async (req, res) => {
     var data = req.query;
    
-    var select = "bank_name",
+    var select = "*",
     table_name = "md_bank",
     whr = null,
     order = null;
