@@ -52,8 +52,8 @@ module.exports = {
             
             let instl_date = await genDate(data.period,data.period_mode,data.recovery_date,data.recovery_date);
 
-            const startDate = instl_date.msg[0].emiStartDate;
-            const endDate = instl_date.msg[0].emiEndDate;
+            const startDate = instl_date.emiStartDate;
+            const endDate = instl_date.emiEndDate;
 
             console.log("Start Date:", startDate);
             console.log("End Date:", endDate);
