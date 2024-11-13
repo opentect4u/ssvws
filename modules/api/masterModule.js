@@ -277,7 +277,77 @@ const getFormNo = () => {
 //     });
 // };
 
-
+const genDate = (period,mode,emiDate,selDay) => {
+  return new Promise((resolve, reject) => {
+    const dateFormat = require('dateformat')
+    var currDate = new Date()
+    // user input //
+    // var period = 48, mode = 'W', emiDate = 15, selDay = 2;
+    // end //
+    // OUTPUT //
+    var emiStartDate = '', emiEndDate = '';
+    // END //
+  
+    var dayList = {
+      1: 'Sunday',
+      2: 'Monday',
+      3: 'Tuesday',
+      4: 'Wednesday',
+      5: 'Thursday',
+      6: 'Friday',
+      7: 'Saturday'
+    }
+  
+    var dayRevarseList = {
+      'Sunday': 1,
+      'Monday': 2,
+      'Tuesday': 3,
+      'Wednesday': 4,
+      'Thursday': 5,
+      'Friday': 6,
+      'Saturday': 7
+    }
+    switch (mode) {
+      case 'Monthly':
+        var modDt = new Date(currDate.setMonth((currDate.getMonth() + 1) + period))
+        emiEndDate = new Date(modDt.getFullYear(), modDt.getMonth(), emiDate)
+        var modStDt = new Date()
+        modStDt.setMonth((modStDt.getMonth() + 1))      
+        emiStartDate = new Date(modStDt.getFullYear(), modStDt.getMonth(), emiDate)
+        break;
+      case 'Weekly':
+        var emiEndDate = new Date(currDate.setDate(currDate.getDate() + (period * 7)))
+  
+        for(let i=emiEndDate.getDate(); i < new Date(emiEndDate.getFullYear(), emiEndDate.getMonth(), 0).getDate(); i++){
+          var selectedMon = dayList[selDay]
+          if(selectedMon == dateFormat(new Date(emiEndDate), 'dddd')){
+            break;
+          }
+          emiEndDate.setDate(emiEndDate.getDate() + 1)
+        }
+  
+        var modStDt = new Date()
+        var selDayNum = dayRevarseList[dateFormat(new Date(modStDt), 'dddd')]
+        emiStartDate = new Date(modStDt.setDate((modStDt.getDate() + (7-selDayNum))))
+        
+        for(let i=emiStartDate.getDate(); i < new Date(emiStartDate.getFullYear(), emiStartDate.getMonth(), 0).getDate(); i++){
+          var selectedMon = dayList[selDay]
+          if(selectedMon == dateFormat(new Date(emiStartDate), 'dddd')){
+            break;
+          }
+          emiStartDate.setDate(emiStartDate.getDate() + 1)
+        }
+        break;
+      default:
+        emiStartDate = new Date()
+        emiEndDate = new Date()
+        break;
+    }
+    
+    // console.log(dateFormat(new Date(emiStartDate), 'dd/mm/yyyy'), dateFormat(new Date(emiEndDate), 'dd/mm/yyyy'));
+    resolve({emtStart: emiStartDate, emiEnd: emiEndDate})
+  })
+}
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate}

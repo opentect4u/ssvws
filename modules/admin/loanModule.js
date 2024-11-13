@@ -1,5 +1,5 @@
 var dateFormat = require("dateformat");
-const { getLoanCode, interest_cal_amt, total_emi, installment_end_date, calculate_prn_emi, calculate_intt_emi, payment_code, periodic } = require("../api/masterModule");
+const { getLoanCode, interest_cal_amt, total_emi, installment_end_date, calculate_prn_emi, calculate_intt_emi, payment_code, periodic, genDate } = require("../api/masterModule");
 const { db_Insert } = require("../../model/mysqlModel");
 
 module.exports = {
@@ -50,10 +50,11 @@ module.exports = {
             let outstanding = (parseFloat(data.prn_disb_amt)+parseFloat(data.old_prn_amt)+parseFloat(intt_cal_amt)+parseFloat(data.od_intt_amt))
             console.log(outstanding,'outstanding');
             
+            let instl_date = await genDate(data.period,data.period_mode,data.recovery_date,data.recovery_date);
 
             var table_name = "td_loan",
             fields =`(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,
-            values = `('${loan_code}','${data.branch_code == '' ? 0 : data.branch_code}','${data.group_code == '' ? 0 : data.group_code}','${data.member_code == '' ? 0 : data.member_code}','${data.grt_form_no == '' ? 0 : data.grt_form_no}','${data.purpose}','${data.sub_purpose}','${data.applied_amt == '' ? 0 : data.applied_amt}','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == '' ? 0 : data.period}','${data.curr_roi == '' ? 0 : data.curr_roi}','${data.od_roi == '' ? 0 : data.od_roi}','${datetime}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${intt_cal_amt}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${data.old_prn_amt == '' ? 0 : data.old_prn_amt}',NULL,'${intt_cal_amt}','${data.od_intt_amt == '' ? 0 : data.od_intt_amt}','${outstanding > 0 ? outstanding : 0}','${prn_emi == '' ? 0 : prn_emi}','${intt_emi == '' ? 0 : intt_emi}','${tot_emi > 0 ? tot_emi : 0}','${data.recovery_date}','${data.period_mode}', ${data.period_mode == 'Monthly' ? 'LAST_DAY(DATE_ADD(now(), INTERVAL 1 MONTH))' : 'DATE(DATE_ADD(now(), INTERVAL 1 WEEK))'},'${dateFormat(inst_end_date, "yyyy-mm-dd")}','${data.trans_date}','${data.created_by}','${datetime}')`,
+            values = `('${loan_code}','${data.branch_code == '' ? 0 : data.branch_code}','${data.group_code == '' ? 0 : data.group_code}','${data.member_code == '' ? 0 : data.member_code}','${data.grt_form_no == '' ? 0 : data.grt_form_no}','${data.purpose}','${data.sub_purpose}','${data.applied_amt == '' ? 0 : data.applied_amt}','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == '' ? 0 : data.period}','${data.curr_roi == '' ? 0 : data.curr_roi}','${data.od_roi == '' ? 0 : data.od_roi}','${datetime}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${intt_cal_amt}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${data.old_prn_amt == '' ? 0 : data.old_prn_amt}',NULL,'${intt_cal_amt}','${data.od_intt_amt == '' ? 0 : data.od_intt_amt}','${outstanding > 0 ? outstanding : 0}','${prn_emi == '' ? 0 : prn_emi}','${intt_emi == '' ? 0 : intt_emi}','${tot_emi > 0 ? tot_emi : 0}','${data.recovery_date}','${data.period_mode}', ${instl_date.msg[0].emiStartDate},'${instl_date.msg[0].emiStartDate}','${data.trans_date}','${data.created_by}','${datetime}')`,
             whr = null,
             flag = 0;
             var trans_dt = await db_Insert(table_name,fields,values,whr,flag);
