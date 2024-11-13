@@ -7,7 +7,7 @@ dateFormat = require('dateformat');
 loanRouter.post("/scheme_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = "scheme_name,min_amt,max_amt,min_period,max_period,payment_mode,roi",
+    var select = "scheme_name,min_amt,max_amt,min_period,max_period,min_period_week,max_period_week,payment_mode,roi",
     table_name = "md_scheme",
     whr = `scheme_id = '${data.scheme_id}'`,
     order = null;
