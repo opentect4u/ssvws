@@ -309,7 +309,7 @@ masterRouter.get("/get_sub_purpose", async (req, res) => {
 masterRouter.get("/get_scheme", async (req, res) => {
     var data = req.query;
    
-    var select = "scheme_id,scheme_name,min_amt,max_amt,min_period,max_period,payment_mode,roi",
+    var select = "scheme_id,scheme_name,min_amt,max_amt,min_period,max_period,min_period_week,max_period_week,payment_mode,roi",
     table_name = "md_scheme",
     whr = `active_flag = 'A'`,
     order = null;
