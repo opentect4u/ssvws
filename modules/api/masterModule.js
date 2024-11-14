@@ -206,7 +206,8 @@ const getFormNo = () => {
       emi_prn = (principal / period);
       console.log(emi_prn.toFixed(2));
       
-       resolve(emi_prn.toFixed(2));
+      //  resolve(emi_prn.toFixed(2));
+      resolve(Math.round(emi_prn));
     });
   };
 
@@ -217,8 +218,8 @@ const getFormNo = () => {
       emi_intt = (interest / period);
       console.log(emi_intt.toFixed(2));
       
-       resolve(emi_intt.toFixed(2));
-      //  resolve(Math.round(emi_intt));
+      //  resolve(emi_intt.toFixed(2));
+       resolve(Math.round(emi_intt));
     });
   };
 
