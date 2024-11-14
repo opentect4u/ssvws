@@ -50,11 +50,10 @@ module.exports = {
             let outstanding = (parseFloat(data.prn_disb_amt)+parseFloat(data.old_prn_amt)+parseFloat(intt_cal_amt)+parseFloat(data.od_intt_amt))
             console.log(outstanding,'outstanding');
             
-            let instl_date = await genDate(data.period,data.period_mode,data.recovery_date,data.recovery_date);
-
+            let instl_date = await genDate(data.period, data.period_mode, data.recovery_date, data.recovery_date);
             const startDate = instl_date.emiStartDate;
-            const endDate = instl_date.emiEndDate;
-
+            const endDate = instl_date.emiEndDate.toISOString().slice(0, 10);
+            
             console.log("Start Date:", startDate);
             console.log("End Date:", endDate);
 
