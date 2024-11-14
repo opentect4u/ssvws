@@ -55,24 +55,31 @@ module.exports = {
 
             let payment_id = await payment_code(data.branch_code)
 
-            var table_name = "td_loan",
-            fields = `instl_paid = '${data.instl_paid}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
-            values = null,
-            whr = `loan_id = '${data.loan_id}'`,
-            flag = 1;
-            var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
-
-            if(rec_dt.suc > 0 && rec_dt.msg.length > 0){
-
-                var table_name = "td_loan_transactions",
-                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,status,created_by,created_at)`,
-                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','${datetime}','${data.tr_type}','U','${data.created_by}','${datetime}')`,
+            var table_name = "td_loan_transactions",
+                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at)`,
+                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.debit}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','I','U','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
-                var rec_dtls = await db_Insert(table_name,fields,values,whr,flag);
+                var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
+
+            var table_name = "td_loan_transactions",
+                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,status,created_by,created_at)`,
+                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','${datetime}','R','U','${data.created_by}','${datetime}')`,
+                whr = null,
+                flag = 0;
+                var rec_dtls_prn = await db_Insert(table_name,fields,values,whr,flag);    
+
+            if(rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0){
+                var table_name = "td_loan",
+                fields = `prn_amt = '${data.prn_amt}', intt_amt = '${data.intt_amt}', outstanding = '${data.outstanding}', instl_paid = '${data.instl_paid}', last_trn_dt = '${data.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                values = null,
+                whr = `loan_id = '${data.loan_id}'`,
+                flag = 1;
+                var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
+                
             }
 
-            resolve(rec_dt)
+            resolve(rec_dtls_prn)
         });
     }
 }
