@@ -56,7 +56,7 @@ res.send(loan_dtls)
 loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.loan_id, a.tr_type, a.debit, b.member_code, b.grt_form_no form_no, c.client_name",
+    var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.loan_id, a.tr_type, a.debit, a.status, b.member_code, b.grt_form_no form_no, c.client_name",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_member c ON b.branch_code = c.branch_code AND b.member_code = c.member_code",
     whr = `a.status = '${data.approval_status}'`,
     order = null;
