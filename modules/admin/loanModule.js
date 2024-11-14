@@ -51,6 +51,10 @@ module.exports = {
             console.log(outstanding,'outstanding');
             
             let instl_date = await genDate(data.period,data.period_mode,data.recovery_date,data.recovery_date);
+               if (!instl_date || !instl_date.emiStartDate || !instl_date.emiEndDate) {
+                console.error("Invalid installment dates generated, setting default values.");
+                instl_date = { emiStartDate: instl_date.emiStartDate, emiEndDate: instl_date.emiEndDate.toISOString().slice(0, 10) };
+            }
 
             const startDate = instl_date.emiStartDate;
             const endDate = instl_date.emiEndDate;
