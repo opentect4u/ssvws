@@ -55,9 +55,12 @@ module.exports = {
 
             let payment_id = await payment_code(data.branch_code)
 
+            console.log(payment_id, 'payment_id');
+            
+
             var table_name = "td_loan_transactions",
                 fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at)`,
-                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.intt_emi}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','I','U','${data.created_by}','${datetime}')`,
+                values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.intt_emi}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','I','U','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
