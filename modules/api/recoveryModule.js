@@ -57,21 +57,21 @@ module.exports = {
 
             var table_name = "td_loan_transactions",
                 fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at)`,
-                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.debit}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','I','U','${data.created_by}','${datetime}')`,
+                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.intt_emi}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','I','U','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
 
             var table_name = "td_loan_transactions",
                 fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,status,created_by,created_at)`,
-                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${data.balance > 0 ? data.balance : 0}','${data.intt_balance > 0 ? data.intt_balance : 0}','${datetime}','R','U','${data.created_by}','${datetime}')`,
+                values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${data.prn_recov > 0 ? data.prn_recov : 0}','${data.intt_recov > 0 ? data.intt_recov : 0}','${datetime}','R','U','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var rec_dtls_prn = await db_Insert(table_name,fields,values,whr,flag);    
 
             if(rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0){
                 var table_name = "td_loan",
-                fields = `prn_amt = '${data.prn_amt}', intt_amt = '${data.intt_amt}', outstanding = '${data.outstanding}', instl_paid = '${data.instl_paid}', last_trn_dt = '${data.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                fields = `prn_amt = '${data.prn_recov}', intt_amt = '${data.intt_recov}', outstanding = '${data.rem_outstanding}', instl_paid = '${data.instl_paid}', last_trn_dt = '${datetime}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                 values = null,
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
