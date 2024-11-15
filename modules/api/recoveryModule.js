@@ -80,15 +80,16 @@ module.exports = {
     
             if(rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0){
 
-                let outstanding_cal = parseFloat(prn_recov) + parseFloat(intt_recov);
+                let outstanding = parseFloat(prn_recov) + parseFloat(intt_recov);
 
                 var table_name = "td_loan",
-                fields = `prn_amt = '${prn_recov}', intt_amt = '${intt_recov}', outstanding = '${outstanding_cal}', instl_paid = '${data.instl_paid}', last_trn_dt = '${data.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                fields = `prn_amt = '${prn_recov}', intt_amt = '${intt_recov}', outstanding = '${outstanding}', instl_paid = '${data.instl_paid}', last_trn_dt = '${data.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                 values = null,
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
                 var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
-                
+                rec_dt["outstanding"] = outstanding;
+                rec_dt["instl_paid"] = instl_paid;
             }
 
             resolve(rec_dt)
