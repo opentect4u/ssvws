@@ -44,4 +44,16 @@ recoveryRouter.post("/recovery_transaction", async (req, res) => {
 
 });
 
+// recoveryRouter.post("/view_transaction", async (req, res) => {
+//     var data = req.body;
+
+//     var select = "a.loan_id,a.branch_code,a.group_code,a.member_code,a.grt_form_no,a.purpose,a.sub_purpose,a.applied_amt,",
+//     table_name = "",
+//     whr = ``,
+//     order = "",
+//     var view_dt = await db_Select(select,table_name,whr,order);
+
+//     res.send(view_dt)
+// })
+
 module.exports = {recoveryRouter}

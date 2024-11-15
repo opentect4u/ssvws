@@ -58,8 +58,8 @@ module.exports = {
             console.log(payment_id, 'payment_id');
             
             var table_name = "td_loan_transactions",
-                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at,trn_lat,trn_long)`,
-                values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.intt_emi}','${data.balance > 0 ? data.balance : 0}','${data.intt_emi > 0 ? data.intt_emi : 0}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}')`,
+                fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
+                values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','0','${data.intt_emi}','${data.balance > 0 ? data.balance : 0}','${data.intt_emi > 0 ? data.intt_emi : 0}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr}')`,
                 whr = null,
                 flag = 0;
                 var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
@@ -70,8 +70,8 @@ module.exports = {
                     let prn_recov = parseFloat(data.balance) - parseFloat(data.prn_emi);
 
                     var table_name = "td_loan_transactions",
-                    fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,status,created_by,created_at,trn_lat,trn_long)`,
-                    values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_emi > 0 ? data.prn_emi : 0}','${data.intt_emi > 0 ? data.intt_emi : 0}','${prn_recov > 0 ? prn_recov : 0}','0','${datetime}','R','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}')`,
+                    fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
+                    values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${data.loan_id}','${data.credit}','0','${data.prn_emi > 0 ? data.prn_emi : 0}','${data.intt_emi > 0 ? data.intt_emi : 0}','${prn_recov > 0 ? prn_recov : 0}','0','${datetime}','R','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr}')`,
                     whr = null,
                     flag = 0;
                     var rec_dtls_prn = await db_Insert(table_name,fields,values,whr,flag);    
