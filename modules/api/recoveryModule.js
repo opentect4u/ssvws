@@ -80,6 +80,8 @@ module.exports = {
     
             if(rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0){
 
+                let prn_recov = parseFloat(data.balance) - parseFloat(data.prn_emi);
+                let intt_recov = parseFloat(data.intt_cal_amt) - parseFloat(data.intt_emi);
                 let outstanding = parseFloat(prn_recov) + parseFloat(intt_recov);
 
                 var table_name = "td_loan",
