@@ -68,7 +68,6 @@ module.exports = {
                     payment_id = await payment_code(data.branch_code)
 
                     let prn_recov = parseFloat(data.balance) - parseFloat(data.prn_emi);
-                    let intt_recov = parseFloat(data.intt_cal_amt) - parseFloat(data.intt_emi);
 
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,status,created_by,created_at)`,
@@ -91,7 +90,7 @@ module.exports = {
                 flag = 1;
                 var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
                 rec_dt["outstanding"] = outstanding;
-                rec_dt["instl_paid"] = instl_paid;
+                rec_dt["instl_paid"] = data.instl_paid;
             }
 
             resolve(rec_dt)
