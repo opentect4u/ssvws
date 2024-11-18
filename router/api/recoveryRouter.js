@@ -55,7 +55,8 @@ recoveryRouter.post("/view_transaction", async (req, res) => {
         AND a.loan_id = c.loan_id
         ${data.loan_id > 0 ? `AND a.loan_id = '${data.loan_id}'` : ''}
         AND c.status = '${data.approval_status}'
-        AND c.tr_type = 'R'`,
+        AND c.tr_type = 'R'
+        AND c.delete_status = 'N'`,
     order = "Order BY a.member_code";
     var view_dt = await db_Select(select,table_name,whr,order);
 
