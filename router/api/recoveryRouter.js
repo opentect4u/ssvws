@@ -64,6 +64,8 @@ recoveryRouter.post("/view_transaction", async (req, res) => {
 
 recoveryRouter.post("/remove_trans", async (req, res) => {
     var data = req.post;
+    console.log(data);
+    
 
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
