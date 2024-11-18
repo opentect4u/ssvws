@@ -1,4 +1,4 @@
-const { db_Select } = require('../../model/mysqlModel');
+const { db_Select, db_Insert } = require('../../model/mysqlModel');
 const { recovery_trans } = require('../../modules/api/recoveryModule');
 
 const express = require('express'),
@@ -60,6 +60,21 @@ recoveryRouter.post("/view_transaction", async (req, res) => {
     var view_dt = await db_Select(select,table_name,whr,order);
 
     res.send(view_dt)
+});
+
+recoveryRouter.post("/remove_trans", async (req, res) => {
+    var data = req.post;
+
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    
+    var table_name = "td_loan_transactions",
+    fields = `delete_status = 'Y', deleted_by = '${data.deleted_by}', deleted_at = '${datetime}'`,
+    values = null,
+    whr = `loan_id = '${data.loan_id}'`,
+    flag = 1;
+    var delete_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+    res.send(delete_dt);
 })
 
 module.exports = {recoveryRouter}
