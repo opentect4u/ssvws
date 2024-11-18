@@ -63,7 +63,7 @@ recoveryRouter.post("/view_transaction", async (req, res) => {
 });
 
 recoveryRouter.post("/remove_trans", async (req, res) => {
-    var data = req.post;
+    var data = req.body;
     console.log(data);
     
 
