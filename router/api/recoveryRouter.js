@@ -72,7 +72,7 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
     var table_name = "td_loan_transactions",
     fields = `delete_status = 'Y', deleted_by = '${data.deleted_by}', deleted_at = '${datetime}'`,
     values = null,
-    whr = `loan_id = '${data.loan_id}'`,
+    whr = `loan_id = '${data.loan_id}' AND status != 'A'`,
     flag = 1;
     var delete_dt = await db_Insert(table_name,fields,values,whr,flag);
 
