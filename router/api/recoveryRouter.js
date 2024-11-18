@@ -70,7 +70,7 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
     var table_name = "td_loan_transactions",
-    fields = `delete_status = 'Y', deleted_by = '${data.deleted_by}', deleted_at = '${datetime}'`,
+    fields = `particulars = '${data.particulars.split("'").join("\\'")}', delete_status = 'Y', deleted_by = '${data.deleted_by}', deleted_at = '${datetime}'`,
     values = null,
     whr = `loan_id = '${data.loan_id}' AND status != 'A'`,
     flag = 1;
