@@ -78,6 +78,6 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
     var delete_dt = await db_Insert(table_name,fields,values,whr,flag);
 
     res.send(delete_dt);
-})
+});
 
 module.exports = {recoveryRouter}

@@ -166,4 +166,19 @@ loanRouter.post("/delete_apply_loan", async (req, res) => {
 //     res.send(fetch_grp_mem_dtls)
 // });
 
+loanRouter.post("/view_recovery_dtls", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.loan_id,a.period,a.curr_roi,a.prn_amt,a.intt_amt,a.outstanding,a.period_mode,a.instl_end_dt,a.instl_paid,a.prn_emi,a.intt_emi,a.tot_emi,a.last_trn_dt,b.credit",
+    table_name = "td_loan a, td_loan_transactions b",
+    whr = `a.loan_id = b.loan_id
+    AND a.branch_code = b.branch_id
+    AND a.loan_id = '${data.loan_id}'
+    AND b.tr_type = 'R'`,
+    order = null;
+    var recovery_dtls = await db_Select(select,table_name,whr,order);
+
+    res.send(recovery_dtls)
+});
+
 module.exports = {loanRouter}
