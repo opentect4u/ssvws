@@ -179,4 +179,18 @@ loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
     res.send(recovery_dtls)
 });
 
+loanRouter.post("/approve_recovery_loan", async (req, res) => {
+    var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    var table_name = "td_loan_transactions",
+    fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
+    values = null,
+    whr = `loan_id = '${data.loan_id}' AND tr_type != 'D'`,
+    flag = 1;
+    var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+    res.send(approve_dt)
+});
+
 module.exports = {loanRouter}
