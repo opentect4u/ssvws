@@ -166,17 +166,15 @@ loanRouter.post("/delete_apply_loan", async (req, res) => {
 //     res.send(fetch_grp_mem_dtls)
 // });
 
-loanRouter.post("/view_recovery_dtls", async (req, res) => {
-    var data = req.body;
-
-    var select = "a.loan_id,a.period,a.curr_roi,a.prn_amt,a.intt_amt,a.outstanding,a.period_mode,a.instl_end_dt,a.instl_paid,a.prn_emi,a.intt_emi,a.tot_emi,a.last_trn_dt,b.credit",
-    table_name = "td_loan a, td_loan_transactions b",
-    whr = `a.loan_id = b.loan_id
-    AND a.branch_code = b.branch_id
-    AND a.loan_id = '${data.loan_id}'
-    AND b.tr_type = 'R'`,
-    order = null;
-    var recovery_dtls = await db_Select(select,table_name,whr,order);
+loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
+        var data = req.body;
+    
+        var select = "a.group_code,a.member_code,a.branch_code,a.scheme_id,a.period,a.curr_roi,a.period_mode,a.fund_id,a.prn_disb_amt disburse_amount,a.recovery_day,a.instl_start_dt,a.instl_end_dt,a.prn_amt principal_amt,a.intt_amt interest_amount,a.prn_emi principle_emi_amount,a.intt_emi interest_emi,a.tot_emi total_emi_amount,a.last_trn_dt txn_date,b.prn_recov principal_recovery, b.intt_recov interest_recovery,b.balance,c.group_name,d.client_name,e.branch_name,f.scheme_name,g.fund_name",
+        table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id LEFT JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code LEFT JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code LEFT JOIN md_branch e ON a.branch_code = e.branch_code LEFT JOIN md_scheme f ON a.scheme_id = f.scheme_id LEFT JOIN md_fund g ON a.fund_id = g.fund_id",
+        whr = `a.loan_id = '${data.loan_id}'
+        AND b.status = 'U' AND b.tr_type = 'R'`,
+        order = null;
+        var recovery_dtls = await db_Select(select,table_name,whr,order);
 
     res.send(recovery_dtls)
 });
