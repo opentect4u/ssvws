@@ -196,4 +196,20 @@ loanRouter.post("/approve_recovery_loan", async (req, res) => {
     res.send(approve_dt)
 });
 
+loanRouter.post("/delete_recov_trans", async (req, res) => {
+    var data = req.body;
+
+    var table_name = "td_loan_transactions",
+    whr = `loan_id = '${data.loan_id}' AND tr_type = 'I'`
+    var del_recov_dt = await db_Delete(table_name,whr);
+
+    if(del_recov_dt.suc > 0 && del_recov_dt.msg.length > 0){
+        var table_name = "td_loan_transactions",
+        whr = `loan_id = '${data.loan_id}' AND tr_type = 'R'`
+        var del_recov_dtls = await db_Delete(table_name,whr);
+    }
+
+    res.send(del_recov_dt);
+});
+
 module.exports = {loanRouter}
