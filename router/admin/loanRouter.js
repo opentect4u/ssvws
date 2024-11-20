@@ -233,7 +233,7 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
     if(del_recov_dtls.suc > 0 && del_recov_dtls.msg.length > 0){
         let prn_amount = parseFloat(prn_amt) + parseFloat(prn_recov);
         let intt_amount = parseFloat(intt_amt) + parseFloat(intt_recov);
-        let outstanding_amount = parseFloat(out_amt) + parseFloat(prn_recov);
+        let outstanding_amount = parseFloat(prn_amount) + parseFloat(intt_amount);
 
         var table_name = "td_loan",
         fields = `prn_amt = '${prn_amount}', intt_amt = '${intt_amount}', outstanding = '${outstanding_amount}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
