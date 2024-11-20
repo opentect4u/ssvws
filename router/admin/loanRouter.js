@@ -201,7 +201,7 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
 
     var select = "a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,b.prn_recov,b.intt_recov",
     table_name = "td_loan a, td_loan_transactions b",
-    whr = `a.branch_id = b.branch_code
+    whr = `a.branch_code = b.branch_id
     AND a.loan_id = b.loan_id
     AND a.loan_id = '${data.loan_id}'`,
     order = null;
