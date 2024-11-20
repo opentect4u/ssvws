@@ -228,7 +228,7 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
         var table_name = "td_loan",
         fields = `prn_amt = '${prn_amount}', intt_amt = '${intt_amount}', outstanding = '${outstanding_amount}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
         values = null,
-        whr = `a.loan_id = '${data.loan_id}'`,
+        whr = `loan_id = '${data.loan_id}'`,
         flag = 1;
         var recov_dtls = await db_Insert(table_name,fields,values,whr,flag);
     }
