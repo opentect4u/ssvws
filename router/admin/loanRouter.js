@@ -258,4 +258,25 @@ loanRouter.post("/search_grp_view", async (req, res) => {
     res.send(search_grp_view)
 });
 
+loanRouter.post("/fetch_search_grp_view", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.group_name,a.group_type,a.branch_code,a.phone1,a.phone2,a.grp_addr,a.disctrict,a.pin_no,a.bank_name,a.branch_name bank_branch,a.acc_no1,a.acc_no2,b.block_name,c.emp_name,d.branch_name",
+    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+    whr = `a.group_code = '${data.group_code}'`,
+    order = null;
+    var fetch_search_group_web = await db_Select(select,table_name,whr,order);
+
+    // if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
+    //     var select = "a.member_code,a.client_name,b.form_no,b.approval_status",
+    //     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    //     whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}'`,
+    //     order = null;
+    //     var grp_mem_dt = await db_Select(select,table_name,whr,order);
+    //     fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
+    // }
+
+    res.send(fetch_search_group_web)
+});
+
 module.exports = {loanRouter}
