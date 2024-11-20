@@ -199,17 +199,40 @@ loanRouter.post("/approve_recovery_loan", async (req, res) => {
 loanRouter.post("/delete_recov_trans", async (req, res) => {
     var data = req.body;
 
+    var select = "a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,b.prn_recov,b.intt_recov",
+    table_name = "td_loan a, td_loan_transactions b",
+    whr = `a.branch_id = b.branch_code
+    AND a.loan_id = b.loan_id
+    AND a.loan_id = '${data.loan_id}'`,
+    order = null;
+    var selected_dt = await db_Select(select,table_name,whr,order);
+
+    if(selected_dt.suc > 0 && selected_dt.msg.length > 0){
     var table_name = "td_loan_transactions",
     whr = `loan_id = '${data.loan_id}' AND tr_type = 'I' AND status = 'U'`
     var del_recov_dt = await db_Delete(table_name,whr);
 
-    if(del_recov_dt.suc > 0 && del_recov_dt.msg.length > 0){
+        if(del_recov_dt.suc > 0 && del_recov_dt.msg.length > 0){
         var table_name = "td_loan_transactions",
         whr = `loan_id = '${data.loan_id}' AND tr_type = 'R' AND status = 'U'`
         var del_recov_dtls = await db_Delete(table_name,whr);
+        }
     }
 
-    res.send(del_recov_dt);
+    if(del_recov_dtls.suc > 0 && del_recov_dtls.msg.length > 0){
+        let prn_amount = parseFloat(prn_amt) + parseFloat(prn_recov);
+        let intt_amount = parseFloat(intt_amt) + parseFloat(intt_recov);
+        let outstanding_amount = parseFloat(prn_amount) + parseFloat(intt_amount);
+
+        var table_name = "td_loan",
+        fields = `prn_amt = '${prn_amount}', intt_amt = '${intt_amount}', outstanding = '${outstanding_amount}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+        values = null,
+        whr = `a.loan_id = '${data.loan_id}'`,
+        flag = 1;
+        var recov_dtls = await db_Insert(table_name,fields,values,whr,flag);
+    }
+
+    res.send(recov_dtls);
 });
 
 module.exports = {loanRouter}
