@@ -198,6 +198,7 @@ loanRouter.post("/approve_recovery_loan", async (req, res) => {
 
 loanRouter.post("/delete_recov_trans", async (req, res) => {
     var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var select = "a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,b.prn_recov,b.intt_recov",
     table_name = "td_loan a, td_loan_transactions b",
