@@ -200,15 +200,25 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
     var data = req.body;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-    var select = "a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,b.prn_recov,b.intt_recov",
-    table_name = "td_loan a, td_loan_transactions b",
-    whr = `a.branch_code = b.branch_id
-    AND a.loan_id = b.loan_id
-    AND a.loan_id = '${data.loan_id}'`,
+    var select = "a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt, a.outstanding",
+    table_name = "td_loan a",
+    whr = `a.loan_id = '${data.loan_id}'`,
     order = null;
-    var selected_dt = await db_Select(select,table_name,whr,order);
+    var loan_dt = await db_Select(select,table_name,whr,order);
 
-    if(selected_dt.suc > 0 && selected_dt.msg.length > 0){
+    var select = "prn_recov, intt_recov",
+    table_name = "td_loan_transactions",
+    whr = `payment_id = '${data.payment_id}'`,
+    order = null;
+    var loan_trn_dt = await db_Select(select,table_name,whr,order);
+
+    if(loan_dt.suc > 0 && loan_trn_dt.suc > 0){
+    var prn_amt = loan_dt.msg.length > 0 ? loan_dt.msg[0].prn_amt : 0,
+    intt_amt = loan_dt.msg.length > 0 ? loan_dt.msg[0].intt_amt : 0,
+    out_amt = loan_dt.msg.length > 0 ? loan_dt.msg[0].outstanding : 0,
+    prn_recov = loan_trn_dt.msg.length > 0 ? loan_trn_dt.msg[0].prn_recov : 0,
+    intt_recov = loan_trn_dt.msg.length > 0 ? loan_trn_dt.msg[0].intt_recov : 0;
+
     var table_name = "td_loan_transactions",
     whr = `loan_id = '${data.loan_id}' AND tr_type = 'I' AND status = 'U'`
     var del_recov_dt = await db_Delete(table_name,whr);
@@ -221,9 +231,9 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
     }
 
     if(del_recov_dtls.suc > 0 && del_recov_dtls.msg.length > 0){
-        let prn_amount = parseFloat(selected_dt.msg[0].prn_amt) + parseFloat(selected_dt.msg[0].prn_recov);
-        let intt_amount = parseFloat(selected_dt.msg[0].intt_amt) + parseFloat(selected_dt.msg[0].intt_recov);
-        let outstanding_amount = parseFloat(prn_amount) + parseFloat(intt_amount);
+        let prn_amount = parseFloat(prn_amt) + parseFloat(prn_recov);
+        let intt_amount = parseFloat(intt_amt) + parseFloat(intt_recov);
+        let outstanding_amount = parseFloat(out_amt) + parseFloat(prn_recov);
 
         var table_name = "td_loan",
         fields = `prn_amt = '${prn_amount}', intt_amt = '${intt_amount}', outstanding = '${outstanding_amount}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
