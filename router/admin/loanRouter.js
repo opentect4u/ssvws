@@ -258,36 +258,69 @@ loanRouter.post("/search_grp_view", async (req, res) => {
     res.send(search_grp_view)
 });
 
+// loanRouter.post("/fetch_search_grp_view", async (req, res) => {
+//     var data = req.body;
+
+//     var select = "a.group_name,a.group_type,a.branch_code,a.phone1,a.phone2,a.grp_addr,a.disctrict,a.pin_no,a.bank_name,a.branch_name bank_branch,a.acc_no1,a.acc_no2,b.block_name,c.emp_name,d.branch_name",
+//     table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+//     whr = `a.group_code = '${data.group_code}'`,
+//     order = null;
+//     var fetch_search_group_view = await db_Select(select,table_name,whr,order);
+
+//     if(fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0){
+//         var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name,(SELECT SUM(outstanding) 
+//                        FROM td_loan 
+//                        WHERE group_code = '${data.group_code}') AS total_outstanding`,
+//         table_name = "td_loan a JOIN md_member b ON  a.branch_code = b.branch_code AND a.member_code = b.member_code",
+//         whr = `a.group_code = '${data.group_code}'`,
+//         order = null;
+//         var grp_mem_dtls = await db_Select(select,table_name,whr,order);
+
+//         if (grp_mem_dtls.suc > 0) {
+//             fetch_search_group_view.msg[0]['memb_dt'] = grp_mem_dtls.msg.length > 0 ? grp_mem_dtls.msg : [];
+//             fetch_search_group_view.msg[0]['total_outstanding'] = grp_mem_dtls.msg.length > 0 
+//                 ? grp_mem_dtls.msg[0]['total_outstanding'] 
+//                 : 0;
+//         } else {
+//             fetch_search_group_view.msg[0]['memb_dt'] = [];
+//             fetch_search_group_view.msg[0]['total_outstanding'] = 0;
+//         }
+//     }
+
+//     res.send(fetch_search_group_view)
+// });
+
 loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     var data = req.body;
 
     var select = "a.group_name,a.group_type,a.branch_code,a.phone1,a.phone2,a.grp_addr,a.disctrict,a.pin_no,a.bank_name,a.branch_name bank_branch,a.acc_no1,a.acc_no2,b.block_name,c.emp_name,d.branch_name",
-    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
-    whr = `a.group_code = '${data.group_code}'`,
-    order = null;
-    var fetch_search_group_view = await db_Select(select,table_name,whr,order);
-
-    if(fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0){
-        var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name,(SELECT SUM(outstanding) 
-                       FROM td_loan 
-                       WHERE group_code = '${data.group_code}') AS total_outstanding`,
-        table_name = "td_loan a JOIN md_member b ON  a.branch_code = b.branch_code AND a.member_code = b.member_code",
+        table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
         whr = `a.group_code = '${data.group_code}'`,
         order = null;
-        var grp_mem_dtls = await db_Select(select,table_name,whr,order);
+    var fetch_search_group_view = await db_Select(select, table_name, whr, order);
 
-        if (grp_mem_dtls.suc > 0) {
-            fetch_search_group_view.msg[0]['memb_dt'] = grp_mem_dtls.msg.length > 0 ? grp_mem_dtls.msg : [];
-            fetch_search_group_view.msg[0]['total_outstanding'] = grp_mem_dtls.msg.length > 0 
-                ? grp_mem_dtls.msg[0]['total_outstanding'] 
-                : 0;
-        } else {
-            fetch_search_group_view.msg[0]['memb_dt'] = [];
-            fetch_search_group_view.msg[0]['total_outstanding'] = 0;
-        }
+    if (fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0) {
+       
+        var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name`,
+            table_name = "td_loan a JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+            whr = `a.group_code = '${data.group_code}'`,
+            order = null;
+        var grp_mem_dtls = await db_Select(select, table_name, whr, order);
+
+        var select = `SUM(outstanding) AS total_outstanding`,
+            table_name = "td_loan",
+            whr = `group_code = '${data.group_code}'`,
+            order = null;
+        var total_outstanding_result = await db_Select(select, table_name, whr, order);
+
+        fetch_search_group_view.msg[0]['memb_dt'] = grp_mem_dtls.suc > 0 && grp_mem_dtls.msg.length > 0 ? grp_mem_dtls.msg : [];
+        fetch_search_group_view.msg[0]['total_outstanding'] = total_outstanding_result.suc > 0 && total_outstanding_result.msg.length > 0
+            ? total_outstanding_result.msg[0]['total_outstanding']
+            : 0;
     }
 
-    res.send(fetch_search_group_view)
+    res.send(fetch_search_group_view);
 });
+
 
 module.exports = {loanRouter}
