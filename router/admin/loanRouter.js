@@ -268,7 +268,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     var fetch_search_group_view = await db_Select(select,table_name,whr,order);
 
     if(fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0){
-        var select = `a.member_code,a.outstanding curr_outstanding,b.client_name,(SELECT SUM(outstanding) 
+        var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name,(SELECT SUM(outstanding) 
                        FROM td_loan 
                        WHERE group_code = '${data.group_code}') AS total_outstanding`,
         table_name = "td_loan a JOIN md_member b ON  a.branch_code = b.branch_code AND a.member_code = b.member_code",
