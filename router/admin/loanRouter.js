@@ -169,7 +169,7 @@ loanRouter.post("/delete_apply_loan", async (req, res) => {
 loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
         var data = req.body;
     
-        var select = `a.group_code,a.member_code,a.branch_code,a.scheme_id,a.period,a.curr_roi,a.period_mode,a.fund_id,a.prn_disb_amt disburse_amount,a.recovery_day,a.instl_start_dt,a.instl_end_dt,a.prn_amt principal_amt,a.intt_amt interest_amount,a.outstanding curr_outstanding,a.prn_emi principle_emi_amount,a.intt_emi interest_emi,a.tot_emi total_emi_amount,a.last_trn_dt txn_date,b.payment_id,b.prn_recov principal_recovery, b.intt_recov interest_recovery,b.credit,b.balance,b.created_by,b.created_at,b.trn_lat,b.trn_long,b.trn_addr,c.group_name,d.client_name,e.branch_name,f.scheme_name,g.fund_name,h.emp_name created_by,  (
+        var select = `a.group_code,a.member_code,a.branch_code,a.scheme_id,a.period,a.curr_roi,a.period_mode,a.fund_id,a.prn_disb_amt disburse_amount,a.recovery_day,a.instl_start_dt,a.instl_end_dt,a.prn_amt principal_amt,a.intt_amt interest_amount,a.outstanding curr_outstanding,a.prn_emi principle_emi_amount,a.intt_emi interest_emi,a.tot_emi total_emi_amount,a.last_trn_dt txn_date,b.payment_id,b.prn_recov principal_recovery, b.intt_recov interest_recovery,b.credit,b.balance,b.tr_type,b.tr_mode,b.bank_name,b.cheque_id,b.chq_dt,b.created_by,b.created_at,b.trn_lat,b.trn_long,b.trn_addr,c.group_name,d.client_name,e.branch_name,f.scheme_name,g.fund_name,h.emp_name created_by,  (
                 SELECT SUM(i.balance + i.intt_balance)
                 FROM td_loan_transactions i
                 WHERE i.tr_type = 'I' AND i.loan_id = a.loan_id
