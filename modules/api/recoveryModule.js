@@ -89,12 +89,12 @@ module.exports = {
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
                 var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
-                rec_dt["outstanding"] = outstanding;
-                rec_dt["instl_paid"] = data.instl_paid;
+                // rec_dt["outstanding"] = outstanding;
+                // rec_dt["instl_paid"] = data.instl_paid;
             }
 
             if(rec_dt.suc > 0 && rec_dt.msg.length > 0){
-                var select = `a.loan_id,a.branch_code,a.group_code,a.member_code,b.payment_date tnx_date,b.payment_id tnx_id,b.credit,b.balance curr_balance,c.group_name,d.branch_name,e.client_name,(
+                var select = `a.loan_id,a.branch_code,a.group_code,a.member_code,a.instl_paid,a.outstanding,b.payment_date tnx_date,b.payment_id tnx_id,b.credit,b.balance curr_balance,c.group_name,d.branch_name,e.client_name,(
                 SELECT SUM(i.balance + i.intt_balance)
                 FROM td_loan_transactions i
                 WHERE i.tr_type = 'I' AND i.loan_id = a.loan_id
@@ -107,7 +107,7 @@ module.exports = {
                 rec_dtls_prn.msg[0]['trans_dtl'] = trans_dtl.suc > 0 ? (trans_dtl.msg.length > 0 ? trans_dtl.msg : []) : [];
             }
 
-            resolve(rec_dt)
+            resolve(trans_dtl)
         });
     }
 }
