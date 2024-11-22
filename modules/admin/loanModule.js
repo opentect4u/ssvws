@@ -77,5 +77,20 @@ module.exports = {
 
             resolve(trans_dt)
         });
-    }
+    },
+
+    save_loan_dtls: (data) => {
+        return new Promise(async (resolve, reject) => {
+            let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+            var table_name = "td_loan",
+            fields = `purpose = '${data.purpose}', sub_purpose = '${data.sub_purpose}', fund_id = '${data.fund_id}', tot_emi = '${data.tot_emi}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            values = null,
+            whr = `loan_id = '${data.loan_id}'`,
+            flag = 1;
+            var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+            resolve(res_dt)
+            });
+        }
 }
