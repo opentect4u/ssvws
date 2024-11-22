@@ -1,5 +1,5 @@
 var dateFormat = require("dateformat");
-const { db_Insert } = require("../../model/mysqlModel");
+const { db_Insert, db_Select } = require("../../model/mysqlModel");
 const { payment_code } = require("./masterModule");
 
 module.exports = { 
@@ -91,6 +91,16 @@ module.exports = {
                 var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
                 rec_dt["outstanding"] = outstanding;
                 rec_dt["instl_paid"] = data.instl_paid;
+            }
+
+            if(rec_dt.suc > 0 && rec_dt.msg.length > 0){
+                var select = `a.loan_id,a.branch_code,a.group_code,a.member_code,b.payment_date tnx_date,b.payment_id tnx_id,b.credit,b.balance curr_balance,c.group_name,d.branch_name,e.client_name`,
+                table_name = "td_loan a JOIN td_loan_transactions b ON a.loan_id = b.loan_id AND a.branch_code = b.branch_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_branch d ON a.branch_code = d.branch_code JOIN md_member e ON a.branch_code = e.branch_code AND a.member_code = e.member_code",
+                whr = `a.loan_id = '${data.loan_id}'`
+                order = null;
+                var trans_dtl = await db_Select(select,table_name,whr,order);
+
+                rec_dtls_prn.msg[0]['trans_dtl'] = trans_dtl.suc > 0 ? (trans_dtl.msg.length > 0 ? trans_dtl.msg : []) : [];
             }
 
             resolve(rec_dt)
