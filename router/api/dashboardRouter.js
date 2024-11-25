@@ -20,7 +20,7 @@ appdashboardRouter.post("/dashboard_dtls", async (req, res) => {
 appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     var data = req.body;
 
-    var select = "SUM(credit)",
+    var select = "SUM(credit) tot_recov_cash",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
     AND tr_type = 'R'
@@ -35,7 +35,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
 appdashboardRouter.post("/dashboard_dtls_bank_recov", async (req, res) => {
     var data = req.body;
 
-    var select = "SUM(credit)",
+    var select = "SUM(credit) tot_recov_bank",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
     AND tr_type = 'R'
