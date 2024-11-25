@@ -51,6 +51,7 @@ app.use((req, res, next) => {
 });
 
 const { adminRouter } = require("./router/adminRouter");
+const { appdashboardRouter } = require("./router/api/dashboardRouter");
 const { grtformRouter } = require("./router/api/grtformRouter");
 const { masterRouter } = require("./router/api/masterRouter");
 const { memberRouter } = require("./router/api/memberRouter");
@@ -68,6 +69,7 @@ app.use(userRouter)
 app.use(memberRouter)
 app.use(recoveryRouter)
 app.use(reportRouter)
+app.use(appdashboardRouter)
 app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
