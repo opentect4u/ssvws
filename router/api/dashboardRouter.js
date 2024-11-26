@@ -17,6 +17,22 @@ appdashboardRouter.post("/dashboard_dtls", async (req, res) => {
     res.send(dashboard_dt)
 });
 
+appdashboardRouter.post("/dashboard_dtls_bm", async (req, res) => {
+    var data = req.body;
+    console.log(data);
+    
+        var select = "COUNT(form_no) no_of_grt",
+        table_name = "td_grt_basic",
+        whr = data.flag == 'O' ? 
+        `modified_by = ${data.emp_id} AND date(grt_date) = '${data.datetime}'` 
+        : `branch_code = '${data.branch_code}' AND date(grt_date) = '${data.datetime}'`,
+        order = null;
+        var dashboard_dt = await db_Select(select,table_name,whr,order);
+
+    res.send(dashboard_dt)
+});
+
+
 appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     var data = req.body;
 
