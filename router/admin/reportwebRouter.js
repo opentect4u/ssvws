@@ -30,4 +30,18 @@ reportwebRouter.post("/group_wise_recov_web", async (req, res) => {
     res.send(grp_recov_web_dt)
 });
 
+reportwebRouter.post("/group_wise_disb_web", async (req, res) => {
+    var data = req.body;
+
+    var select = "SUM(a.debit),SUM(a.balance),b.group_code,c.group_name",
+    table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
+    whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+     AND a.tr_type= 'D' 
+     AND a.tr_mode = '${data.tr_mode}'`,
+    order = `GROUP BY b.group_code`;
+    var grp_recov_web_dt = await db_Select(select,table_name,whr,order);
+
+    res.send(grp_recov_web_dt)
+});
+
 module.exports = {reportwebRouter}
