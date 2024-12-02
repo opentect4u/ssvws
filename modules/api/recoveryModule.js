@@ -115,15 +115,17 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-            let payment_id = await payment_code(data.branch_code)
-            console.log(payment_id,'idss');
+            // let payment_id = await payment_code(data.branch_code)
+            // console.log(payment_id,'idss');
 
-            console.log(payment_id, 'payment_id');
+            // console.log(payment_id, 'payment_id');
 
             if(data.recovdtls.length > 0){
                 for (let dt of data.recovdtls) {
                     console.log(dt,'dtdtd');
-                    
+
+                let payment_id = await payment_code(data.branch_code)
+ 
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
                     values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','0','${dt.intt_emi}','${dt.balance > 0 ? dt.balance : 0}','${dt.intt_emi > 0 ? dt.intt_emi : 0}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
