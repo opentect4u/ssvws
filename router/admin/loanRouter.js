@@ -53,11 +53,23 @@ loanRouter.post("/fetch_existing_loan", async (req, res) => {
 res.send(loan_dtls)
 })
 
+// loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
+//     var data = req.body;
+
+//     var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.tr_type, a.debit, b.member_code, b.grt_form_no form_no, c.client_name",
+//     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_member c ON b.branch_code = c.branch_code AND b.member_code = c.member_code",
+//     whr = `a.status = 'U' AND a.tr_type = '${data.tr_type}'`,
+//     order = null;
+//     var fetch_trans_dt = await db_Select(select,table_name,whr,order);
+
+//     res.send(fetch_trans_dt)
+// });
+
 loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = "a.payment_date transaction_date, a.payment_id transaction_id, a.loan_id, a.tr_type, a.debit, b.member_code, b.grt_form_no form_no, c.client_name",
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_member c ON b.branch_code = c.branch_code AND b.member_code = c.member_code",
+    var select = "DISTINCT a.payment_date transaction_date, a.tr_type, b.group_code, c.group_name",
+    table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.branch_code = c.branch_code AND b.group_code = c.group_code",
     whr = `a.status = 'U' AND a.tr_type = '${data.tr_type}'`,
     order = null;
     var fetch_trans_dt = await db_Select(select,table_name,whr,order);
@@ -166,21 +178,38 @@ loanRouter.post("/delete_apply_loan", async (req, res) => {
 //     res.send(fetch_grp_mem_dtls)
 // });
 
-loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
-        var data = req.body;
+// loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
+//         var data = req.body;
     
-        var select = `a.group_code,a.member_code,a.branch_code,a.scheme_id,a.period,a.curr_roi,a.period_mode,a.fund_id,a.prn_disb_amt disburse_amount,a.recovery_day,a.instl_start_dt,a.instl_end_dt,a.prn_amt principal_amt,a.intt_amt interest_amount,a.outstanding curr_outstanding,a.prn_emi principle_emi_amount,a.intt_emi interest_emi,a.tot_emi total_emi_amount,a.last_trn_dt txn_date,b.payment_id,b.prn_recov principal_recovery, b.intt_recov interest_recovery,b.credit,b.balance,b.tr_type,b.tr_mode,b.bank_name,b.cheque_id,b.chq_dt,b.created_by,b.created_at,b.trn_lat,b.trn_long,b.trn_addr,c.group_name,d.client_name,e.branch_name,f.scheme_name,g.fund_name,h.emp_name created_by,  (
-                SELECT SUM(i.balance + i.intt_balance)
-                FROM td_loan_transactions i
-                WHERE i.tr_type = 'I' AND i.loan_id = a.loan_id
-            ) AS interest_total`,
-        table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id LEFT JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code LEFT JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code LEFT JOIN md_branch e ON a.branch_code = e.branch_code LEFT JOIN md_scheme f ON a.scheme_id = f.scheme_id LEFT JOIN md_fund g ON a.fund_id = g.fund_id LEFT JOIN md_employee h ON b.created_by = h.emp_id",
-        whr = `a.loan_id = '${data.loan_id}'
-        AND b.status = 'U' AND b.tr_type = 'R'`,
-        order = null;
-        var recovery_dtls = await db_Select(select,table_name,whr,order);
+//         var select = `a.group_code,a.member_code,a.branch_code,a.scheme_id,a.period,a.curr_roi,a.period_mode,a.fund_id,a.prn_disb_amt disburse_amount,a.recovery_day,a.instl_start_dt,a.instl_end_dt,a.prn_amt principal_amt,a.intt_amt interest_amount,a.outstanding curr_outstanding,a.prn_emi principle_emi_amount,a.intt_emi interest_emi,a.tot_emi total_emi_amount,a.last_trn_dt txn_date,b.payment_id,b.prn_recov principal_recovery, b.intt_recov interest_recovery,b.credit,b.balance,b.tr_type,b.tr_mode,b.bank_name,b.cheque_id,b.chq_dt,b.created_by,b.created_at,b.trn_lat,b.trn_long,b.trn_addr,c.group_name,d.client_name,e.branch_name,f.scheme_name,g.fund_name,h.emp_name created_by,  (
+//                 SELECT SUM(i.balance + i.intt_balance)
+//                 FROM td_loan_transactions i
+//                 WHERE i.tr_type = 'I' AND i.loan_id = a.loan_id
+//             ) AS interest_total`,
+//         table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id LEFT JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code LEFT JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code LEFT JOIN md_branch e ON a.branch_code = e.branch_code LEFT JOIN md_scheme f ON a.scheme_id = f.scheme_id LEFT JOIN md_fund g ON a.fund_id = g.fund_id LEFT JOIN md_employee h ON b.created_by = h.emp_id",
+//         whr = `a.loan_id = '${data.loan_id}'
+//         AND b.status = 'U' AND b.tr_type = 'R'`,
+//         order = null;
+//         var recovery_dtls = await db_Select(select,table_name,whr,order);
 
-    res.send(recovery_dtls)
+//     res.send(recovery_dtls)
+// });
+
+loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
+    var data = req.body;
+
+    var select = `a.group_code,a.branch_code,a.period,a.curr_roi,a.period_mode,a.fund_id,a.prn_disb_amt disburse_amount,a.recovery_day,a.instl_start_dt,a.instl_end_dt,a.prn_amt principal_amt,a.intt_amt interest_amount,a.outstanding curr_outstanding,a.prn_emi principle_emi_amount,a.intt_emi interest_emi,a.tot_emi total_emi_amount,a.last_trn_dt txn_date,b.payment_id,b.prn_recov principal_recovery, b.intt_recov interest_recovery,b.credit,b.balance,b.tr_type,b.tr_mode,b.bank_name,b.cheque_id,b.chq_dt,b.created_by,b.created_at,b.trn_lat,b.trn_long,b.trn_addr,c.group_name,d.client_name,e.branch_name,f.scheme_name,g.fund_name,h.emp_name created_by,  (
+            SELECT SUM(i.balance + i.intt_balance)
+            FROM td_loan_transactions i
+            WHERE i.tr_type = 'I' AND i.loan_id = a.loan_id
+        ) AS interest_total`,
+    table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id LEFT JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code LEFT JOIN md_branch e ON a.branch_code = e.branch_code LEFT JOIN md_employee h ON b.created_by = h.emp_id",
+    whr = `a.loan_id = '${data.loan_id}'
+    AND b.status = 'U' AND b.tr_type = 'R'`,
+    order = null;
+    var recovery_dtls = await db_Select(select,table_name,whr,order);
+
+res.send(recovery_dtls)
 });
 
 loanRouter.post("/approve_recovery_loan", async (req, res) => {

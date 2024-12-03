@@ -163,8 +163,12 @@ module.exports = {
                     let balance = parseFloat(dt.balance) || 0;
                     let prnEmi = parseFloat(dt.prn_emi) || 0;
                     let prn_recov = balance - prnEmi;
+                    console.log(prn_recov,'prn_recovary');
+                    
 
                     let intt_recov = parseFloat(dt.intt_cal_amt) - parseFloat(dt.intt_emi);
+                    console.log(intt_recov,'intt_recovery');
+                    
                     let outstanding = parseFloat(prn_recov) + parseFloat(intt_recov);
 
                     console.log(prn_recov,intt_recov,outstanding,'calculate');
@@ -176,6 +180,8 @@ module.exports = {
                     whr = `loan_id = '${dt.loan_id}'`,
                     flag = 1;
                     var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
+                    console.log(rec_dt);
+                    
                     // rec_dt["outstanding"] = outstanding;
                     // rec_dt["instl_paid"] = dt.instl_paid;
                     }
@@ -200,5 +206,6 @@ module.exports = {
                 reject({ "suc": 0, "msg": "No recovery details provided" });
             }
         });
-    }
+    } 
+
 }
