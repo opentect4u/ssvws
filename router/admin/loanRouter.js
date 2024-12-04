@@ -233,7 +233,7 @@ loanRouter.post("/approve_recovery_loan", async (req, res) => {
     var table_name = "td_loan_transactions",
     fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
     values = null,
-    whr = `loan_id IN '${data.loan_id}' AND tr_type != 'D'`,
+    whr = `loan_id IN (${data.loan_id}) AND tr_type != 'D'`,
     flag = 1;
     var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
 
