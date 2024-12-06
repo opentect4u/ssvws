@@ -415,7 +415,7 @@ const getLoanDmd = (loan_id, DATE) => {
 
           var ld_demand;
 
-       if (get_data.msg[0].period_mode === 'Monthly') {
+      //  if (get_data.msg[0].period_mode === 'Monthly') {
 
           if (DATE > end_dt){
             console.log(DATE > instl_end_dt,'test');
@@ -440,16 +440,14 @@ const getLoanDmd = (loan_id, DATE) => {
 
          var create_date = `${year}-${month}-${day}`;
 
-          
-        //  var create_date =  `concat(year,'-',month,'-',day) AS currdt`;
-
-         //concat('2022-','09-','06')
-         
-         //new Date(year,month,day)
-
          console.log("Created date:", create_date);
 
+         if (get_data.msg[0].period_mode === 'Monthly') {
          var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 30)+1 AS date_diff`
+         }else {
+            var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 7)+1 AS date_diff`
+         }
+
          var date_diffs = await db_Select(date_diff);
 
          ld_actual_amt = (date_diffs.msg[0].date_diff) * tot_emi
@@ -465,10 +463,10 @@ const getLoanDmd = (loan_id, DATE) => {
          console.log(ld_demand);
         
         }
-        } else {
-          console.log("Non-monthly period mode calculation not implemented.");
-          resolve(null);
-        }
+        // } else {
+        //   console.log("Non-monthly period mode calculation not implemented.");
+        //   resolve(null);
+        // }
 
         if (ld_demand <= 0 ){
           ld_demand = 0
