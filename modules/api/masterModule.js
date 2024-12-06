@@ -348,7 +348,27 @@ const genDate = (period,mode,emiDate,selDay) => {
     // console.log(dateFormat(new Date(emiStartDate), 'dd/mm/yyyy'), dateFormat(new Date(emiEndDate), 'dd/mm/yyyy'));
     resolve({emtStart: emiStartDate, emiEnd: emiEndDate})
   })
-}
+};
+
+const getMonthDiff = () => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      var select = `DATE(instl_start_dt) instl_start_dt, DATEDIFF(instl_start_dt, CURDATE()) AS dateDifference`,
+       table_name = "td_loan";
+      var get_dt = await db_Select(select, table_name, null, null);
+      console.log(get_dt,'lo');
+
+        var dateOnly = get_dt.msg[0].instl_start_dt; 
+        var instlStartDate = new Date(dateOnly).toISOString().split('T')[0]; 
+        console.log(instlStartDate,'instlStartDate');
+         
+      resolve(instlStartDate); 
+    } catch (error) {
+      reject(error); 
+    }
+  });
+};
+
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getMonthDiff}

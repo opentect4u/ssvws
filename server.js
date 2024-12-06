@@ -57,6 +57,7 @@ const { masterRouter } = require("./router/api/masterRouter");
 const { memberRouter } = require("./router/api/memberRouter");
 const { recoveryRouter } = require("./router/api/recoveryRouter");
 const { reportRouter } = require("./router/api/reportRouter");
+const { testRouter } = require("./router/api/testRouter");
 const { userRouter } = require("./router/api/userRouter");
 const { DashboardRouter } = require("./router/dashboardRouter");
 const { LoginRouter } = require("./router/loginRouter");
@@ -70,6 +71,7 @@ app.use(memberRouter)
 app.use(recoveryRouter)
 app.use(reportRouter)
 app.use(appdashboardRouter)
+app.use(testRouter)
 app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
