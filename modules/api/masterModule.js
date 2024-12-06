@@ -1,4 +1,5 @@
-const { db_Select, db_Insert } = require("../../model/mysqlModel");
+const { db_Select, db_Insert } = require("../../model/mysqlModel"),
+dateFormat = require('dateformat');
 
 const getFormNo = () => {
     return new Promise(async (resolve, reject) => {
@@ -350,25 +351,141 @@ const genDate = (period,mode,emiDate,selDay) => {
   })
 };
 
-const getMonthDiff = () => {
+// const getMonthDiff = (loan_id,DATE) => {
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       var select = `period,disb_dt,prn_disb_amt,intt_cal_amt,outstanding,tot_emi,instl_start_dt,instl_end_dt,recovery_day,period_mode`,
+//        table_name = "td_loan",
+//        whr = `loan_id = '12072049'`,
+//        order = null;
+//       var get_data = await db_Select(select, table_name, whr, order);
+//       console.log(get_data,'lo');
+
+//         // var dateOnly = get_dt.msg[0].instl_start_dt; 
+//         // var instlStartDate = new Date(dateOnly).toISOString().split('T')[0]; 
+//         // console.log(instlStartDate,'instlStartDate');
+
+//         if(get_data.suc > 0 && get_data.msg.length > 0){
+//           if(get_data.period_mode == 'Monthly'){
+             
+//             var day = `SELECT DAY("2024-06-24")`
+//             var month = `SELECT EXTRACT(MONTH FROM "2024-06-24")`;
+//             var year = `SELECT EXTRACT(year FROM "2024-06-24")`;
+//             console.log(day,month,year,'dmy');
+            
+//             var get_date = (year)-(month)-(day)
+//             console.log(get_date,'get_date');
+            
+
+//           }else {
+//             console.log()
+//           }
+//         }
+         
+//       resolve(get_date); 
+//     } catch (error) {
+//       reject(error); 
+//     }
+//   });
+// };
+
+const getLoanDmd = (loan_id, DATE) => {
+  console.log(loan_id,DATE);
+  
   return new Promise(async (resolve, reject) => {
     try {
-      var select = `DATE(instl_start_dt) instl_start_dt, DATEDIFF(instl_start_dt, CURDATE()) AS dateDifference`,
-       table_name = "td_loan";
-      var get_dt = await db_Select(select, table_name, null, null);
-      console.log(get_dt,'lo');
+       var select = `period, disb_dt, prn_disb_amt, intt_cal_amt, outstanding, tot_emi, instl_start_dt, instl_end_dt, recovery_day, period_mode`,
+            table_name = "td_loan",
+            whr = `loan_id = '${loan_id}'`,
+            order = null;
 
-        var dateOnly = get_dt.msg[0].instl_start_dt; 
-        var instlStartDate = new Date(dateOnly).toISOString().split('T')[0]; 
-        console.log(instlStartDate,'instlStartDate');
+       var get_data = await db_Select(select, table_name, whr, order);
+       console.log(get_data,'ok');
+      
+
+       if (get_data.suc > 0 && get_data.msg.length > 0) {
+
+          var instl_st_dt = get_data.msg[0].instl_start_dt;
+          var instl_end_dt = get_data.msg[0].instl_end_dt;
+          end_dt = `${dateFormat(instl_end_dt, "yyyy-mm-dd")}`;
+          console.log(instl_end_dt,end_dt,'instl_end_dt');
+
+          var tot_emi = get_data.msg[0].tot_emi;
+          var outstanding = get_data.msg[0].outstanding;
+
+          var ld_demand;
+
+       if (get_data.msg[0].period_mode === 'Monthly') {
+
+          if (DATE > end_dt){
+            console.log(DATE > instl_end_dt,'test');
+            
+           ld_demand = outstanding
+          
+             console.log(ld_demand,'ld_demand_dt');
+          }else{
+          var dayQuery = `EXTRACT(DAY FROM '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') AS day`;
+          var monthQuery = `EXTRACT(MONTH FROM '${dateFormat(DATE, "yyyy-mm-dd")}') AS month`;
+          var yearQuery = `EXTRACT(YEAR FROM '${dateFormat(DATE, "yyyy-mm-dd")}') AS year`;
+          
+          var dayResult = await db_Select(dayQuery);
+          var monthResult = await db_Select(monthQuery);
+          var yearResult = await db_Select(yearQuery);
+          
+         console.log(dayResult, monthResult, yearResult, 'dmy');
+          
+         var day = dayResult.msg[0].day;  
+         var month = monthResult.msg[0].month; 
+         var year = yearResult.msg[0].year;  
+
+         var create_date = `${year}-${month}-${day}`;
+
+          
+        //  var create_date =  `concat(year,'-',month,'-',day) AS currdt`;
+
+         //concat('2022-','09-','06')
          
-      resolve(instlStartDate); 
+         //new Date(year,month,day)
+
+         console.log("Created date:", create_date);
+
+         var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 30)+1 AS date_diff`
+         var date_diffs = await db_Select(date_diff);
+
+         ld_actual_amt = (date_diffs.msg[0].date_diff) * tot_emi
+         console.log(ld_actual_amt);
+         
+         var select = "SUM(credit) credit",
+         table_name = "td_loan_transactions",
+         whr = `loan_id = '${loan_id}' AND tr_type = 'R' AND payment_date <= '${dateFormat(create_date, "yyyy-mm-dd")}'`,
+         order = null;
+         var ld_paid_amt = await db_Select(select,table_name,whr,order);
+
+        ld_demand = parseFloat(ld_actual_amt) - parseFloat(ld_paid_amt.msg[0].credit)
+         console.log(ld_demand);
+        
+        }
+        } else {
+          console.log("Non-monthly period mode calculation not implemented.");
+          resolve(null);
+        }
+
+        if (ld_demand <= 0 ){
+          ld_demand = 0
+        }else {
+          ld_demand = ld_demand
+        }
+        resolve({suc : 1, deamnd : {ld_demand}});
+      } else {
+        console.log("No data found or query failed.");
+        resolve(null);
+      }
     } catch (error) {
-      reject(error); 
+      console.error("Error calculating month difference:", error);
+      reject(error);
     }
   });
 };
 
-
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getMonthDiff}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd}
