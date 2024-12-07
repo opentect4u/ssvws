@@ -395,8 +395,8 @@ const getLoanDmd = (loan_id, DATE) => {
   return new Promise(async (resolve, reject) => {
     try {
 
-      const formattedDate = dateFormat(DATE, "yyyy-mm-dd");
-      console.log("Formatted Date:", formattedDate);
+      // const formattedDate = dateFormat(DATE, "yyyy-mm-dd");
+      // console.log("Formatted Date:", formattedDate);
 
        var select = `period, disb_dt, prn_disb_amt, intt_cal_amt, outstanding, tot_emi, instl_start_dt, instl_end_dt, recovery_day, period_mode`,
             table_name = "td_loan",
