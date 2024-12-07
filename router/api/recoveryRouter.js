@@ -98,6 +98,7 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
 recoveryRouter.post("/get_demand_data", async (req, res) => {
     try {
         var data = req.body;
+        console.log(data,'data');
 
         var select = "loan_id,recovery_day,period_mode",
         table_name = "td_loan",
@@ -109,8 +110,12 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
             let demandResults = [];
 
             for (dt of get_dmd_dt.msg) {
+                console.log(dt,'dt');
+                
                 var loan_id = dt.loan_id;
                 var recovery_day = dt.recovery_day;
+                console.log(loan_id,recovery_day,'lolo');
+                
 
                 var demandData = await getLoanDmd(loan_id, recovery_day);
                 demandResults.push({ loan_id, recovery_day, demand: demandData });

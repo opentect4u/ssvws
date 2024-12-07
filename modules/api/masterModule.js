@@ -390,7 +390,7 @@ const genDate = (period,mode,emiDate,selDay) => {
 // };
 
 const getLoanDmd = (loan_id, DATE) => {
-  console.log(loan_id,DATE);
+  console.log(loan_id,DATE,'DATE');
   
   return new Promise(async (resolve, reject) => {
     try {
