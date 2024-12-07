@@ -429,8 +429,8 @@ const getLoanDmd = (loan_id, DATE) => {
              console.log(ld_demand,'ld_demand_dt');
           }else{
           var dayQuery = `EXTRACT(DAY FROM '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') AS day`;
-          var monthQuery = `EXTRACT(MONTH FROM '${dateFormat(formattedDate, "yyyy-mm-dd")}') AS month`;
-          var yearQuery = `EXTRACT(YEAR FROM '${dateFormat(formattedDate, "yyyy-mm-dd")}') AS year`;
+          var monthQuery = `EXTRACT(MONTH FROM '${dateFormat(DATE, "yyyy-mm-dd")}') AS month`;
+          var yearQuery = `EXTRACT(YEAR FROM '${dateFormat(DATE, "yyyy-mm-dd")}') AS year`;
           
           var dayResult = await db_Select(dayQuery);
           var monthResult = await db_Select(monthQuery);
