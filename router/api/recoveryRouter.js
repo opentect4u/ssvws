@@ -1,4 +1,5 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
+const { getLoanDmd } = require('../../modules/api/masterModule');
 const { recovery_trans } = require('../../modules/api/recoveryModule');
 
 const express = require('express'),
@@ -95,16 +96,33 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
 });
 
 recoveryRouter.post("/get_demand_data", async (req, res) => {
-    var data = req.body;
+    try {
+        var data = req.body;
 
-    var select = "recovery_day,period_mode",
-    table_name = "td_loan",
-    whr = `recovery_day = '${data.get_date}' AND outstanding > 0`,
-    order = null;
-    var get_dmd_dt = await db_Select(select,table_name,whr,order);
-    // console.log(get_dmd_dt,'get');
-    res.send(get_dmd_dt);
-    
-})
+        var select = "loan_id,recovery_day,period_mode",
+        table_name = "td_loan",
+        whr = `recovery_day = '${data.get_date}' AND outstanding > 0`,
+        order = null;
+        var get_dmd_dt = await db_Select(select,table_name,whr,order);
+
+        if (get_dmd_dt.suc > 0 && get_dmd_dt.msg.length > 0) {
+            let demandResults = [];
+
+            for (dt of get_dmd_dt.msg) {
+                var loan_id = dt.loan_id;
+                var recovery_day = dt.recovery_day;
+
+                var demandData = await getLoanDmd(loan_id, recovery_day);
+                demandResults.push({ loan_id, recovery_day, demand: demandData });
+            }
+            res.send({ suc: 1, msg: demandResults });
+        }else {
+            res.send({ suc: 0, msg: "No data found" });
+        }
+        }catch (error) {
+            console.error("Error in demand data retrieval:", error);
+            res.status(500).send({ suc: 0, msg: "Internal server error" });
+        }
+});
 
 module.exports = {recoveryRouter}
