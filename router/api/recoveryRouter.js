@@ -97,12 +97,12 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
 recoveryRouter.post("/get_demand_data", async (req, res) => {
     var data = req.body;
 
-    var select = "recovery_day, COUNT(recovery_day)",
+    var select = "recovery_day,period_mode",
     table_name = "td_loan",
     whr = `recovery_day = '${data.get_date}' AND outstanding > 0`,
-    order = `GROUP BY recovery_day`;
+    order = null;
     var get_dmd_dt = await db_Select(select,table_name,whr,order);
-    console.log(get_dmd_dt,'get');
+    // console.log(get_dmd_dt,'get');
     res.send(get_dmd_dt);
     
 })
