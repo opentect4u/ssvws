@@ -413,7 +413,7 @@ const getLoanDmd = (loan_id, DATE) => {
           var tot_emi = get_data.msg[0].tot_emi;
           var outstanding = get_data.msg[0].outstanding;
 
-          var ld_demand;
+          var ld_demand = 0;
 
       //  if (get_data.msg[0].period_mode === 'Monthly') {
 
@@ -460,7 +460,8 @@ const getLoanDmd = (loan_id, DATE) => {
          var ld_paid_amt = await db_Select(select,table_name,whr,order);
 
         ld_demand = parseFloat(ld_actual_amt) - parseFloat(ld_paid_amt.msg[0].credit)
-         console.log(ld_demand);
+        ld_demand = Math.max(0, ld_demand);
+         console.log(ld_demand,'ld');
         
         }
         // } else {
