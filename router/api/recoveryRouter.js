@@ -102,7 +102,8 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
 
         var select = "loan_id,recovery_day,period_mode",
         table_name = "td_loan",
-        whr = `recovery_day = '${data.get_date}' AND outstanding > 0`,
+        // whr = `recovery_day = '${data.get_date}' AND outstanding > 0`,
+        whr = `outstanding > 0`,
         order = null;
         var get_dmd_dt = await db_Select(select,table_name,whr,order);
 
@@ -112,13 +113,14 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
             for (dt of get_dmd_dt.msg) {
                 console.log(dt,'dt');
                 
-                var loan_id = dt.loan_id;
-                var recovery_day = dt.recovery_day;
-                console.log(loan_id,recovery_day,'lolo');
+                // var loan_id = dt.loan_id;
+                // var recovery_day = dt.recovery_day;
+                console.log(loan_id,'lolo');
                 
 
-                var demandData = await getLoanDmd(loan_id, recovery_day);
-                demandResults.push({ loan_id, recovery_day, demand: demandData });
+                var demandData = await getLoanDmd(dt.loan_id, data.get_date);
+                // demandResults.push({ loan_id, recovery_day, demand: demandData });
+                demandResults.push({ demand: demandData });
             }
             res.send({ suc: 1, msg: demandResults });
         }else {
