@@ -113,14 +113,14 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
             for (dt of get_dmd_dt.msg) {
                 console.log(dt,'dt');
                 
-                // var loan_id = dt.loan_id;
-                // var recovery_day = dt.recovery_day;
+                var loan_id = dt.loan_id;
+                var recovery_day = dt.recovery_day;
                 // console.log(loan_id,'lolo');
                 
 
-                var demandData = await getLoanDmd(dt.loan_id, data.get_date);
-                // demandResults.push({ loan_id, recovery_day, demand: demandData });
-                demandResults.push({ demand: demandData });
+                var demandData = await getLoanDmd(loan_id, data.get_date);
+                demandResults.push({ loan_id, recovery_day, demand: demandData });
+                // demandResults.push({ demand: demandData });
             }
             res.send({ suc: 1, msg: demandResults });
         }else {
