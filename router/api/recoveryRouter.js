@@ -115,7 +115,7 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
                 
                 var loan_id = dt.loan_id;
                 var recovery_day = dt.recovery_day;
-                var period = dt.period;
+                var period = dt.period_mode;
                 // console.log(loan_id,'lolo');
                 
 
