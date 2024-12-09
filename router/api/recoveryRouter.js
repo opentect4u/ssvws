@@ -115,11 +115,12 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
                 
                 var loan_id = dt.loan_id;
                 var recovery_day = dt.recovery_day;
+                var period = dt.period;
                 // console.log(loan_id,'lolo');
                 
 
                 var demandData = await getLoanDmd(loan_id, data.get_date);
-                demandResults.push({ loan_id, recovery_day, demand: demandData });
+                demandResults.push({ loan_id, recovery_day, period, demand: demandData });
                 // demandResults.push({ demand: demandData });
             }
             res.send({ suc: 1, msg: demandResults });
