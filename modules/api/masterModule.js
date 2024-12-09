@@ -395,9 +395,6 @@ const getLoanDmd = (loan_id, DATE) => {
   return new Promise(async (resolve, reject) => {
     try {
 
-      // const formattedDate = dateFormat(DATE, "yyyy-mm-dd");
-      // console.log("Formatted Date:", formattedDate);
-
        var select = `period, disb_dt, prn_disb_amt, intt_cal_amt, outstanding, tot_emi, instl_start_dt, instl_end_dt, recovery_day, period_mode`,
             table_name = "td_loan",
             whr = `loan_id = '${loan_id}'`,
@@ -453,6 +450,8 @@ const getLoanDmd = (loan_id, DATE) => {
          }
 
          var date_diffs = await db_Select(date_diff);
+         console.log(date_diffs);
+         
 
          ld_actual_amt = (date_diffs.msg[0].date_diff) * tot_emi
          console.log(ld_actual_amt);
@@ -462,6 +461,8 @@ const getLoanDmd = (loan_id, DATE) => {
          whr = `loan_id = '${loan_id}' AND tr_type = 'R' AND payment_date <= '${dateFormat(create_date, "yyyy-mm-dd")}'`,
          order = null;
          var ld_paid_amt = await db_Select(select,table_name,whr,order);
+         console.log(ld_paid_amt);
+         
 
         ld_demand = parseFloat(ld_actual_amt) - parseFloat(ld_paid_amt.msg[0].credit)
         ld_demand = Math.max(0, ld_demand);
@@ -478,7 +479,7 @@ const getLoanDmd = (loan_id, DATE) => {
         }else {
           ld_demand = ld_demand
         }
-        resolve({suc : 1, deamnd : {ld_demand}});
+        resolve({suc : 1, demand : {ld_demand}});
       } else {
         console.log("No data found or query failed.");
         resolve(null);
