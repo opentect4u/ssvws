@@ -170,27 +170,27 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
 recoveryRouter.post("/get_demand_data", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'data');
+        // console.log(data,'data');
 
         var dayQuery = `EXTRACT(DAY FROM '${dateFormat(data.get_date, "yyyy-mm-dd")}') AS recovday`;
         // console.log(dayQuery);
         var dayResult = await db_Select(dayQuery);
         // console.log(dayResult);
         var recov_day = dayResult.msg[0].recovday;
-        console.log(recov_day,'recov');
+        // console.log(recov_day,'recov');
         
         var select = "a.loan_id,a.group_code,a.member_code,a.recovery_day,a.period_mode,b.group_name",
         table_name = "td_loan a JOIN md_group b ON a.branch_code = b.branch_code AND a.group_code = b.group_code",
         whr = `a.recovery_day = '${recov_day}' AND a.outstanding > 0`,
         order = null;
         var get_dmd_dt = await db_Select(select,table_name,whr,order);
-        console.log(get_dmd_dt);
+        // console.log(get_dmd_dt);
         
         if (get_dmd_dt.suc > 0 && get_dmd_dt.msg.length > 0) {
             let demandResults = [];
 
             for (dt of get_dmd_dt.msg) {
-                console.log(dt,'dt');
+                // console.log(dt,'dt');
                 
                 var loan_id = dt.loan_id;
                 var group_code = dt.group_code;
@@ -222,18 +222,55 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
         }
 });
 
+// recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
+//     var data = req.body;
+//     console.log(data,'group');
+    
+//     var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+//     table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+//     whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+//      AND b.tr_type= 'R' 
+//      AND b.tr_mode = '${data.tr_mode}'
+//      AND b.created_by = '${data.emp_id}'`,
+//     order = `GROUP BY a.group_code,a.member_code,b.credit,c.group_name,d.client_name`;
+//     var grp_recov_web_dt = await db_Select(select,table_name,whr,order);
+
+//     res.send(grp_recov_web_dt)
+// });
+
 recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
-    var data = req.body;
+    var data = req.body, grp_recov_dt;
+    console.log(data,'group');
 
-    var select = "a.group_code,b.group_name",
-    table_name = "td_loan a JOIN md_group b ON a.branch_code = b.branch_code AND a.group_code = b.group_code",
-    whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-     AND a.tr_type= 'R' 
-     AND a.tr_mode = '${data.tr_mode}'`,
-    order = `GROUP BY b.group_code`;
-    var grp_recov_web_dt = await db_Select(select,table_name,whr,order);
 
-    res.send(grp_recov_web_dt)
+    if(data.user_id == '1'){
+        var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+        table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+        whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+        AND b.tr_type= 'R' 
+        AND b.tr_mode = '${data.tr_mode}'
+        AND b.created_by = '${data.emp_id}'`,
+        order = null;
+        grp_recov_dt = await db_Select(select,table_name,whr,order);
+    }else if (data.user_id == '2' && data.flag == 'O'){
+        var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+        table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+        whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+        AND b.tr_type= 'R' 
+        AND b.tr_mode = '${data.tr_mode}'
+        AND b.created_by = '${data.emp_id}'`,
+        order = null;
+        grp_recov_dt = await db_Select(select,table_name,whr,order);
+    }else {
+        var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+        table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+        whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND b.tr_type= 'R'
+              AND b.tr_mode = '${data.tr_mode}' AND b.branch_id = '${data.branch_code}'`,
+        order = null;
+        grp_recov_dt = await db_Select(select,table_name,whr,order);
+    }
+    
+    res.send(grp_recov_dt)
 });
 
 module.exports = {recoveryRouter}
