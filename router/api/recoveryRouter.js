@@ -6,6 +6,78 @@ const express = require('express'),
 recoveryRouter = express.Router(),
 dateFormat = require('dateformat');
 
+// recoveryRouter.post("/search_group_app", async (req, res) => {
+//     var data = req.body;
+
+//     // var select = "a.group_code,b.group_name,SUM(a.prn_amt + a.od_prn_amt) AS total_prn_amt,SUM(a.intt_amt + a.od_intt_amt) AS total_intt_amt,c.status,b.group_type",
+//     // table_name = "td_loan a JOIN md_group b ON a.branch_code = b.branch_code AND a.group_code = b.group_code  JOIN td_loan_transactions c ON a.branch_code = c.branch_id AND a.loan_id = c.loan_id",
+//     // whr = `(b.group_code like '%${data.grp_dtls}%' OR b.group_name like '%${data.grp_dtls}%') AND c.status = 'A'`,
+//     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
+//     table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
+//     whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%' AND c.status = 'A'`
+//     order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
+//     var search_grp = await db_Select (select,table_name,whr,order);
+
+//     if(search_grp.suc > 0 && search_grp.msg.length > 0){
+//         for(let dt of search_grp.msg){
+        
+//             // var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.status, c.balance, c.intt_balance, c.payment_date",
+//             // table_name = "td_loan a, md_member b, td_loan_transactions c",
+//             // whr = `a.branch_code = b.branch_code 
+//             // AND a.member_code = b.member_code
+//             // AND a.group_code = ${dt.group_code}
+//             // AND c.payment_date = (SELECT MAX(d.payment_date) FROM td_loan_transactions d WHERE a.branch_code = d.branch_id AND a.loan_id = d.loan_id)`,
+
+//             var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.balance",
+//             table_name = "td_loan a, md_member b, td_loan_transactions c",
+//             whr = `a.branch_code = b.branch_code 
+//             AND a.member_code = b.member_code
+//             AND a.loan_id = c.loan_id
+//             AND a.branch_code = c.branch_id
+//             AND a.group_code = ${dt.group_code}
+//             AND c.tr_type = 'D'`,
+//             order = null;
+//             var mem_dt = await db_Select(select,table_name,whr,order);
+
+//        dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
+            
+//         }
+//     }
+
+// res.send(search_grp)
+// });
+
+// recoveryRouter.post("/search_group_app", async (req, res) => {
+//     var data = req.body;
+
+//     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
+//     table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
+//     whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%' AND c.status = 'A'`
+//     order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
+//     var search_grp = await db_Select (select,table_name,whr,order);
+
+//     if(search_grp.suc > 0 && search_grp.msg.length > 0){
+//         for(let dt of search_grp.msg){
+
+//             var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.balance",
+//             table_name = "td_loan a, md_member b, td_loan_transactions c",
+//             whr = `a.branch_code = b.branch_code 
+//             AND a.member_code = b.member_code
+//             AND a.loan_id = c.loan_id
+//             AND a.branch_code = c.branch_id
+//             AND a.group_code = ${dt.group_code}
+//             AND c.tr_type = 'D'`,
+//             order = null;
+//             var mem_dt = await db_Select(select,table_name,whr,order);
+
+//        dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
+            
+//         }
+//     }
+
+// res.send(search_grp)
+// });
+
 recoveryRouter.post("/search_group_app", async (req, res) => {
     var data = req.body;
 
