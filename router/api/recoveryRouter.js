@@ -223,19 +223,38 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
 });
 
 // recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
-//     var data = req.body;
+//     var data = req.body, grp_recov_dt;
 //     console.log(data,'group');
-    
-//     var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
-//     table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
-//     whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-//      AND b.tr_type= 'R' 
-//      AND b.tr_mode = '${data.tr_mode}'
-//      AND b.created_by = '${data.emp_id}'`,
-//     order = `GROUP BY a.group_code,a.member_code,b.credit,c.group_name,d.client_name`;
-//     var grp_recov_web_dt = await db_Select(select,table_name,whr,order);
 
-//     res.send(grp_recov_web_dt)
+
+//     if(data.user_id == '1'){
+//         var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+//         table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+//         whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+//         AND b.tr_type= 'R' 
+//         AND b.tr_mode = '${data.tr_mode}'
+//         AND b.created_by = '${data.emp_id}'`,
+//         order = null;
+//         grp_recov_dt = await db_Select(select,table_name,whr,order);
+//     }else if (data.user_id == '2' && data.flag == 'O'){
+//         var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+//         table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+//         whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+//         AND b.tr_type= 'R' 
+//         AND b.tr_mode = '${data.tr_mode}'
+//         AND b.created_by = '${data.emp_id}'`,
+//         order = null;
+//         grp_recov_dt = await db_Select(select,table_name,whr,order);
+//     }else {
+//         var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
+//         table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
+//         whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND b.tr_type= 'R'
+//               AND b.tr_mode = '${data.tr_mode}' AND b.branch_id = '${data.branch_code}'`,
+//         order = null;
+//         grp_recov_dt = await db_Select(select,table_name,whr,order);
+//     }
+    
+//     res.send(grp_recov_dt)
 // });
 
 recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
@@ -244,33 +263,66 @@ recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
 
 
     if(data.user_id == '1'){
-        var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
-        table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
-        whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-        AND b.tr_type= 'R' 
-        AND b.tr_mode = '${data.tr_mode}'
-        AND b.created_by = '${data.emp_id}'`,
-        order = null;
+        var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
+        table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
+    whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+         AND a.tr_type= 'R'
+        AND a.tr_mode = '${data.tr_mode}'
+        AND a.created_by = '${data.emp_id}'`,
+        order = `GROUP BY b.group_code`;
         grp_recov_dt = await db_Select(select,table_name,whr,order);
     }else if (data.user_id == '2' && data.flag == 'O'){
-        var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
-        table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
-        whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-        AND b.tr_type= 'R' 
-        AND b.tr_mode = '${data.tr_mode}'
-        AND b.created_by = '${data.emp_id}'`,
-        order = null;
+        var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
+        table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
+    whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+         AND a.tr_type= 'R'
+        AND a.tr_mode = '${data.tr_mode}'
+        AND a.created_by = '${data.emp_id}'`,
+        order = `GROUP BY b.group_code`;
         grp_recov_dt = await db_Select(select,table_name,whr,order);
     }else {
-        var select = "a.group_code,a.member_code,b.credit,c.group_name,d.client_name",
-        table_name = "td_loan a JOIN td_loan_transactions b ON a.branch_code = b.branch_id AND a.loan_id = b.loan_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_member d ON a.branch_code = d.branch_code AND a.member_code = d.member_code",
-        whr = `date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND b.tr_type= 'R'
-              AND b.tr_mode = '${data.tr_mode}' AND b.branch_id = '${data.branch_code}'`,
-        order = null;
+        var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
+        table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
+        whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type= 'R'
+              AND a.tr_mode = '${data.tr_mode}' AND a.branch_id = '${data.branch_code}'`,
+        order = `GROUP BY b.group_code`;
         grp_recov_dt = await db_Select(select,table_name,whr,order);
     }
     
     res.send(grp_recov_dt)
+});
+
+recoveryRouter.post("/memb_wise_recov_app", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
+    table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
+    whr = `a.group_code like '%${data.grp_dtls_app}%' OR a.group_name like '%${data.grp_dtls_app}%' AND c.status = 'A'`
+    order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
+    var search_grp_app = await db_Select (select,table_name,whr,order);
+
+
+    if(search_grp_app.suc > 0 && search_grp_app.msg.length > 0){
+        for(let dt of search_grp_app.msg){
+
+            var select = "a.loan_id,a.member_code,b.client_name,c.credit,c.balance",
+            table_name = "td_loan a, md_member b, td_loan_transactions c",
+            whr = `a.branch_code = b.branch_code 
+            AND a.member_code = b.member_code
+            AND a.loan_id = c.loan_id
+            AND a.branch_code = c.branch_id
+            AND a.group_code = ${dt.group_code}
+            AND date(c.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' 
+            AND c.tr_type = 'R'`,
+            order = null;
+            var mem_dt_app = await db_Select(select,table_name,whr,order);
+
+       dt['memb_dtls_app'] = mem_dt_app.suc > 0 ? (mem_dt_app.msg.length > 0 ? mem_dt_app.msg : []) : [];
+            
+        }
+    }
+
+res.send(search_grp_app)
 });
 
 module.exports = {recoveryRouter}
