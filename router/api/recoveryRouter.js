@@ -97,11 +97,17 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 AND a.loan_id = c.loan_id
                 AND a.branch_code = c.branch_id
                 AND a.group_code = ${dt.group_code}
-                AND c.tr_type = 'D'`,
+                AND c.payment_date = (SELECT MAX(d.payment_date) FROM td_loan_transactions d WHERE a.loan_id=d.loan_id AND a.branch_code = d.branch_id)`,
                 order = null;
 
             var mem_dt = await db_Select(select, table_name, whr, order);
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
+
+            // if(mem_dt.suc > 0 && mem_dt.msg.length > 0){
+            //     var select = "balance",
+            //     table_name = "td_loan_transactions",
+            //     whr = ``
+            // }
 
             for (let memb of dt.memb_dtls) {
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);

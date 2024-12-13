@@ -68,12 +68,20 @@ res.send(loan_dtls)
 
 loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
     var data = req.body;
-
-    var select = "DISTINCT a.payment_date transaction_date, a.tr_type, b.group_code, c.group_name",
-    table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.branch_code = c.branch_code AND b.group_code = c.group_code",
-    whr = `a.status = 'U' AND a.tr_type = '${data.tr_type}'`,
-    order = null;
-    var fetch_trans_dt = await db_Select(select,table_name,whr,order);
+    if(data.tr_type == 'R'){
+        var select = "DISTINCT a.payment_date transaction_date, a.tr_type, b.group_code, c.group_name",
+        table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.branch_code = c.branch_code AND b.group_code = c.group_code",
+        whr = `a.status = 'U' AND a.tr_type = '${data.tr_type}'`,
+        order = null;
+        var fetch_trans_dt = await db_Select(select,table_name,whr,order);
+    }else {
+        var select = "a.payment_date transaction_date,a.loan_id, a.payment_id transaction_id, a.tr_type, a.debit, b.member_code, b.grt_form_no form_no, c.client_name",
+            table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_member c ON b.branch_code = c.branch_code AND b.member_code = c.member_code",
+            whr = `a.status = 'U' AND a.tr_type = '${data.tr_type}'`,
+            order = null;
+            var fetch_trans_dt = await db_Select(select,table_name,whr,order);
+    }
+   
 
     res.send(fetch_trans_dt)
 });
