@@ -1,5 +1,6 @@
 const { db_Select, db_Insert, db_Delete } = require('../../model/mysqlModel');
 const { loan_trans, save_loan_dtls } = require('../../modules/admin/loanModule');
+const { getLoanDmd } = require('../../modules/api/masterModule');
 
 const loanRouter = require('express').Router();
 dateFormat = require('dateformat');
@@ -368,6 +369,8 @@ loanRouter.post("/save_loan_details", async (req, res) => {
     res.send(res_data);
 })
 });
+
+
 
 
 module.exports = {loanRouter}
