@@ -80,6 +80,8 @@ dateFormat = require('dateformat');
 
 recoveryRouter.post("/search_group_app", async (req, res) => {
     var data = req.body;
+    console.log(data,'grp');
+    
 
     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
         table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
@@ -87,6 +89,8 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
         order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
 
     var search_grp = await db_Select(select, table_name, whr, order);
+    console.log(search_grp,'search');
+    
 
     if (search_grp.suc > 0 && search_grp.msg.length > 0) {
         for (let dt of search_grp.msg) {
