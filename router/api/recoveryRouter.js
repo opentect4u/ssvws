@@ -110,29 +110,17 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
             var mem_dt = await db_Select(select, table_name, whr, order);
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
 
-            let loanIds = mem_dt.msg.map(m => `'${m.loan_id}'`);
-            if (loanIds.length > 0) {
-                var balanceQuery = `
-                    SELECT loan_id, MAX(payment_date) AS last_payment_date, balance
-                    FROM td_loan_transactions
-                    WHERE loan_id IN (${loanIds.join(", ")})
-                    AND tr_type != 'I'
-                    GROUP BY loan_id, balance;
-                `;
-                var balance_dt = await db_Select(balanceQuery);
-                let balanceMap = {};
-                if (balance_dt.suc > 0 && balance_dt.msg.length > 0) {
-                    balance_dt.msg.forEach(b => {
-                        balanceMap[b.loan_id] = b.balance;
-                    });
-                }
+           for(let dts of mem_dt.msg){
+            var select = "balance",
+            table_name = "td_loan_transactions",
+            whr = `loan_id IN (${dts.loan_id})
+            AND payment_date = (SELECT MAX(payment_date) FROM td_loan_transactions WHERE loan_id IN (${dts.loan_id})
+            AND tr_type != 'I')`
+            order = null;
 
-                // Attach balances to corresponding member details
-                dt["memb_dtls"] = dt["memb_dtls"].map(m => {
-                    m.balance = balanceMap[m.loan_id] || 0; // Default to 0 if no balance is found
-                    return m;
-                });
-            }
+            var balance_dt = await db_Select(select, table_name, whr, order);
+            dt['memb_dtls'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg : []) : [];
+           }
 
             for (let memb of dt.memb_dtls) {
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
