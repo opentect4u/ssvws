@@ -286,7 +286,7 @@ recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
          AND a.tr_type= 'R'
         AND a.tr_mode = '${data.tr_mode}'
         AND a.created_by = '${data.emp_id}'`,
-        order = `GROUP BY b.group_code`;
+        order = `GROUP BY b.group_code,c.group_name`;
         grp_recov_dt = await db_Select(select,table_name,whr,order);
     }else if (data.user_id == '2' && data.flag == 'O'){
         var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
@@ -295,14 +295,14 @@ recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
          AND a.tr_type= 'R'
         AND a.tr_mode = '${data.tr_mode}'
         AND a.created_by = '${data.emp_id}'`,
-        order = `GROUP BY b.group_code`;
+        order = `GROUP BY b.group_code,c.group_name`;
         grp_recov_dt = await db_Select(select,table_name,whr,order);
     }else {
         var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
         whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type= 'R'
               AND a.tr_mode = '${data.tr_mode}' AND a.branch_id = '${data.branch_code}'`,
-        order = `GROUP BY b.group_code`;
+        order = `GROUP BY b.group_code,c.group_name`;
         grp_recov_dt = await db_Select(select,table_name,whr,order);
     }
     
