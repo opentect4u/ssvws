@@ -90,7 +90,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
     if (search_grp.suc > 0 && search_grp.msg.length > 0) {
         for (let dt of search_grp.msg) {
-            var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.balance",
+            var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.tr_type,c.balance",
                 table_name = "td_loan a, md_member b, td_loan_transactions c",
                 whr = `a.branch_code = b.branch_code 
                 AND a.member_code = b.member_code 
@@ -109,17 +109,17 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
                 memb['demand'] = demandData || {}; 
 
-                var select = "balance,tr_type",
-                table_name = "td_loan_transactions",
-                whr = `loan_id = '${memb.loan_id}'
-                AND payment_date = (SELECT MAX(payment_date) 
-                                               FROM td_loan_transactions 
-                                               WHERE loan_id = '${memb.loan_id}'
-                                               AND tr_type != 'I')`;
-                var order = null;
+                // var select = "balance,tr_type",
+                // table_name = "td_loan_transactions",
+                // whr = `loan_id = '${memb.loan_id}'
+                // AND payment_date = (SELECT MAX(payment_date) 
+                //                                FROM td_loan_transactions 
+                //                                WHERE loan_id = '${memb.loan_id}'
+                //                                AND tr_type != 'I')`;
+                // var order = null;
             
-                var balance_dt = await db_Select(select, table_name, whr, order);
-                memb['balance'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg[0].balance : 0) : 0;
+                // var balance_dt = await db_Select(select, table_name, whr, order);
+                // memb['balance'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg[0].balance : 0) : 0;
             }
         }
 
