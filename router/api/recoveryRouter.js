@@ -103,11 +103,14 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
             var mem_dt = await db_Select(select, table_name, whr, order);
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
 
-            // if(mem_dt.suc > 0 && mem_dt.msg.length > 0){
-            //     var select = "balance",
-            //     table_name = "td_loan_transactions",
-            //     whr = ``
-            // }
+           for(let dt of search_grp.msg){
+            var select = "balance",
+            table_name = "td_loan_transactions",
+            whr = `loan_id = '${dt.loan_id}'
+            AND payment_date = (SELECT MAX(payment_date) FROM td_loan_transactions WHERE loan_id = '${dt.loan_id}'
+            AND tr_type != 'I')`
+            order = null;
+           }
 
             for (let memb of dt.memb_dtls) {
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
