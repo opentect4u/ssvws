@@ -19,7 +19,8 @@ appdashboardRouter.post("/dashboard_dtls", async (req, res) => {
 
 appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     var data = req.body;
-
+    console.log(data,'sss');
+    
     var select = "SUM(credit) tot_recov_cash",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
@@ -27,7 +28,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     AND tr_mode = '${data.tr_mode}'
     AND date(payment_date) = '${data.datetime}'
     AND created_by = ${data.emp_id}`,
-    order = null;
+    order = `GROUP BY emp_id`;
     var dashboard_dt_cash = await db_Select(select,table_name,whr,order);
 
     res.send(dashboard_dt_cash)
