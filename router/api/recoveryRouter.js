@@ -107,7 +107,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
                 memb['demand'] = demandData || {}; 
 
-                var select = "balance",
+                var select = "balance,tr_type",
                 table_name = "td_loan_transactions",
                 whr = `loan_id = ${memb.loan_id}
                            AND payment_date = (SELECT MAX(payment_date) 
