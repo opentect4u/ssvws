@@ -83,15 +83,15 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     console.log(data,'grp');
     
 
-    var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
-        table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
-        whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%' AND c.status = 'A'`,
-        order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
+    // var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
+    //     table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
+    //     whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%' AND c.status = 'A'`,
+    //     order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
 
-    // var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt",
-    // table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code",
-    // whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%'`,
-    // order = `GROUP BY a.group_code, a.group_name, a.group_type`;
+    var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt",
+    table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code",
+    whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%'`,
+    order = `GROUP BY a.group_code, a.group_name, a.group_type`;
 
 
     var search_grp = await db_Select(select, table_name, whr, order);
