@@ -90,15 +90,22 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
     if (search_grp.suc > 0 && search_grp.msg.length > 0) {
         for (let dt of search_grp.msg) {
-            var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.balance",
-                table_name = "td_loan a, md_member b, td_loan_transactions c",
-                whr = `a.branch_code = b.branch_code 
-                AND a.member_code = b.member_code 
-                AND a.loan_id = c.loan_id
-                AND a.branch_code = c.branch_id
-                AND a.group_code = ${dt.group_code}
-                AND c.payment_date = (SELECT MAX(d.payment_date) FROM td_loan_transactions d WHERE a.loan_id=d.loan_id AND a.branch_code = d.branch_id)`,
-                order = null;
+            // var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name,c.balance",
+            //     table_name = "td_loan a, md_member b, td_loan_transactions c",
+            //     whr = `a.branch_code = b.branch_code 
+            //     AND a.member_code = b.member_code 
+            //     AND a.loan_id = c.loan_id
+            //     AND a.branch_code = c.branch_id
+            //     AND a.group_code = ${dt.group_code}
+            //     AND c.payment_date = (SELECT MAX(d.payment_date) FROM td_loan_transactions d WHERE a.loan_id=d.loan_id AND a.branch_code = d.branch_id)`,
+            //     order = null;
+
+            var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,b.client_name",
+            table_name = "td_loan a, md_member b",
+            whr = `a.branch_code = b.branch_code 
+            AND a.member_code = b.member_code
+            AND a.group_code = ${dt.group_code}`,
+            order = null;
 
             var mem_dt = await db_Select(select, table_name, whr, order);
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
