@@ -109,10 +109,10 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
                 var select = "balance,tr_type",
                 table_name = "td_loan_transactions",
-                whr = `loan_id = ${memb.loan_id}
+                whr = `loan_id = '${memb.loan_id}'
                            AND payment_date = (SELECT MAX(payment_date) 
                                                FROM td_loan_transactions 
-                                               WHERE loan_id = ${memb.loan_id}
+                                               WHERE loan_id = '${memb.loan_id}'
                                                AND tr_type == 'I')`;
                 var order = null;
             
