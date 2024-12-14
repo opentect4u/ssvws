@@ -99,23 +99,23 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 AND a.group_code = ${dt.group_code}
                 AND c.payment_date = (SELECT MAX(d.payment_date) FROM td_loan_transactions d WHERE a.loan_id=d.loan_id AND a.branch_code = d.branch_id)`,
                 order = null;
-                
+
             var mem_dt = await db_Select(select, table_name, whr, order);
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
 
-           for(let dts of mem_dt.msg){
-            console.log(dts,'dts');
+        //    for(let dts of mem_dt.msg){
+        //     console.log(dts,'dts');
             
-            var select = "balance",
-            table_name = "td_loan_transactions",
-            whr = `loan_id IN (${dts.loan_id})
-            AND payment_date = (SELECT MAX(payment_date) FROM td_loan_transactions WHERE loan_id IN (${dts.loan_id})
-            AND tr_type != 'I')`
-            order = null;
+        //     var select = "balance",
+        //     table_name = "td_loan_transactions",
+        //     whr = `loan_id IN (${dts.loan_id})
+        //     AND payment_date = (SELECT MAX(payment_date) FROM td_loan_transactions WHERE loan_id IN (${dts.loan_id})
+        //     AND tr_type != 'I')`
+        //     order = null;
 
-            var balance_dt = await db_Select(select, table_name, whr, order);
-            dt['balance'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg : []) : [];
-           }
+        //     var balance_dt = await db_Select(select, table_name, whr, order);
+        //     dt['balance'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg : []) : [];
+        //    }
 
             for (let memb of dt.memb_dtls) {
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
