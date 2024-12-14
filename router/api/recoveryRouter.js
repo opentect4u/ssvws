@@ -111,6 +111,8 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
 
            for(let dts of mem_dt.msg){
+            console.log(dts,'dts');
+            
             var select = "balance",
             table_name = "td_loan_transactions",
             whr = `loan_id IN (${dts.loan_id})
