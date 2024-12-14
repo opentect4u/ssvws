@@ -27,8 +27,8 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     AND tr_type = 'R'
     AND tr_mode = '${data.tr_mode}'
     AND date(payment_date) = '${data.datetime}'
-    AND created_by = ${data.emp_id}`,
-    order = `GROUP BY emp_id`;
+    AND created_by = ${data.created_by}`,
+    order = null;
     var dashboard_dt_cash = await db_Select(select,table_name,whr,order);
 
     res.send(dashboard_dt_cash)
