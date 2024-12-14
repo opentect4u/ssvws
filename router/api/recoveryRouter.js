@@ -119,7 +119,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                     AND tr_type != 'I'
                     GROUP BY loan_id, balance;
                 `;
-                var balance_dt = await db_RawSelect(balanceQuery);
+                var balance_dt = await db_Select(balanceQuery);
                 let balanceMap = {};
                 if (balance_dt.suc > 0 && balance_dt.msg.length > 0) {
                     balance_dt.msg.forEach(b => {
