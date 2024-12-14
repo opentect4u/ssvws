@@ -184,6 +184,7 @@ masterRouter.get("/get_education", async (req, res) => {
 
 masterRouter.post("/fetch_validation", async (req, res) => {
     var data = req.body;
+console.log(data,'gg');
 
     var select = "a.*, b.group_name";
     var table_name = "md_member a, md_group b";

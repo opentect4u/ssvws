@@ -19,7 +19,7 @@ appdashboardRouter.post("/dashboard_dtls", async (req, res) => {
 
 appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     var data = req.body;
-    console.log(data,'sss');
+    // console.log(data,'sss');
     
     var select = "SUM(credit) tot_recov_cash",
     table_name = "td_loan_transactions",
