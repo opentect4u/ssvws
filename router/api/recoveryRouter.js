@@ -119,7 +119,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
             order = null;
 
             var balance_dt = await db_Select(select, table_name, whr, order);
-            dt['memb_dtls'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg : []) : [];
+            dt['balance_dtls'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg : []) : [];
            }
 
             for (let memb of dt.memb_dtls) {
