@@ -189,8 +189,9 @@ module.exports = {
                     let prn_recov = balance - prnEmi;
                     console.log(prn_recov,'prn_recovary');*/
                     
-
+                    let prn_update  =  balance -  prn_recov
                     let intt_update =  intt_balance -  inttEMI
+                    let outs_update =  parseFloat(prn_update) + parseFloat(intt_update)
                     
                     console.log(intt_update,'intt_recovery');
                     
@@ -200,7 +201,7 @@ module.exports = {
                     
     
                     var table_name = "td_loan",
-                    fields = `prn_amt = '${prn_recov}', intt_amt = '${intt_update}', outstanding = '${outstanding}', instl_paid = '${dt.instl_paid}', last_trn_dt = '${dt.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                    fields = `prn_amt = '${prn_update}', intt_amt = '${intt_update}', outstanding = '${outs_update}', instl_paid = '${dt.instl_paid}', last_trn_dt = '${dt.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                     values = null,
                     whr = `loan_id = '${dt.loan_id}'`,
                     flag = 1;
