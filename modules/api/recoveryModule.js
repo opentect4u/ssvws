@@ -136,8 +136,8 @@ module.exports = {
                     let prn_recov = balance - prnEmi;
 
                     if(prnEmi > balance){
-                        prnEmi = balance
                         let excess_amt = prnEmi - balance
+                        prnEmi = balance
                         inttEMI = inttEMI + excess_amt
                     }else{
                         prnEmi = parseFloat(dt.prn_emi)
