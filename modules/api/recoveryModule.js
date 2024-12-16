@@ -196,7 +196,7 @@ module.exports = {
                     
                     let outstanding = parseFloat(prn_recov) + parseFloat(intt_update);
 
-                    console.log(prn_recov,intt_recov,outstanding,'calculate');
+                    //console.log(prn_recov,intt_recov,outstanding,'calculate');
                     
     
                     var table_name = "td_loan",
