@@ -124,11 +124,32 @@ module.exports = {
                 for (let dt of data.recovdtls) {
                     console.log(dt,'dtdtd');
 
-                let payment_id = await payment_code(data.branch_code)
+                    let balance = parseFloat(dt.prn_amt) || 0;  //previoud prn amt
+                    console.log(balance,'balance');
+                        
+                    let prnEmi = parseFloat(dt.prn_emi) || 0;  //prn recovery
+                    console.log(prnEmi,'prnEmi');
+
+                    let intt_balance = parseFloat(dt.intt_amt) //previoud intt
+                    let inttEMI = parseFloat(dt.intt_emi)      //intt recovery
+
+                    if(prnEmi > balance){
+                        prnEmi = balance
+                        let excess_amt = prnEmi - balance
+                        inttEMI = inttEMI + excess_amt
+                    }else{
+                        prnEmi = parseFloat(dt.prn_emi)
+                        inttEMI = parseFloat(dt.intt_emi)
+                    }
+
+
+
+
+                let payment_id = await payment_code(data.branch_code)     //interest
  
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
-                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','To Interest','0','${dt.intt_emi}','${dt.prn_amt > 0 ? dt.prn_amt : 0}','${dt.intt_emi > 0 ? dt.intt_emi : 0}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
+                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','To Interest','0','${inttEMI}','${balance > 0 ? balance : 0}','${inttEMI}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
                     whr = null,
                     flag = 0;
                     var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
@@ -139,11 +160,12 @@ module.exports = {
                         
     
                         // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
-                        let balance = parseFloat(dt.prn_amt) || 0;
+                        /*let balance = parseFloat(dt.prn_amt) || 0;
                         console.log(balance,'balance');
                         
                         let prnEmi = parseFloat(dt.prn_emi) || 0;
-                        console.log(prnEmi,'prnEmi');
+                        console.log(prnEmi,'prnEmi');*/
+
                         let prn_recov = balance - prnEmi;
 
                         console.log(prn_recov,'prn');
@@ -151,7 +173,7 @@ module.exports = {
     
                         var table_name = "td_loan_transactions",
                         fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
-                        values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','By Cash(Install)','${dt.credit}','0','${dt.prn_emi > 0 ? dt.prn_emi : 0}','${dt.intt_emi > 0 ? dt.intt_emi : 0}','${prn_recov > 0 ? prn_recov : 0}','0','${datetime}','R','${data.tr_mode}','${data.bank_name}','${data.cheque_id == '' ? 0 : data.cheque_id}', '${data.chq_dt == '' ? null : data.chq_dt}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
+                        values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','By Cash(Install)','${dt.credit}','0','${prnEmi > 0 ?prnEmi : 0}','${inttEMI > 0 ? inttEMI : 0}','${prn_recov > 0 ? prn_recov : 0}','0','${datetime}','R','${data.tr_mode}','${data.bank_name}','${data.cheque_id == '' ? 0 : data.cheque_id}', '${data.chq_dt == '' ? null : data.chq_dt}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
                         whr = null,
                         flag = 0;
                         var rec_dtls_prn = await db_Insert(table_name,fields,values,whr,flag);    
@@ -160,22 +182,23 @@ module.exports = {
                     if(rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0){
     
                     // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
-                    let balance = parseFloat(dt.prn_amt) || 0;
+                    /*let balance = parseFloat(dt.prn_amt) || 0;
                     let prnEmi = parseFloat(dt.prn_emi) || 0;
                     let prn_recov = balance - prnEmi;
-                    console.log(prn_recov,'prn_recovary');
+                    console.log(prn_recov,'prn_recovary');*/
                     
 
-                    let intt_recov = parseFloat(dt.intt_amt) - parseFloat(dt.intt_emi);
+                    let intt_update =  intt_balance -  inttEMI
+                    
                     console.log(intt_recov,'intt_recovery');
                     
-                    let outstanding = parseFloat(prn_recov) + parseFloat(intt_recov);
+                    let outstanding = parseFloat(prn_recov) + parseFloat(intt_update);
 
                     console.log(prn_recov,intt_recov,outstanding,'calculate');
                     
     
                     var table_name = "td_loan",
-                    fields = `prn_amt = '${prn_recov}', intt_amt = '${intt_recov}', outstanding = '${outstanding}', instl_paid = '${dt.instl_paid}', last_trn_dt = '${dt.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                    fields = `prn_amt = '${prn_recov}', intt_amt = '${intt_update}', outstanding = '${outstanding}', instl_paid = '${dt.instl_paid}', last_trn_dt = '${dt.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                     values = null,
                     whr = `loan_id = '${dt.loan_id}'`,
                     flag = 1;
