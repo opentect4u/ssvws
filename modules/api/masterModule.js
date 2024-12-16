@@ -442,7 +442,9 @@ const getLoanDmd = (loan_id, DATE) => {
          var month = monthResult.msg[0].month; 
          var year = yearResult.msg[0].year;  
 
-         var create_date = `${year}-${month}-${day}`;
+         //var create_date = `${year}-${month}-${day}`;
+
+         var create_date = DATE
 
          console.log("Created date:", create_date);
 
