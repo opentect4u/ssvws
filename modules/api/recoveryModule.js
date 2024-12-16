@@ -166,7 +166,7 @@ module.exports = {
                     console.log(prn_recov,'prn_recovary');
                     
 
-                    let intt_recov = parseFloat(dt.intt_cal_amt) - parseFloat(dt.intt_emi);
+                    let intt_recov = parseFloat(dt.intt_amt) - parseFloat(dt.intt_emi);
                     console.log(intt_recov,'intt_recovery');
                     
                     let outstanding = parseFloat(prn_recov) + parseFloat(intt_recov);
