@@ -416,7 +416,10 @@ const getLoanDmd = (loan_id, DATE) => {
 
           var ld_demand = 0;
 
-      //  if (get_data.msg[0].period_mode === 'Monthly') {
+      if (outstanding == 0) {
+
+        ld_demand = 0
+      }else{
 
           if (DATE > end_dt){
             console.log(DATE > instl_end_dt,'test');
@@ -469,10 +472,7 @@ const getLoanDmd = (loan_id, DATE) => {
          console.log(ld_demand,'ld');
         
         }
-        // } else {
-        //   console.log("Non-monthly period mode calculation not implemented.");
-        //   resolve(null);
-        // }
+     }
 
         if (ld_demand <= 0 ){
           ld_demand = 0
