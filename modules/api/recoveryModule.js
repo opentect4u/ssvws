@@ -190,7 +190,7 @@ module.exports = {
 
                     let intt_update =  intt_balance -  inttEMI
                     
-                    console.log(intt_recov,'intt_recovery');
+                    console.log(intt_update,'intt_recovery');
                     
                     let outstanding = parseFloat(prn_recov) + parseFloat(intt_update);
 
