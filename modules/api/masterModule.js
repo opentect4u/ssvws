@@ -449,9 +449,9 @@ const getLoanDmd = (loan_id, DATE) => {
          console.log("Created date:", create_date);
 
          if (get_data.msg[0].period_mode === 'Monthly') {
-         var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 30)+1 AS date_diff`
+         var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 30) AS date_diff`
          }else {
-            var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 7)+1 AS date_diff`
+            var date_diff = `ROUND(DATEDIFF('${dateFormat(create_date, "yyyy-mm-dd")}', '${dateFormat(instl_st_dt, "yyyy-mm-dd")}') / 7) AS date_diff`
          }
 
          var date_diffs = await db_Select(date_diff);
