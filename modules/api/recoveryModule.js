@@ -128,7 +128,7 @@ module.exports = {
  
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,balance,intt_balance,tr_type,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
-                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','0','${dt.intt_emi}','${dt.balance > 0 ? dt.balance : 0}','${dt.intt_emi > 0 ? dt.intt_emi : 0}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
+                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','0','${dt.intt_emi}','${dt.prn_amt > 0 ? dt.prn_amt : 0}','${dt.intt_emi > 0 ? dt.intt_emi : 0}','I','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
                     whr = null,
                     flag = 0;
                     var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
@@ -139,7 +139,7 @@ module.exports = {
                         
     
                         // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
-                        let balance = parseFloat(dt.balance) || 0;
+                        let balance = parseFloat(dt.prn_amt) || 0;
                         console.log(balance,'balance');
                         
                         let prnEmi = parseFloat(dt.prn_emi) || 0;
@@ -160,7 +160,7 @@ module.exports = {
                     if(rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0){
     
                     // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
-                    let balance = parseFloat(dt.balance) || 0;
+                    let balance = parseFloat(dt.prn_amt) || 0;
                     let prnEmi = parseFloat(dt.prn_emi) || 0;
                     let prn_recov = balance - prnEmi;
                     console.log(prn_recov,'prn_recovary');

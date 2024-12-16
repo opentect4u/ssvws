@@ -458,7 +458,7 @@ const getLoanDmd = (loan_id, DATE) => {
          
          var select = "SUM(credit) credit",
          table_name = "td_loan_transactions",
-         whr = `loan_id = '${loan_id}' AND tr_type = 'R' AND payment_date <= '${dateFormat(create_date, "yyyy-mm-dd")}'`,
+         whr = `loan_id = SUBSTRING(${loan_id}, 4) AND tr_type = 'R' AND payment_date <= '${dateFormat(create_date, "yyyy-mm-dd")}'`,
          order = null;
          var ld_paid_amt = await db_Select(select,table_name,whr,order);
          console.log(ld_paid_amt);
