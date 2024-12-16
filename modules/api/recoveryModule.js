@@ -226,7 +226,10 @@ module.exports = {
                 WHERE i.group_code = '${dt.group_code}' AND b.tr_type = 'R'
                 ) outstanding`,
                 table_name = "td_loan a JOIN td_loan_transactions b ON a.loan_id = b.loan_id AND a.branch_code = b.branch_id JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code JOIN md_branch d ON a.branch_code = d.branch_code JOIN md_employee e ON b.created_by = e.emp_id JOIN md_member f ON a.branch_code = f.branch_code AND a.member_code = f.member_code",
-                    whr = `a.group_code = '${dt.group_code}' AND b.tr_type = 'R'`,
+                    whr = `a.loan_id = '${dt.loan_id}' AND b.tr_type = 'R' AND b.created_at = 
+                    (SELECT MAX(created_at) 
+                                         FROM td_loan_transactions 
+                                      WHERE loan_id = '${dt.loan_id}')`,
                     order = `GROUP BY a.loan_id,a.member_code,a.branch_code,a.group_code,b.payment_date,b.credit,b.tr_mode,b.cheque_id,b.created_by,c.group_name,d.branch_name,e.emp_name,f.client_name`;
                     var trans_dtl = await db_Select(select,table_name,whr,order);
     
