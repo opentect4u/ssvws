@@ -133,6 +133,8 @@ module.exports = {
                     let intt_balance = parseFloat(dt.intt_amt) //previoud intt
                     let inttEMI = parseFloat(dt.intt_emi)      //intt recovery
 
+                    let prn_recov = balance - prnEmi;
+
                     if(prnEmi > balance){
                         prnEmi = balance
                         let excess_amt = prnEmi - balance
@@ -166,7 +168,7 @@ module.exports = {
                         let prnEmi = parseFloat(dt.prn_emi) || 0;
                         console.log(prnEmi,'prnEmi');*/
 
-                        let prn_recov = balance - prnEmi;
+                        
 
                         console.log(prn_recov,'prn');
                         
