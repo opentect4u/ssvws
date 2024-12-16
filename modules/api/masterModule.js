@@ -473,7 +473,8 @@ const getLoanDmd = (loan_id, DATE) => {
         
         }
      }
-
+        console.log(ld_demand,'dd');
+        
         if (ld_demand <= 0 ){
           ld_demand = 0
         }else {
