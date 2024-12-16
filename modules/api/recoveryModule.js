@@ -133,7 +133,7 @@ module.exports = {
                     let intt_balance = parseFloat(dt.intt_amt) //previoud intt
                     let inttEMI = parseFloat(dt.intt_emi)      //intt recovery
 
-                    let prn_recov = balance - prnEmi;
+                    
 
                     if(prnEmi > balance){
                         let excess_amt = prnEmi - balance
@@ -144,7 +144,7 @@ module.exports = {
                         inttEMI = parseFloat(dt.intt_emi)
                     }
 
-
+                    let prn_recov = balance - prnEmi;
 
 
                 let payment_id = await payment_code(data.branch_code)     //interest
@@ -189,7 +189,7 @@ module.exports = {
                     let prn_recov = balance - prnEmi;
                     console.log(prn_recov,'prn_recovary');*/
                     
-                    let prn_update  =  balance -  prn_recov
+                    let prn_update  =  balance - prnEmi;
                     let intt_update =  intt_balance -  inttEMI
                     let outs_update =  parseFloat(prn_update) + parseFloat(intt_update)
                     
