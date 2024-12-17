@@ -68,6 +68,8 @@ const { testRouter } = require("./router/api/testRouter");
 const { userRouter } = require("./router/api/userRouter");
 const { DashboardRouter } = require("./router/dashboardRouter");
 const { LoginRouter } = require("./router/loginRouter");
+const { loan_statementRouter } = require("./router/report/branch_report/web/loan_statementRouter");
+const { loan_transRouter } = require("./router/report/branch_report/web/loan_transRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -79,6 +81,8 @@ app.use(recoveryRouter)
 app.use(reportRouter)
 app.use(appdashboardRouter)
 app.use(testRouter)
+app.use(loan_statementRouter)
+app.use(loan_transRouter)
 app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
