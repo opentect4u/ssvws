@@ -55,8 +55,7 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
         AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
         GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type
         ORDER BY a.payment_date,a.payment_id)a`,
-    whr = `a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
-    AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'`,
+    whr = null,
     order = `GROUP BY trans_date,particulars,tr_type`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
 
