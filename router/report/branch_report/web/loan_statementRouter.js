@@ -21,9 +21,9 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
     var data = req.body;
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
-    var select = "payment_date trans_date, payment_id trans_no,particulars,credit,debit,bank_charge,proc_charge,(balance + intt_balance)balance,tr_type,tr_mode",
+    var select = "payment_date trans_date, payment_id trans_no,particulars,credit,debit,bank_charge,proc_charge,(balance + od_balance + intt_balance)balance,tr_type,tr_mode",
     table_name = "td_loan_transactions",
-    whr = `date(payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND loan_id = '${data.loan_id}'`,
+    whr = `date(payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND loan_id = '${data.loan_id}' AND tr_type != 'O'`,
     order = `ORDER BY date(payment_date),payment_id`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
 
@@ -47,12 +47,17 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
     var data = req.body;
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR GROUP CODE
-    var select = " a.payment_date trans_date,a.payment_id trans_id,a.particulars,a.tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.intt_balance) total",
-    table_name = "td_loan_transactions a,td_loan b",
+    var select = "trans_date,particulars,tr_type,sum(debit)debit,sum(credit)credit,sum(bank_charge)bank_charge,sum(proc_charge)proc_charge,sum(total)balance",
+    table_name = `(
+        select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,a.tr_type tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.od_balance +a.intt_balance) total
+        from td_loan_transactions a,td_loan b  
+        where a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
+        AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+        GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type
+        ORDER BY a.payment_date,a.payment_id)a`,
     whr = `a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
     AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'`,
-    order = `GROUP BY a.payment_date,a.payment_id,a.particulars,a.tr_type
-    ORDER BY a.payment_date,a.payment_id`;
+    order = `GROUP BY trans_date,particulars,tr_type`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
 
     res.send(loan_report_dt);
