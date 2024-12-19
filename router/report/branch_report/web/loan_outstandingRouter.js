@@ -16,8 +16,10 @@ loan_outstandingRouter.post("/loan_outstanding_report", async (req, res) => {
     var loan_outstanding_dt = await db_Select(select,table_name,whr,order);  
 
     if(loan_outstanding_dt.suc > 0 && loan_outstanding_dt.msg.length > 0){
-        var detailsoutstanding = [];
+        // var detailsoutstanding = [];
         for (let dt of loan_outstanding_dt.msg) {
+            console.log(dt,'dt');
+            
 
                         var loan_id = dt.loan_id;
         
@@ -31,14 +33,10 @@ loan_outstandingRouter.post("/loan_outstanding_report", async (req, res) => {
                                                             AND payment_date <= '${data.os_dt}'
                                                             AND tr_type = 'R')`;
                         var details = await db_Select(select, table_name, whr, null);
-
-                        if (details.suc > 0 && details.msg.length > 0) {
-                            detailsoutstanding.push(details.msg[0].balance);
-                        }
         }
-        res.send({ suc: 1, balances: detailsArray, msg: "Success" });
+        res.send({ suc: 1, msg: details });
     }else {
-        res.send({ suc: 0, msg: 'Check Loan outstanding Details' });
+        res.send({ suc: 0, msg: [] });
     }
         } catch (error) {
     console.error(error);
