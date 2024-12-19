@@ -27,7 +27,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
         // console.log(selDayNum, 'selDayNum');
 
         // Fetch loan details from recovery day
-        var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,a.disb_dt,a.curr_roi,a.period,a.period_mode,a.instl_end_dt,b.created_by collec_code,d.emp_name co_name",
+        var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,a.disb_dt,a.curr_roi,a.period,a.period_mode,a.instl_end_dt,a.tot_emi,b.created_by collec_code,d.emp_name co_name",
         table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_member c ON a.member_code = c.member_code LEFT JOIN md_employee d ON b.created_by = d.emp_id",
         whr = `a.disb_dt <= '${data.to_dt}' AND 
                      (a.recovery_day BETWEEN '${fromdt}' AND '${todt}' OR a.recovery_day = '${selDayNum}')`,
