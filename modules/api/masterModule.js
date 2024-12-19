@@ -279,6 +279,16 @@ const getFormNo = () => {
 //     });
 // };
 
+var dayRevarseList = {
+  'Sunday': 1,
+  'Monday': 2,
+  'Tuesday': 3,
+  'Wednesday': 4,
+  'Thursday': 5,
+  'Friday': 6,
+  'Saturday': 7
+}
+
 const genDate = (period,mode,emiDate,selDay) => {
   return new Promise((resolve, reject) => {
     const dateFormat = require('dateformat')
@@ -300,15 +310,6 @@ const genDate = (period,mode,emiDate,selDay) => {
       7: 'Saturday'
     }
   
-    var dayRevarseList = {
-      'Sunday': 1,
-      'Monday': 2,
-      'Tuesday': 3,
-      'Wednesday': 4,
-      'Thursday': 5,
-      'Friday': 6,
-      'Saturday': 7
-    }
     switch (mode) {
       case 'Monthly':
         var modDt = new Date(currDate.setMonth((currDate.getMonth() + 1) + period))
@@ -495,4 +496,4 @@ const getLoanDmd = (loan_id, DATE) => {
 };
 
   
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd, dayRevarseList}
