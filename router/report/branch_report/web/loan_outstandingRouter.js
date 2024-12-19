@@ -11,10 +11,10 @@ loan_outstandingRouter.post("/loan_outstanding_report", async (req, res) => {
     
 
     //FETCH OUTSTANDING DETAILS MEMBER WISE
-    var select = "c.payment_date,a.group_code,d.group_name,a.member_code,b.client_name,a.loan_id,b.client_mobile,b.gurd_name,b.client_addr,b.aadhar_no,b.pan_no,b.acc_no,e.purpose_id,f.sub_purp_name,g.scheme_name,h.fund_name,a.applied_dt,a.applied_amt,a.disb_dt,a.intt_cal_amt intt_payable,a.prn_disb_amt,a.curr_roi,a.period_mode,a.instl_end_dt,(c.balance + c.od_balance)prn_amt,c.intt_balance,a.outstanding,c.created_by collector_code,i.emp_name collec_name,c.created_at,c.approved_by,c.approved_at",
-    table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan_transactions c ON a.loan_id = c.loan_id LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_purpose e ON a.purpose = e.purp_id LEFT JOIN md_sub_purpose f ON a.sub_purpose = f.sub_purp_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_fund h ON a.fund_id = h.fund_id LEFT JOIN md_employee i ON c.created_by = i.emp_id",
+    var select = "a.group_code,d.group_name,a.member_code,b.client_name,a.loan_id,b.client_mobile,b.gurd_name,b.client_addr,b.aadhar_no,b.pan_no,b.acc_no,e.purpose_id,f.sub_purp_name,g.scheme_name,h.fund_name,a.applied_dt,a.applied_amt,a.disb_dt,a.prn_disb_amt,a.curr_roi,a.period_mode,a.instl_end_dt",
+    table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_purpose e ON a.purpose = e.purp_id LEFT JOIN md_sub_purpose f ON a.sub_purpose = f.sub_purp_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_fund h ON a.fund_id = h.fund_id",
     whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.os_dt}'`,
-    order = `ORDER BY c.payment_date`;
+    order = null;
     var loan_outstanding_dt = await db_Select(select,table_name,whr,order); 
     console.log(loan_outstanding_dt,'lolo');
      
@@ -37,8 +37,29 @@ loan_outstandingRouter.post("/loan_outstanding_report", async (req, res) => {
                                                             AND payment_date <= '${data.os_dt}'
                                                             AND tr_type = 'R')`;
                         var details = await db_Select(select, table_name, whr, null);
+
+                        var select = "od_balance";
+                        table_name = "td_loan_transactions";
+                        whr = `loan_id = '${loan_id}' AND tr_type = 'R'
+                                            AND payment_date = (SELECT MAX(payment_date)
+                                                            FROM td_loan_transactions
+                                                            WHERE loan_id = '${loan_id}' 
+                                                            AND payment_date <= '${data.os_dt}'
+                                                            AND tr_type = 'R')`;
+                        var details_od = await db_Select(select, table_name, whr, null);
+
+
+                        var select = "intt_balance";
+                        table_name = "td_loan_transactions";
+                        whr = `loan_id = '${loan_id}' AND tr_type = 'R'
+                                            AND payment_date = (SELECT MAX(payment_date)
+                                                            FROM td_loan_transactions
+                                                            WHERE loan_id = '${loan_id}' 
+                                                            AND payment_date <= '${data.os_dt}'
+                                                            AND tr_type = 'R')`;
+                        var details_intt = await db_Select(select, table_name, whr, null);
         }
-        res.send({ suc: 1, msg: details });
+        res.send({ suc: 1, msg: details,details_od,details_intt });
     }else {
         res.send({ suc: 0, msg: [] });
     }
