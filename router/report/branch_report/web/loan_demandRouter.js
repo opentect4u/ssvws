@@ -84,7 +84,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
 
             res.send({ suc: 1, msg: demandResults });
         } else {
-            res.send({ suc: 0, msg: 'Check Loan Details' });
+            res.send({ suc: 0, msg: [] });
         }
     } catch (error) {
         console.error(error);
