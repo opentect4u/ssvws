@@ -30,8 +30,9 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
         var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,a.disb_dt,a.curr_roi,a.period,a.period_mode,b.created_by collec_code,d.emp_name co_name";
         table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_member c ON a.member_code = c.member_code LEFT JOIN md_employee d ON b.created_by = d.emp_id";
         whr = `disb_dt <= '${data.to_dt}' AND 
-                     (recovery_day BETWEEN '${fromdt}' AND '${todt}' OR recovery_day = '${selDayNum}')`;
-        var loan_dt = await db_Select(select, table_name, whr, null);
+                     (recovery_day BETWEEN '${fromdt}' AND '${todt}' OR recovery_day = '${selDayNum}')`
+        order = `a.loan_id,a.group_code`;
+        var loan_dt = await db_Select(select, table_name, whr, order);
         // console.log(loan_dt, 'loan_dt');
 
         if (loan_dt.suc > 0 && loan_dt.msg.length > 0) {
