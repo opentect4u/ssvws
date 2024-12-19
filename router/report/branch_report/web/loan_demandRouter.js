@@ -77,7 +77,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                     }
                    
                 } else {
-                    console.warn(`Loan ID ${loan_id}: Balance check failed.`);
+                    console.warn(`Loan ID ${loan_id}: Balance is 0.`);
                 }
             }
 
