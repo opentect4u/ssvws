@@ -23,8 +23,8 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
         // console.log(todt, 'todt');
 
         // Extract day of the week from the current date
-        var selDayNum = dayRevarseList[dateFormat(new Date(), 'dddd')];
-        // console.log(selDayNum, 'selDayNum');
+        var selDayNum = dayRevarseList[dateFormat(data.to_dt, 'dddd')];
+        console.log(selDayNum, 'selDayNum');
 
         // Fetch loan details from recovery day
         var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,a.disb_dt,a.curr_roi,a.period,a.period_mode,b.created_by collec_code,d.emp_name co_name";
