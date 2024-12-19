@@ -31,7 +31,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
         table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_member c ON a.member_code = c.member_code LEFT JOIN md_employee d ON b.created_by = d.emp_id",
         whr = `a.disb_dt <= '${data.to_dt}' AND 
                      (a.recovery_day BETWEEN '${fromdt}' AND '${todt}' OR a.recovery_day = '${selDayNum}')`,
-        order = `a.loan_id,a.group_code`;
+        order = `ORDER BY a.loan_id,a.group_code`;
         var loan_dt = await db_Select(select, table_name, whr, order);
         // console.log(loan_dt, 'loan_dt');
 
