@@ -73,11 +73,11 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                     if(demandData.suc > 0 && demandData.demand.ld_demand > 0){
                         demandResults.push({ loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,curr_roi,period,period_mode,balance_dt,co_name, demand: demandData });
                     }else {
-                        console.warn({ suc: 0, msg: 'Demand Amount is 0' });
+                        // console.log({ suc: 0, msg: 'Demand Amount is 0' });
                     }
                    
                 } else {
-                    console.warn(`Loan ID ${loan_id}: Balance is 0.`);
+                    // console.log(`Loan ID ${loan_id}: Balance is 0.`);
                 }
             }
 
