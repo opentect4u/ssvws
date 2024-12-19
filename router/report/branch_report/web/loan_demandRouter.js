@@ -51,6 +51,8 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                 var period = dt.period;
                 var period_mode = dt.period_mode;
                 var co_name = dt.emp_name;
+                var tot_emi = dt.tot_emi;
+                var instl_end_dt = dt.instl_end_dt;
 
                 // Calculate balance
                 var select = "(balance + od_balance + intt_balance) balance";
@@ -72,7 +74,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                     var demandData = await getLoanDmd(loan_id, data.to_dt);
 
                     if(demandData.suc > 0 && demandData.demand.ld_demand > 0){
-                        demandResults.push({ loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,curr_roi,period,period_mode,balance_dt,co_name, demand: demandData.demand.ld_demand });
+                        demandResults.push({ loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,curr_roi,period,period_mode,balance_dt,co_name,tot_emi,instl_end_dt, demand: demandData.demand.ld_demand });
                     }else {
                         // console.log({ suc: 0, msg: 'Demand Amount is 0' });
                     }
