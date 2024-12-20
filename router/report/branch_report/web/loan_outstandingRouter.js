@@ -50,6 +50,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
                     console.error(`Error fetching balance data for loan ID ${loan_id}:`, err);
                 }
             }
+            res.setTimeout(10*1000)
             res.send({ suc: 1, msg: outstandingResults });
         } else {
             res.send({ suc: 0, msg: [] });
