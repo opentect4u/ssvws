@@ -527,7 +527,7 @@ const loan_balance_outstanding = (loan_id, os_dt) => {
           
           resolve({ suc: 1, balance_dt: { balance } });
         } else {
-          console.log("No transactions found for the given date.");
+          // console.log("No transactions found for the given date.");
           resolve(null);
         }
     } catch (error) {
@@ -569,7 +569,7 @@ const loan_od_balance_outstanding = (loan_id, os_dt) => {
           
           resolve({ suc: 1, od_balance_dt: { od_balance } });
         } else {
-          console.log("No transactions found for the given date.");
+          // console.log("No transactions found for the given date.");
           resolve(null);
         }
     } catch (error) {
@@ -611,7 +611,7 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
           
           resolve({ suc: 1, intt_balance_dt: { intt_balance } });
         } else {
-          console.log("No transactions found for the given date.");
+          // console.log("No transactions found for the given date.");
           resolve(null);
         }
     } catch (error) {
