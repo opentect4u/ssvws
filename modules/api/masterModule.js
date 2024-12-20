@@ -66,7 +66,7 @@ const getFormNo = () => {
 
         let newMemberCode = res_dt.msg[0].member_code;
         let memberCode = `${branch_code}` + newMemberCode;
-        console.log(memberCode,'code');
+        // console.log(memberCode,'code');
         
       resolve(memberCode);
     });
@@ -83,7 +83,7 @@ const getFormNo = () => {
 
         let newLoanCode = res_dt.msg[0].loan_code;        
         let loanCode = `${branch_code}` + newLoanCode;
-        console.log(loanCode,'code');
+        // console.log(loanCode,'code');
         
       resolve(loanCode);
     });
@@ -100,7 +100,7 @@ const getFormNo = () => {
         var pay_dt = await db_Select(select,table_name,whr,order);
 
         let newPayCode = pay_dt.msg[0].max_pay_id;   
-        console.log(newPayCode,'paycode');
+        // console.log(newPayCode,'paycode');
          
         var newPayId = `${year}` + `${branch_code}` + newPayCode        
       resolve(newPayId);
@@ -192,7 +192,7 @@ const getFormNo = () => {
       const periodValue = period[0].tot_period
       const interest = (((principal * rate) / 100) / periodValue) * time;
   
-      console.log(interest);
+      // console.log(interest);
       return Math.round(interest);
     } catch (error) {
       console.error(error.message);
@@ -205,7 +205,7 @@ const getFormNo = () => {
       let emi_prn;
 
       emi_prn = (principal / period);
-      console.log(emi_prn.toFixed(2));
+      // console.log(emi_prn.toFixed(2));
       
       //  resolve(emi_prn.toFixed(2));
       resolve(Math.round(emi_prn));
@@ -217,7 +217,7 @@ const getFormNo = () => {
       let emi_intt;
 
       emi_intt = (interest / period);
-      console.log(emi_intt.toFixed(2));
+      // console.log(emi_intt.toFixed(2));
       
       //  resolve(emi_intt.toFixed(2));
        resolve(Math.round(emi_intt));
@@ -497,7 +497,7 @@ const getLoanDmd = (loan_id, DATE) => {
 
 
 const loan_balance_outstanding = (loan_id, os_dt) => {
-  console.log(loan_id,os_dt);
+  // console.log(loan_id,os_dt);
   
   return new Promise(async (resolve, reject) => {
     try {
@@ -518,12 +518,12 @@ const loan_balance_outstanding = (loan_id, os_dt) => {
           table_name,
           whr
         );
-        console.log(transactionDetails,'trans');
+        // console.log(transactionDetails,'trans');
         
 
         if (transactionDetails.suc > 0 && transactionDetails.msg.length > 0) {
           var balance = transactionDetails.msg[0]?.balance || 0;
-          console.log(balance,'bal');
+          // console.log(balance,'bal');
           
           resolve({ suc: 1, balance_dt: { balance } });
         } else {
@@ -539,7 +539,7 @@ const loan_balance_outstanding = (loan_id, os_dt) => {
 
 
 const loan_od_balance_outstanding = (loan_id, os_dt) => {
-  console.log(loan_id,os_dt);
+  // console.log(loan_id,os_dt);
   
   return new Promise(async (resolve, reject) => {
     try {
@@ -560,12 +560,12 @@ const loan_od_balance_outstanding = (loan_id, os_dt) => {
           table_name,
           whr
         );
-        console.log(od_transactionDetails,'trans');
+        // console.log(od_transactionDetails,'trans');
         
 
         if (od_transactionDetails.suc > 0 && od_transactionDetails.msg.length > 0) {
           var od_balance = od_transactionDetails.msg[0]?.balance || 0;
-          console.log(od_balance,'bal');
+          // console.log(od_balance,'bal');
           
           resolve({ suc: 1, od_balance_dt: { od_balance } });
         } else {
@@ -581,7 +581,7 @@ const loan_od_balance_outstanding = (loan_id, os_dt) => {
 
   
 const loan_intt_balance_outstanding = (loan_id, os_dt) => {
-  console.log(loan_id,os_dt);
+  // console.log(loan_id,os_dt);
   
   return new Promise(async (resolve, reject) => {
     try {
@@ -602,12 +602,12 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
           table_name,
           whr
         );
-        console.log(intt_transactionDetails,'trans');
+        // console.log(intt_transactionDetails,'trans');
         
 
         if (intt_transactionDetails.suc > 0 && intt_transactionDetails.msg.length > 0) {
           var intt_balance = intt_transactionDetails.msg[0]?.balance || 0;
-          console.log(intt_balance,'bal');
+          // console.log(intt_balance,'bal');
           
           resolve({ suc: 1, intt_balance_dt: { intt_balance } });
         } else {
