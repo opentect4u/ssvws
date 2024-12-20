@@ -56,7 +56,7 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
         GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.curr_roi,b.period,b.period_mode,b.tot_emi
         ORDER BY a.payment_date,a.payment_id)a`,
     whr = null,
-    order = `GROUP BY trans_date,particulars,tr_type,,curr_roi,period,period_mode,tot_emi`;
+    order = `GROUP BY trans_date,particulars,tr_type,curr_roi,period,period_mode,tot_emi`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
 
     res.send(loan_report_dt);
