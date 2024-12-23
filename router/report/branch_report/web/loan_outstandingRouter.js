@@ -38,9 +38,9 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
                     var period_mode = dt.period_mode;
                     var tot_emi = dt.tot_emi;
                     var instl_end_dt = dt.instl_end_dt;
-                    var balance = balanceData?.balance_dt?.balance || 0;
-                    var od_balance = od_balanceData?.balance_dt?.od_balance || 0;
-                    var intt_balance = intt_balanceData?.balance_dt?.intt_balance || 0;
+                    var balance = balanceData.balance_dt.balance || 0;
+                    var od_balance = od_balanceData.od_balance_dt.od_balance || 0;
+                    var intt_balance = intt_balanceData.intt_balance_dt.intt_balance || 0;
                     var total_outstanding = (balance + od_balance + intt_balance);
 
                     // console.log(balance,od_balance,intt_balance,total_outstanding);
@@ -118,9 +118,9 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                     var tot_emi = dt.tot_emi;
                     var instl_start_dt = dt.instl_start_dt;
                     var instl_end_dt = dt.instl_end_dt;
-                    var balance = balanceData?.balance_dt?.balance || 0;
-                    var od_balance = od_balanceData?.balance_dt?.od_balance || 0;
-                    var intt_balance = intt_balanceData?.balance_dt?.intt_balance || 0;
+                    var balance = balanceData.balance_dt.balance || 0;
+                    var od_balance = od_balanceData.od_balance_dt.od_balance || 0;
+                    var intt_balance = intt_balanceData.intt_balance_dt.intt_balance || 0;
                     var total_outstanding = (balance + od_balance + intt_balance);
 
                     // Use `group_code` as the key to group balances

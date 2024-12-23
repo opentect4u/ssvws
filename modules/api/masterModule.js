@@ -564,7 +564,7 @@ const loan_od_balance_outstanding = (loan_id, os_dt) => {
         
 
         if (od_transactionDetails.suc > 0 && od_transactionDetails.msg.length > 0) {
-          var od_balance = od_transactionDetails.msg[0]?.balance || 0;
+          var od_balance = od_transactionDetails.msg[0].od_balance || 0;
           // console.log(od_balance,'bal');
           
           resolve({ suc: 1, od_balance_dt: { od_balance } });
@@ -593,7 +593,7 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
           AND payment_date = (
             SELECT MAX(payment_date)
             FROM td_loan_transactions
-            WHERE loan_id = '${loan_id}' 
+            WHERE loan_id = '${loan_id}'
               AND payment_date <= '${os_dt}'
               AND tr_type = 'R'
           )`;
@@ -606,7 +606,7 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
         
 
         if (intt_transactionDetails.suc > 0 && intt_transactionDetails.msg.length > 0) {
-          var intt_balance = intt_transactionDetails.msg[0]?.balance || 0;
+          var intt_balance = intt_transactionDetails.msg[0].intt_balance || 0;
           // console.log(intt_balance,'bal');
           
           resolve({ suc: 1, intt_balance_dt: { intt_balance } });
