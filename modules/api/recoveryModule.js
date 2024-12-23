@@ -153,7 +153,7 @@ module.exports = {
  
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,balance,intt_balance,tr_type,tr_mode,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
-                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','To Interest','0','${inttEMI}','${balance > 0 ? balance : 0}','${intt_recovs}','I','${data.tr_mode}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
+                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','To Interest','0','${inttEMI}','${balance > 0 ? balance : 0}','${intt_balance}','I','${data.tr_mode}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
                     whr = null,
                     flag = 0;
                     var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
