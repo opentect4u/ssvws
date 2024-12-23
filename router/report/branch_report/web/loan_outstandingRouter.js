@@ -11,11 +11,11 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
 
         // Fetch outstanding details member-wise
         var select =
-                "a.branch_code,a.group_code, d.group_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, e.purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi, a.period_mode, a.instl_end_dt, a.tot_emi",
+                "a.branch_code,a.group_code, d.group_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, e.purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi, a.period, a.period_mode, a.instl_end_dt, a.tot_emi",
             table_name =
                 "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_purpose e ON a.purpose = e.purp_id LEFT JOIN md_sub_purpose f ON a.sub_purpose = f.sub_purp_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_fund h ON a.fund_id = h.fund_id",
             whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.os_dt}'`,
-            order = `LIMIT ${data.min},${data.max}`;
+            order = `ORDER BY a.disb_dt LIMIT ${data.min},${data.max}`;
 
         var loanOutstandingData = await db_Select(select, table_name, whr, order);
 
@@ -68,11 +68,11 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
 
         // Fetch outstanding details group-wise
         var select =
-                "a.branch_code,a.group_code, d.group_name, d.created_by co_code, i.emp_name co_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, e.purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi, a.period_mode, a.instl_start_dt,a.instl_end_dt, a.tot_emi",
+                "a.branch_code,a.group_code, d.group_name, d.created_by co_code, i.emp_name co_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, e.purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi,a.period, a.period_mode, a.instl_start_dt,a.instl_end_dt, a.tot_emi",
             table_name =
                 "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_purpose e ON a.purpose = e.purp_id LEFT JOIN md_sub_purpose f ON a.sub_purpose = f.sub_purp_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_fund h ON a.fund_id = h.fund_id LEFT JOIN md_employee i ON d.created_by = i.emp_id",
             whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.os_dt}'`,
-            order = `LIMIT ${data.min},${data.max}`;
+            order = `ORDER BY a.disb_dt LIMIT ${data.min},${data.max}`;
 
         var loanOutstandingData_grp = await db_Select(select, table_name, whr, order);
 
@@ -102,6 +102,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                     var disb_dt = `${dateFormat(dt.disb_dt, "yyyy-mm-dd")}`;
                     var prn_disb_amt = dt.prn_disb_amt;
                     var curr_roi = dt.curr_roi;
+                    var period = dt.period;
                     var period_mode = dt.period_mode;
                     var tot_emi = dt.tot_emi;
                     var instl_start_dt = dt.instl_start_dt;
@@ -119,6 +120,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                             disb_dt,
                             curr_roi,
                             instl_start_dt,
+                            period,
                             period_mode,
                             tot_emi,
                             instl_end_dt,
