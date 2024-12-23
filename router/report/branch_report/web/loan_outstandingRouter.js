@@ -38,21 +38,34 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
                     var period_mode = dt.period_mode;
                     var tot_emi = dt.tot_emi;
                     var instl_end_dt = dt.instl_end_dt;
+                    var balance = balanceData?.balance_dt?.balance || 0;
+                    var od_balance = od_balanceData?.balance_dt?.od_balance || 0;
+                    var intt_balance = intt_balanceData?.balance_dt?.intt_balance || 0;
+                    var total_outstanding = (balance + od_balance + intt_balance);
+
+                    // console.log(balance,od_balance,intt_balance,total_outstanding);
+                    
 
                     // Collect all balances and push to the results array
+                   if(total_outstanding > 0){
                     outstandingResults.push({
                         loan_id: loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,
-                        curr_roi,period,period_mode,tot_emi,instl_end_dt,
-                        balance: balanceData?.balance_dt?.balance || 0,
-                        od_balance: od_balanceData?.balance_dt?.od_balance || 0,
-                        intt_balance: intt_balanceData?.balance_dt?.intt_balance || 0,
+                        curr_roi,period,period_mode,tot_emi,instl_end_dt,balance,od_balance,intt_balance,total_outstanding
+                        // balance: balanceData?.balance_dt?.balance || 0,
+                        // od_balance: od_balanceData?.balance_dt?.od_balance || 0,
+                        // intt_balance: intt_balanceData?.balance_dt?.intt_balance || 0,
                     });
+                }else {
+
+                }
                 } catch (err) {
                     console.error(`Error fetching balance data for loan ID ${loan_id}:`, err);
                 }
             }
-            res.setTimeout(10*1000)
+            // res.setTimeout(10*1000)
             res.send({ suc: 1, msg: outstandingResults });
+            // console.log(outstandingResults);
+            
         } else {
             res.send({ suc: 0, msg: [] });
         }
