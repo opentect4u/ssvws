@@ -9,7 +9,7 @@ masterRouter.get("/get_group", async (req, res) => {
 
  var select = "*",
  table_name = "md_group",
- whr = `branch_code = '${data.branch_code}' AND approval_status = 'U'`,
+ whr = `branch_code = '${data.branch_code}'`,
  order = null;
  var group_dt = await db_Select(select,table_name,whr,order);
  res.send(group_dt) 
@@ -29,7 +29,7 @@ masterRouter.get("/get_group_add", async (req, res) => {
     const fetchChunk = async () => {
         var select = "*",
         table_name = "md_group",
-        whr = `branch_code = '${data.branch_code}' AND approval_status = 'U'`,
+        whr = `branch_code = '${data.branch_code}'`,
         order = `LIMIT ${limit} OFFSET ${offset}`;
         var group_dt = await db_Select(select,table_name,whr,order);
 
