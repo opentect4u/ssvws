@@ -90,6 +90,10 @@ app.use(loan_outstandingRouter)
 app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
+  // const bcrypt = require("bcrypt");
+  // var pass = bcrypt.hashSync('8910622991', 10)
+  // console.log(pass);
+  
 //   var user = req.session.user;
 //   if (!user) {
 //     res.redirect("/login");
