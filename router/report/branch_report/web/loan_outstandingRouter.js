@@ -154,7 +154,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                     // groupwiseBalance[group_code].total_intt_balance += intt_balanceData?.balance_dt?.intt_balance || 0;
                     // groupwiseBalance[group_code].total_outstanding = (total_balance + total_od_balance + total_intt_balance);
 
-                    console.log(balance,od_balance,intt_balance, total_outstanding);
+                    // console.log(balance,od_balance,intt_balance, total_outstanding);
                     
         
                     // Add individual loan details to `members` array
