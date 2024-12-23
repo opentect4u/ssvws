@@ -120,8 +120,13 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                     var tot_emi = dt.tot_emi;
                     var instl_start_dt = dt.instl_start_dt;
                     var instl_end_dt = dt.instl_end_dt;
-        
+                    var balance = balanceData?.balance_dt?.balance || 0;
+                    var od_balance = od_balanceData?.balance_dt?.od_balance || 0;
+                    var intt_balance = intt_balanceData?.balance_dt?.intt_balance || 0;
+                    var total_outstanding = (balance + od_balance + intt_balance);
+
                     // Use `group_code` as the key to group balances
+                    if(total_outstanding > 0){
                     if (!groupwiseBalance[group_code]) {
                         groupwiseBalance[group_code] = {
                             branch_code,
@@ -137,23 +142,33 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                             period_mode,
                             tot_emi,
                             instl_end_dt,
-                            total_balance: 0,
-                            total_od_balance: 0,
-                            total_intt_balance: 0,
+                            // total_balance: 0,
+                            // total_od_balance: 0,
+                            // total_intt_balance: 0,
+                            balance,od_balance,intt_balance,total_outstanding
                         };
                     }
+                }else {
+                    
+                }
         
                     // Update group totals
-                    groupwiseBalance[group_code].total_balance += balanceData?.balance_dt?.balance || 0;
-                    groupwiseBalance[group_code].total_od_balance += od_balanceData?.balance_dt?.od_balance || 0;
-                    groupwiseBalance[group_code].total_intt_balance += intt_balanceData?.balance_dt?.intt_balance || 0;
+                    // groupwiseBalance[group_code].total_balance += balanceData?.balance_dt?.balance || 0;
+                    // groupwiseBalance[group_code].total_od_balance += od_balanceData?.balance_dt?.od_balance || 0;
+                    // groupwiseBalance[group_code].total_intt_balance += intt_balanceData?.balance_dt?.intt_balance || 0;
+                    // groupwiseBalance[group_code].total_outstanding = (total_balance + total_od_balance + total_intt_balance);
+
+                    console.log(balance,od_balance,intt_balance, total_outstanding);
+                    
         
                     // Add individual loan details to `members` array
-                    groupwiseBalance[group_code].members.push({
-                        balance: balanceData?.balance_dt?.balance || 0,
-                        od_balance: od_balanceData?.balance_dt?.od_balance || 0,
-                        intt_balance: intt_balanceData?.balance_dt?.intt_balance || 0,
-                    });
+
+                    // groupwiseBalance[group_code].members.push({
+                    //     balance: balanceData?.balance_dt?.balance || 0,
+                    //     od_balance: od_balanceData?.balance_dt?.od_balance || 0,
+                    //     intt_balance: intt_balanceData?.balance_dt?.intt_balance || 0,
+                    //     total_outstanding : (balance + od_balance + intt_balance)
+                    // });
                 } catch (err) {
                     // console.error(`Error fetching balance data for loan ID ${loan_id}:`, err);
                 }
