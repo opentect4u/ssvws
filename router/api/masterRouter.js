@@ -10,7 +10,7 @@ masterRouter.get("/get_group", async (req, res) => {
  var select = "*",
  table_name = "md_group",
  whr = `branch_code = '${data.branch_code}'`,
- order = null;
+ order = `LIMIT ${data.min},${data.max}`;
  var group_dt = await db_Select(select,table_name,whr,order);
  res.send(group_dt) 
 });
