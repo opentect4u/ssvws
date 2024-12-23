@@ -22,12 +22,11 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
     // var select = "a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,(a.balance + a.od_balance + a.intt_balance)balance,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi",
-    var select = "a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,a.balance prn_bal,a.od_balance,a.intt_balance intt_bal,(a.balance + a.intt_balance) total,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi",
+    var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,a.balance prn_bal,a.od_balance,a.intt_balance intt_bal,(a.balance + a.intt_balance) total,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
     table_name = "td_loan_transactions a, td_loan b",
-    whr = `a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O'`,
+    whr = `a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
     order = `ORDER BY date(a.payment_date),a.payment_id`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
-
     res.send(loan_report_dt);
 });
 
