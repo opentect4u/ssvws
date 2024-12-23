@@ -12,7 +12,13 @@ masterRouter.get("/get_group", async (req, res) => {
  whr = `branch_code = '${data.branch_code}'`,
  order = `LIMIT ${data.min},${data.max}`;
  var group_dt = await db_Select(select,table_name,whr,order);
- res.send(group_dt) 
+
+ if(group_dt.suc > 0 && group_dt.msg.length > 0){
+    res.send(group_dt) 
+
+ }else {
+    res.send({ suc: 0, msg: [] });
+ }
 });
 
 masterRouter.get("/get_group_add", async (req, res) => {
