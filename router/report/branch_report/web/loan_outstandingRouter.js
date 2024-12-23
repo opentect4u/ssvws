@@ -47,7 +47,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
                     
 
                     // Collect all balances and push to the results array
-                   if(total_outstanding.suc > 0 && total_outstanding > 0){
+                   if(total_outstanding > 0){
                     outstandingResults.push({
                         loan_id: loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,
                         curr_roi,period,period_mode,tot_emi,instl_end_dt,balance,od_balance,intt_balance,total_outstanding
@@ -124,7 +124,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                     var total_outstanding = (balance + od_balance + intt_balance);
 
                     // Use `group_code` as the key to group balances
-                    if(total_outstanding.suc > 0 && total_outstanding > 0){
+                    if(total_outstanding > 0){
                     if (!groupwiseBalance[group_code]) {
                         groupwiseBalance[group_code] = {
                             branch_code,
