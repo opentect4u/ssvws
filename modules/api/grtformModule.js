@@ -32,7 +32,7 @@ module.exports = {
 
                     var table_name = "td_grt_basic",
                     fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
-                    values = `('${form_no}', '${datetime}', '${data.branch_code}', '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+                    values = `('${form_no}', '${data.grt_date}', '${data.branch_code}', '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
                     whr = null,
                     flag =  0;
                     var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -127,7 +127,7 @@ module.exports = {
 
             if(edit_basic_dt.suc > 0){
                 var table_name = "td_grt_basic",
-                fields = `grt_date = '${datetime}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
+                fields = `grt_date = '${data.grt_date}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
                 bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,

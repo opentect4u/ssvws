@@ -186,8 +186,8 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     var data = req.body;
 console.log(data,'gg');
 
-    var select = "a.*, b.group_name";
-    var table_name = "md_member a, md_group b";
+    var select = "a.*, b.group_name, c.grt_date";
+    var table_name = "md_member a, md_group b, td_grt_basic c";
     
     var whr = `a.branch_code = b.branch_code `;
     if (data.flag == 'M') {

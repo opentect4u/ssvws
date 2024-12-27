@@ -29,7 +29,6 @@ grtformRouter.post("/save_basic_dtls", async (req, res) =>{
 
 grtformRouter.post("/edit_grt_dtls", async (req, res) => {
     var data = req.body;
-
     var edit_grt_dt = await edit_grt_data(data)
     res.send(edit_grt_dt);
 });
@@ -38,7 +37,7 @@ grtformRouter.get("/fetch_form_dtls", async (req, res) => {
     var data = req.query;
 
     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date",
-    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code",
     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U' AND b.delete_flag = 'N'`,
     order = null;
     var fetch_dtls = await db_Select(select,table_name,whr,order)
@@ -50,7 +49,7 @@ grtformRouter.post("/fetch_basic_dtls", async (req, res) => {
     var data = req.body;
 
     var select = "a.*,b.*,c.group_name",
-    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code = c.group_code",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code = c.group_code",
     whr = `a.branch_code = '${data.branch_code}' 
     AND b.form_no = '${data.form_no}' 
     AND b.approval_status = '${data.approval_status}'`,
@@ -239,5 +238,18 @@ grtformRouter.post("/get_form_against_co", async (req, res) => {
 
 res.send(search_co)
 });
+
+grtformRouter.post("/bm_search_pending_form", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code",
+    whr = `a.member_code like '%${data.bm_search_pending}%' OR a.client_name like '%${data.bm_search_pending}%' OR a.client_mobile like '%${data.bm_search_pending}%' OR a.aadhar_no like '%${data.bm_search_pending}%' OR a.pan_no like '%${data.bm_search_pending}%' AND b.approval_status = 'U' AND b.delete_flag = 'N'`,
+    order = null;
+    var search_bm_pending = await db_Select(select,table_name,whr,order);
+
+    res.send(search_bm_pending);
+
+})
 
 module.exports = {grtformRouter}
