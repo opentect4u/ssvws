@@ -80,7 +80,7 @@ dateFormat = require('dateformat');
 
 recoveryRouter.post("/search_group_app", async (req, res) => {
     var data = req.body;
-    console.log(data,'grp');
+    // console.log(data,'grp');
     
 
     // var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
@@ -95,7 +95,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
 
     var search_grp = await db_Select(select, table_name, whr, order);
-    console.log(search_grp,'search');
+    // console.log(search_grp,'search');
     
 
     if (search_grp.suc > 0 && search_grp.msg.length > 0) {
@@ -121,7 +121,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
             dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
 
             for (let memb of dt.memb_dtls) {
-                console.log(memb,'memb');
+                // console.log(memb,'memb');
                 
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
                 memb['demand'] = demandData || {}; 
@@ -148,7 +148,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
 recoveryRouter.post("/recovery_transaction", async (req, res) => {
     var data = req.body,res_dt;
-    console.log(data,'dt');
+    // console.log(data,'dt');
     
     recovery_trans(data).then(data => {
         res_dt = data
@@ -181,7 +181,7 @@ recoveryRouter.post("/view_transaction", async (req, res) => {
 
 recoveryRouter.post("/remove_trans", async (req, res) => {
     var data = req.body;
-    console.log(data);
+    // console.log(data);
     
 
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -288,7 +288,7 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
 
 recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
     var data = req.body, grp_recov_dt;
-    console.log(data,'group');
+    // console.log(data,'group');
 
 
     if(data.user_id == '1'){

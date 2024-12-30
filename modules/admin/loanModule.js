@@ -6,7 +6,7 @@ module.exports = {
     loan_trans: (data) => {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-             console.log(data,'kiki');
+            //  console.log(data,'kiki');
              
             var curr_date = new Date()
             var last_date = new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0)
@@ -40,7 +40,7 @@ module.exports = {
                 console.error("One of the values is not a number. Please check the calculate functions.");
             } else {
                 var tot_emi = Math.round(parseFloat(prn_emi) + parseFloat(intt_emi));
-                console.log("Total EMI:", tot_emi);
+                // console.log("Total EMI:", tot_emi);
             }
             // let tot_emi = Math.round(prn_emi + intt_emi);
             // console.log(tot_emi,'emi');
@@ -48,15 +48,15 @@ module.exports = {
             let payment_id = await payment_code(data.branch_code)
 
             let outstanding = (parseFloat(data.prn_disb_amt)+parseFloat(data.old_prn_amt)+parseFloat(intt_cal_amt)+parseFloat(data.od_intt_amt))
-            console.log(outstanding,'outstanding');
+            // console.log(outstanding,'outstanding');
             
             let instl_date = await genDate(data.period, data.period_mode, data.recovery_date, data.recovery_date);
-            console.log("Generated Dates:", instl_date); 
+            // console.log("Generated Dates:", instl_date); 
             const startDate = instl_date.emtStart;
             const endDate = instl_date.emiEnd;
             
-            console.log("Start Date:", startDate);
-            console.log("End Date:", endDate);
+            // console.log("Start Date:", startDate);
+            // console.log("End Date:", endDate);
 
             var table_name = "td_loan",
             fields =`(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,

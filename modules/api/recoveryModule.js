@@ -122,13 +122,13 @@ module.exports = {
 
             if(data.recovdtls.length > 0){
                 for (let dt of data.recovdtls) {
-                    console.log(dt,'dtdtd');
+                    // console.log(dt,'dtdtd');
 
                     let balance = parseFloat(dt.prn_amt) || 0;  //previoud prn amt
-                    console.log(balance,'balance');
+                    // console.log(balance,'balance');
                         
                     let prnEmi = parseFloat(dt.prn_emi) || 0;  //prn recovery
-                    console.log(prnEmi,'prnEmi');
+                    // console.log(prnEmi,'prnEmi');
 
                     let intt_balance = parseFloat(dt.intt_amt) //previoud intt
                     let inttEMI = parseFloat(dt.intt_emi)      //intt recovery
@@ -160,7 +160,7 @@ module.exports = {
     
                     if(rec_dtls_int.suc > 0 && rec_dtls_int.msg.length > 0){
                         payment_id = await payment_code(data.branch_code)
-                        console.log(payment_id,'id');
+                        // console.log(payment_id,'id');
                         
     
                         // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
@@ -172,7 +172,7 @@ module.exports = {
 
                         
 
-                        console.log(prn_recov,'prn');
+                        // console.log(prn_recov,'prn');
                         
     
                         var table_name = "td_loan_transactions",
@@ -195,7 +195,7 @@ module.exports = {
                     let intt_update =  intt_balance -  inttEMI
                     let outs_update =  parseFloat(prn_update) + parseFloat(intt_update)
                     
-                    console.log(intt_update,'intt_recovery');
+                    // console.log(intt_update,'intt_recovery');
                     
                     let outstanding = parseFloat(prn_recov) + parseFloat(intt_update);
 
@@ -208,7 +208,7 @@ module.exports = {
                     whr = `loan_id = '${dt.loan_id}'`,
                     flag = 1;
                     var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
-                    console.log(rec_dt);
+                    // console.log(rec_dt);
                     
                     // rec_dt["outstanding"] = outstanding;
                     // rec_dt["instl_paid"] = dt.instl_paid;

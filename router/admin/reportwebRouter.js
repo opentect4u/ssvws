@@ -138,14 +138,14 @@ reportwebRouter.post("/group_wise_disb_web", async (req, res) => {
 reportwebRouter.post("/get_demand_data_web", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'data');
+        // console.log(data,'data');
 
         var dayQuery = `EXTRACT(DAY FROM '${dateFormat(data.get_date, "yyyy-mm-dd")}') AS recovday`;
-        console.log(dayQuery);
+        // console.log(dayQuery);
         var dayResult = await db_Select(dayQuery);
-        console.log(dayResult);
+        // console.log(dayResult);
         var recov_day = dayResult.msg[0].recovday;
-        console.log(recov_day,'recov');
+        // console.log(recov_day,'recov');
 
         // var last_day = `LAST_DAY(${data.get_date})`;
         // console.log(last_day,'last');
@@ -156,13 +156,13 @@ reportwebRouter.post("/get_demand_data_web", async (req, res) => {
         whr = `a.branch_code = '${data.branch_code}' AND a.recovery_day = '${recov_day}' AND a.outstanding > 0 AND a.instl_end_dt < '${data.get_date}'`,
         order = null;
         var get_dmd_dt = await db_Select(select,table_name,whr,order);
-        console.log(get_dmd_dt);
+        // console.log(get_dmd_dt);
         
         if (get_dmd_dt.suc > 0 && get_dmd_dt.msg.length > 0) {
             let demandResults = [];
 
             for (dt of get_dmd_dt.msg) {
-                console.log(dt,'dt');
+                // console.log(dt,'dt');
                 
                 var loan_id = dt.loan_id;
                 var group_code = dt.group_code;

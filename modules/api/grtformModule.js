@@ -204,7 +204,7 @@ module.exports = {
     edit_family_dt: (data) => {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-            console.log(data, 'de');
+            // console.log(data, 'de');
     
             if (data.memberdtls.length > 0) {
     
@@ -269,7 +269,7 @@ module.exports = {
             whr = null,
             flag = 0;
             var grp_dt = await db_Insert(table_name, fields, values, whr, flag);
-            console.log(grp_dt,'dt');
+            // console.log(grp_dt,'dt');
             
             grp_dt["group_code"] = group_code.msg[0].group_code;
             grp_dt["group_name"] = data.group_name;
@@ -291,7 +291,7 @@ module.exports = {
             whr = `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
             var edit_grp_dt = await db_Insert(table_name, fields, values, whr, flag);
-            console.log(edit_grp_dt,'dt');
+            // console.log(edit_grp_dt,'dt');
 
             resolve(edit_grp_dt);
         });
@@ -307,7 +307,7 @@ module.exports = {
             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
             var final_dt = await db_Insert(table_name, fields, values, whr, flag);
-            console.log(final_dt,'dt');
+            // console.log(final_dt,'dt');
 
             resolve(final_dt);
         });

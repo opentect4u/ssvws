@@ -35,7 +35,7 @@ const { db_Select, db_Insert } = require('../../model/mysqlModel');
 
 userRouter.post("/fetch_sign_up_dt", async (req, res) => {
     var data = req.body,result;
-    console.log(data,'kkk');
+    // console.log(data,'kkk');
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var select = "emp_id,branch_id,emp_name",

@@ -133,7 +133,7 @@ module.exports = {
     
             if (data.memberdtls.length > 0) {
                 for (let dt of data.memberdtls) {
-                  console.log(dt,'dttt');
+                  // console.log(dt,'dttt');
                   
                     if (dt.sl_no && dt.sl_no > 0) { 
                         var table_name = "td_grt_family",
@@ -175,7 +175,7 @@ module.exports = {
         whr = `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`,
         flag = 1;
         var fwd_dt = await db_Insert(table_name, fields, values, whr, flag);
-        console.log(fwd_dt,'dt');
+        // console.log(fwd_dt,'dt');
 
         resolve(fwd_dt);
       });

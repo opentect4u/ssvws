@@ -7,17 +7,17 @@ dateFormat = require('dateformat');
 
 grtformRouter.post("/save_basic_dtls", async (req, res) =>{
     var data = req.body, res_data;
-    console.log(data,'grt dt');
+    // console.log(data,'grt dt');
     save_basic_dtls(data).then(data => {
-        console.log(data);
+        // console.log(data);
         res_data = data
-        console.log(res_data,'ttttt');
+        // console.log(res_data,'ttttt');
         
         // res.send(data)
     }).catch(err => {
         // console.log(err);
         res_data = err
-        console.log(res_data);
+        // console.log(res_data);
 
         // res.send(err)
     }).finally(() => {
@@ -72,10 +72,10 @@ grtformRouter.post("/save_group", async (req, res) => {
 
 grtformRouter.post("/edit_group", async (req, res) => {
     var data = req.body;
-    console.log(data,'edit_grp_dt');
+    // console.log(data,'edit_grp_dt');
 
     var edit_grp_dt = await edit_grp_save(data);
-    console.log(edit_grp_dt,'grp');
+    // console.log(edit_grp_dt,'grp');
     
     res.send(edit_grp_dt);
 });
@@ -150,7 +150,7 @@ grtformRouter.post("/save_occup_dtls", async (req, res) => {
     var data = req.body;
 
     var occup_dt = await edit_occup_dt(data)
-    console.log(occup_dt);
+    // console.log(occup_dt);
     res.send(occup_dt);
 });
 

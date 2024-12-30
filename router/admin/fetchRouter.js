@@ -32,7 +32,7 @@ dateFormat = require('dateformat');
 
 fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     var data = req.body;
-    console.log(data, 'dd');
+    // console.log(data, 'dd');
 
     var select = data.prov_grp_code > 0 ? 'a.prov_grp_code, b.*' : 'DISTINCT a.prov_grp_code, b.group_name, b.group_type',
         table_name = 'td_grt_basic a, md_group b',
@@ -124,7 +124,7 @@ fetchRouter.get("/fetch_family_dt_web", async (req, res) => {
 
 fetchRouter.post("/edit_group_web", async (req, res) => {
     var data = req.body;
-    console.log(data,'grp_dt');
+    // console.log(data,'grp_dt');
 
     var edit_grp_dt = await edit_grp_web(data);
     // console.log(grp_dt,'grp');
@@ -460,7 +460,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
 
     if(assign_member.suc > 0 && assign_member.msg.length > 0){
         for(let dt of assign_member.msg){
-            console.log(dt,'yyy');
+            // console.log(dt,'yyy');
             
             if(dt.grp_code > 0){
                 response_set = {suc: 0, msg: assign_member.msg, status: `${dt.client_name} is alrady assigned to a active group, ${dt.group_name}.`}

@@ -184,7 +184,7 @@ masterRouter.get("/get_education", async (req, res) => {
 
 masterRouter.post("/fetch_validation", async (req, res) => {
     var data = req.body;
-console.log(data,'gg');
+// console.log(data,'gg');
 
     var select = "a.*, b.group_name, c.grt_date";
     var table_name = "md_member a, md_group b, td_grt_basic c";
@@ -212,7 +212,7 @@ console.log(data,'gg');
                   whr = `a.branch_code = b.branch_code AND a.member_code = '${res_dt.msg[0].member_code}'`
                   order = `HAVING a.outstanding > 0`;
                   var default_chk = await db_Select(select,table_name,whr,order);
-                  console.log(default_chk);
+                //   console.log(default_chk);
                   
                 if(default_chk.suc > 0){
                     if(default_chk.msg.length > 0){

@@ -6,7 +6,7 @@ const {db_Select} = require('../../model/mysqlModel');
 
 appdashboardRouter.post("/dashboard_dtls", async (req, res) => {
     var data = req.body;
-    console.log(data);
+    // console.log(data);
     
     var select = "COUNT(form_no) no_of_grt",
     table_name = "td_grt_basic",
@@ -52,7 +52,7 @@ appdashboardRouter.post("/dashboard_dtls_bank_recov", async (req, res) => {
 
 appdashboardRouter.post("/dashboard_dtls_bm", async (req, res) => {
     var data = req.body;
-    console.log(data);
+    // console.log(data);
     
         var select = "COUNT(form_no) no_of_grt",
         table_name = "td_grt_basic",
