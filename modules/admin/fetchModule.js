@@ -208,7 +208,7 @@ module.exports = {
     return new Promise(async (resolve, reject) => {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   
-      if (data.member_code?.length > 0) {
+      if (data.member_code.length > 0) {
         for (let member_code of data.member_code) {
           const table_name = "td_grt_basic",
                 fields = `prov_grp_code = '${data.group_code}', grp_added_by = '${data.added_by}', grp_added_at = '${datetime}'`,

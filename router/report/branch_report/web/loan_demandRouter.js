@@ -67,18 +67,21 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                 // console.log(details, 'details');
                  
                 // Check balance
-                if (details.suc > 0 && details.msg[0]?.balance > 0) {
-                    var balance_dt = details.msg[0]?.balance
-                    // console.log(balance_dt,'balance');
-                    
-                    var demandData = await getLoanDmd(loan_id, data.to_dt);
+                if (details.suc > 0 && details.msg.length > 0) {
+                        if (details.msg[0].balance > 0) {
 
-                    if(demandData.suc > 0 && demandData.demand.ld_demand > 0){
-                        demandResults.push({ loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,curr_roi,period,period_mode,balance_dt,co_name,tot_emi,instl_end_dt, demand: demandData.demand.ld_demand });
-                    }else {
-                        // console.log({ suc: 0, msg: 'Demand Amount is 0' });
-                    }
-                   
+                             var balance_dt = details.msg[0].balance
+                                // console.log(balance_dt,'balance');
+                
+                             var demandData = await getLoanDmd(loan_id, data.to_dt);
+
+                            if(demandData.suc > 0 && demandData.demand.ld_demand > 0){
+                                demandResults.push({ loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,curr_roi,period,period_mode,balance_dt,co_name,tot_emi,instl_end_dt, demand: demandData.demand.ld_demand });
+                            }else {
+                            // console.log({ suc: 0, msg: 'Demand Amount is 0' });
+                            }
+                        }
+                
                 } else {
                     // console.log(`Loan ID ${loan_id}: Balance is 0.`);
                 }
