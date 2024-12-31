@@ -522,7 +522,7 @@ const loan_balance_outstanding = (loan_id, os_dt) => {
         
 
         if (transactionDetails.suc > 0 && transactionDetails.msg.length > 0) {
-          var balance = transactionDetails.msg[0]?.balance || 0;
+          var balance = transactionDetails.msg[0].balance || 0;
           // console.log(balance,'bal');
           
           resolve({ suc: 1, balance_dt: { balance } });
