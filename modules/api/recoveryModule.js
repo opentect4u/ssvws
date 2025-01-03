@@ -153,7 +153,7 @@ module.exports = {
  
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,balance,intt_balance,tr_type,tr_mode,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
-                    values = `('${dateFormat(datetime, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','To Interest','0','${inttEMI}','${balance > 0 ? balance : 0}','${intt_balance}','I','${data.tr_mode}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
+                    values = `('${dateFormat(dt.last_trn_dt, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','To Interest','0','${inttEMI}','${balance > 0 ? balance : 0}','${intt_balance}','I','${data.tr_mode}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
                     whr = null,
                     flag = 0;
                     var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
@@ -177,7 +177,7 @@ module.exports = {
     
                         var table_name = "td_loan_transactions",
                         fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
-                        values = `('${datetime}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','${data.tr_mode == 'B' ? 'By UPI [Installment Payment]' : data.tr_mode == 'C' ? 'By Cash [Installment Payment]' : ''}','${dt.credit}','0','${prnEmi > 0 ?prnEmi : 0}','${inttEMI > 0 ? inttEMI : 0}','${prn_recov > 0 ? prn_recov : 0}','0','${intt_recovs > 0 ? intt_recovs : 0}','${datetime}','R','${data.tr_mode}','${data.bank_name}','${data.cheque_id == '' ? 0 : data.cheque_id}', '${data.chq_dt == '' ? null : data.chq_dt}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
+                        values = `('${dateFormat(dt.last_trn_dt, "yyyy-mm-dd")}','${payment_id}','${data.branch_code == '' ? 0 : data.branch_code}','${dt.loan_id}','${data.tr_mode == 'B' ? 'By UPI [Installment Payment]' : data.tr_mode == 'C' ? 'By Cash [Installment Payment]' : ''}','${dt.credit}','0','${prnEmi > 0 ?prnEmi : 0}','${inttEMI > 0 ? inttEMI : 0}','${prn_recov > 0 ? prn_recov : 0}','0','${intt_recovs > 0 ? intt_recovs : 0}','${datetime}','R','${data.tr_mode}','${data.bank_name}','${data.cheque_id == '' ? 0 : data.cheque_id}', '${data.chq_dt == '' ? null : data.chq_dt}','U','${data.created_by}','${datetime}','${data.trn_lat}','${data.trn_long}','${data.trn_addr.split("'").join("\\'")}')`,
                         whr = null,
                         flag = 0;
                         var rec_dtls_prn = await db_Insert(table_name,fields,values,whr,flag);    
