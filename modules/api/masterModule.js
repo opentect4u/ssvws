@@ -89,15 +89,17 @@ const getFormNo = () => {
     });
   };
 
-  const payment_code = (branch_code) => {
+  const payment_code = (branch_code, trn_dt = null) => {
     return new Promise(async (resolve, reject) => {
         year = new Date().getFullYear();
 
         var select = "IF(MAX(SUBSTRING(payment_id, 8)) > 0, MAX(cast(SUBSTRING(payment_id, 8) as unsigned))+1, 1) max_pay_id",
         table_name = "td_loan_transactions",
-        whr = ` YEAR(payment_date) = YEAR(NOW());`,
+        whr = `YEAR(payment_date) = ${trn_dt ? `YEAR('${dateFormat(trn_dt, "yyyy-mm-dd")}')` : 'YEAR(NOW())'}`,
         order = null;
         var pay_dt = await db_Select(select,table_name,whr,order);
+        console.log(pay_dt,'pay_dt');
+        
 
         let newPayCode = pay_dt.msg[0].max_pay_id;   
         // console.log(newPayCode,'paycode');

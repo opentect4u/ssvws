@@ -149,7 +149,8 @@ module.exports = {
 
 
 
-                let payment_id = await payment_code(data.branch_code)     //interest
+                    let payment_id = await payment_code(data.branch_code, dt.last_trn_dt)     //interest
+                    // console.log(payment_id,'id_intt');
  
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,balance,intt_balance,tr_type,tr_mode,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
@@ -159,8 +160,8 @@ module.exports = {
                     var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
     
                     if(rec_dtls_int.suc > 0 && rec_dtls_int.msg.length > 0){
-                        payment_id = await payment_code(data.branch_code)
-                        // console.log(payment_id,'id');
+                      payment_id = await payment_code(data.branch_code, dt.last_trn_dt)
+                        // console.log(payment_id,'id_recov');
                         
     
                         // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
