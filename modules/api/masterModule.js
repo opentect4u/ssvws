@@ -98,7 +98,7 @@ const getFormNo = () => {
         whr = `YEAR(payment_date) = ${trn_dt ? `YEAR('${dateFormat(trn_dt, "yyyy-mm-dd")}')` : 'YEAR(NOW())'}`,
         order = null;
         var pay_dt = await db_Select(select,table_name,whr,order);
-        console.log(pay_dt,'pay_dt');
+        // consolxe.log(pay_dt,'pay_dt');
         
 
         let newPayCode = pay_dt.msg[0].max_pay_id;   
