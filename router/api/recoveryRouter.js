@@ -118,13 +118,18 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 order = null;
 
             var mem_dt = await db_Select(select, table_name, whr, order);
-            dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
+            // dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
+            dt['memb_dtls'] = [];
 
-            for (let memb of dt.memb_dtls) {
+            if (mem_dt.suc > 0 && mem_dt.msg.length > 0) {
+            for (let memb of mem_dt.msg) {
                 // console.log(memb,'memb');
                 
                 var demandData = await getLoanDmd(memb.loan_id, data.get_date);
-                memb['demand'] = demandData || {}; 
+                if(demandData.suc > 0 && demandData.demand.ld_demand > 0){
+                    memb['demand'] = demandData;
+                    dt['memb_dtls'].push(memb);
+                }
 
                 // var select = "balance",
                 // table_name = "td_loan_transactions",
@@ -138,6 +143,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 // var balance_dt = await db_Select(select, table_name, whr, order);
                 // memb['balance'] = balance_dt.suc > 0 ? (balance_dt.msg.length > 0 ? balance_dt.msg[0].balance : 0) : 0;
             }
+        }
         }
 
         res.send({ suc: 1, msg: search_grp.msg }); 
