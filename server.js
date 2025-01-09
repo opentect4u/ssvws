@@ -31,16 +31,16 @@ app.set("layout", "templates/layout");
 app.use(express.static(path.join(__dirname, "assets/")));
 
 // Set up the session middleware
-app.use(
-  session({
-    secret: "Vivekananda Micro Finance", // Change this to a secure random string
-    resave: false,
-    saveUninitialized: true,
-    cookie : {
-      maxAge: 3600000
-    }
-  })
-);
+// app.use(
+//   session({
+//     secret: "Vivekananda Micro Finance", // Change this to a secure random string
+//     resave: false,
+//     saveUninitialized: true,
+//     cookie : {
+//       maxAge: 3600000
+//     }
+//   })
+// );
 
 // const options = {
 //   key: fs.readFileSync(path.join(__dirname, 'ssvwsadmin_certificate/private-key.txt')),
@@ -49,13 +49,13 @@ app.use(
 
 // var server = https.createServer(options, app);
 
-app.use((req, res, next) => {
-  res.locals.user = req.session.user;
-  res.locals.path = req.path;
-  res.locals.message = req.session.message;
-  delete req.session.message;
-  next();
-});
+// app.use((req, res, next) => {
+//   res.locals.user = req.session.user;
+//   res.locals.path = req.path;
+//   res.locals.message = req.session.message;
+//   delete req.session.message;
+//   next();
+// });
 
 const { adminRouter } = require("./router/adminRouter");
 const { appdashboardRouter } = require("./router/api/dashboardRouter");
