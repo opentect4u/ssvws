@@ -184,7 +184,7 @@ masterRouter.get("/get_education", async (req, res) => {
 
 masterRouter.post("/fetch_validation", async (req, res) => {
     var data = req.body;
-// console.log(data,'gg');
+console.log(data,'gg');
 
     var select = "a.*, b.group_name, c.grt_date";
     var table_name = "md_member a, md_group b, td_grt_basic c";
@@ -192,9 +192,11 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     var whr = `a.branch_code = b.branch_code `;
     if (data.flag == 'M') {
         whr += `AND a.client_mobile = '${data.user_dt}'`;
-    } else if (data.flag == 'A') {
+    } 
+    if (data.flag == 'A') {
         whr += `AND a.aadhar_no = '${data.user_dt}'`;
-    } else if (data.flag == 'P') {
+    } 
+    if (data.flag == 'P') {
         whr += `AND a.pan_no = '${data.user_dt}'`;
     }
 
@@ -202,6 +204,8 @@ masterRouter.post("/fetch_validation", async (req, res) => {
 
     try {
         var res_dt = await db_Select(select, table_name, whr, order);
+        // console.log(res_dt, 'res_dt');
+        
         var response_set = {}
         if(res_dt.suc > 0){
             if(res_dt.msg.length > 0){
@@ -212,7 +216,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
                   whr = `a.branch_code = b.branch_code AND a.member_code = '${res_dt.msg[0].member_code}'`
                   order = `HAVING a.outstanding > 0`;
                   var default_chk = await db_Select(select,table_name,whr,order);
-                //   console.log(default_chk);
+                //   console.log(default_chk, 'default_chk');
                   
                 if(default_chk.suc > 0){
                     if(default_chk.msg.length > 0){
