@@ -213,8 +213,8 @@ console.log(data,'gg');
 
                   var select = "a.outstanding, b.branch_name",
                   table_name = "td_loan a,md_branch b",
-                  whr = `a.branch_code = b.branch_code AND a.member_code = '${res_dt.msg[0].member_code}'`
-                  order = `HAVING a.outstanding > 0`;
+                  whr = `a.branch_code = b.branch_code AND a.member_code = '${res_dt.msg[0].member_code}' AND a.outstanding > 0`
+                  order = null;
                   var default_chk = await db_Select(select,table_name,whr,order);
                 //   console.log(default_chk, 'default_chk');
                   
