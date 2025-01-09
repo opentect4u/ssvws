@@ -184,36 +184,47 @@ masterRouter.get("/get_education", async (req, res) => {
 
 masterRouter.post("/fetch_validation", async (req, res) => {
     var data = req.body;
-console.log(data,'gg');
+    // console.log(data,'gg');
 
-    var select = "a.*, b.group_name, c.grt_date";
-    var table_name = "md_member a, md_group b, td_grt_basic c";
+    var select = "member_code";
+    var table_name = "md_member";
     
-    var whr = `a.branch_code = b.branch_code `;
+    var whr = `branch_code = '${data.branch_code}'`;
     if (data.flag == 'M') {
-        whr += `AND a.client_mobile = '${data.user_dt}'`;
+        whr += `AND client_mobile = '${data.user_dt}'`;
     } 
     if (data.flag == 'A') {
-        whr += `AND a.aadhar_no = '${data.user_dt}'`;
+        whr += `AND aadhar_no = '${data.user_dt}'`;
     } 
     if (data.flag == 'P') {
-        whr += `AND a.pan_no = '${data.user_dt}'`;
+        whr += `AND pan_no = '${data.user_dt}'`;
     }
 
-    var order = null;
+    var order = `GROUP BY member_code`;
+    var res_dt = await db_Select(select, table_name, whr, order);
+
+    if(res_dt.suc > 0 && res_dt.msg.length > 0){
+        for(let dt of res_dt.msg){
+            var select = "branch_code,member_code,gender,client_name,client_mobile,phone_verify_flag,email_id,gurd_name,gurd_mobile,client_addr,pin_no,aadhar_no,aadhar_verify_flag,pan_no,pan_verify_flag,religion,other_religion,caste,other_caste,education,other_education,dob",
+            table_name = "md_member",
+            whr = `member_code = '${dt.member_code}'`,
+            order = null;
+        }
+        
+        // var res_dtls = await db_Select(select,table_name,whr,order);
+    }
 
     try {
-        var res_dt = await db_Select(select, table_name, whr, order);
-        // console.log(res_dt, 'res_dt');
+        var res_dtls = await db_Select(select, table_name, whr, order);
+        // console.log(res_dtls, 'res_dtls');
         
         var response_set = {}
-        if(res_dt.suc > 0){
-            if(res_dt.msg.length > 0){
-                // var default_chk = await db_Select('a.outstanding,b.branch_name', 'td_loan a,md_branch b', `a.branch_id = b.branch_code AND a.sub_customer_id='${res_dt.msg[0].member_code}'`, `HAVING a.outstanding > 0`)
+        if(res_dtls.suc > 0){
+            if(res_dtls.msg.length > 0){
 
                   var select = "a.outstanding, b.branch_name",
                   table_name = "td_loan a,md_branch b",
-                  whr = `a.branch_code = b.branch_code AND a.member_code = '${res_dt.msg[0].member_code}' AND a.outstanding > 0`
+                  whr = `a.branch_code = b.branch_code AND a.member_code = '${res_dtls.msg[0].member_code}' AND a.outstanding > 0`
                   order = null;
                   var default_chk = await db_Select(select,table_name,whr,order);
                 //   console.log(default_chk, 'default_chk');
@@ -222,7 +233,7 @@ console.log(data,'gg');
                     if(default_chk.msg.length > 0){
                         response_set = {suc: 0, msg: [], status: `You are in ${default_chk.msg[0].branch_name} Branch and You are not eligible to get a new Loan. You have Rs. ${default_chk.msg[0].outstanding} outstanding.`}
                     }else{
-                        response_set = {suc: 1, msg: res_dt.msg, status: 'Existing User. Eligible to apply a new loan.'}
+                        response_set = {suc: 1, msg: res_dtls.msg, status: 'Existing User. Eligible to apply a new loan.'}
                     }
                 }else{
                     response_set = {suc: 1, msg: res_dt.msg, status: 'Error to fetch outstanding data'}
