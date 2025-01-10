@@ -1,5 +1,5 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
-const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm } = require('../../modules/admin/fetchModule');
+const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm, remove_member_dtls } = require('../../modules/admin/fetchModule');
 
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
@@ -377,16 +377,24 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     var fetch_search_group_web = await db_Select(select,table_name,whr,order);
 
     if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
-        var select = "a.member_code,a.client_name,b.form_no,b.approval_status",
-        table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
-        whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}'`,
-        order = null;
+        var select = "a.member_code,a.client_name,b.form_no,b.approval_status,SUM(c.outstanding) tot_outstanding",
+        table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_loan c ON a.branch_code = c.branch_code AND a.member_code = c.member_code",
+        whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}' AND b.approval_status != 'R'`,
+        order = `GROUP BY a.member_code,a.client_name,b.form_no,b.approval_status`;
         var grp_mem_dt = await db_Select(select,table_name,whr,order);
         fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
     }
 
     res.send(fetch_search_group_web)
 });
+
+fetchRouter.post("/remove_member_from_group", async (req, res) => {
+    var data = req.body;
+    
+//DROP OUT MEMBER FROM GROUP
+    var remove_memb_dt = await remove_member_dtls(data);
+    res.send(remove_memb_dt)
+})
 
 fetchRouter.post("/search_member_web", async (req, res) => {
     var data = req.body;

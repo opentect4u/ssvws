@@ -240,6 +240,24 @@ module.exports = {
       resolve(back_dt_bm);
     });
   },
+
+  remove_member_dtls: (data) => {
+    return new Promise(async (resolve, reject) => {
+      let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+      
+      //FUNCTION OF RWEMOVE MEMBER DETAILS
+        var table_name = "td_grt_basic",
+        fields = `approval_status = 'R', remarks = '${data.remove_remarks.split("'").join("\\'")}', rejected_by = '${data.rejected_by}', rejected_at = '${datetime}'`,
+        values = null,
+        whr = `branch_code = '${data.branch_code}' AND form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
+        flag = 1;
+        var response_data = await db_Insert(table_name, fields, values, whr, flag);
+
+      // console.log(back_dt_bm,'dt');
+
+      resolve(response_data);
+    });
+  },
   
   
 }
