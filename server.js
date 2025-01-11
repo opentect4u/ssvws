@@ -96,17 +96,17 @@ app.use(userwebRouter)
 app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
-  // const bcrypt = require("bcrypt");
-  // var pass = bcrypt.hashSync('8910622991', 10)
-  // console.log(pass);
+  const bcrypt = require("bcrypt");
+  var pass = bcrypt.hashSync('SSVWS@2025',10)
+  console.log(pass);
   
 //   var user = req.session.user;
 //   if (!user) {
 //     res.redirect("/login");
 //   } else {
-    res.redirect("/login");
+    // res.redirect("/login");
 //   }
-// res.send('Welcome')
+res.send(pass)
 });
 
 app.get('/404', (req, res) => {

@@ -1,4 +1,5 @@
 const { db_Select } = require('../../../model/mysqlModel');
+const { save_user_dtls } = require('../../../modules/admin/user/userwebModule');
 
 const express = require('express'),
 userwebRouter = express.Router(),
@@ -28,5 +29,13 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
     res.send(fetch_emp_dt)
 
 });
+
+userwebRouter.post("/save_user_dt", async (req, res) => {
+    var data = req.body;
+
+    var save_dt = await save_user_dtls(data);
+    
+    res.send(save_dt);
+})
 
 module.exports = {userwebRouter}
