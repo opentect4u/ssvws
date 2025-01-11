@@ -21,9 +21,9 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
     var data = req.body;
 
     try {
-        var select = "emp_id,user_type";
-        table_name = "md_user";
-        whr = `emp_id = '${data.emp_id}'`,
+        var select = "a.emp_id,a.user_type,b.emp_name";
+        table_name = "md_user a, md_employee b";
+        whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.emp_id = '${data.emp_id}'`,
         order = null;
         var user_dt = await db_Select(select, table_name, whr, order);
 
