@@ -1,5 +1,5 @@
 const { db_Select } = require('../../../model/mysqlModel');
-const { save_user_dtls } = require('../../../modules/admin/user/userwebModule');
+const { save_user_dtls, edit_user_dt } = require('../../../modules/admin/user/userwebModule');
 
 const express = require('express'),
 userwebRouter = express.Router(),
@@ -50,7 +50,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
                 });
             } else {
                 // If no details found in 'md_employee'
-                return res.status(404).send({
+                return res.send({
                     suc: 0,
                     msg: [],
                     details: "Employee details not found"
@@ -59,7 +59,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
     } catch (error) {
         // Handle errors gracefully
         console.error("Error fetching employee details:", error);
-        return res.status(500).send({ suc: 0, msg: "Internal server error" });
+        return res.send({ suc: 0, msg: "Internal server error" });
     }
 });
 
@@ -84,6 +84,14 @@ userwebRouter.post("/fetch_user_details", async (req, res) => {
     var fetch_user = await db_Select(select,table_name,whr,order);
 
     res.send(fetch_user)
+});
+
+userwebRouter.post("/edit_user_dt", async (req, res) => {
+    var data = req.body;
+
+    var edit_dt = await edit_user_dt(data);
+
+    res.send(edit_dt);
 })
 
 module.exports = {userwebRouter}
