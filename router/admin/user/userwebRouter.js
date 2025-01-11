@@ -46,8 +46,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
                 // If employee details found
                 return res.status(200).send({
                     suc: 1,
-                    msg: fetch_emp_dt.msg,
-                    details: "Employee details fetched successfully"
+                    msg: fetch_emp_dt.msg
                 });
             } else {
                 // If no details found in 'md_employee'
