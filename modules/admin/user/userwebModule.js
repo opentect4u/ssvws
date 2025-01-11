@@ -28,5 +28,34 @@ module.exports = {
                 
             }
     });
+},
+
+edit_user_dt : (data) => {
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+        return new Promise(async (resolve, reject) => {
+            try {
+                var table_name = "md_user",
+                fields = `user_type = '${data.user_type}', user_status = '${data.user_status}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+                        if (data.user_status === 'I') {
+                        fields += `,
+                            remarks = '${data.remarks}', 
+                            deactivated_by = '${data.deactivated_by}', 
+                            deactivated_at = '${datetime}'`;
+                        }
+            
+                var values = null, // For `UPDATE` queries, this remains null
+                whr = `emp_id = '${data.emp_id}' AND brn_code = '${data.branch_code}'`,
+                flag = 1;
+            
+            var edit_dtls_user = await db_Insert(table_name, fields, values, whr, flag);
+            
+
+                resolve({"suc": 1, "msg": edit_dtls_user})
+
+            }catch (error){
+                reject({"suc": 2, "msg": "Error occurred during saving user details", details: error });
+                
+            }
+    });
 }
 }
