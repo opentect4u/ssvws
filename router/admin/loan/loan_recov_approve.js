@@ -1,4 +1,4 @@
-const { db_Select, db_Insert } = require('../../../model/mysqlModel');
+const { db_Select, db_Insert, db_Delete } = require('../../../model/mysqlModel');
 
 const express = require('express'),
 loan_recov_approveRouter = express.Router(),
@@ -139,23 +139,91 @@ loan_recov_approveRouter.post("/approve_member_recov", async (req, res) => {
 
 loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    var data = req.body;
-    // console.log(data,'juju');
+    var data = req.body, del_loans = {};
+    console.log(data,'juju');
     
-//REJECT RECOVERY TRANSACTION
-    if (data.reject_membdt.length > 0) {        
-        for (let dt of data.reject_membdt) {
-            var table_name = "td_reject_transactions",
-            fields = `(payment_date,payment_id,branch_id,loan_id,credit,tr_type,status,reject_remarks,rejected_by,rejected_at)`,
-            values = `('${dateFormat(dt.payment_date, 'yyyy-mm-dd')}','${dt.payment_id}','${dt.branch_code}','${dt.loan_id}','${dt.credit}','R','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}')`,
-            whr = null,
-            flag = 0;
-            var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
+    //REJECT RECOVERY TRANSACTION
+    if (data.reject_membdt.length > 0) {   
+        var payment_date_arr = data.reject_membdt.map(pdt => `'${dateFormat(pdt.payment_date, 'yyyy-mm-dd')}'`)
+        var loan_id_arr = data.reject_membdt.map(pdt => pdt.loan_id)
+        var branch_code_arr = data.reject_membdt.map(pdt => pdt.branch_code)
+
+        console.log(payment_date_arr,loan_id_arr,branch_code_arr,'array');
+        
+    
+        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.credit,b.debit,b.tr_type",
+            table_name = "td_loan a, td_loan_transactions b",
+            whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code IN (${branch_code_arr.join(',')}) AND b.payment_date IN (${payment_date_arr.join(',')}) AND a.loan_id = (${loan_id_arr.join(',')}) AND b.tr_type IN ('I', 'R')`,
+            order = null;
+            var fetch_loans = await db_Select(select,table_name,whr,order);
+
+            console.log(fetch_loans,'fetch_loans');
+            
+
+        if(fetch_loans.suc > 0 && fetch_loans.msg.length > 0){
+            
+            for (let dt of data.fetch_loans.msg) {
+    
+                    var table_name = "td_reject_transactions",
+                    fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,tr_type,status,reject_remarks,rejected_by,rejected_at)`,
+                    values = `('${dateFormat(dt.payment_date, 'yyyy-mm-dd')}','${dt.payment_id}','${dt.branch_id}','${dt.loan_id}','${dt.credit}','${dt.debit}','${dt.tr_type}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}')`,
+                    whr = null,
+                    flag = 0;
+                    var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
+               
+                    console.log(reject_dt,'reject_dt');
+                    
+    
+                if(reject_dt.suc > 0 && reject_dt.msg.length > 0){
+                    var table_name = "td_loan_transactions",
+                    whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}' AND loan_id = '${dt.loan_id}' AND tr_type = '${dt.tr_type}'`
+                    del_loans = await db_Delete(table_name,whr);
+                }
+
+                console.log(del_loans,'del');
+                
+            }
+        }     
+    }
+
+    res.send(del_loans)
+
+});
+
+loan_recov_approveRouter.post("/reject_grp_co_wise_recov", async (req, res) => {
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    var data = req.body, del_loan = {};
+    // console.log(data,'data');
+
+    //REJECT GROUPWISE / COWISE RECOVERY
+    if (data.reject_dt.length > 0) {        
+        for (let dt of data.reject_dt) {
+        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.credit,b.debit,b.tr_type",
+        table_name = "td_loan a, td_loan_transactions b",
+        whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code = '${dt.branch_code}' AND a.group_code = '${dt.group_code}' AND b.payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND b.tr_type IN ('I', 'R')`,
+        order = null;
+        var fetch_loan = await db_Select(select,table_name,whr,order);
+
+            if(fetch_loan.suc > 0 && fetch_loan.msg.length > 0){
+                for (let dts of fetch_loan.msg) {
+                        var table_name = "td_reject_transactions",
+                        fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,tr_type,status,reject_remarks,rejected_by,rejected_at)`,
+                        values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_code}','${dts.loan_id}','${dts.credit}','${dts.debit}','${dts.tr_type}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}')`,
+                        whr = null,
+                        flag = 0;
+                        var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
+    
+                        if(reject_dt.suc > 0 && reject_dt.msg.length > 0){
+                            var table_name = "td_loan_transactions",
+                            whr = `payment_date = '${dateFormat(dts.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dts.payment_id}' AND loan_id = '${dts.loan_id}' AND tr_type = '${dts.tr_type}'`
+                            del_loan = await db_Delete(table_name,whr);
+                        }
+                }
+             }
         }
     }
 
-    res.send(reject_dt)
-
+    res.send(del_loan)
 });
 
 loan_recov_approveRouter.post("/reject_list", async (req, res) => {
@@ -168,6 +236,6 @@ loan_recov_approveRouter.post("/reject_list", async (req, res) => {
     var reject_list_dt = await db_Select(select,table_name,whr,order);
 
     res.send(reject_list_dt)
-})
+});
 
 module.exports = {loan_recov_approveRouter}
