@@ -27,28 +27,36 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
         order = null;
         var user_dt = await db_Select(select, table_name, whr, order);
 
-        // console.log("Result from md_user query:", user_dt);
 
-
-        if (user_dt.suc > 0 && user_dt.msg.length > 0) {
+        if (user_dt.suc > 0 && Array.isArray(user_dt.msg) && user_dt.msg.length > 0) {
             // Employee ID already exists in 'md_user'
-            return res.status(200).send({ suc: 0, msg: user_dt, details: "Employee already exists in md_user" });
+            return res.status(200).send({
+                suc: 1,
+                msg: user_dt.msg,
+                details: "Employee already exists in md_user"
+            });
         }
 
-        // Step 2: Fetch employee details from 'md_employee' and branch details from 'md_branch'
-        var select1 = "a.branch_id, a.emp_name, b.branch_name";
-        table_name1 = "md_employee a, md_branch b";
-        whr1 = `a.branch_id = b.branch_code AND a.emp_id = '${data.emp_id}'`,
-        order1 = null;
-        var fetch_emp_dt = await db_Select(select1, table_name1, whr1, order1);
-        console.log("Result from md_employee and md_branch query:", fetch_emp_dt);
-        if (fetch_emp_dt.suc > 0) {
-            // Send fetched employee details
-            return res.status(200).send(fetch_emp_dt);
-        } else {
-            // Employee ID not found in 'md_employee'
-            return res.status(404).send({ suc: 0, msg: "Employee details not found" });
-        }
+            var select1 = "a.branch_id, a.emp_name, b.branch_name";
+            table_name1 = "md_employee a, md_branch b";
+            whr1 = `a.branch_id = b.branch_code AND a.emp_id = '${data.emp_id}'`,
+            order1 = null;
+            var fetch_emp_dt = await db_Select(select1, table_name1, whr1, order1);
+            if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
+                // If employee details found
+                return res.status(200).send({
+                    suc: 1,
+                    msg: fetch_emp_dt.msg,
+                    details: "Employee details fetched successfully"
+                });
+            } else {
+                // If no details found in 'md_employee'
+                return res.status(404).send({
+                    suc: 0,
+                    msg: [],
+                    details: "Employee details not found"
+                });
+            }
     } catch (error) {
         // Handle errors gracefully
         console.error("Error fetching employee details:", error);
