@@ -75,7 +75,7 @@ userwebRouter.post("/save_user_dt", async (req, res) => {
 userwebRouter.post("/fetch_user_details", async (req, res) => {
     var data = req.body;
 
-    var select = "a.emp_id,a.brn_code,b.emp_name,c.branch_name",
+    var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,c.branch_name",
     table_name = "md_user a, md_employee b, md_branch c",
     whr = `a.brn_code = b.branch_id
     AND a.brn_code = c.branch_code
