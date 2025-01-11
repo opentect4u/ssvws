@@ -1,4 +1,4 @@
-const { db_Select } = require('../../../model/mysqlModel');
+const { db_Select, db_Insert } = require('../../../model/mysqlModel');
 const { save_user_dtls, edit_user_dt } = require('../../../modules/admin/user/userwebModule');
 
 const express = require('express'),
@@ -92,6 +92,23 @@ userwebRouter.post("/edit_user_dt", async (req, res) => {
     var edit_dt = await edit_user_dt(data);
 
     res.send(edit_dt);
-})
+});
+
+userwebRouter.post("/reset_password", async (req, res) => {
+    var data = req.body;
+    // console.log(data,'data');
+    
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    var table_name = "md_user",
+    fields = `password = '$2b$10$GKfgEjJu9WuKkOUWzg28VOMWS6E214C3K.VizYE2Z3UXGTe/UaCEC',modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
+    values = null,
+    whr = `brn_code  = '${data.branch_code}' AND emp_id = '${data.emp_id}'`,
+    flag = 1;
+    var reset_dtls_user = await db_Insert(table_name,fields,values,whr,flag);
+
+    res.send(reset_dtls_user)
+
+});
 
 module.exports = {userwebRouter}
