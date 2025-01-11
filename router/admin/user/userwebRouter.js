@@ -21,7 +21,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
     var data = req.body;
 
     try {
-        var select = "emp_id, user_type";
+        var select = "emp_id,user_type";
         table_name = "md_user";
         whr = `emp_id = '${data.emp_id}'`,
         order = null;
@@ -32,7 +32,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
         if (user_dt.suc > 0 && user_dt.msg.length > 0) {
             // Employee ID already exists in 'md_user'
-            return res.status(200).send({ suc: 0, msg: "Employee already exists in md_user" });
+            return res.status(200).send({ suc: 0, msg: user_dt, details: "Employee already exists in md_user" });
         }
 
         // Step 2: Fetch employee details from 'md_employee' and branch details from 'md_branch'
@@ -68,13 +68,13 @@ userwebRouter.post("/save_user_dt", async (req, res) => {
 userwebRouter.post("/fetch_user_details", async (req, res) => {
     var data = req.body;
 
-    var select = "",
+    var select = "a.emp_id,a.emp_name",
     table_name = "",
     whr = null,
     order = null;
     var fetch_user = await db_Select(select,table_name,whr,order);
 
-    res.send()
+    res.send(fetch_user)
 })
 
 module.exports = {userwebRouter}
