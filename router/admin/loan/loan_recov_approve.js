@@ -162,7 +162,7 @@ loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) =
 
         if(fetch_loans.suc > 0 && fetch_loans.msg.length > 0){
             
-            for (let dt of data.fetch_loans.msg) {
+            for (let dt of fetch_loans.msg) {
     
                     var table_name = "td_reject_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,tr_type,status,reject_remarks,rejected_by,rejected_at)`,
