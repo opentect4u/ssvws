@@ -142,7 +142,7 @@ loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) =
     var data = req.body, del_loans = {};
     console.log(data,'juju');
     
-    //REJECT RECOVERY TRANSACTION
+    //REJECT RECOVERY TRANSACTION MEMBERWISE
     if (data.reject_membdt.length > 0) {   
         var payment_date_arr = data.reject_membdt.map(pdt => `'${dateFormat(pdt.payment_date, 'yyyy-mm-dd')}'`)
         var loan_id_arr = data.reject_membdt.map(pdt => pdt.loan_id)

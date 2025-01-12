@@ -4,6 +4,8 @@ module.exports = {
     save_user_dtls: (data) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
         return new Promise(async (resolve, reject) => {
+
+            //SAVE USER DETAILS
             try {
                 var table_name = "md_user",
                 fields = `(emp_id,brn_code,user_type,password,user_status,created_by,created_at)`,
@@ -33,6 +35,8 @@ module.exports = {
 edit_user_dt : (data) => {
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
         return new Promise(async (resolve, reject) => {
+
+            //EDIT USER DETAILS
             try {
                 var table_name = "md_user",
                 fields = `user_type = '${data.user_type}', user_status = '${data.user_status}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
