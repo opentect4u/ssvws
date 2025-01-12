@@ -206,9 +206,11 @@ loan_recov_approveRouter.post("/reject_grp_co_wise_recov", async (req, res) => {
 
             if(fetch_loan.suc > 0 && fetch_loan.msg.length > 0){
                 for (let dts of fetch_loan.msg) {
+                    console.log();
+                    
                         var table_name = "td_reject_transactions",
                         fields = `(payment_date,payment_id,branch_id,loan_id,credit,debit,tr_type,status,reject_remarks,rejected_by,rejected_at)`,
-                        values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_code}','${dts.loan_id}','${dts.credit}','${dts.debit}','${dts.tr_type}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}')`,
+                        values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_id}','${dts.loan_id}','${dts.credit}','${dts.debit}','${dts.tr_type}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}')`,
                         whr = null,
                         flag = 0;
                         var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
