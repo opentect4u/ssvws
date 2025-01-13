@@ -1,9 +1,11 @@
 const { db_Select, db_Insert } = require('../../../model/mysqlModel');
-const { save_user_dtls, edit_user_dt } = require('../../../modules/admin/user/userwebModule');
+const { save_user_dtls, edit_user_dt, change_pass_data } = require('../../../modules/admin/user/userwebModule');
 
 const express = require('express'),
 userwebRouter = express.Router(),
 dateFormat = require('dateformat');
+const bcrypt = require("bcrypt");
+
 
 userwebRouter.get("/get_user_type", async (req, res) => {
     var data = req.query;
@@ -122,6 +124,48 @@ userwebRouter.post("/user_profile_details", async (req, res) => {
     var profile_dtls = await db_Select(select,table_name,whr,order);
 
     res.send(profile_dtls)
+});
+
+userwebRouter.post("/change_password", async (req, res) => {
+    var data = req.body, result;
+//   console.log(data);
+  const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  var change_pwd_dt = await change_pass_data(data);
+//   console.log(change_pwd_dt);
+
+  if(change_pwd_dt.suc > 0) {
+    if(change_pwd_dt.msg.length > 0) {
+        // console.log(data.old_pwd, change_pwd_dt.msg[0].password, await bcrypt.compare(data.old_pwd, change_pwd_dt.msg[0].password))
+      if (await bcrypt.compare(data.old_pwd, change_pwd_dt.msg[0].password)) {
+        var pass = bcrypt.hashSync(data.new_pwd, 10);
+        // console.log(pass,'pass');
+        
+        var table_name = "md_user",
+        fields = `password = '${pass}', modified_by = '${data.modified_by}', modified_at='${datetime}'`,
+        where = `emp_id = '${data.emp_id}'`,
+        flag = 1;
+        var change_pass = await db_Insert(table_name,fields,null,where,flag)
+        result = change_pass
+        result = {
+          suc: 1,
+          msg: "Password changed successfully",
+          data: change_pwd_dt.msg,
+        };
+      }else {
+        result = {
+          suc: 0,
+          msg: "Please check your password",
+          data: [],
+        };
+      }
+    }else {
+      result = { suc: 0, msg: "No data found",  data: [], };
+    }
+  }else {
+    result = { suc: 0, msg: change_pwd_dt.msg };
+  }
+  res.send(result);
+
 })
 
 module.exports = {userwebRouter}

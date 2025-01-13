@@ -1,4 +1,4 @@
-const { db_Insert } = require("../../../model/mysqlModel");
+const { db_Insert, db_Select } = require("../../../model/mysqlModel");
 
 module.exports = {
     save_user_dtls: (data) => {
@@ -58,6 +58,25 @@ edit_user_dt : (data) => {
 
             }catch (error){
                 reject({"suc": 2, "msg": "Error occurred during saving user details", details: error });
+                
+            }
+    });
+},
+
+change_pass_data : (data) => {
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+        return new Promise(async (resolve, reject) => {
+              //FETCH USER DETAILS
+              try {
+                var select = "emp_id,password",
+                table_name = "md_user",
+                whr = `emp_id='${data.emp_id}'`,
+                order = null;
+              var pwd_dt = await db_Select(select, table_name, whr, order);
+              resolve(pwd_dt);            
+
+            }catch (error){
+                reject({"suc": 2, "msg": "Error occurred during fetching user details", details: error });
                 
             }
     });
