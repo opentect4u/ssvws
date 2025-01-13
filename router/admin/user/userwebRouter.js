@@ -111,4 +111,17 @@ userwebRouter.post("/reset_password", async (req, res) => {
 
 });
 
+userwebRouter.post("/user_profile_details", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.emp_id,a.brn_code,a.user_type,c.user_type type_name",
+    table_name = "md_user a, md_employee b, md_user_type c",
+    whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.user_type = c.type_code AND a.emp_id = '${data.emp_id}'`,
+    order = null;
+
+    var profile_dtls = await db_Select(select,table_name,whr,order);
+
+    res.send(profile_dtls)
+})
+
 module.exports = {userwebRouter}
