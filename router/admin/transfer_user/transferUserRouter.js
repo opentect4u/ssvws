@@ -42,8 +42,8 @@ transferUserRouter.post("/tranfer_user", async (req, res) => {
       //TRANSFER BRANCH
     try {
         var table_name = "md_user_branch",
-                fields = `(user_dt,emp_id,branch_code,modified_by,modified_at)`,
-                values = `('${datetime}','${data.emp_id}','${data.branch_code}','${data.modified_by}','${datetime}')`,
+                fields = `(user_dt,emp_id,branch_code,remarks,modified_by,modified_at)`,
+                values = `('${datetime}','${data.emp_id}','${data.branch_code}','${data.remarks.split("'").join("\\'")}','${data.modified_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var save_trans_dtls = await db_Insert(table_name,fields,values,whr,flag);  

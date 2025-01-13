@@ -42,7 +42,7 @@ edit_user_dt : (data) => {
                 fields = `user_type = '${data.user_type}', user_status = '${data.user_status}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
                         if (data.user_status === 'I') {
                         fields += `,
-                            deactive_remarks = '${data.remarks}', 
+                            deactive_remarks = '${data.remarks.split("'").join("\\'")}', 
                             deactivated_by = '${data.deactivated_by}', 
                             deactivated_at = '${datetime}'`;
                         }
