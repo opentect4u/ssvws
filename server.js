@@ -75,6 +75,7 @@ const { loan_outstandingRouter } = require("./router/report/branch_report/web/lo
 const { loan_recov_approveRouter } = require("./router/admin/loan/loan_recov_approve");
 const { empRouter } = require("./router/admin/employee/empRouter");
 const { userwebRouter } = require("./router/admin/user/userwebRouter");
+const { transferUserRouter } = require("./router/admin/transfer_user/transferUserRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -93,6 +94,7 @@ app.use(loan_outstandingRouter)
 app.use(loan_recov_approveRouter)
 app.use(empRouter)
 app.use(userwebRouter)
+app.use(transferUserRouter)
 app.use('/admin', adminRouter)
 
 app.get("/",async (req, res) => {
