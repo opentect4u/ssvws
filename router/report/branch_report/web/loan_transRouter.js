@@ -37,7 +37,7 @@ loan_transRouter.post("/recov_loan_trans_report", async (req, res) => {
       //FETCH RECOVERY DETAILS GROUP WISE
       if(data.flag == 'M'){
 
-      var select = "a.payment_date,a.payment_id,b.group_code,c.group_name,b.member_code,d.client_name,b.loan_id,a.particulars,a.credit,(a.balance + a.od_balance + a.intt_balance)balance,a.tr_mode,a.bank_name,a.cheque_id,a.trn_addr,a.created_by collector_code,f.emp_name collec_name,a.created_at,a.approved_by approve_code,i.emp_name approved_by,a.approved_at",
+      var select = "a.payment_date,a.payment_id,b.group_code,c.group_name,b.member_code,d.client_name,b.loan_id,a.particulars,a.credit,(a.balance + a.od_balance + a.intt_balance)balance,a.tr_mode,a.bank_name,a.cheque_id,a.trn_addr,a.created_by collector_code,f.emp_name collec_name,a.created_at,a.approved_by approve_code,f.emp_name approved_by,a.approved_at",
       table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_member d ON b.member_code = d.member_code LEFT JOIN md_employee f ON a.created_by = f.emp_id AND a.approved_by = f.emp_id",
       whr = `b.branch_code = '${data.branch_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
       order = `ORDER BY a.payment_date,c.group_name`;
@@ -46,7 +46,7 @@ loan_transRouter.post("/recov_loan_trans_report", async (req, res) => {
       res.send(member_dt);
       } else {
 
-        var select = "a.payment_date,b.group_code,c.group_name,a.particulars,sum(a.credit)credit,(sum(a.balance) + sum(a.od_balance) + sum(a.intt_balance))balance,a.tr_mode,a.bank_name,a.created_by collector_code,f.emp_name collec_name,a.created_at,a.approved_by approve_code,i.emp_name approved_by",
+        var select = "a.payment_date,b.group_code,c.group_name,a.particulars,sum(a.credit)credit,(sum(a.balance) + sum(a.od_balance) + sum(a.intt_balance))balance,a.tr_mode,a.bank_name,a.created_by collector_code,f.emp_name collec_name,a.created_at,a.approved_by approve_code,f.emp_name approved_by",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_member d ON b.member_code = d.member_code LEFT JOIN md_employee f ON a.created_by = f.emp_id AND a.approved_by = f.emp_id",
         whr = `b.branch_code = '${data.branch_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
         order = `GROUP BY a.payment_date,b.group_code,c.group_name,a.particulars,a.tr_mode,a.bank_name,a.created_by,f.emp_name,a.created_at,a.approved_by
