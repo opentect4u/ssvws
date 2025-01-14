@@ -86,73 +86,91 @@ const db_RunProcedureAndFetchData = async (proc_name, dataKey = null, dataArr = 
     var tb_order = selOrder ? selOrder : "";
     const fetchQuery = `SELECT ${selFields} ${selTableName ? `FROM ${selTableName}` : ''} ${tb_whr} ${tb_order}`;
 
-    console.log(procedureCall, fetchQuery, '--------------');
+    // console.log(procedureCall, fetchQuery, '--------------');
+
+    db.query(procedureCall, dataArr, (err, result) => {
+      if (err) {
+        console.log(err);
+        data = { suc: 0, msg: JSON.stringify(err) };
+        resolve(data);
+      } else {
+        db.query(fetchQuery, selWhereArr, (err, results) => {
+          if (err) {
+            console.log(err);
+            data = { suc: 0, msg: JSON.stringify(err) };
+          } else {
+            data = { suc: 1, msg: results };
+          }
+          resolve(data);
+        })
+      }
+    });
     
   
     // Get a connection from the pool
-    db.getConnection((err, connection) => {
-      if (err) {
-        console.error('Error getting database connection:', err);
-        data = { suc: 0, msg: 'Error getting database connection:' };
-        resolve(data)
-        return;
-      }
+    // db.getConnection((err, connection) => {
+    //   if (err) {
+    //     console.error('Error getting database connection:', err);
+    //     data = { suc: 0, msg: 'Error getting database connection:' };
+    //     resolve(data)
+    //     return;
+    //   }
   
-      // Start a transaction
-      connection.beginTransaction((err) => {
-        if (err) {
-          console.error('Error starting transaction:', err);
-          connection.release();
-          data = { suc: 0, msg: 'Error starting transaction:' };
-          resolve(data)
-          return;
-        }
+    //   // Start a transaction
+    //   connection.beginTransaction((err) => {
+    //     if (err) {
+    //       console.error('Error starting transaction:', err);
+    //       connection.release();
+    //       data = { suc: 0, msg: 'Error starting transaction:' };
+    //       resolve(data)
+    //       return;
+    //     }
   
-        // Call the stored procedure
-        connection.query(procedureCall, dataArr, (err) => {
-          if (err) {
-            console.error('Error calling the procedure:', err);
-            return connection.rollback(() => {
-              connection.release();
-              data = { suc: 0, msg: 'Error calling the procedure:' };
-              resolve(data)
-            });
-          }
+    //     // Call the stored procedure
+    //     connection.query(procedureCall, dataArr, (err) => {
+    //       if (err) {
+    //         console.error('Error calling the procedure:', err);
+    //         return connection.rollback(() => {
+    //           connection.release();
+    //           data = { suc: 0, msg: 'Error calling the procedure:' };
+    //           resolve(data)
+    //         });
+    //       }
 
-          console.log('Procedure called successfully:', '++++++++++++++++++++++++++');
+    //       console.log('Procedure called successfully:', '++++++++++++++++++++++++++');
   
-          // Fetch data from the temporary table
-          connection.query(fetchQuery, selWhereArr, (err, results) => {
-            if (err) {
-              console.error('Error fetching data from temporary table:', err);
-              return connection.rollback(() => {
-                connection.release();
-                data = { suc: 0, msg: 'Error fetching data from temporary table:' };
-                resolve(data)
-              });
-            }
+    //       // Fetch data from the temporary table
+    //       connection.query(fetchQuery, selWhereArr, (err, results) => {
+    //         if (err) {
+    //           console.error('Error fetching data from temporary table:', err);
+    //           return connection.rollback(() => {
+    //             connection.release();
+    //             data = { suc: 0, msg: 'Error fetching data from temporary table:' };
+    //             resolve(data)
+    //           });
+    //         }
   
-            data = { suc: 1, msg: results };
-            console.log('Data fetched from temporary table:');
+    //         data = { suc: 1, msg: results };
+    //         console.log('Data fetched from temporary table:');
   
-            // Commit the transaction
-            connection.commit((err) => {
-              if (err) {
-                console.error('Error committing transaction:', err);
-                return connection.rollback(() => {
-                  connection.release();
-                  data = { suc: 0, msg: 'Error committing transaction:' };
-                  resolve(data)
-                });
-              }
+    //         // Commit the transaction
+    //         connection.commit((err) => {
+    //           if (err) {
+    //             console.error('Error committing transaction:', err);
+    //             return connection.rollback(() => {
+    //               connection.release();
+    //               data = { suc: 0, msg: 'Error committing transaction:' };
+    //               resolve(data)
+    //             });
+    //           }
   
-              connection.release();
-              resolve(data);
-            });
-          });
-        });
-      });
-    });
+    //           connection.release();
+    //           resolve(data);
+    //         });
+    //       });
+    //     });
+    //   });
+    // });
   });
 };
 
