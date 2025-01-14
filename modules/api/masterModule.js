@@ -89,25 +89,25 @@ const getFormNo = () => {
     });
   };
 
-  const payment_code = (branch_code, trn_dt = null) => {
-    return new Promise(async (resolve, reject) => {
-        year = new Date().getFullYear();
+  // const payment_code = (branch_code, trn_dt = null) => {
+  //   return new Promise(async (resolve, reject) => {
+  //       year = new Date().getFullYear();
 
-        var select = "IF(MAX(SUBSTRING(payment_id, 8)) > 0, MAX(cast(SUBSTRING(payment_id, 8) as unsigned))+1, 1) max_pay_id",
-        table_name = "td_loan_transactions",
-        whr = `YEAR(payment_date) = ${trn_dt ? `YEAR('${dateFormat(trn_dt, "yyyy-mm-dd")}')` : 'YEAR(NOW())'}`,
-        order = null;
-        var pay_dt = await db_Select(select,table_name,whr,order);
-        // consolxe.log(pay_dt,'pay_dt');
+  //       var select = "IF(MAX(SUBSTRING(payment_id, 8)) > 0, MAX(cast(SUBSTRING(payment_id, 8) as unsigned))+1, 1) max_pay_id",
+  //       table_name = "td_loan_transactions",
+  //       whr = `YEAR(payment_date) = ${trn_dt ? `YEAR('${dateFormat(trn_dt, "yyyy-mm-dd")}')` : 'YEAR(NOW())'}`,
+  //       order = null;
+  //       var pay_dt = await db_Select(select,table_name,whr,order);
+  //       // consolxe.log(pay_dt,'pay_dt');
         
 
-        let newPayCode = pay_dt.msg[0].max_pay_id;   
-        // console.log(newPayCode,'paycode');
+  //       let newPayCode = pay_dt.msg[0].max_pay_id;   
+  //       // console.log(newPayCode,'paycode');
          
-        var newPayId = `${year}` + `${branch_code}` + newPayCode        
-      resolve(newPayId);
-    });
-  };
+  //       var newPayId = `${year}` + `${branch_code}` + newPayCode        
+  //     resolve(newPayId);
+  //   });
+  // };
 
   // const getBankCode = () => {
   //   return new Promise(async (resolve, reject) => {
@@ -143,6 +143,15 @@ const getFormNo = () => {
     });
 };
 
+
+const payment_code = () => {
+  return new Promise(async (resolve, reject) => {
+  const timestamp = new Date().getTime();
+  const newPayId = `${timestamp}`;
+
+  resolve(newPayId);
+});
+}
   
 
   // const interest_cal_amt = (principal, rate, time) => {

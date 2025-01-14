@@ -149,7 +149,8 @@ module.exports = {
 
 
 
-                    let payment_id = await payment_code(data.branch_code, dt.last_trn_dt)     //interest
+                    // let payment_id = await payment_code(data.branch_code, dt.last_trn_dt)     //interest
+                    let payment_id = await payment_code()     //interest
                     console.log(payment_id,'id_intt');
  
                     var table_name = "td_loan_transactions",
@@ -162,7 +163,8 @@ module.exports = {
 
     
                     if(rec_dtls_int.suc > 0 && rec_dtls_int.msg.length > 0){
-                      payment_id = await payment_code(data.branch_code, dt.last_trn_dt)
+                    //   payment_id = await payment_code(data.branch_code, dt.last_trn_dt)
+                      payment_id = await payment_code()
                         console.log(payment_id,'id_recov');
                         
     
