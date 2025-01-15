@@ -28,7 +28,6 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
     try {
         var data = req.body;
 
-        var data = req.body;
         const pro_name = 'p_loan_out_standing',
         pro_params = `?,?`,
         pro_params_val = [data.branch_code, data.os_dt],
@@ -67,15 +66,16 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
                     tot_applied_amt += dt.applied_amt;
                     tot_prn_disb_amt += dt.prn_disb_amt;
                     tot_tot_emi += dt.tot_emi;
+                    
+                    var arr_index = groupwiseBalance.findIndex(x => x.group_code == curr_group_code);
+                    groupwiseBalance[arr_index].balance = tot_balance;
+                    groupwiseBalance[arr_index].od_balance = tot_od_balance;
+                    groupwiseBalance[arr_index].intt_balance = tot_intt_balance;
+                    groupwiseBalance[arr_index].total_outstanding = tot_outstanding;
+                    groupwiseBalance[arr_index].applied_amt = tot_applied_amt;
+                    groupwiseBalance[arr_index].prn_disb_amt = tot_prn_disb_amt;
+                    groupwiseBalance[arr_index].tot_emi = tot_tot_emi;
                 }
-                var arr_index = groupwiseBalance.findIndex(x => x.group_code == curr_group_code);
-                groupwiseBalance[arr_index].balance = tot_balance;
-                groupwiseBalance[arr_index].od_balance = tot_od_balance;
-                groupwiseBalance[arr_index].intt_balance = tot_intt_balance;
-                groupwiseBalance[arr_index].total_outstanding = tot_outstanding;
-                groupwiseBalance[arr_index].applied_amt = tot_applied_amt;
-                groupwiseBalance[arr_index].prn_disb_amt = tot_prn_disb_amt;
-                groupwiseBalance[arr_index].tot_emi = tot_tot_emi;
                 // if(!groupwiseBalance[dt.group_code]){
                 //     groupwiseBalance[dt.group_code] = [];
                 // }
