@@ -42,7 +42,7 @@ loan_statementAdminRouter.post("/loan_statement_group_dtls_admin", async (req, r
     res.send(grp_dt);
 });
 
-loan_statementAdminRouter.post("/loan_statement_group_report", async (req, res) => {
+loan_statementAdminRouter.post("/loan_statement_group_report_admin", async (req, res) => {
     var data = req.body;
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR GROUP CODE
