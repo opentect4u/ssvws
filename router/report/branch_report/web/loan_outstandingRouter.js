@@ -24,7 +24,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
     }
 });
 
-loan_outstandingRouter.post("/loan_outstanding_report_groupwise_admin", async (req, res) => {
+loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, res) => {
     try {
 
         var data = req.body;
