@@ -48,16 +48,9 @@ loan_outstandingAdminrouter.post("/loan_outstanding_report_groupwise_admin", asy
         sel_order = `GROUP BY a.branch_code, a.group_code, b.group_name,f.purpose_id, g.sub_purp_name, h.scheme_name, i.fund_name, a.applied_date, a.disbursed_date, a.current_roi, a.installment_start_date, a.period, a.period_mode,a.installment_end_date
         ORDER BY a.disbursed_date`;
         var repo_data = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
-        // var groupwiseBalance = [];
-        // if (repo_data.suc > 0 && repo_data.msg.length > 0) {
-        //     for(let dt of repo_data.msg){
-        //             groupwiseBalance.push(dt)
-        //     }
-        // }
 
         res.send(repo_data)
 
-        // res.send({ suc: repo_data.suc, msg: repo_data.suc > 0 ? groupwiseBalance : [] });
     } catch (error) {
         console.error("Error fetching loan outstanding report:", error);
         res.status(500).send({ suc: 0, msg: "An error occurred" });
