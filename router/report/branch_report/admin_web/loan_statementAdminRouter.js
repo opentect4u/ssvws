@@ -29,13 +29,13 @@ loan_statementAdminRouter.post("/loan_statement_report_admin", async (req, res) 
     res.send(loan_report_dt);
 });
 
-loan_statementAdminRouter.post("/loan_statement_group_dtls", async (req, res) => {
+loan_statementAdminRouter.post("/loan_statement_group_dtls_admin", async (req, res) => {
     var data = req.body;
 
     //FETCH GROUP DETAILS
     var select = "a.branch_code,a.group_code,a.group_name,SUM(b.outstanding) outstanding,c.branch_name",
     table_name = "md_group a LEFT JOIN td_loan b ON a.group_code = b.group_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-    whr = `a.branch_code = '${data.branch_code}' AND a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%'`,
+    whr = `a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%'`,
     order = `GROUP BY a.branch_code,a.group_code,a.group_name,c.branch_name`;
     var grp_dt = await db_Select(select,table_name,whr,order);
 
