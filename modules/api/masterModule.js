@@ -522,18 +522,22 @@ const getLoanBal = (loan_id,to_dt) => {
        var pay_data = await db_Select(select,table_name,whr,order)
 
        if(pay_data.suc > 0 && pay_data.msg.length > 0) {
+        const latestPaymentDate = pay_data.msg[0].payment_date;
+
         var select = "max(payment_id) payment_id",
         table_name = "td_loan_transactions",
-        whr = `loan_id = '${loan_id}' AND date(payment_date) = '${pay_data.msg[0].payment_date}'`,
+        whr = `loan_id = '${loan_id}' AND date(payment_date) = '${latestPaymentDate}'`,
         order = null;
 
         var pay_id = await db_Select(select,table_name,whr,order)
        
 
         if(pay_id.suc > 0 && pay_id.msg.length > 0){
+          const latestPaymentId = pay_id.msg[0].payment_id;
+
           var select = "(balance + od_balance + intt_balance) balance",
           table_name = "td_loan_transactions",
-          whr = `loan_id = '${loan_id}' AND date(payment_date) = '${pay_data.msg[0].payment_date}' AND payment_id = '${pay_id.msg[0].payment_id}'`,
+          whr = `loan_id = '${loan_id}' AND date(payment_date) = '${latestPaymentDate}' AND payment_id = '${latestPaymentId}'`,
           order = null;
           var balance = await db_Select(select,table_name,whr,order)
         }
