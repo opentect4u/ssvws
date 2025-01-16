@@ -526,7 +526,7 @@ const getLoanBal = (loan_id,to_dt) => {
 
         var select = "max(payment_id) payment_id",
         table_name = "td_loan_transactions",
-        whr = `loan_id = '${loan_id}' AND date(payment_date) = '${latestPaymentDate}'`,
+        whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(latestPaymentDate, "yyyy-mm-dd")}'`,
         order = null;
 
         var pay_id = await db_Select(select,table_name,whr,order)
@@ -537,7 +537,7 @@ const getLoanBal = (loan_id,to_dt) => {
 
           var select = "(balance + od_balance + intt_balance) balance",
           table_name = "td_loan_transactions",
-          whr = `loan_id = '${loan_id}' AND date(payment_date) = '${latestPaymentDate}' AND payment_id = '${latestPaymentId}'`,
+          whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(latestPaymentDate, "yyyy-mm-dd")}' AND payment_id = '${latestPaymentId}'`,
           order = null;
           var balance = await db_Select(select,table_name,whr,order)
         }
