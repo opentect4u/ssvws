@@ -27,7 +27,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report", async (req, res) => {
 
         var data = req.body;
         const pro_name = 'p_loan_demand',
-        pro_params = `?,?`,
+        pro_params = `?,?,?`,
         pro_params_val = [data.branch_code, data.from_dt, data.to_dt],
         sel_table_name = `tt_loan_demand a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_group c ON a.branch_code = c.branch_code AND a.group_code = c.group_code`,
         sel_fields = `a.branch_code,a.from_dt,a.to_dt,a.member_code,a.group_code,b.client_name,c.group_name,a.loan_id,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.installment_start_date,a.installment_end_date,a.total_emi,a.curr_dmd_amt,a.ovd_dmd_amt,a.coll_amt collection_amount,(a.current_principal + a.overdue_principal + a.interest_amount) balance`,
