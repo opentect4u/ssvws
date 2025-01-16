@@ -79,6 +79,7 @@ const { transferUserRouter } = require("./router/admin/transfer_user/transferUse
 const { loan_transAdminRouter } = require("./router/report/branch_report/admin_web/loan_transAdminRouter");
 const { loan_statementAdminRouter } = require("./router/report/branch_report/admin_web/loan_statementAdminRouter");
 const { loan_outstandingAdminrouter } = require("./router/report/branch_report/admin_web/loan_outstandingAdminrouter");
+const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_summaryRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -95,6 +96,7 @@ app.use(loan_transRouter)
 app.use(loan_demandRouter)
 app.use(loan_outstandingRouter)
 app.use(loan_recov_approveRouter)
+app.use(loan_summaryrouter)
 app.use(empRouter)
 app.use(userwebRouter)
 app.use(transferUserRouter)
