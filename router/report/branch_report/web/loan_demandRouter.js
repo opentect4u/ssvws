@@ -78,7 +78,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                         // if (details.msg[0].balance > 0) {
 
                              var balance_dt = get_balance.msg[0].balance
-                                // console.log(balance_dt,'balance');
+                                console.log(balance_dt,'balance');
                 
                              var demandData = await getLoanDmd(loan_id, data.to_dt);
 
