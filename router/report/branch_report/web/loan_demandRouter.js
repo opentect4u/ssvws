@@ -60,7 +60,7 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                 // Calculate balance
 
                 var get_balance = await getLoanBal(loan_id, data.to_dt);
-                //console.log(loan_id, data.to_dt,get_balance,'oooo');
+                console.log(loan_id, data.to_dt,get_balance,'oooo');
                 
 
 
@@ -77,8 +77,6 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
 
                             if(demandData.suc > 0 && demandData.demand.ld_demand > 0){
                                 demandResults.push({ loan_id,branch_code,group_code,group_name,member_code,client_name,disb_dt,curr_roi,period,period_mode,co_name,tot_emi,balance_dt,instl_end_dt, demand: demandData.demand.ld_demand });
-                            }else {
-                             console.log('demand data not found', demandData);
                             }
                 
                 // } else {
