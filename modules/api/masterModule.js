@@ -506,6 +506,52 @@ const getLoanDmd = (loan_id, DATE) => {
   });
 };
 
+/**Function to get Loan Balance against a particular date */
+/**Function used in Loan demand report, */
+const getLoanBal = (loan_id,DATE) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+
+      var res_dt = 0;
+      
+       var select = "max(payment_date) payment_date",
+       table_name = "td_loan_transactions",
+       whr = `loan_id = '${loan_id}' AND date(payment_date) <= '${DATE}'`,
+       order = null;
+
+       var pay_data = await db_Select(select,table_name,whr,order)
+
+       if(pay_data.suc > 0 && pay_data.msg.length > 0) {
+        var select = "max(payment_id) payment_id",
+        table_name = "td_loan_transactions",
+        whr = `loan_id = '${loan_id}' AND date(payment_date) = '${pay_data.msg[0].payment_date}'`,
+        order = null;
+
+        var pay_id = await db_Select(select,table_name,whr,order)
+       
+
+        if(pay_id.suc > 0 && pay_id.msg.length > 0){
+          var select = "(balance + od_balance + intt_balance) balance",
+          table_name = "td_loan_transactions",
+          whr = `loan_id = '${loan_id}' AND date(payment_date) = '${pay_data.msg[0].payment_date}' AND payment_id = '${pay_id.msg[0].payment_id}'`,
+          order = null;
+          var balance = await db_Select(select,table_name,whr,order)
+        }
+       
+        resolve("get balance:", balance)
+      
+         }else{
+           resolve("balance not found", res_dt)
+
+         }
+         
+    } catch (error) {
+      console.error("Error calculating balance:", error);
+      reject(error);
+    }
+  });
+};
+
 
 const loan_balance_outstanding = (loan_id, os_dt) => {
   // console.log(loan_id,os_dt);
@@ -632,4 +678,4 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
   });
 };
 
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd, dayRevarseList, loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding}
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd, getLoanBal, dayRevarseList, loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding}
