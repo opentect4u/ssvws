@@ -542,7 +542,7 @@ const getLoanBal = (loan_id,to_dt) => {
           var balance = await db_Select(select,table_name,whr,order)
         }
        
-        resolve("get balance:", pay_data)
+        resolve("get balance:", loan_id)
       
          }else{
            resolve("balance not found", res_dt)
