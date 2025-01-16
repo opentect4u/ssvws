@@ -110,26 +110,26 @@ app.use('/adminreport', loan_statementAdminRouter)
 app.use('/adminreport', loan_outstandingAdminrouter)
 app.use('/adminreport', loan_summaryAdminRouter)
 
-// app.get("/",async (req, res) => {
-//   // const bcrypt = require("bcrypt");
-//   // var pass = bcrypt.hashSync('SSVWS@2025',10)
-//   // console.log(pass);
+app.get("/",async (req, res) => {
+  // const bcrypt = require("bcrypt");
+  // var pass = bcrypt.hashSync('SSVWS@2025',10)
+  // console.log(pass);
   
-// //   var user = req.session.user;
-// //   if (!user) {
-// //     res.redirect("/login");
-// //   } else {
+//   var user = req.session.user;
+//   if (!user) {
 //     res.redirect("/login");
-// //   }
-// // res.send(pass)
-// });
+//   } else {
+    res.redirect("/login");
+//   }
+// res.send(pass)
+});
 
-app.get("/", async (req, res) => {
-  var get_loan_bal = await getLoanBal('12020623','2024-12-20')
-  console.log(get_loan_bal,'get');
+// app.get("/", async (req, res) => {
+//   var get_loan_bal = await getLoanBal('12020623','2024-12-20')
+//   console.log(get_loan_bal,'get');
 
-  res.send(get_loan_bal)
-})
+//   res.send(get_loan_bal)
+// })
 
 app.get('/404', (req, res) => {
   res.render('pages/404')
