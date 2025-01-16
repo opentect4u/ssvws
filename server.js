@@ -80,6 +80,7 @@ const { loan_transAdminRouter } = require("./router/report/branch_report/admin_w
 const { loan_statementAdminRouter } = require("./router/report/branch_report/admin_web/loan_statementAdminRouter");
 const { loan_outstandingAdminrouter } = require("./router/report/branch_report/admin_web/loan_outstandingAdminrouter");
 const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_summaryRouter");
+const { loan_summaryAdminRouter } = require("./router/report/branch_report/admin_web/loan_summaryAdminRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -104,6 +105,7 @@ app.use('/admin', adminRouter)
 app.use('/adminreport', loan_transAdminRouter)
 app.use('/adminreport', loan_statementAdminRouter)
 app.use('/adminreport', loan_outstandingAdminrouter)
+app.use('/adminreport', loan_summaryAdminRouter)
 
 app.get("/",async (req, res) => {
   // const bcrypt = require("bcrypt");
