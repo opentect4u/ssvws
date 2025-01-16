@@ -60,6 +60,8 @@ loan_demandRouter.post("/loan_demand_report", async (req, res) => {
                 // Calculate balance
 
                 var get_balance = await getLoanBal(loan_id, data.to_dt);
+                console.log(loan_id, data.to_dt,get_balance,'oooo');
+                
 
 
                 // var select = "(balance + od_balance + intt_balance) balance";
