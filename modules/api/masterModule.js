@@ -541,9 +541,13 @@ const getLoanBal = (loan_id,to_dt) => {
           order = null;
           var balance = await db_Select(select,table_name,whr,order)
         }
-       
-        resolve("get balance:", loan_id)
-      
+
+        if (balance && balance.suc > 0 && balance.msg.length > 0) {
+          resolve(balance.msg[0]);
+        } else {
+          resolve({ message: "Balance data not found" });
+        }
+        
          }else{
            resolve("balance not found", res_dt)
 
