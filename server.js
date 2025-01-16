@@ -81,6 +81,7 @@ const { loan_statementAdminRouter } = require("./router/report/branch_report/adm
 const { loan_outstandingAdminrouter } = require("./router/report/branch_report/admin_web/loan_outstandingAdminrouter");
 const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_summaryRouter");
 const { loan_summaryAdminRouter } = require("./router/report/branch_report/admin_web/loan_summaryAdminRouter");
+const { dmd_vs_collRouter } = require("./router/report/branch_report/web/dmd_vs_collRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -101,6 +102,7 @@ app.use(loan_summaryrouter)
 app.use(empRouter)
 app.use(userwebRouter)
 app.use(transferUserRouter)
+app.use(dmd_vs_collRouter)
 app.use('/admin', adminRouter)
 app.use('/adminreport', loan_transAdminRouter)
 app.use('/adminreport', loan_statementAdminRouter)
