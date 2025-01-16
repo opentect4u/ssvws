@@ -508,7 +508,7 @@ const getLoanDmd = (loan_id, DATE) => {
 
 /**Function to get Loan Balance against a particular date */
 /**Function used in Loan demand report, */
-const getLoanBal = (loan_id,DATE) => {
+const getLoanBal = (loan_id,to_dt) => {
   return new Promise(async (resolve, reject) => {
     try {
 
@@ -516,7 +516,7 @@ const getLoanBal = (loan_id,DATE) => {
       
        var select = "max(payment_date) payment_date",
        table_name = "td_loan_transactions",
-       whr = `loan_id = '${loan_id}' AND date(payment_date) <= '${DATE}'`,
+       whr = `loan_id = '${loan_id}' AND date(payment_date) <= '${to_dt}'`,
        order = null;
 
        var pay_data = await db_Select(select,table_name,whr,order)
