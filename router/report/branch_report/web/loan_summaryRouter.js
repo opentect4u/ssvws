@@ -31,9 +31,9 @@ loan_summaryrouter.post ("/loan_summary_report_schemewise", async (req, res) => 
            AND a.branch_code = '${data.branch_code}'
            AND date(b.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'`
     order = `GROUP BY a.scheme_id,c.scheme_name`;
-    var fund_dt = await db_Select(select,table_name,whr,order);
+    var scheme_dt = await db_Select(select,table_name,whr,order);
 
-    res.send(fund_dt)
+    res.send(scheme_dt)
 })
 
 module.exports = {loan_summaryrouter}
