@@ -56,9 +56,9 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
         const pro_name = 'p_loan_demand',
         pro_params = `?,?,?`,
         pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
-        sel_table_name = `tt_loan_demand a,vw_loan_demand_report b,md_group c`,
-        sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,(a.curr_dmd_amt + a.coll_amt)previous_demand,a.curr_dmd_amt current_demand ,a.coll_amt,a.current_principal,b.co_name,c.co_id`,
-        sel_whr_fields = `a.loan_id = b.loan_id AND b.group_code = c.group_code AND b.collec_code = c.co_id AND c.co_id = '${data.co_id}' AND (a.curr_dmd_amt + a.coll_amt + a.current_principal) > 0`,
+        sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
+        sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,(a.curr_dmd_amt + a.coll_amt)previous_demand,a.curr_dmd_amt current_demand ,a.coll_amt,a.current_principal,b.co_name,b.collec_code`,
+        sel_whr_fields = `a.loan_id = b.loan_id AND b.collec_code = '${data.co_id}' AND (a.curr_dmd_amt + a.coll_amt + a.current_principal) > 0`,
         sel_whr_arr = [],
         sel_order = `ORDER BY  a.loan_id`;
         var repo_data_cowise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
