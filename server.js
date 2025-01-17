@@ -83,6 +83,7 @@ const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_s
 const { loan_summaryAdminRouter } = require("./router/report/branch_report/admin_web/loan_summaryAdminRouter");
 const { dmd_vs_collRouter } = require("./router/report/branch_report/web/dmd_vs_collRouter");
 const { getLoanBal } = require("./modules/api/masterModule");
+const { dmd_vs_collAdminRouter } = require("./router/report/branch_report/admin_web/dmd_vs_collAdminRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -109,6 +110,7 @@ app.use('/adminreport', loan_transAdminRouter)
 app.use('/adminreport', loan_statementAdminRouter)
 app.use('/adminreport', loan_outstandingAdminrouter)
 app.use('/adminreport', loan_summaryAdminRouter)
+app.use('/adminreport', dmd_vs_collAdminRouter)
 
 app.get("/",async (req, res) => {
   // const bcrypt = require("bcrypt");
