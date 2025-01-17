@@ -38,8 +38,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
         a.current_roi,a.period,a.period_mode,a.installment_end_date,sum(a.total_emi)total_emi,sum(a.curr_dmd_amt + a.coll_amt)previous_demand,sum(a.curr_dmd_amt) current_demand ,sum(a.coll_amt),sum(a.current_principal)outstanding,b.co_name`,
         sel_whr_fields = `a.loan_id = b.loan_id AND (a.curr_dmd_amt + a.coll_amt + a.current_principal) > 0`,
         sel_whr_arr = [],
-        sel_order = `GROUP BY a.group_code,b.group_name,a.disbursed_date,a.current_roi,a.period,a.period_mode,a.installment_end_date,b.co_name
-        ORDER BY  a.loan_id`;
+        sel_order = `GROUP BY a.group_code,b.group_name,a.disbursed_date,a.current_roi,a.period,a.period_mode,a.installment_end_date,b.co_name`;
         var repo_data_grpwise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
 
         res.send(repo_data_grpwise)
@@ -61,8 +60,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
         sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,(a.curr_dmd_amt + a.coll_amt)previous_demand,a.curr_dmd_amt current_demand ,a.coll_amt,a.current_principal,b.co_name,b.co_id`,
         sel_whr_fields = `a.loan_id = b.loan_id AND b.co_id = '${data.co_id}' AND (a.curr_dmd_amt + a.coll_amt + a.current_principal) > 0`,
         sel_whr_arr = [],
-        sel_order = `GROUP BY a.group_code,b.group_name,a.disbursed_date,a.current_roi,a.period,a.period_mode,a.installment_end_date,b.co_name
-        ORDER BY  a.loan_id`;
+        sel_order = `GROUP BY a.group_code,b.group_name,a.disbursed_date,a.current_roi,a.period,a.period_mode,a.installment_end_date,b.co_name`;
         var repo_data_cowise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
 
         res.send(repo_data_cowise)
