@@ -1,5 +1,5 @@
 // const mysql = require("mysql");
-const mysql = require("mysql");
+const mysql = require("mysql2");
 require('dotenv').config()
 
 // LOCAL //
@@ -20,9 +20,13 @@ const db = mysql.createPool({
 // });
 
 db.getConnection((err, connection) => {
-  if (err) console.log(err);
-  connection.release();
-  return;
+  if (err) {
+    console.log(err);
+    throw new Error(err);
+  }else{
+    connection.release();
+    return;
+  }
 });
 
 module.exports = db;
