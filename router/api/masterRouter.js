@@ -7,6 +7,7 @@ dateFormat = require('dateformat');
 masterRouter.get("/get_group", async (req, res) => {
  var data = req.query;
 
+ //get group details
  var select = "*",
  table_name = "md_group",
  whr = `branch_code = '${data.branch_code}'`,
@@ -18,6 +19,7 @@ res.send(group_dt)
 masterRouter.get("/get_group_add", async (req, res) => {
     var data = req.query;
 
+    //add group
     res.setHeader('Content-Type', 'text/event-stream');
     res.setHeader('Cache-Control', 'no-cache');
     res.setHeader('Connection', 'keep-alive');
@@ -55,6 +57,7 @@ masterRouter.get("/get_group_add", async (req, res) => {
 
 
 masterRouter.get("/get_religion", async (req, res) => {
+    //get religion from mastertable
     var religion_dt = [
         {
             id: "Hinduism",
@@ -90,6 +93,7 @@ masterRouter.get("/get_religion", async (req, res) => {
 
 
 masterRouter.get("/get_caste", async (req, res) => {
+    //get caste from master details
     var caste_dt = [
         {
             id: "General",
@@ -129,6 +133,8 @@ masterRouter.get("/get_caste", async (req, res) => {
 
 
 masterRouter.get("/get_education", async (req, res) => {
+
+    //get educations
     var edu_dt = [
         {
             id: "Secondary",
@@ -186,6 +192,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
     var data = req.body;
     // console.log(data,'gg');
 
+    //fetch validation
     var select = "member_code";
     var table_name = "md_member";
     
@@ -255,6 +262,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
 masterRouter.get("/get_state", async (req, res) => {
     var data = req.query;
    
+    //get setate from master table
     var select = "*",
     table_name = "md_state",
     whr = null,
@@ -267,6 +275,7 @@ masterRouter.get("/get_state", async (req, res) => {
 masterRouter.get("/get_district", async (req, res) => {
     var data = req.query;
    
+    //get district from master table
     var select = "*",
     table_name = "md_district",
     whr = `state_id = '${data.state_id}'`,
@@ -278,6 +287,7 @@ masterRouter.get("/get_district", async (req, res) => {
 masterRouter.get("/get_block", async (req, res) => {
     var data = req.query;
    
+    //get block from master table
     var select = "*",
     table_name = "md_block",
     whr = `dist_id = '${data.dist_id}'`,
@@ -289,6 +299,7 @@ masterRouter.get("/get_block", async (req, res) => {
 masterRouter.get("/get_purpose", async (req, res) => {
     var data = req.query;
    
+    //get purpose from master table
     var select = "*",
     table_name = "md_purpose",
     whr = null,
@@ -300,6 +311,7 @@ masterRouter.get("/get_purpose", async (req, res) => {
 masterRouter.get("/get_sub_purpose", async (req, res) => {
     var data = req.query;
    
+    //get sub purpose from master table
     var select = "*",
     table_name = "md_sub_purpose",
     whr = `purp_id = '${data.purp_id}'`,
@@ -325,6 +337,7 @@ masterRouter.get("/get_sub_purpose", async (req, res) => {
 masterRouter.get("/get_scheme", async (req, res) => {
     var data = req.query;
    
+    //get scheme purpose from master table
     var select = "scheme_id,scheme_name,min_amt,max_amt,min_period,max_period,payment_mode,roi",
     table_name = "md_scheme",
     whr = `active_flag = 'A'`,
@@ -336,6 +349,7 @@ masterRouter.get("/get_scheme", async (req, res) => {
 masterRouter.get("/get_fund", async (req, res) => {
     var data = req.query;
    
+    //get fund from master table
     var select = "fund_id,fund_name",
     table_name = "md_fund",
     whr = null,
@@ -345,6 +359,8 @@ masterRouter.get("/get_fund", async (req, res) => {
    });
 
 masterRouter.get("/get_tr_type", async (req, res) => {
+
+    //get sub purpose from master table
     var tr_type_dt = [
         {
             id: "D",
@@ -360,9 +376,11 @@ masterRouter.get("/get_tr_type", async (req, res) => {
         },
     ]
     res.send(tr_type_dt) 
+    
    });  
    
 masterRouter.get("/get_tr_mode", async (req, res) => {
+    //gert transactions details
     var tr_mode_dt = [
         {
             id: "C",
@@ -379,6 +397,7 @@ masterRouter.get("/get_tr_mode", async (req, res) => {
 masterRouter.get("/get_bank", async (req, res) => {
     var data = req.query;
    
+    //get bank details
     var select = "*",
     table_name = "md_bank",
     whr = null,

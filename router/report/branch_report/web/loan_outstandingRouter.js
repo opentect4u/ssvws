@@ -51,7 +51,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
 
     } catch (error) {
         console.error("Error fetching loan outstanding report:", error);
-        res.status(500).send({ suc: 0, msg: "An error occurred" });
+        res.send({ suc: 0, msg: "An error occurred" });
     }
 }); 
 

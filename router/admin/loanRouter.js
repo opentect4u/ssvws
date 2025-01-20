@@ -8,6 +8,7 @@ dateFormat = require('dateformat');
 loanRouter.post("/scheme_dtls", async (req, res) => {
     var data = req.body;
 
+    //fetch scheme details
     var select = "scheme_name,min_amt,max_amt,min_period,max_period,min_period_week,max_period_week,payment_mode,roi",
     table_name = "md_scheme",
     whr = `scheme_id = '${data.scheme_id}'`,
@@ -20,6 +21,7 @@ loanRouter.post("/scheme_dtls", async (req, res) => {
 loanRouter.post("/fetch_loan_application_dtls", async (req, res) => {
     var data = req.body;
 
+    //fetch loan application details
         var select = "a.branch_code,a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,b.prov_grp_code,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.branch_name,d.group_name,d.acc_no1,d.acc_no2,e.applied_amt,e.loan_purpose,e.sub_pupose,f.purpose_id,g.sub_purp_name",
         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.branch_code = d.branch_code AND b.prov_grp_code = d.group_code LEFT JOIN td_grt_occupation_household e ON a.branch_code = e.branch_code AND b.form_no = e.form_no LEFT JOIN md_purpose f ON e.loan_purpose = f.purp_id LEFT JOIN md_sub_purpose g ON e.sub_pupose = g.sub_purp_id",
         whr = `a.member_code like '%${data.member_dtls}%' OR a.client_name like '%${data.member_dtls}%' OR a.client_mobile like '%${data.member_dtls}%' OR b.form_no like '%${data.member_dtls}%'`,
@@ -32,6 +34,7 @@ loanRouter.post("/fetch_loan_application_dtls", async (req, res) => {
 loanRouter.post("/fetch_existing_loan", async (req, res) => {
     var data = req.body;
 
+    //fetch existing loan details
     // var select = "loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,disb_dt,prn_disb_amt,period_mode,last_trn_dt",
     var select = "*",
     table_name = "td_loan",
@@ -68,6 +71,8 @@ res.send(loan_dtls)
 
 loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
     var data = req.body;
+
+    //fetch loan transactions details
     if(data.tr_type == 'R'){
         var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
@@ -121,6 +126,8 @@ loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
 
 loanRouter.post("/save_loan_transaction", async (req, res) => {
     var data = req.body,res_dt;
+
+    //save loan transaction details
     loan_trans(data).then(data => {
         res_dt = data
     }).catch(err => {
@@ -134,6 +141,7 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 loanRouter.post("/fetch_recovery_day", async (req, res) => {
     var data = req.body;
 
+    //fetch recovery day
     var select = "a.loan_id,a.grt_form_no,a.member_code,a.recovery_day,b.client_name",
     table_name = "td_loan a , md_member b",
     whr = `a.branch_code = b.branch_code
@@ -149,6 +157,7 @@ loanRouter.post("/approve_loan_disbursement", async (req, res) => {
     var data = req.body;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //approve loan disbursement details
     var table_name = "td_loan_transactions",
     fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
     values = null,
@@ -162,6 +171,7 @@ loanRouter.post("/approve_loan_disbursement", async (req, res) => {
 loanRouter.post("/delete_apply_loan", async (req, res) => {
     var data = req.body;
 
+    //delete apply loan
     var table_name = "td_loan",
     whr = `loan_id = '${data.loan_id}'`
     var del_loan_dt = await db_Delete(table_name,whr);
@@ -218,6 +228,7 @@ loanRouter.post("/view_unapprove_recovery_dtls", async (req, res) => {
     // order = null;
     // var recovery_dtls = await db_Select(select,table_name,whr,order);
 
+    //view unapprove recovery details
     var select = `a.loan_id,a.member_code,a.prn_amt,a.intt_amt,a.outstanding curr_outstanding,a.prn_emi,a.intt_emi,a.tot_emi,b.client_name,(a.prn_amt+c.prn_recov+a.intt_amt+c.intt_recov) prev_outstanding,c.credit,c.payment_date trn_dt,c.payment_id trn_id,c.created_by created_id,c.created_at, d.emp_name created_by`,
     table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan_transactions c ON a.loan_id = c.loan_id LEFT JOIN md_employee d ON c.created_by = d.emp_id",
     whr = `c.status = 'U' AND c.tr_type = 'R'  `,
@@ -234,6 +245,7 @@ loanRouter.post("/approve_recovery_loan", async (req, res) => {
     var data = req.body;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //approve loan recovery
     var table_name = "td_loan_transactions",
     fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
     values = null,
@@ -248,6 +260,7 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
     var data = req.body;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //delete recovery transactions
     var select = "a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt, a.outstanding",
     table_name = "td_loan a",
     whr = `a.loan_id = '${data.loan_id}'`,
@@ -297,6 +310,7 @@ loanRouter.post("/delete_recov_trans", async (req, res) => {
 loanRouter.post("/search_grp_view", async (req, res) => {
     var data = req.body;
 
+    //search group for view
     var select = "group_code,group_name,group_type",
     table_name = "md_group",
     whr = `group_name like '%${data.group_name_view}%'`,
@@ -309,6 +323,7 @@ loanRouter.post("/search_grp_view", async (req, res) => {
 loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     var data = req.body;
 
+    //fetch search group view details 
     var select = "a.group_name,a.group_type,a.branch_code,a.phone1,a.phone2,a.grp_addr,a.disctrict,a.pin_no,a.bank_name,a.branch_name bank_branch,a.acc_no1,a.acc_no2,b.block_name,c.emp_name,d.branch_name",
         table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
         whr = `a.group_code = '${data.group_code}'`,
@@ -341,6 +356,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
 loanRouter.post("/view_loan_dtls", async (req, res) => {
     var data = req.body;
 
+    //view loan details
     var select = "a.loan_id,a.branch_code,a.group_code,a.member_code,a.grt_form_no,a.purpose,a.sub_purpose,a.applied_amt,a.applied_dt,a.scheme_id,a.fund_id,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day,a.period_mode,a.instl_paid,a.instl_start_dt,a.instl_end_dt,a.last_trn_dt,b.client_name,c.purpose_id,d.sub_purp_name,e.scheme_name,f.fund_name,g.group_name",
     table_name = "td_loan a JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_sub_purpose d ON a.sub_purpose = d.sub_purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
     whr = `loan_id = '${data.loan_id}'`,
@@ -364,6 +380,7 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
 loanRouter.post("/save_loan_details", async (req, res) => {
     var data = req.body, res_data;
 
+    //save loan details
     save_loan_dtls(data).then(data => {
         res_data = data
     }).catch(err => {

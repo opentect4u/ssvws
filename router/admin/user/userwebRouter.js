@@ -10,6 +10,7 @@ const bcrypt = require("bcrypt");
 userwebRouter.get("/get_user_type", async (req, res) => {
     var data = req.query;
 
+    //get user type
     var select = "type_code,user_type",
     table_name = "md_user_type",
     whr = null,
@@ -22,6 +23,7 @@ userwebRouter.get("/get_user_type", async (req, res) => {
 userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
     var data = req.body;
 
+    //fetch employee details
     try {
         var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name";
         table_name = "md_user a, md_employee b";
@@ -32,7 +34,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
         if (user_dt.suc > 0 && Array.isArray(user_dt.msg) && user_dt.msg.length > 0) {
             // Employee ID already exists in 'md_user'
-            return res.status(200).send({
+            return res.send({
                 suc: 1,
                 msg: user_dt.msg,
                 details: "Employee already exists in md_user"
@@ -46,7 +48,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
             var fetch_emp_dt = await db_Select(select1, table_name1, whr1, order1);
             if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
                 // If employee details found
-                return res.status(200).send({
+                return res.send({
                     suc: 1,
                     msg: fetch_emp_dt.msg
                 });
@@ -69,6 +71,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 userwebRouter.post("/save_user_dt", async (req, res) => {
     var data = req.body;
 
+    //save user details
     var save_dt = await save_user_dtls(data);
     
     res.send(save_dt);
@@ -77,6 +80,7 @@ userwebRouter.post("/save_user_dt", async (req, res) => {
 userwebRouter.post("/fetch_user_details", async (req, res) => {
     var data = req.body;
 
+    //fetch user details
     var select = "a.emp_id,a.brn_code,a.user_type,a.user_status,a.deactive_remarks,b.emp_name,c.branch_name",
     table_name = "md_user a, md_employee b, md_branch c",
     whr = `a.brn_code = b.branch_id
@@ -91,6 +95,7 @@ userwebRouter.post("/fetch_user_details", async (req, res) => {
 userwebRouter.post("/edit_user_dt", async (req, res) => {
     var data = req.body;
 
+    //edit user details
     var edit_dt = await edit_user_dt(data);
 
     res.send(edit_dt);
@@ -100,6 +105,7 @@ userwebRouter.post("/reset_password", async (req, res) => {
     var data = req.body;
     // console.log(data,'data');
     
+    //reset password
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var table_name = "md_user",
@@ -116,6 +122,7 @@ userwebRouter.post("/reset_password", async (req, res) => {
 userwebRouter.post("/user_profile_details", async (req, res) => {
     var data = req.body;
 
+    //fetch user profile details
     var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,c.user_type type_name, d.branch_name",
     table_name = "md_user a, md_employee b, md_user_type c, md_branch d",
     whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.user_type = c.type_code AND a.brn_code = d.branch_code AND a.emp_id = '${data.emp_id}'`,
@@ -129,6 +136,8 @@ userwebRouter.post("/user_profile_details", async (req, res) => {
 userwebRouter.post("/change_password", async (req, res) => {
     var data = req.body, result;
 //   console.log(data);
+
+//change password
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   var change_pwd_dt = await change_pass_data(data);
 //   console.log(change_pwd_dt);

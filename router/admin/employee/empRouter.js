@@ -59,13 +59,13 @@ empRouter.post("/fetch_emp", async (req, res) => {
 
     // res.send(fetch_emp_dtls)
     if (fetch_emp_dtls) {
-        res.status(200).send(fetch_emp_dtls);
+        res.send(fetch_emp_dtls);
     } else {
-        res.status(404).send({ message: "Employee details not found." });
+        res.send({ message: "Employee details not found." });
     }
 } catch (error) {
     console.error("Error fetching employee details:", error);
-    res.status(500).send({ message: "An error occurred while fetching employee details.", error: error.message });
+    res.send({ message: "An error occurred while fetching employee details.", error: error.message });
 }
 });
 

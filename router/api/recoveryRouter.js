@@ -88,6 +88,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     //     whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%' AND c.status = 'A'`,
     //     order = `GROUP BY a.group_code, a.group_name, a.group_type, c.status`;
 
+    //search group in app
     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt",
     table_name = "md_group a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code",
     whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%'`,
@@ -154,6 +155,7 @@ recoveryRouter.post("/recovery_transaction", async (req, res) => {
     var data = req.body,res_dt;
     console.log(data,'dt');
     
+    //save recovery transaction
     recovery_trans(data).then(data => {
         res_dt = data
     }).catch(err => {
@@ -167,6 +169,7 @@ recoveryRouter.post("/recovery_transaction", async (req, res) => {
 recoveryRouter.post("/view_transaction", async (req, res) => {
     var data = req.body;
 
+    //view transaction details
     var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day,a.period,a.period_mode,a.instl_paid,a.instl_start_dt,a.instl_end_dt,a.last_trn_dt,b.client_name,c.credit,c.debit,c.prn_recov,c.intt_recov,c.balance,c.intt_balance,c.recov_upto,c.tr_type,c.status,c.payment_date,c.trn_lat,c.trn_long,c.trn_addr",
     table_name = "td_loan a, md_member b, td_loan_transactions c",
     whr = `a.branch_code = b.branch_code 
@@ -187,7 +190,7 @@ recoveryRouter.post("/remove_trans", async (req, res) => {
     var data = req.body;
     // console.log(data);
     
-
+    //remove transactions
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
     var table_name = "td_loan_transactions",
@@ -205,6 +208,7 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
         var data = req.body;
         // console.log(data,'data');
 
+        //get demand data from function
         var dayQuery = `EXTRACT(DAY FROM '${dateFormat(data.get_date, "yyyy-mm-dd")}') AS recovday`;
         // console.log(dayQuery);
         var dayResult = await db_Select(dayQuery);
@@ -251,7 +255,7 @@ recoveryRouter.post("/get_demand_data", async (req, res) => {
         }
         }catch (error) {
             console.error("Error in demand data retrieval:", error);
-            res.status(500).send({ suc: 0, msg: "Internal server error" });
+            res.send({ suc: 0, msg: "Internal server error" });
         }
 });
 
@@ -294,7 +298,7 @@ recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
     var data = req.body, grp_recov_dt;
     // console.log(data,'group');
 
-
+     //recovery grouwise via app
     if(data.user_id == '1'){
         var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
@@ -328,6 +332,7 @@ recoveryRouter.post("/group_wise_recov_app", async (req, res) => {
 recoveryRouter.post("/memb_wise_recov_app", async (req, res) => {
     var data = req.body;
 
+     //recovery memberwise via app
     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
     table_name = "md_group a JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code JOIN td_loan_transactions c ON b.branch_code = c.branch_id AND b.loan_id = c.loan_id",
     whr = `a.group_code like '%${data.grp_dtls_app}%' OR a.group_name like '%${data.grp_dtls_app}%' AND c.status = 'A'`

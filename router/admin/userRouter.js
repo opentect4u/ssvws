@@ -38,6 +38,7 @@ userRouter.post("/fetch_sign_up_dt", async (req, res) => {
     // console.log(data,'kkk');
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //fetch sign up details
     var select = "emp_id,branch_id,emp_name",
     table_name = "md_employee",
     whr = `emp_id = '${data.emp_id}'`;
@@ -71,6 +72,7 @@ userRouter.post("/submit_sign_up", async (req, res) => {
     var data = req.body;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //save sign up details
     var pass = bcrypt.hashSync(data.pwd.toString(), 10);
     var table_name = "md_user",
     fields = `(emp_id, brn_code, password, user_status, created_by, created_at)`,

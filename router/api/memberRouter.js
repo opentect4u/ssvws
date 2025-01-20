@@ -8,6 +8,7 @@ dateFormat = require('dateformat');
 memberRouter.post("/search_member", async (req, res) => {
     var data = req.body;
 
+    //search member
     // var select = "a.*, b.group_name",
     var select = "a.*",
     // table_name = "md_member a LEFT JOIN md_group b ON a.branch_code = b.branch_code",
@@ -25,6 +26,7 @@ res.send(search_mem)
 memberRouter.get("/get_grt_dtls", async (req, res) => {
     var data = req.query;
 
+    //get grt details
     var select = "a.form_no,a.grt_date,a.branch_code,a.prov_grp_code,a.member_code,a.approval_status,a.co_lat_val,a.co_long_val,a.co_gps_address,b.branch_name,c.group_name",
     table_name = "td_grt_basic a LEFT JOIN md_branch b ON a.branch_code = b.branch_code LEFT JOIN md_group c ON a.prov_grp_code = c.group_code",
     whr = `a.member_code = '${data.member_code}'`,
@@ -37,6 +39,7 @@ memberRouter.get("/get_grt_dtls", async (req, res) => {
 memberRouter.post("/edit_search_basic_dtls", async (req, res) => {
     var data = req.body;
 
+    //edit search basic details
     var edit_dtls = await edit_search_basic(data);
     res.send(edit_dtls)
 });

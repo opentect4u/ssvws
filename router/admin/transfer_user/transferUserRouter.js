@@ -16,7 +16,7 @@ transferUserRouter.post("/fetch_user_dtls_fr_transfer", async (req, res) => {
             var fetch_user_dt = await db_Select(select, table_name, whr, order);
             if (fetch_user_dt.suc > 0 && fetch_user_dt.msg.length > 0) {
                 // If employee details found
-                return res.status(200).send({
+                return res.send({
                     suc: 1,
                     msg: fetch_user_dt.msg
                 });

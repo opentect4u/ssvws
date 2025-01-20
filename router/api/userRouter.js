@@ -9,6 +9,7 @@ userRouter.post('/login_app', async (req, res) => {
         result;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //login app
     var log_dt = await app_login_data(data);
     // console.log(log_dt);
    

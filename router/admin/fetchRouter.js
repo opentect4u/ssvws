@@ -34,6 +34,8 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
     var data = req.body;
     // console.log(data, 'dd');
 
+
+    //fetch branch manager forward details in web
     var select = data.prov_grp_code > 0 ? 'a.prov_grp_code, b.*' : 'DISTINCT a.prov_grp_code, b.group_name, b.group_type',
         table_name = 'td_grt_basic a, md_group b',
         whr = `a.prov_grp_code = b.group_code
@@ -60,6 +62,7 @@ fetchRouter.post("/fetch_bmfwd_dtls_web", async (req, res) => {
 fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
     var data = req.query;
 
+    //fetch form details in web
     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.remarks,c.branch_name",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
@@ -72,6 +75,7 @@ fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
 fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
     var data = req.body;
 
+    //fetch basic details in web
     var select = "a.*,b.*",
     table_name = "md_member a, td_grt_basic b",
     whr = `a.branch_code = b.branch_code 
@@ -89,6 +93,7 @@ fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
 fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     var data = req.query;
 
+    //fetch occupation details in web
     var select = "a.form_no,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
     table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
     whr = `a.loan_purpose = b.purp_id 
@@ -103,6 +108,7 @@ fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
 fetchRouter.get("/fetch_household_dt_web", async (req, res) => {
     var data = req.query;
 
+    //fetch household details in web
     var select = "form_no,house_type,own_rent,no_of_rooms,land,tv_flag,bike_flag,fridge_flag,wm_flag,poltical_flag,parental_addr,parental_phone",
     table_name = "td_grt_occupation_household",
     whr = `branch_code IN (${data.branch_code}) AND form_no = '${data.form_no}'`,
@@ -114,6 +120,7 @@ fetchRouter.get("/fetch_household_dt_web", async (req, res) => {
 fetchRouter.get("/fetch_family_dt_web", async (req, res) => {
     var data = req.query;
 
+    //fetch family details in web
     var select = "form_no,sl_no,family_name name,relation,family_dob,age,sex,education,stu_work_flag studyingOrWorking,monthly_income monthlyIncome",
     table_name = "td_grt_family",
     whr = `branch_code IN (${data.branch_code}) AND form_no = '${data.form_no}'`,
@@ -126,6 +133,7 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
     var data = req.body;
     // console.log(data,'grp_dt');
 
+    //edit details of group in web
     var edit_grp_dt = await edit_grp_web(data);
     // console.log(grp_dt,'grp');
     
@@ -135,13 +143,15 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
 fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
     var data = req.body;
   
+    //edit basic details in web
     var basic_dt_web = await edit_basic_dt_web(data);
     res.send(basic_dt_web);
   });
   
   fetchRouter.post("/edit_occup_dtls_web", async (req, res) => {
     var data = req.body;
-  
+
+    //edit occup details in web
     var occup_dt_web = await edit_occup_dt_web(data);
     res.send(occup_dt_web);
   });
@@ -149,6 +159,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
   fetchRouter.post("/edit_household_dtls_web", async (req, res) => {
     var data = req.body;
   
+    //edit household details in web
     var household_dt_web = await edit_household_dt_web(data);
     res.send(household_dt_web);
   });
@@ -156,6 +167,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
   fetchRouter.post("/edit_family_dtls_web", async (req, res) => {
     var data = req.body, res_data;
 
+    //edit family details in web
     edit_family_dt_web(data).then(data => {
         res_data = data
     }).catch(err => {
@@ -168,6 +180,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
   fetchRouter.get("/fetch_form_fwd_bm_web", async (req, res) => {
     var data = req.query;
 
+    //fetch form which forward by mranch manager in web
     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.remarks,b.rejected_by,b.rejected_at,c.branch_name",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
@@ -181,6 +194,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
     var data = req.body;
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //delete members in MIS
     var table_name = "td_grt_basic",
     fields = `approval_status = '${data.approval_status}', remarks = '${data.remarks.split("'").join("\\'")}', rejected_by = '${data.rejected_by}', rejected_at = '${datetime}'`,
     values = null,
@@ -193,6 +207,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
 fetchRouter.post("/forward_mis_asst", async (req, res) => {
     var data = req.body;
 
+    //forward mis assistant details
     var fwd_dt = await fwd_mis_asst(data);
     res.send(fwd_dt)
 });
@@ -201,6 +216,7 @@ fetchRouter.post("/verify_by_mis", async (req, res) => {
     const data = req.body;
     let value = '';
     
+    //MIS verification
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     switch (data.flag) {
@@ -214,7 +230,7 @@ fetchRouter.post("/verify_by_mis", async (req, res) => {
             value = `pan_verify_flag = '${data.verify_value}'`;
             break;
         default:
-            return res.status(400).send({ suc: 0, msg: [], status: 'Invalid flag provided' });
+            return res.send({ suc: 0, msg: [], status: 'Invalid flag provided' });
     }
 
     try {
@@ -235,6 +251,7 @@ fetchRouter.post("/verify_by_mis", async (req, res) => {
 fetchRouter.get("/fetch_verify_flag", async (req, res) => {
     var data = req.query;
 
+    //fetch verigy flag details
     var select = "phone_verify_flag,aadhar_verify_flag,pan_verify_flag",
     table_name = "md_member",
     // whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
@@ -247,6 +264,7 @@ fetchRouter.get("/fetch_verify_flag", async (req, res) => {
 fetchRouter.get("/mis_approve_dtls", async (req, res) => {
     var data = req.query
 
+    //approve MIS details
     var select = "member_code,client_name,remarks",
     table_name = "td_grt_basic",
     whr = `approval_status = 'A' AND form_no = '${data.form_no}' AND member_code = '${data.member_code}' AND approved_by = '${data.approved_by}'`,
@@ -302,6 +320,7 @@ fetchRouter.get("/mis_approve_dtls", async (req, res) => {
 fetchRouter.post("/approved_dtls", async (req, res) => {
     var data = req.body
 
+    //approved details
     if(data.user_type == '2' && data.approval_status == 'U'){
         var select = "a.created_by id,a.created_at,a.co_gps_address,b.emp_name created_by",
         table_name = "td_grt_basic a LEFT JOIN md_employee b ON a.branch_code = b.branch_id AND a.created_by = b.emp_id",
@@ -346,6 +365,7 @@ fetchRouter.post("/approved_dtls", async (req, res) => {
 fetchRouter.post("/search_application", async (req, res) => {
     var data = req.body;
 
+    //search application
     var select = "a.*,b.*,c.branch_name",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
     whr = `a.client_name like '%${data.search_appl}%' OR a.client_mobile like '%${data.search_appl}%' OR a.member_code like '%${data.search_appl}%' OR b.form_no like '%${data.search_appl}%'`,
@@ -358,6 +378,7 @@ fetchRouter.post("/search_application", async (req, res) => {
 fetchRouter.post("/search_group_web", async (req, res) => {
     var data = req.body;
 
+    //search group in web 
     var select = "group_code,group_name,group_type",
     table_name = "md_group",
     whr = `group_name like '%${data.group_name}%'`,
@@ -370,6 +391,7 @@ fetchRouter.post("/search_group_web", async (req, res) => {
 fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     var data = req.body;
 
+    //fetch search group details in web
     var select = "a.*, b.block_name,c.emp_name",
     table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id",
     whr = `a.group_code = '${data.group_code}'`,
@@ -399,6 +421,7 @@ fetchRouter.post("/remove_member_from_group", async (req, res) => {
 fetchRouter.post("/search_member_web", async (req, res) => {
     var data = req.body;
 
+    //search member in web
     var select = "member_code,client_name",
     table_name = "md_member",
     whr = `client_name like '%${data.client_name}%'`,
@@ -411,6 +434,7 @@ fetchRouter.post("/search_member_web", async (req, res) => {
 fetchRouter.get("/branch_name_mis", async (req, res) => {
     var data = req.query;
 
+    //in MIS fetch branch name details
     var select = "branch_code,dist_code,branch_name",
     table_name = "md_branch",
     whr = `branch_code IN (${data.branch_code})`,
@@ -458,6 +482,7 @@ fetchRouter.get("/branch_name_mis", async (req, res) => {
 fetchRouter.post("/grp_ass_member", async (req, res) => {
     var data = req.body;
 
+    //before verification assign group to member
     var select =
         "a.branch_code,a.member_code,a.client_name,b.form_no,IF(c.group_code > 0, c.group_code, 0) grp_code, c.group_name",
       table_name =
@@ -501,6 +526,7 @@ fetchRouter.post("/grp_ass_member", async (req, res) => {
 fetchRouter.post("/assign_group_to_mem", async (req, res) => {
     var data = req.body, res_data;
 
+    //assign group to member
     assign_group_to_member(data).then(data => {
         res_data = data
     }).catch(err => {
@@ -513,6 +539,7 @@ fetchRouter.post("/assign_group_to_mem", async (req, res) => {
 fetchRouter.post("/back_to_bm", async (req, res) => {
     var data = req.body;
 
+    //form details back to branch manager
     var back_dt = await back_dt_to_bm(data);
     res.send(back_dt)
 });

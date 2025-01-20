@@ -8,6 +8,7 @@ appdashboardRouter.post("/dashboard_dtls", async (req, res) => {
     var data = req.body;
     // console.log(data);
     
+    //dashboard details
     var select = "COUNT(form_no) no_of_grt",
     table_name = "td_grt_basic",
     whr = `created_by = ${data.emp_id} AND date(grt_date) = '${data.datetime}'`,
@@ -21,6 +22,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     var data = req.body;
     // console.log(data,'sss');
     
+    //how many recovery done via cash show in dashboard
     var select = "SUM(credit) tot_recov_cash",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
@@ -37,6 +39,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
 appdashboardRouter.post("/dashboard_dtls_bank_recov", async (req, res) => {
     var data = req.body;
     
+    //how many recovery done via bank show in dashboard
     var select = "SUM(credit) tot_recov_bank",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
@@ -54,6 +57,7 @@ appdashboardRouter.post("/dashboard_dtls_bm", async (req, res) => {
     var data = req.body;
     // console.log(data);
     
+    //dashboard details in branch manager
         var select = "COUNT(form_no) no_of_grt",
         table_name = "td_grt_basic",
         whr = data.flag == 'O' ? 
@@ -68,6 +72,7 @@ appdashboardRouter.post("/dashboard_dtls_bm", async (req, res) => {
 appdashboardRouter.post("/dashboard_dtls_cash_recov_bm", async (req, res) => {
     var data = req.body;
 
+    //how many recovery done via cash by branch manager show in dashboard
     var select = "SUM(credit) tot_recov_cash",
     table_name = "td_loan_transactions",
     whr = data.flag == 'O' ? `branch_id = '${data.branch_code}'
@@ -88,6 +93,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov_bm", async (req, res) => {
 appdashboardRouter.post("/dashboard_dtls_bank_recov_bm", async (req, res) => {
     var data = req.body;
 
+    //how many recovery done via bank by branch manager show in dashboard
     var select = "SUM(credit) tot_recov_bank",
     table_name = "td_loan_transactions",
     whr =  data.flag == 'O' ? `branch_id = '${data.branch_code}'

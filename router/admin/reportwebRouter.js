@@ -18,6 +18,7 @@ reportwebRouter.post("/member_wise_recov_web", async (req, res) => {
 
     // res.send(recov_web_dt)
 
+    //memberwise recovery in web
     var data = req.body;
 
     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
@@ -54,6 +55,7 @@ res.send(search_grp_app)
 reportwebRouter.post("/group_wise_recov_web", async (req, res) => {
     var data = req.body;
 
+    //groupwise recovery in web
     var select = "SUM(a.credit) credit,SUM(a.balance) balance,b.group_code,c.group_name",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
     whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
@@ -69,6 +71,7 @@ reportwebRouter.post("/group_wise_recov_web", async (req, res) => {
 reportwebRouter.post("/group_wise_disb_web", async (req, res) => {
     var data = req.body;
 
+    //group wise disbursement in web
     var select = "SUM(a.debit),SUM(a.balance),b.group_code,c.group_name",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.branch_id = b.branch_code AND a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code",
     whr = `date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
@@ -136,6 +139,7 @@ reportwebRouter.post("/group_wise_disb_web", async (req, res) => {
 // });
 
 reportwebRouter.post("/get_demand_data_web", async (req, res) => {
+    //get demand data in web
     try {
         var data = req.body;
         // console.log(data,'data');
@@ -189,7 +193,7 @@ reportwebRouter.post("/get_demand_data_web", async (req, res) => {
         }
         }catch (error) {
             console.error("Error in demand data retrieval:", error);
-            res.status(500).send({ suc: 0, msg: "Internal server error" });
+            res.send({ suc: 0, msg: "Internal server error" });
         }
 });
 

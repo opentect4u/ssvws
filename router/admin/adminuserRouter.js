@@ -7,6 +7,7 @@ const { getBankCode } = require('../../modules/api/masterModule');
 adminuserRouter.get('/fetch_branch', async (req, res) => {
     var data = req.body;
 
+    //fetch branch details
     var select = "branch_code,branch_name,brn_addr",
     table_name = "md_branch",
     whr = null,
@@ -20,6 +21,7 @@ adminuserRouter.post('/save_profile_web', async (req, res) => {
     console.log(data);
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //save profile details in web
     var table_name = "md_employee",
     fields = `emp_name = ${data.emp_name != '' ? `'${data.emp_name}'` : 'NULL'}, 
               branch_id = ${data.branch_id != '' ? `'${data.branch_id}'` : 'NULL'}, 
@@ -43,6 +45,7 @@ adminuserRouter.post('/password_change_user', async (req, res) => {
     // console.log(data,'pwd');
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+    //change user password
     var select = "emp_id,password",
     table_name = "md_user",
     whr = `emp_id='${data.emp_id}'`;
@@ -81,6 +84,7 @@ adminuserRouter.post("/save_bank_dtls", async (req, res) => {
 
     let bank_code = await getBankCode()
 
+    //save bank details
     var table_name = "md_bank",
     fields = data.bank_code > 0 ? `bank_name = '${data.bank_name}', branch_name = '${data.branch_name}', ifsc = '${data.ifsc > 0 ? data.ifsc : 0}', branch_addr = '${data.branch_addr.split("'").join("\\'")}', sol_id = '${data.sol_id > 0 ? data.sol_id : 0}', phone_no = '${data.phone_no > 0 ? data.phone_no : 0}', modified_by = '${data.modified_by}', modified_at = '${datetime}'` : `(bank_code, bank_name, branch_name, ifsc, branch_addr, sol_id, phone_no, created_by, created_at)`,
     values = `('${bank_code}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc == '' ? 0 : data.ifsc}', '${data.branch_addr.split("'").join("\\'")}', '${data.sol_id == '' ? 0 : data.sol_id}', '${data.phone_no == '' ? 0 : data.phone_no}', '${data.created_by}', '${datetime}')`,
