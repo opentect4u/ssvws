@@ -152,7 +152,7 @@ loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) =
         // console.log(payment_date_arr,loan_id_arr,branch_code_arr,'array');
         
     
-        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by,b.created_at",
+        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by",
             table_name = "td_loan a, td_loan_transactions b",
             whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code IN (${branch_code_arr.join(',')}) AND b.payment_date IN (${payment_date_arr.join(',')}) AND a.loan_id IN (${loan_id_arr.join(',')}) AND b.tr_type IN ('I', 'R')`,
             order = null;
@@ -166,8 +166,8 @@ loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) =
             for (let dt of fetch_loans.msg) {
     
                     var table_name = "td_reject_transactions",
-                    fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by,created_at)`,
-                    values = `('${dateFormat(dt.payment_date, 'yyyy-mm-dd')}','${dt.payment_id}','${dt.branch_id}','${dt.loan_id}','${dt.particulars}','${dt.credit}','${dt.debit}','${dt.prn_recov}','${dt.intt_recov}','${dt.balance}','${dt.od_balance}','${dt.intt_balance}','${dt.tr_type}','${dt.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dt.created_by}','${dt.created_at}')`,
+                    fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by)`,
+                    values = `('${dateFormat(dt.payment_date, 'yyyy-mm-dd')}','${dt.payment_id}','${dt.branch_id}','${dt.loan_id}','${dt.particulars}','${dt.credit}','${dt.debit}','${dt.prn_recov}','${dt.intt_recov}','${dt.balance}','${dt.od_balance}','${dt.intt_balance}','${dt.tr_type}','${dt.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dt.created_by}')`,
                     whr = null,
                     flag = 0;
                     var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
@@ -234,7 +234,7 @@ loan_recov_approveRouter.post("/reject_grp_co_wise_recov", async (req, res) => {
     if (data.reject_dt.length > 0) {        
         for (let dt of data.reject_dt) {
         // var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.credit,b.debit,b.tr_type",
-        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by,b.created_at"
+        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by"
         table_name = "td_loan a, td_loan_transactions b",
         whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code = '${dt.branch_code}' AND a.group_code = '${dt.group_code}' AND b.payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND b.tr_type IN ('I', 'R')`,
         order = null;
@@ -246,8 +246,8 @@ loan_recov_approveRouter.post("/reject_grp_co_wise_recov", async (req, res) => {
                 for (let dts of fetch_loan.msg) {
 
                         var table_name = "td_reject_transactions",
-                        fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by,created_at)`,
-                        values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_id}','${dts.loan_id}','${dts.particulars}','${dts.credit}','${dts.debit}','${dts.prn_recov}','${dts.intt_recov}','${dts.balance}','${dts.od_balance}','${dts.intt_balance}','${dts.tr_type}','${dts.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dts.created_by}','${dts.created_at}')`,
+                        fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by)`,
+                        values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_id}','${dts.loan_id}','${dts.particulars}','${dts.credit}','${dts.debit}','${dts.prn_recov}','${dts.intt_recov}','${dts.balance}','${dts.od_balance}','${dts.intt_balance}','${dts.tr_type}','${dts.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dts.created_by}')`,
                         whr = null,
                         flag = 0;
                         var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
