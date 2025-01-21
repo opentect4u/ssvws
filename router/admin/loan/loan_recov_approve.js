@@ -181,9 +181,39 @@ loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) =
                 }
 
                 console.log(del_loans,'del');
+
+                if(del_loans.suc > 0 && del_loans.msg.length > 0){
+                    var select = "loan_id,balance,od_balance,intt_balance,tr_type",
+                    table_name = "td_loan_transactions",
+                    whr = `loan_id = '${dt.loan_id}'`,
+                    order = `ORDER BY payment_id DESC
+                    LIMIT 1`;
+                    var last_row = await db_Select(select,table_name,whr,order)
+                }
+
+                console.log(last_row,'last_row');
+
+                if(last_row.suc > 0 && last_row.msg.length > 0){
+                    console.log(last_row,'lass');
+                    
+                    var prn_amt = last_row.msg[0].balance
+                    var od_prn_amt = last_row.msg[0].od_balance
+                    var intt_amt = last_row.msg[0].intt_balance
+                    var outstanding = parseFloat(prn_amt) + parseFloat(od_prn_amt) + parseFloat(intt_amt)
+
+                    var table_name = "td_loan",
+                    fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}'`,
+                    values = null,
+                    whr = `loan_id = '${dt.loan_id}'`,
+                    flag = 1;
+                    var reject_dt = await db_Insert(table_name,fields,values,whr,flag);
+                }
+
+                console.log(reject_dt,'reject');
                 
             }
-        }     
+        }    
+        
     }
 
     res.send(del_loans)
