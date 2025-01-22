@@ -24,7 +24,7 @@ module.exports = {
     save_attendance_out: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
-              console.log(data,'data');
+              // console.log(data,'data');
               
                   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
