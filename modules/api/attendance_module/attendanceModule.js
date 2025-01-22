@@ -27,9 +27,9 @@ module.exports = {
                   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
                   var table_name = "td_emp_attendance",
-                  fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
+                  fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O',modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
                   values = null,
-                  whr = `emp_id = '${data.emp_id}'`,
+                  whr = `emp_id = '${data.emp_id}' AND in_date_time = '${data.in_date_time}'`,
                   flag = 1;
                   var attendance_data_out = await db_Insert(table_name, fields, values, whr, flag);
                 //   console.log(attendance_data_out,'dt');
