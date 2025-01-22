@@ -34,7 +34,8 @@ attendanceRouter.post("/get_attendance_dtls", async (req, res) => {
     var select = "entry_dt,in_date_time,in_lat,in_long,in_addr,attan_status,late_in,created_by",
     table_name = "td_emp_attendance",
     whr = `emp_id = '${data.emp_id}'`,
-    order = `ORDER BY in_date_time`;
+    order = `ORDER BY in_date_time DESC 
+             LIMIT 1`;
     var atten_emp_dtls = await db_Select(select,table_name,whr,order);
 
     res.send(atten_emp_dtls)
