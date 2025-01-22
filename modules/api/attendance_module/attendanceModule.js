@@ -1,4 +1,5 @@
 var dateFormat = require("dateformat");
+const { db_Insert } = require("../../../model/mysqlModel");
 module.exports = {
     save_attendance_in: (data) => {
         return new Promise(async (resolve, reject) => {
@@ -11,7 +12,7 @@ module.exports = {
                   whr = null,
                   flag = 0;
                   var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
-                  console.log(attendance_data,'dt');
+                //   console.log(attendance_data,'dt');
                   
                   resolve({"suc" : 1, "msg": "Attendance data saved successfully", attendance_data});
                 }catch(error){
@@ -31,7 +32,7 @@ module.exports = {
                   whr = `emp_id = '${data.emp_id}'`,
                   flag = 1;
                   var attendance_data_out = await db_Insert(table_name, fields, values, whr, flag);
-                  console.log(attendance_data_out,'dt');
+                //   console.log(attendance_data_out,'dt');
                   
                   resolve({"suc" : 1, "msg": "Attendance data updated successfully", attendance_data_out});
                 }catch(error){
