@@ -1,4 +1,4 @@
-const { db_Insert } = require('../../../model/mysqlModel');
+const { db_Insert, db_Select } = require('../../../model/mysqlModel');
 const { save_attendance_in, save_attendance_out } = require('../../../modules/api/attendance_module/attendanceModule');
 
 const express = require('express'),
@@ -26,6 +26,18 @@ attendanceRouter.post("/save_out_attendance", async (req, res) => {
     }).finally (() => {
         res.send(save_attendance_data_out)
     })
+});
+
+attendanceRouter.post("/get_attendance_dtls", async (req, res) => {
+    var data = req.body;
+   
+    var select = "entry_dt,in_date_time,in_lat,in_long,in_addr,attn_status,late_in,created_by",
+    table_name = "td_emp_attendance",
+    whr = `emp_id = '${data.emp_id}'`,
+    order = null;
+    var atten_emp_dtls = await db_Select(select,table_name,whr,order);
+
+    res.send(atten_emp_dtls)
 });
 
 module.exports = {attendanceRouter}
