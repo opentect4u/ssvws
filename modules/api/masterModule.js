@@ -686,4 +686,19 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
   });
 };
 
-  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd, getLoanBal, dayRevarseList, loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding}
+const  fetch_first_date = (get_year, get_month) => {
+  console.log(get_year, get_month);
+  return new Promise(async (resolve, reject) => {
+    try {  
+      var get_first_day = new Date(`${get_year}`, `${get_month}`)
+      get_first_day.getDate()
+      resolve(get_first_day)
+  } catch (error) {
+    console.error("Error fetching loan balance outstanding:", error);
+    reject(error);
+  }
+});
+};
+
+
+  module.exports = {getFormNo, groupCode, getMemberCode, getLoanCode, interest_cal_amt, calculate_prn_emi, calculate_intt_emi, installment_end_date, periodic, payment_code, getBankCode, genDate, getLoanDmd, getLoanBal, dayRevarseList, loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding, fetch_first_date}
