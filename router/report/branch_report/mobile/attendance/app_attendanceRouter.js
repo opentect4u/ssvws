@@ -27,6 +27,18 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         console.error("Error fetching attendance report:", error);
         res.send({ suc: 0, msg: "An error occurred" });
     }
-})
+});
+
+app_attendanceRouter.post("/fetch_emp_atten_dtls", async (req, res) => {
+    var data = req.body;
+
+        var select = "in_date_time,in_addr,out_date_time,out_addr,attan_status,attn_reject_remarks,late_in",
+        table_name = "td_emp_attendance",
+        whr = `emp_id = '${data.emp_id}' AND sl_no = '${data.sl_no}'`,
+        order = null;
+        var atten_report_dtls = await db_Select(select,table_name,whr,order);
+       
+        res.send(atten_report_dtls)
+});
 
 module.exports = {app_attendanceRouter}
