@@ -22,17 +22,16 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         order = null;
         var atten_report_dt = await db_Select(select,table_name,whr,order);
 
-        for(dt of atten_report_dt){
             if(atten_report_dt.suc > 0 && atten_report_dt.msg.length > 0){
+                for (dt of atten_report_dt.msg) {
                 var select = "in_date_time,in_addr,out_date_time,out_addr,attan_status,attn_reject_remarks,late_in",
                 table_name = "td_emp_attendance",
                 whr = `emp_id = '${data.emp_id}' AND sl_no = '${dt.sl_no}'`,
                 order = null;
                 var atten_report_dtls = await db_Select(select,table_name,whr,order);
                 atten_report_dt.msg[0]['attens_dtls'] = atten_report_dtls.suc > 0 ? (atten_report_dtls.msg.length > 0 ? atten_report_dtls.msg : []) : []; 
-    
+                }
             }
-        }
       
         res.send(atten_report_dt)
     } catch (error) {
