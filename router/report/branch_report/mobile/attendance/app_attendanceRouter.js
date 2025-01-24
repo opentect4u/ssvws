@@ -16,7 +16,7 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         // console.log(get_first_day,'ju');
         
         
-        var select = "a.sl_no,a.entry_dt,a.in_date_time,a.out_date_time,b.emp_name",
+        var select = "a.sl_no,a.entry_dt,a.in_date_time,a.out_date_time,a.late_in,b.emp_name",
         table_name = "td_emp_attendance a, md_employee b",
         whr = `a.emp_id = b.emp_id AND date(a.in_date_time) BETWEEN '${get_first_day}' AND '${get_last_day}' AND b.emp_id = '${data.emp_id}'`,
         order = null;
