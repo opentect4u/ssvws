@@ -8,13 +8,10 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
     try {
         var data = req.body;
         
-        var select = "a.entry_dt,a.in_date_time,a.out_date_time,b.emp_name",
-        table_name = "td_emp_attendance a, md_employee b",
-        whr = `a.emp_id = b.emp_id AND a.entry_dt BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND b.emp_id = '${data.emp_id}'`,
-        order = null;
-        var atten_report_dt = await db_Select(select,table_name,whr,order);
-
-        res.send(atten_report_dt)
+       var first_day =  `SELECT DATE(CONCAT(@year, '-', LPAD(@month, 2, '0'), '-01')) AS first_day`;
+       console.log(first_day,'kikiki');
+       
+       res.send(first_day)
 
     } catch (error) {
         console.error("Error fetching attendance report:", error);
