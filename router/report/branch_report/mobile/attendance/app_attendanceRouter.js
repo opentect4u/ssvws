@@ -23,9 +23,9 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         var atten_report_dt = await db_Select(select,table_name,whr,order);
 
         if(atten_report_dt.suc > 0 && atten_report_dt.msg.length > 0){
-            var select = "in_date_time,in_addr,out_date_time,out_addr,attan_status,attan_status,attn_reject_remarks,late_in",
+            var select = "in_date_time,in_addr,out_date_time,out_addr,attan_status,attn_reject_remarks,late_in",
             table_name = "td_emp_attendance",
-            whr = `date(in_date_time) BETWEEN '${get_first_day}' AND '${get_last_day}' AND emp_id = '${data.emp_id}'`,
+            whr = `emp_id = '${data.emp_id}'`,
             order = null;
             var atten_report_dtls = await db_Select(select,table_name,whr,order);
             atten_report_dt.msg[0]['attens_dtls'] = atten_report_dtls.suc > 0 ? (atten_report_dtls.msg.length > 0 ? atten_report_dtls.msg : []) : []; 
