@@ -118,7 +118,7 @@ app.use('/adminreport', loan_outstandingAdminrouter)
 app.use('/adminreport', loan_summaryAdminRouter)
 app.use('/adminreport', dmd_vs_collAdminRouter)
 app.use('/adminreport', loan_demandAdminRouter)
-app.use('/attendance', attenAdminRouter)
+app.use('/adminreport', attenAdminRouter)
 
 app.get("/",async (req, res) => {
   // const bcrypt = require("bcrypt");
