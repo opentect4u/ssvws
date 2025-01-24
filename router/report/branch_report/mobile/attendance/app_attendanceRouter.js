@@ -8,11 +8,11 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
     try {
         var data = req.body;
         
-       var first_day =  `SELECT DATE(CONCAT(@year, '-', LPAD(@month, 2, '0'), '-01')) AS first_day`;
-       console.log(first_day,'kikiki');
-       
-       res.send(first_day)
-
+        var get_first_day = new Date(`${data.get_year}`, `${data.get_month}`)
+        get_first_day.getDate();
+        var first_day = get_first_day
+        res.send(first_day)
+    
     } catch (error) {
         console.error("Error fetching attendance report:", error);
         res.send({ suc: 0, msg: "An error occurred" });
