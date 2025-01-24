@@ -39,12 +39,23 @@ module.exports = {
               
                   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-                  var table_name = "td_emp_attendance",
-                  fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O',modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
-                  values = null,
-                  whr = `emp_id = '${data.emp_id}' AND in_date_time = '${data.in_date_time}'`,
-                  flag = 1;
-                  var attendance_data_out = await db_Insert(table_name, fields, values, whr, flag);
+                  var select = "end_time",
+                  table_name = "md_check_in_out",
+                  whr = null,
+                  order = null;
+                  var get_end_time = await db_Select(select,table_name,whr,order);
+
+                  if(get_end_time.suc > 0 && get_end_time.msg.length > 0){
+                    var end_time_dt = get_end_time.msg[0].end_time
+                     console.log(end_time_dt,'dts');
+
+                    var table_name = "td_emp_attendance",
+                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = '${data.out_date_time == end_time_dt ? 'O' : 'E'}',early_out = '${data.out_date_time == end_time_dt ? 'N' : 'Y'}', modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
+                    values = null,
+                    whr = `emp_id = '${data.emp_id}' AND in_date_time = '${data.in_date_time}'`,
+                    flag = 1;
+                    var attendance_data_out = await db_Insert(table_name, fields, values, whr, flag);
+                  }
                 //   console.log(attendance_data_out,'dt');
                   
                   resolve({"suc" : 1, "msg": "Attendance data updated successfully", attendance_data_out});
