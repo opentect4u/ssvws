@@ -32,7 +32,7 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
 
         }
 
-        res.send(atten_report_dt)
+        res.send(atten_report_dtls)
     } catch (error) {
         console.error("Error fetching attendance report:", error);
         res.send({ suc: 0, msg: "An error occurred" });
