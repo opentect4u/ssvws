@@ -1,5 +1,5 @@
 const { db_Select } = require('../../../../../model/mysqlModel');
-const { fetch_first_date } = require('../../../../../modules/api/masterModule');
+const { fetch_last_date } = require('../../../../../modules/api/masterModule');
 
 const express = require('express'),
 app_attendanceRouter = express.Router(),
@@ -9,7 +9,7 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
     try {
         var data = req.body;
         
-        var get_last_day = await fetch_first_date(data.get_year,data.get_month)
+        var get_last_day = await fetch_last_date(data.get_year,data.get_month)
     
         var select = "a.sl_no,a.in_date_time,a.out_date_time,b.emp_name",
         table_name = "td_emp_attendance a, md_employee b",
