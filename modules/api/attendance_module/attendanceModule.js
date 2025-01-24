@@ -1,17 +1,28 @@
 var dateFormat = require("dateformat");
-const { db_Insert } = require("../../../model/mysqlModel");
+const { db_Insert, db_Select } = require("../../../model/mysqlModel");
 module.exports = {
     save_attendance_in: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
                   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-                  var table_name = "td_emp_attendance",
-                  fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,created_by,created_at)',
-                  values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.created_by}','${datetime}')`,
+                  var select = "start_time",
+                  table_name = "md_check_in_out",
                   whr = null,
-                  flag = 0;
-                  var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
+                  order = null;
+                  var get_start_time = await db_Select(select,table_name,whr,order);
+
+                  if(get_start_time.suc > 0 && get_start_time.msg.length > 0){
+                     var start_time_dt = get_start_time.msg[0].start_time
+                     console.log(start_time_dt,'dt');
+                     
+                    var table_name = "td_emp_attendance",
+                    fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,clock_status,late_in,created_by,created_at)',
+                    values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time == start_time_dt ? 'I' : 'L'}','${data.in_date_time == start_time_dt ? 'N' : 'Y'}','${data.created_by}','${datetime}')`,
+                    whr = null,
+                    flag = 0;
+                    var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
+                  }
                 //   console.log(attendance_data,'dt');
                   
                   resolve({"suc" : 1, "msg": "Attendance data saved successfully", attendance_data});
