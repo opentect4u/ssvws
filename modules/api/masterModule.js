@@ -690,10 +690,9 @@ const  fetch_last_date = (get_year, get_month) => {
   console.log(get_year, get_month);
   return new Promise(async (resolve, reject) => {
     try {  
-      var get_last_day = new Date(`${get_year}`, `${get_month}`, 0)
-      
-      get_last_day.getDate();
-      var fetch_date = get_last_day.toISOString().split("T")[0];
+      var get_last_day = new Date(get_year, get_month, 0)
+
+      var fetch_date = dateFormat(get_last_day, 'yyyy-mm-dd');
       resolve(fetch_date)
   } catch (error) {
     console.error("Error fetching loan balance outstanding:", error);
