@@ -10,10 +10,10 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         var data = req.body;
         
         var get_last_day = await fetch_last_date(data.get_year,data.get_month)
-        console.log(get_last_day,'last');
+        // console.log(get_last_day,'last');
         
         var get_first_day = (data.get_year) + '-' + (data.get_month) + '-' + '01'
-        console.log(get_first_day,'ju');
+        // console.log(get_first_day,'ju');
         
         
         var select = "a.sl_no,a.in_date_time,a.out_date_time,b.emp_name",
