@@ -687,7 +687,7 @@ const loan_intt_balance_outstanding = (loan_id, os_dt) => {
 };
 
 const  fetch_last_date = (get_year, get_month) => {
-  console.log(get_year, get_month);
+  // console.log(get_year, get_month);
   return new Promise(async (resolve, reject) => {
     try {  
       var get_last_day = new Date(get_year, get_month, 0)
