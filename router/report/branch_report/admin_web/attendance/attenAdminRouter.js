@@ -43,7 +43,7 @@ attenAdminRouter.post("/attendance_report_admin", async (req, res) => {
 
             var select = "a.emp_id,a.entry_dt,a.in_date_time,a.out_date_time,a.in_addr,a.out_addr,a.attan_status,a.clock_status,a.attn_reject_remarks,a.late_in,b.emp_name",
             table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
-            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `a.emp_id = '${data.emp_id}'` : ''}`,
+            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''}`,
             order = `ORDER BY a.entry_dt,a.in_date_time,a.emp_id DESC`;
             var atten_report = await db_Select(select,table_name,whr,order);
 
