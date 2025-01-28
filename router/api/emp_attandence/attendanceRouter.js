@@ -31,7 +31,7 @@ attendanceRouter.post("/save_out_attendance", async (req, res) => {
 attendanceRouter.post("/get_attendance_dtls", async (req, res) => {
     var data = req.body;
    
-    var select = "entry_dt,in_date_time,in_lat,in_long,in_addr,attan_status,clock_status,late_in,early_out",
+    var select = "entry_dt,in_date_time,in_lat,in_long,in_addr,attan_status,clock_status",
     table_name = "td_emp_attendance",
     whr = `emp_id = '${data.emp_id}'`,
     order = `ORDER BY in_date_time DESC 
