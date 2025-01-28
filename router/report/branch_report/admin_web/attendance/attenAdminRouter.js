@@ -36,6 +36,24 @@ attenAdminRouter.post("/fetch_employee_aginst_branch", async (req, res) => {
     }    
 });
 
+//show a single employee , show no. of days present, total effective hours,no. of Late In & Early Out
+attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
+ try{
+  var data = req.body;
+
+  var select = "count(in_date_time)in_date_time",
+  table_name = "td_emp_attendance",
+  whr = `emp_id = '${data.emp_id}'`,
+  order = null;
+  var emp_details = await db_Select(select,table_name,whr,order);
+
+  res.send(emp_details)
+ }catch (error) {
+            console.error("Error fetching per employee details:", error);
+            res.send({ suc: 0, msg: "An error occurred" });
+        }
+});
+
 //fetch attendance report through from and to date and branch id and emp name
 attenAdminRouter.post("/attendance_report_admin", async (req, res) => {
     try{
