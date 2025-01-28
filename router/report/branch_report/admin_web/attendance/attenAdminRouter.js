@@ -4,13 +4,14 @@ const express = require('express'),
 attenAdminRouter = express.Router(),
 dateFormat = require('dateformat');
 
-//fetch employee name through brancg id
+//fetch employee name through branch id
 attenAdminRouter.post("/fetch_employee_aginst_branch", async (req, res) => {
     try{
         var data = req.body;
 
         if(data.branch_id == 'A'){
-        //fetch employee name through brancg id
+
+        //fetch all employee name
         var select = "emp_id,branch_id,emp_name",
         table_name = "md_employee",
         whr = null,
@@ -20,6 +21,7 @@ attenAdminRouter.post("/fetch_employee_aginst_branch", async (req, res) => {
         res.send(emp_dtls)
         }else {
         
+        //fetch employee name through branch_id
         var select = "emp_id,branch_id,emp_name",
         table_name = "md_employee",
         whr = `branch_id = '${data.branch_id}'`,
