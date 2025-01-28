@@ -1,6 +1,8 @@
 var dateFormat = require("dateformat");
 const { db_Insert, db_Select } = require("../../../model/mysqlModel");
 module.exports = {
+
+  //save in attendance
     save_attendance_in: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
@@ -32,6 +34,7 @@ module.exports = {
         });
     },
 
+    //save out attendance
     save_attendance_out: (data) => {
         return new Promise(async (resolve, reject) => {
             try {

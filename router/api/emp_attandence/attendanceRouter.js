@@ -5,6 +5,7 @@ const express = require('express'),
 attendanceRouter = express.Router(),
 dateFormat = require('dateformat');
 
+//save in attendance
 attendanceRouter.post("/save_in_attendance", async (req, res) => {
     var data = req.body, save_attendance_data;
 
@@ -17,6 +18,7 @@ attendanceRouter.post("/save_in_attendance", async (req, res) => {
     })
 });
 
+//save out attendance
 attendanceRouter.post("/save_out_attendance", async (req, res) => {
     var data = req.body, save_attendance_data_out;
     save_attendance_out(data).then(data => {
@@ -28,6 +30,7 @@ attendanceRouter.post("/save_out_attendance", async (req, res) => {
     })
 });
 
+//fetch attendance details
 attendanceRouter.post("/get_attendance_dtls", async (req, res) => {
     var data = req.body;
    
