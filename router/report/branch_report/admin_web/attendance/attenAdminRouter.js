@@ -49,7 +49,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
 
   if(emp_details.suc > 0 && emp_details.msg.length > 0){
 
-    var select = "in_date_time",
+    var select = `dateFormat(in_date_time,'YYYY-MM-DD HH:MM:SS')`,
     table_name = "td_emp_attendance",
     whr = `emp_id = '${data.emp_id}'`,
     order = null;
