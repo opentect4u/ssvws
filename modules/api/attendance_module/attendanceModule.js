@@ -14,11 +14,11 @@ module.exports = {
 
                   if(get_start_time.suc > 0 && get_start_time.msg.length > 0){
                      var start_time_dt = get_start_time.msg[0].start_time
-                     console.log(start_time_dt,'dt');
+                    //  console.log(start_time_dt,'dt');
                      
                     var table_name = "td_emp_attendance",
-                    fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,clock_status,late_in,created_by,created_at)',
-                    values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time == start_time_dt ? 'I' : 'L'}','${data.in_date_time == start_time_dt ? 'N' : 'Y'}','${data.created_by}','${datetime}')`,
+                    fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,clock_status,created_by,created_at)',
+                    values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time == start_time_dt ? 'I' : 'L'}','${data.created_by}','${datetime}')`,
                     whr = null,
                     flag = 0;
                     var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
@@ -47,10 +47,10 @@ module.exports = {
 
                   if(get_end_time.suc > 0 && get_end_time.msg.length > 0){
                     var end_time_dt = get_end_time.msg[0].end_time
-                     console.log(end_time_dt,'dts');
+                    //  console.log(end_time_dt,'dts');
 
                     var table_name = "td_emp_attendance",
-                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = '${data.out_date_time == end_time_dt ? 'O' : 'E'}',early_out = '${data.out_date_time == end_time_dt ? 'N' : 'Y'}', modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
+                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = '${data.out_date_time == end_time_dt ? 'O' : 'E'}', modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
                     values = null,
                     whr = `emp_id = '${data.emp_id}' AND in_date_time = '${data.in_date_time}'`,
                     flag = 1;
