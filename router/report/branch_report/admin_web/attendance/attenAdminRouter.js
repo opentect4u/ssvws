@@ -41,7 +41,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
  try{
   var data = req.body;
 
-  var select = "count(in_date_time)in_date_time",
+  var select = "count(in_date_time)tot_present",
   table_name = "td_emp_attendance",
   whr = `emp_id = '${data.emp_id}'`,
   order = null;
