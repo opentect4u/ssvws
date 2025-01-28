@@ -49,15 +49,9 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
 
   if(emp_details.suc > 0 && emp_details.msg.length > 0){
 
-    var select = `dateFormat(in_date_time,'YYYY-MM-DD HH:MM:SS')`,
-    table_name = "td_emp_attendance",
-    whr = `emp_id = '${data.emp_id}'`,
-    order = null;
-    var emp_detail = await db_Select(select,table_name,whr,order);
-
     var select = "count(late_in)late_in",
     table_name = "td_emp_attendance",
-    whr = `emp_id = '${data.emp_id}' AND late_in = 'L' AND in_date_time = '${emp_detail.msg[0].in_date_time}'`,
+    whr = `emp_id = '${data.emp_id}' AND late_in = 'L'`,
     order = null;
     var emp_details_late = await db_Select(select,table_name,whr,order);
   }
