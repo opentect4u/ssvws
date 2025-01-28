@@ -43,16 +43,16 @@ attenAdminRouter.post("/attendance_report_admin", async (req, res) => {
 
     if(data.branch_id == 'A'){
              var select = "a.emp_id,a.entry_dt,a.in_date_time,a.out_date_time,a.in_addr,a.out_addr,a.attan_status,a.clock_status,a.attn_reject_remarks,b.emp_name",
-             table_name = "td_emp_attendance a, md_employee b",
-             whr = `a.emp_id = b.emp_id AND date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}'`
+             table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
+             whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}'`
              order = `ORDER BY a.entry_dt,a.in_date_time,a.emp_id`;
              var atten_report = await db_Select(select,table_name,whr,order);
 
              res.send(atten_report)
            }else {
             var select = "a.emp_id,a.entry_dt,a.in_date_time,a.out_date_time,a.in_addr,a.out_addr,a.attan_status,a.clock_status,a.attn_reject_remarks,b.emp_name",
-            table_name = "td_emp_attendance a, md_employee b",
-            whr = `a.emp_id = b.emp_id AND date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' AND b.branch_id = '${data.branch_id}'`,
+            table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
+            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' AND b.branch_id = '${data.branch_id}' AND a.emp_id = '${data.emp_id}'`,
             order = `ORDER BY a.entry_dt,a.in_date_time,a.emp_id`;
             var atten_report = await db_Select(select,table_name,whr,order);
 
