@@ -47,6 +47,23 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
   order = null;
   var emp_details = await db_Select(select,table_name,whr,order);
 
+  if(emp_details.suc > 0 && emp_details.msg.length > 0){
+    var select = "count(late_in)late_in",
+    table_name = "td_emp_attendance",
+    whr = `emp_id = '${data.emp_id}' AND late_in = 'L'`,
+    order = null;
+    var emp_details_late = await db_Select(select,table_name,whr,order);
+  }
+
+  if(emp_details_late.suc > 0 && emp_details_late.msg.length > 0){
+    var select = "count(late_in)early_out",
+    table_name = "td_emp_attendance",
+    whr = `emp_id = '${data.emp_id}' AND late_in = 'E'`,
+    order = null;
+    var emp_details_early = await db_Select(select,table_name,whr,order);
+  }
+  emp_details.msg[0]['late'] = emp_details_late.suc > 0 ? (emp_details_late.msg.length > 0 ? emp_details_late.msg : []) : [];
+  emp_details.msg[0]['early'] = emp_details_early.suc > 0 ? (emp_details_early.msg.length > 0 ? emp_details_early.msg : []) : [];
   res.send(emp_details)
  }catch (error) {
             console.error("Error fetching per employee details:", error);
