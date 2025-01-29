@@ -106,6 +106,8 @@ attenAdminRouter.post("/attendance_report_admin", async (req, res) => {
 attenAdminRouter.post("/reject_atten",async (req, res) => {
     try{
     var data = req.body;
+    console.log(data,'kog');
+    
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     var table_name = "td_emp_attendance",
