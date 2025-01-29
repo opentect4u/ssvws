@@ -51,17 +51,23 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
 
   if(emp_details.suc > 0 && emp_details.msg.length > 0){
 
-    var select = "emp_id, COUNT(*) tot_late_in, 0 tot_late_out",
+    var select = "emp_id, COUNT(*) tot_late_in",
     table_name = "td_emp_attendance",
     whr = `TIME(in_date_time) > (SELECT start_time FROM md_check_in_out) AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'`,
     order = `GROUP BY emp_id`;
     var emp_details_late_in = await db_Select(select,table_name,whr,order);
     
-    var select = "emp_id, 0 tot_late_in, COUNT(*) tot_late_out",
+    var select = "emp_id,COUNT(*) tot_early_out",
     table_name = "td_emp_attendance",
     whr = `TIME(out_date_time) < (SELECT end_time FROM md_check_in_out) AND clock_status = 'O' AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'`,
     order = `GROUP BY emp_id`;
     var emp_details_late_out = await db_Select(select,table_name,whr,order);
+
+    // var select = "emp_id",
+    // table_name = "td_emp_attendance",
+    // whr = ``,
+    // order = `ORDER BY emp_id`;
+    // var emp_details_late_out = await db_Select(select,table_name,whr,order);
 
     emp_details.msg[0]['late_in'] = emp_details_late_in.suc > 0 ? (emp_details_late_in.msg.length > 0 ? emp_details_late_in.msg : []) : [];
     emp_details.msg[0]['early_out'] = emp_details_late_out.suc > 0 ? (emp_details_late_out.msg.length > 0 ? emp_details_late_out.msg : []) : [];
