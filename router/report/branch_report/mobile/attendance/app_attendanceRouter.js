@@ -16,7 +16,7 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         // console.log(get_first_day,'ju');
         
         
-        var select = "a.sl_no,a.entry_dt,a.in_date_time,a.out_date_time,a.clock_status,a.late_in,a.early_out,b.emp_name",
+        var select = "a.sl_no,a.entry_dt,a.in_date_time,a.out_date_time,a.clock_status,a.late_in,b.emp_name",
         table_name = "td_emp_attendance a, md_employee b",
         whr = `a.emp_id = b.emp_id AND date(a.in_date_time) BETWEEN '${get_first_day}' AND '${get_last_day}' AND b.emp_id = '${data.emp_id}'`,
         order = null;
@@ -32,7 +32,7 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
 app_attendanceRouter.post("/fetch_emp_atten_dtls", async (req, res) => {
     var data = req.body;
 
-        var select = "in_date_time,in_addr,out_date_time,out_addr,attan_status,attn_reject_remarks,clock_status,late_in,early_out",
+        var select = "in_date_time,in_addr,out_date_time,out_addr,attan_status,attn_reject_remarks,clock_status,late_in",
         table_name = "td_emp_attendance",
         whr = `emp_id = '${data.emp_id}' AND sl_no = '${data.sl_no}'`,
         order = null;
