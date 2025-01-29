@@ -5,7 +5,7 @@ attendancewebRouter = express.Router(),
 dateFormat = require('dateformat');
 
 //fetch employee name through branch id
-attenAdminRouter.post("/fetch_employee_fr_branch", async (req, res) => {
+attendancewebRouter.post("/fetch_employee_fr_branch", async (req, res) => {
     try{
         var data = req.body;
         //fetch employee name through branch_id
