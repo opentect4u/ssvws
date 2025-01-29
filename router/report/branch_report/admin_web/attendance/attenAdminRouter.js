@@ -40,7 +40,7 @@ attenAdminRouter.post("/fetch_employee_aginst_branch", async (req, res) => {
 attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
  try{
   var data = req.body;
-  console.log(data,'dts');
+//   console.log(data,'dts');
   
 
   var select = "COUNT(in_date_time)tot_present",
@@ -63,7 +63,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
     order = `GROUP BY emp_id`;
     var emp_details_late_out = await db_Select(select,table_name,whr,order);
 
-    var select = "emp_id,TIME(in_date_time) in_date_time,TIME(out_date_time) out_date_time,TIMEDIFF(out_date_time,in_date_time) total_effective_hours",
+    var select = "emp_id,TIME(in_date_time) in_date_time,TIME(out_date_time) out_date_time,TIMEDIFF(out_date_time,in_date_time) total_work_hours",
     table_name = "td_emp_attendance",
     whr = `entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'`,
     order = `ORDER BY emp_id`;
