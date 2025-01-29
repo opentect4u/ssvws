@@ -69,7 +69,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
     order = `ORDER BY emp_id`;
     var emp_details_tot_hoor = await db_Select(select,table_name,whr,order);
 
-    emp_details.msg[0]['early_out'] = emp_details_tot_hoor.suc > 0 ? (emp_details_tot_hoor.msg.length > 0 ? emp_details_tot_hoor.msg : []) : [];
+    emp_details.msg[0]['tot_work'] = emp_details_tot_hoor.suc > 0 ? (emp_details_tot_hoor.msg.length > 0 ? emp_details_tot_hoor.msg : []) : [];
     emp_details.msg[0]['late_in'] = emp_details_late_in.suc > 0 ? (emp_details_late_in.msg.length > 0 ? emp_details_late_in.msg : []) : [];
     emp_details.msg[0]['early_out'] = emp_details_late_out.suc > 0 ? (emp_details_late_out.msg.length > 0 ? emp_details_late_out.msg : []) : [];
   }
