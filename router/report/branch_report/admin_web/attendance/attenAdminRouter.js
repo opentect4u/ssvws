@@ -40,6 +40,8 @@ attenAdminRouter.post("/fetch_employee_aginst_branch", async (req, res) => {
 attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
  try{
   var data = req.body;
+  console.log(data,'dts');
+  
 
   var select = "COUNT(in_date_time)tot_present",
   table_name = "td_emp_attendance",
