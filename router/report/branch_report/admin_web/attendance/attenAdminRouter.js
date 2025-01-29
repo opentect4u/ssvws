@@ -65,7 +65,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
 
     var select = "emp_id,TIME(in_date_time) in_date_time,TIME(out_date_time) out_date_time,TIMEDIFF(out_date_time,in_date_time) total_work_hours",
     table_name = "td_emp_attendance",
-    whr = `entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'`,
+    whr = `entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}' AND clock_status = 'O'`,
     order = `ORDER BY emp_id`;
     var emp_details_tot_hoor = await db_Select(select,table_name,whr,order);
 
