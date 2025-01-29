@@ -1,4 +1,4 @@
-const { db_Select } = require('../../../../model/mysqlModel');
+const { db_Select, db_Insert } = require('../../../../model/mysqlModel');
 
 const express = require('express'),
 attendancewebRouter = express.Router(),
