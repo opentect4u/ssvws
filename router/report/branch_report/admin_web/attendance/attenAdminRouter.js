@@ -63,7 +63,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
     order = `GROUP BY emp_id`;
     var emp_details_late_out = await db_Select(select,table_name,whr,order);
 
-    var select = "emp_id,SUM(TIMESTAMPDIFF(HOUR,MINUTE, SECOND, in_date_time, out_date_time)) total_work_hours",
+    var select = "emp_id,SUM(TIMESTAMPDIFF(in_date_time, out_date_time)) total_work_hours",
     table_name = "td_emp_attendance",
     whr = `entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}' AND clock_status = 'O'`,
     order = `GROUP BY emp_id`;
