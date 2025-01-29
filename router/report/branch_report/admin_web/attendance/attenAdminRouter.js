@@ -62,9 +62,10 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
     whr = `TIME(out_date_time) > (SELECT end_time FROM md_check_in_out) AND clock_status = 'O' AND date(out_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}'`,
     order = `GROUP BY emp_id`;
     var emp_details_late_out = await db_Select(select,table_name,whr,order);
+
+    emp_details.msg[0]['late_in'] = emp_details_late_in.suc > 0 ? (emp_details_late_in.msg.length > 0 ? emp_details_late_in.msg : []) : [];
+    emp_details.msg[0]['late_out'] = emp_details_late_out.suc > 0 ? (emp_details_late_out.msg.length > 0 ? emp_details_late_out.msg : []) : [];
   }
-  emp_details.msg[0]['late_in'] = emp_details_late_in.suc > 0 ? (emp_details_late_in.msg.length > 0 ? emp_details_late_in.msg : []) : [];
-  emp_details.msg[0]['late_out'] = emp_details_late_out.suc > 0 ? (emp_details_late_out.msg.length > 0 ? emp_details_late_out.msg : []) : [];
 
   res.send(emp_details)
  }catch (error) {
