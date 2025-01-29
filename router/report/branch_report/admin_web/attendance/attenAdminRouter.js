@@ -45,7 +45,7 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
 
   var select = "COUNT(in_date_time)tot_present",
   table_name = "td_emp_attendance",
-  whr = `emp_id = '${data.emp_id}'`,
+  whr = `emp_id = '${data.emp_id}' AND attan_status != 'R'`,
   order = null;
   var emp_details = await db_Select(select,table_name,whr,order);
 
@@ -53,19 +53,19 @@ attenAdminRouter.post("/show_per_emp_detls", async (req, res) => {
 
     var select = "emp_id, COUNT(*) tot_late_in",
     table_name = "td_emp_attendance",
-    whr = `TIME(in_date_time) > (SELECT start_time FROM md_check_in_out) AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'`,
+    whr = `TIME(in_date_time) > (SELECT start_time FROM md_check_in_out) AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'  AND attan_status != 'R'`,
     order = `GROUP BY emp_id`;
     var emp_details_late_in = await db_Select(select,table_name,whr,order);
     
     var select = "emp_id,COUNT(*) tot_early_out",
     table_name = "td_emp_attendance",
-    whr = `TIME(out_date_time) < (SELECT end_time FROM md_check_in_out) AND clock_status = 'O' AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'`,
+    whr = `TIME(out_date_time) < (SELECT end_time FROM md_check_in_out) AND clock_status = 'O' AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'  AND attan_status != 'R'`,
     order = `GROUP BY emp_id`;
     var emp_details_late_out = await db_Select(select,table_name,whr,order);
 
     var select = "emp_id,SEC_TO_TIME(SUM(TIME_TO_SEC(TIMEDIFF(out_date_time, in_date_time)))) AS total_work_hours",
     table_name = "td_emp_attendance",
-    whr = `entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}' AND clock_status = 'O'`,
+    whr = `entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}' AND clock_status = 'O'  AND attan_status != 'R'`,
     order = `GROUP BY emp_id`;
     var emp_details_tot_hoor = await db_Select(select,table_name,whr,order);
 
@@ -90,7 +90,7 @@ attenAdminRouter.post("/attendance_report_admin", async (req, res) => {
 
             var select = "a.emp_id,a.entry_dt,a.in_date_time,a.out_date_time,a.in_addr,a.out_addr,a.attan_status,a.clock_status,a.attn_reject_remarks,a.late_in,b.emp_name",
             table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
-            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''}`,
+            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''} AND attan_status != 'R'`,
             order = `ORDER BY a.entry_dt,a.in_date_time,a.emp_id DESC`;
             var atten_report = await db_Select(select,table_name,whr,order);
 
