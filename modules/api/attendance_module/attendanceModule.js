@@ -6,11 +6,12 @@ module.exports = {
     save_attendance_in: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
-                  let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+                let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+                let entry_date = dateFormat(new Date(), "yyyy-mm-dd"); // Extract only dat
 
                   var select = "emp_id,entry_dt,in_date_time,clock_status",
                   table_name = "td_emp_attendance",
-                  whr = `entry_dt = '${datetime}' AND emp_id = '${data.emp_id}' AND clock_status = 'I'`,
+                  whr = `entry_dt = '${entry_date}' AND emp_id = '${data.emp_id}' AND clock_status = 'I'`,
                   order = null;
                   var fetch_atten_dtls = await db_Select(select,table_name,whr,order);
 
