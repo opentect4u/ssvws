@@ -7,15 +7,7 @@ module.exports = {
         return new Promise(async (resolve, reject) => {
             try {
                 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-                let entry_date = dateFormat(new Date(), "yyyy-mm-dd"); // Extract only dat
 
-                  var select = "emp_id,entry_dt,in_date_time,clock_status",
-                  table_name = "td_emp_attendance",
-                  whr = `entry_dt = '${entry_date}' AND emp_id = '${data.emp_id}' AND clock_status = 'I'`,
-                  order = null;
-                  var fetch_atten_dtls = await db_Select(select,table_name,whr,order);
-
-                  if(fetch_atten_dtls.suc > 0 && fetch_atten_dtls.msg.length > 0){
                     var select = "start_time",
                     table_name = "md_check_in_out",
                     whr = null,
@@ -36,9 +28,7 @@ module.exports = {
                   //   console.log(attendance_data,'dt');
                     
                     resolve({"suc" : 1, "msg": "Attendance data saved successfully", attendance_data});
-                  }else {
-                    resolve({"suc" : 0, "msg": "You are already Clocked IN", attendance_data});
-                  }
+                
                   }catch(error){
                       reject({"suc": 0, "msg": "Error occurred during saving attendance details", details: error });
                   }  
