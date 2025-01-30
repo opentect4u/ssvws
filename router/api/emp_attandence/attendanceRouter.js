@@ -12,10 +12,11 @@ dateFormat = require('dateformat');
         console.log(data,'lo');
         
         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+        let entry_date = dateFormat(new Date(), "yyyy-mm-dd");
 
         var select = "emp_id,entry_dt,clock_status",
         table_name = "td_emp_attendance",
-        whr = `emp_id = '${data.emp_id}' AND entry_dt = '${datetime}'`,
+        whr = `emp_id = '${data.emp_id}' AND entry_dt = '${entry_date}'`,
         order = null;
         var fetch_emp_logged_dt = await db_Select(select,table_name,whr,order);
     
