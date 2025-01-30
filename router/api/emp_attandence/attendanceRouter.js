@@ -21,7 +21,7 @@ dateFormat = require('dateformat');
 
         // let entry_date = dateFormat(new Date(), "yyyy-mm-dd");
 
-        var select = "emp_id,entry_dt,clock_status",
+        var select = "emp_id,date(entry_dt) entry_dt,clock_status",
         table_name = "td_emp_attendance",
         whr = `emp_id = '${data.emp_id}' AND entry_dt = '${entry_date}'`,
         order = null;
