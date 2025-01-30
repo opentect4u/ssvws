@@ -11,15 +11,15 @@ dateFormat = require('dateformat');
         var data = req.body;
         console.log(data,'lo');
 
-        let now = new Date();
-        let year = now.getFullYear();
-        let month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        let day = String(now.getDate()).padStart(2, '0');
+        // let now = new Date();
+        // let year = now.getFullYear();
+        // let month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        // let day = String(now.getDate()).padStart(2, '0');
 
-        var entry_date = `${year}-${month}-${day}`; // Format YYYY-MM-DD
-        console.log("Formatted entry_date:", entry_date);
+        // var entry_date = `${year}-${month}-${day}`; // Format YYYY-MM-DD
+        // console.log("Formatted entry_date:", entry_date);
 
-        // let entry_date = dateFormat(new Date(), "yyyy-mm-dd");
+        let entry_date = dateFormat(new Date(), "yyyy-mm-dd");
 
         var select = "emp_id,date(entry_dt) entry_dt,clock_status",
         table_name = "td_emp_attendance",
