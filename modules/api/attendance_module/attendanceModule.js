@@ -8,29 +8,39 @@ module.exports = {
             try {
                   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-                  var select = "start_time",
-                  table_name = "md_check_in_out",
-                  whr = null,
+                  var select = "emp_id,entry_dt,in_date_time,clock_status",
+                  table_name = "td_emp_attendance",
+                  whr = `entry_dt = '${datetime}' AND emp_id = '${data.emp_id}' AND clock_status = 'I'`,
                   order = null;
-                  var get_start_time = await db_Select(select,table_name,whr,order);
+                  var fetch_atten_dtls = await db_Select(select,table_name,whr,order);
 
-                  if(get_start_time.suc > 0 && get_start_time.msg.length > 0){
-                     var start_time_dt = get_start_time.msg[0].start_time
-                    //  console.log(start_time_dt,'dt');
-                     
-                    var table_name = "td_emp_attendance",
-                    fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,late_in,created_by,created_at)',
-                    values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time == start_time_dt ? '' : 'L'}','${data.created_by}','${datetime}')`,
+                  if(fetch_atten_dtls.suc > 0 && fetch_atten_dtls.msg.length > 0){
+                    var select = "start_time",
+                    table_name = "md_check_in_out",
                     whr = null,
-                    flag = 0;
-                    var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
+                    order = null;
+                    var get_start_time = await db_Select(select,table_name,whr,order);
+  
+                    if(get_start_time.suc > 0 && get_start_time.msg.length > 0){
+                       var start_time_dt = get_start_time.msg[0].start_time
+                      //  console.log(start_time_dt,'dt');
+                       
+                      var table_name = "td_emp_attendance",
+                      fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,late_in,created_by,created_at)',
+                      values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time == start_time_dt ? '' : 'L'}','${data.created_by}','${datetime}')`,
+                      whr = null,
+                      flag = 0;
+                      var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
+                    }
+                  //   console.log(attendance_data,'dt');
+                    
+                    resolve({"suc" : 1, "msg": "Attendance data saved successfully", attendance_data});
+                  }else {
+                    resolve({"suc" : 0, "msg": "You are already Clocked IN", attendance_data});
                   }
-                //   console.log(attendance_data,'dt');
-                  
-                  resolve({"suc" : 1, "msg": "Attendance data saved successfully", attendance_data});
-                }catch(error){
-                    reject({"suc": 0, "msg": "Error occurred during saving attendance details", details: error });
-                }   
+                  }catch(error){
+                      reject({"suc": 0, "msg": "Error occurred during saving attendance details", details: error });
+                  }  
         });
     },
 
