@@ -27,9 +27,9 @@ dateFormat = require('dateformat');
         order = null;
         var fetch_emp_logged_dt = await db_Select(select,table_name,whr,order);
     
-        res.send(fetch_emp_logged_dt);
+        res.send({suc: 1, msg:"Already clocked In", fetch_emp_logged_dt});
     }catch (error){
-        res.send(error);
+        res.send({suc: 0, msg: "NO data found", error});
     }
    
    });
