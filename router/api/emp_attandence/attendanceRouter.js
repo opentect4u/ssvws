@@ -12,9 +12,10 @@ dateFormat = require('dateformat');
         console.log(data,'lo');
         
         // Get the local date in YYYY-MM-DD format
-        var year = date.getFullYear();
-        var month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        var day = String(date.getDate()).padStart(2, '0');
+        let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+        var year = datetime.getFullYear();
+        var month = String(datetime.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        var day = String(datetime.getDate()).padStart(2, '0');
 
         var entry_date = `${year}-${month}-${day}`;
         console.log(entry_date);
