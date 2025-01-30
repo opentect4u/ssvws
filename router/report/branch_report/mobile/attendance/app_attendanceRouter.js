@@ -19,7 +19,7 @@ app_attendanceRouter.post("/attendance_report", async (req, res) => {
         var select = "a.sl_no,a.entry_dt,a.in_date_time,a.in_addr,a.out_date_time,a.out_addr,a.attan_status,a.clock_status,a.attn_reject_remarks,a.late_in,b.emp_name",
         table_name = "td_emp_attendance a, md_employee b",
         // whr = `a.emp_id = b.emp_id AND date(a.in_date_time) BETWEEN '${get_first_day}' AND '${get_last_day}' AND b.emp_id = '${data.emp_id}'`,
-        whr = `a.emp_id = b.emp_id AND a.entry_dt = '${data.entry_dt}' AND a.attan_status != 'R' AND b.emp_id = '${data.emp_id}'`,
+        whr = `a.emp_id = b.emp_id AND a.entry_dt = '${data.entry_dt}' AND b.emp_id = '${data.emp_id}'`,
         order = null;
         var atten_report_dt = await db_Select(select,table_name,whr,order);
       
