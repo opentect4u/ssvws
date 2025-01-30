@@ -5,6 +5,27 @@ const express = require('express'),
 attendanceRouter = express.Router(),
 dateFormat = require('dateformat');
 
+  //fetch employee already logged in or not
+   attendanceRouter.post("/fetch_emp_logged_dtls", async (req, res) => {
+    try{
+        var data = req.body;
+        console.log(data,'lo');
+        
+        let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+        var select = "emp_id,entry_dt,clock_status",
+        table_name = "td_emp_attendance",
+        whr = `emp_id = '${data.emp_id}' AND entry_dt = '${datetime}'`,
+        order = null;
+        var fetch_emp_logged_dt = await db_Select(select,table_name,whr,order);
+    
+        res.send(fetch_emp_logged_dt);
+    }catch (error){
+        res.send(error);
+    }
+   
+   });
+
 //save in attendance
 attendanceRouter.post("/save_in_attendance", async (req, res) => {
     var data = req.body, save_attendance_data;
