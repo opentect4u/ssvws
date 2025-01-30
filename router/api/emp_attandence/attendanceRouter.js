@@ -10,15 +10,14 @@ dateFormat = require('dateformat');
     try{
         var data = req.body;
         console.log(data,'lo');
-        
-        // Get the local date in YYYY-MM-DD format
-        let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-        var year = datetime.getFullYear();
-        var month = String(datetime.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-        var day = String(datetime.getDate()).padStart(2, '0');
 
-        var entry_date = `${year}-${month}-${day}`;
-        console.log(entry_date);
+        let now = new Date();
+        let year = now.getFullYear();
+        let month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+        let day = String(now.getDate()).padStart(2, '0');
+
+        var entry_date = `${year}-${month}-${day}`; // Format YYYY-MM-DD
+        console.log("Formatted entry_date:", entry_date);
 
         // let entry_date = dateFormat(new Date(), "yyyy-mm-dd");
 
