@@ -406,8 +406,8 @@ masterRouter.get("/get_bank", async (req, res) => {
     res.send(bank_dt) 
    });   
 
-   masterRouter.get("/get_designation", async (req, res) => {
-    var data = req.query;
+   masterRouter.post("/get_designation", async (req, res) => {
+    var data = req.body;
    
     //get designation details
     var select = "*",
