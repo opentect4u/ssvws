@@ -37,7 +37,7 @@ attendancewebRouter.post("/show_per_emp_detls_per_brn", async (req, res) => {
 
     var select = "emp_id, COUNT(*) tot_late_in",
     table_name = "td_emp_attendance",
-    whr = `TIME(in_date_time) > (SELECT start_time FROM md_check_in_out) AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND emp_id = '${data.emp_id}'  AND attan_status != 'R'`,
+    whr = `TIME(in_date_time) > (SELECT start_time FROM md_check_in_out) AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''}  AND attan_status != 'R'`,
     order = `GROUP BY emp_id`;
     var emp_details_late_in = await db_Select(select,table_name,whr,order);
     
