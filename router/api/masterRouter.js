@@ -406,4 +406,16 @@ masterRouter.get("/get_bank", async (req, res) => {
     res.send(bank_dt) 
    });   
 
+   masterRouter.get("/get_designation", async (req, res) => {
+    var data = req.query;
+   
+    //get designation details
+    var select = "*",
+    table_name = "md_designation",
+    whr = null,
+    order = null;
+    var desig_dt = await db_Select(select,table_name,whr,order);
+   res.send(desig_dt) 
+   });
+
 module.exports = {masterRouter}
