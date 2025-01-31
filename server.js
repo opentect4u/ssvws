@@ -89,6 +89,7 @@ const { attendanceRouter } = require("./router/api/emp_attandence/attendanceRout
 const { app_attendanceRouter } = require("./router/report/branch_report/mobile/attendance/app_attendanceRouter");
 const { attenAdminRouter } = require("./router/report/branch_report/admin_web/attendance/attenAdminRouter");
 const { attendancewebRouter } = require("./router/report/branch_report/web/attendancewebRouter");
+const { loan_closeRouter } = require("./router/report/branch_report/web/loan_close_reportRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -113,6 +114,7 @@ app.use(dmd_vs_collRouter)
 app.use(attendanceRouter)
 app.use(app_attendanceRouter)
 app.use(attendancewebRouter)
+app.use(loan_closeRouter)
 app.use('/admin', adminRouter)
 app.use('/adminreport', loan_transAdminRouter)
 app.use('/adminreport', loan_statementAdminRouter)
