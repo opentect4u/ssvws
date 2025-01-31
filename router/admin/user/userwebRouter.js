@@ -25,7 +25,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
     //fetch employee details
     try {
-        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name";
+        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation";
         table_name = "md_user a, md_employee b";
         whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.emp_id = '${data.emp_id}'`,
         order = null;
