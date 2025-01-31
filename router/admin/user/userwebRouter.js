@@ -41,7 +41,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
             });
         }
 
-            var select1 = "a.branch_id, a.emp_name, b.branch_name";
+            var select1 = "a.branch_id, a.emp_name, b.branch_name,b.designation";
             table_name1 = "md_employee a, md_branch b";
             whr1 = `a.branch_id = b.branch_code AND a.emp_id = '${data.emp_id}'`,
             order1 = null;
