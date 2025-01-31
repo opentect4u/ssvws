@@ -43,7 +43,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
             var select1 = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
             table_name1 = "md_employee a, md_branch b, md_designation c";
-            whr1 = `a.branch_id = b.branch_code AND a.designation = b.desig_code AND a.emp_id = '${data.emp_id}'`,
+            whr1 = `a.branch_id = b.branch_code AND a.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
             order1 = null;
             var fetch_emp_dt = await db_Select(select1, table_name1, whr1, order1);
             if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
