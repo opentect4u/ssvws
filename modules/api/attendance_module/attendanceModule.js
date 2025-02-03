@@ -22,7 +22,7 @@ module.exports = {
                        
                       var table_name = "td_emp_attendance",
                       fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,late_in,created_by,created_at)',
-                      values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time >= start_time_dt ? NULL : 'L'}','${data.created_by}','${datetime}')`,
+                      values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}','${data.in_date_time >= start_time_dt ? "NULL" : "'L'"}','${data.created_by}','${datetime}')`,
                       whr = null,
                       flag = 0;
                       var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
