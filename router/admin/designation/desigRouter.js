@@ -1,3 +1,4 @@
+const { db_Select } = require('../../../model/mysqlModel');
 const { designation_save } = require('../../../modules/admin/designation/desigModule');
 
 const express = require('express'),
@@ -19,5 +20,13 @@ desigRouter.post("/save_designation", async (req, res) => {
 
 desigRouter.get("/show_all_designation", async (req, res) => {
     var data = req.query;
+
+    var select = "desig_code, desig_type",
+    table_name = "md_designation",
+    whr = null,
+    order = null;
+    var desig_dt = await db_Select(select, table_name,whr,order);
+    
+    res.send(desig_dt)
 })
 module.exports = {desigRouter}
