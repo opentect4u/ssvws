@@ -4,6 +4,8 @@ module.exports = {
     designation_save: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log(data,'dadadaddada');
+                
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             
             //save designation details in md_designation table
