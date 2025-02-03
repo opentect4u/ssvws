@@ -5,6 +5,8 @@ module.exports = {
   //save in attendance
     save_attendance_in: (data) => {
         return new Promise(async (resolve, reject) => {
+          console.log(data);
+          
             try {
                 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
