@@ -9,7 +9,7 @@ dateFormat = require('dateformat');
    attendanceRouter.post("/fetch_emp_logged_dtls", async (req, res) => {
     try{
         var data = req.body;
-        console.log(data,'lo');
+        // console.log(data,'lo');
 
         // let now = new Date();
         // let year = now.getFullYear();
