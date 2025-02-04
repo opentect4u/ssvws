@@ -381,7 +381,7 @@ fetchRouter.post("/search_group_web", async (req, res) => {
     //search group in web 
     var select = "group_code,group_name,group_type",
     table_name = "md_group",
-    whr = `group_name like '%${data.group_name}%'`,
+    whr = `branch_code = '${data.branch_code}' AND group_name like '%${data.group_name}%'`,
     order = null;
     var search_group_web = await db_Select(select,table_name,whr,order);
 
