@@ -394,7 +394,7 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     //fetch search group details in web
     var select = "a.*, b.block_name,c.emp_name",
     table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id",
-    whr = `a.group_code = '${data.group_code}'`,
+    whr = `a.group_code = '${data.group_code}' AND a.branch_code = '${data.branch_code}'`,
     order = null;
     var fetch_search_group_web = await db_Select(select,table_name,whr,order);
 
