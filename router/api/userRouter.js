@@ -28,7 +28,7 @@ userRouter.post('/logins_app', async (req, res) => {
     var log_dt;
 
    
-       if(userType == '1' && userType == '2' && userType == '5'){
+       if(userType == '1' || userType == '2' || userType == '5'){
           //login app
           var log_dt = await app_login_data(data);
           console.log(log_dt,'log');
