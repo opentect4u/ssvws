@@ -15,14 +15,16 @@ userRouter.post("/fetch_emp_type", async (req, res) => {
     order = null;
     var fetch_emp_type = await db_Select(select,table_name,whr,order);
   
-    res.send(fetch_emp_type)
+    if(fetch_emp_type.suc > 0 && fetch_emp_type.msg.length > 0){
+      res.send(fetch_emp_type)
+    }else {
+      res.send({ suc: 0, msg: "No data found", fetch_emp_type })
+    }
   }catch (error) {
-    console.error("Login Error:", error);
-    return res.send({ suc: 0, msg: "No data found", error: error.message });
-
+    console.error(error);
+    return res.send({ suc: 0, msg: "Internal Server error", error: error.message });
   }
- 
-})
+});
 
 userRouter.post('/login_app', async (req, res) => {
     var data = req.body,
