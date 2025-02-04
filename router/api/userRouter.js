@@ -36,7 +36,7 @@ userRouter.post('/logins_app', async (req, res) => {
           // console.log(log_dt);
        }else {
           var log_dt = await superadmin_login_data(data);
-          console.log(logs);
+          console.log(log_dt,'logs');
           
        }
    
