@@ -15,21 +15,29 @@ userRouter.post('/logins_app', async (req, res) => {
     whr = null,
     order = null;
     var user_type_dt = await db_Select(select,table_name,whr,order);
+    console.log(user_type_dt);
+    
 
     if (user_type_dt.suc > 0 || user_type_dt.msg.length > 0) {
       return res.send({ suc: 0, msg: "Invalid User Type" });
     }
 
     var userType = user_type_dt.msg[0].type_code;
+    console.log(userType,'usertype');
+    
     var log_dt;
 
    
        if(userType == '1' && userType == '2' && userType == '5'){
           //login app
           var log_dt = await app_login_data(data);
+          console.log(log_dt,'log');
+          
           // console.log(log_dt);
        }else {
           var log_dt = await superadmin_login_data(data);
+          console.log(logs);
+          
        }
    
     if (log_dt.suc > 0) {
