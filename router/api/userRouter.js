@@ -18,7 +18,7 @@ userRouter.post("/fetch_emp_type", async (req, res) => {
     if(fetch_emp_type.suc > 0 && fetch_emp_type.msg.length > 0){
       res.send(fetch_emp_type)
     }else {
-      res.send({ suc: 0, msg: "No data found", fetch_emp_type })
+      res.send({ suc: 0, msg: "No data found"})
     }
   }catch (error) {
     console.error(error);
