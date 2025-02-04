@@ -28,22 +28,6 @@ module.exports = {
         });
 },
 
-superadmin_login_data : (data) => {
-  return new Promise(async (resolve, reject) => {
-    var select = "a.emp_id, a.user_type id, a.password, b.user_type, c.emp_name, c.phone_home, c.phone_mobile, c.email, c.gender, c.active_flag, c.area_code, d.branch_name, d.dist_code",
-    table_name = "md_user a, md_user_type b,  md_employee c, md_branch d",
-    whr = `a.emp_id=c.emp_id
-    AND a.user_type=b.type_code
-    AND a.emp_id = '${data.emp_id}'
-    AND c.branch_id = '${data.branch_id}'
-    AND c.branch_id = d.branch_code
-    AND a.user_status = 'A'`
-    order = null;
-  var super_login_dt = await db_Select(select, table_name, whr, order);
-  resolve(super_login_dt);
-  });
-},
-
 // bm_login_data : (data) => {
 //   return new Promise(async (resolve, reject) => {
 
