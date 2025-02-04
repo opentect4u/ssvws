@@ -5,16 +5,23 @@ const { app_login_data, bm_login_data, superadmin_login_data } = require('../../
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
 
 userRouter.post("/fetch_emp_type", async (req, res) => {
-  var data = req.body;
+  try{
+    var data = req.body;
 
-  var select = "a.user_type id,b.user_type",
-  table_name = "md_user a, md_user_type b",
-  whr = `a.user_type = b.type_code
-  AND a.emp_id = '${data.emp_id}'`,
-  order = null;
-  var fetch_emp_type = await db_Select(select,table_name,whr,order);
+    var select = "a.user_type id,b.user_type",
+    table_name = "md_user a, md_user_type b",
+    whr = `a.user_type = b.type_code
+    AND a.emp_id = '${data.emp_id}'`,
+    order = null;
+    var fetch_emp_type = await db_Select(select,table_name,whr,order);
+  
+    res.send(fetch_emp_type)
+  }catch (error) {
+    console.error("Login Error:", error);
+    return res.send({ suc: 0, msg: "No data found", error: error.message });
 
-  res.send(fetch_emp_type)
+  }
+ 
 })
 
 userRouter.post('/login_app', async (req, res) => {
