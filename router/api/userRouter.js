@@ -18,7 +18,7 @@ userRouter.post('/logins_app', async (req, res) => {
     console.log(user_type_dt);
     
 
-    if (user_type_dt.suc > 0 || user_type_dt.msg.length > 0) {
+    if (user_type_dt.suc <= 0 || user_type_dt.msg.length === 0) {
       return res.send({ suc: 0, msg: "Invalid User Type" });
     }
 
