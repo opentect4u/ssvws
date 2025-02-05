@@ -51,10 +51,18 @@ edit_user_dt : (data) => {
                 whr = `emp_id = '${data.emp_id}' AND brn_code = '${data.branch_code}'`,
                 flag = 1;
             
-            var edit_dtls_user = await db_Insert(table_name, fields, values, whr, flag);
+                var edit_dtls_user = await db_Insert(table_name, fields, values, whr, flag);
+
+                var table_name = "md_employee",
+                fields = `designation = '${data.designation}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                values = null,
+                whr = `emp_id = '${data.emp_id}' AND branch_id = '${data.branch_code}'`,
+                flag = 1;
+
+                var edit_user_dtls = await db_Insert(table_name,fields,values,whr,flag);
             
 
-                resolve({"suc": 1, "msg": edit_dtls_user})
+                resolve({"suc": 1, "msg": edit_user_dtls})
 
             }catch (error){
                 reject({"suc": 2, "msg": "Error occurred during saving user details", details: error });
