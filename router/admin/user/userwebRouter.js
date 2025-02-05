@@ -86,7 +86,7 @@ userwebRouter.post("/fetch_user_details", async (req, res) => {
     whr = `a.brn_code = b.branch_id
     AND a.brn_code = c.branch_code
     AND a.emp_id = b.emp_id
-    AND a.designation = d.desig_code`,
+    AND b.designation = d.desig_code`,
     order = null;
     var fetch_user = await db_Select(select,table_name,whr,order);
 
