@@ -27,7 +27,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
     try {
         var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type,d.branch_assign_id";
         table_name = "md_user a, md_employee b, md_designation c, td_assign_branch_user d";
-        whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND b.designation = c.desig_code AND a.user_type = d.user_type AND a.emp_id = d.emp_id AND a.emp_id = '${data.emp_id}'`,
+        whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND b.designation = c.desig_code AND a.user_type = d.user_type AND a.emp_id = d.ho_user_id AND a.emp_id = '${data.emp_id}'`,
         order = null;
         var user_dt = await db_Select(select, table_name, whr, order);
 
