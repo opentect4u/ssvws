@@ -40,11 +40,11 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
           });
       }
 
-            var select = "a.branch_assign_id code,b.branch_name name",
-            table_name = "td_assign_branch_user a, md_branch b",
-            whr = `a.branch_assign_id = b.branch_code`,
-            order = null;
-            var user_dtls = await db_Select(select,table_name,whr,order);
+            // var select = "a.branch_assign_id code,b.branch_name name",
+            // table_name = "td_assign_branch_user a, md_branch b",
+            // whr = `a.branch_assign_id = b.branch_code`,
+            // order = null;
+            // var user_dtls = await db_Select(select,table_name,whr,order);
         
 
             var select = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
@@ -57,7 +57,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
                 return res.send({
                     suc: 1,
                     msg: fetch_emp_dt.msg,
-                    user_dtls: user_dtls.msg
+                    // user_dtls: user_dtls.msg
                 });
             } else {
                 // If no details found in 'md_employee'
@@ -96,6 +96,16 @@ userwebRouter.post("/fetch_user_details", async (req, res) => {
     AND b.designation = d.desig_code`,
     order = null;
     var fetch_user = await db_Select(select,table_name,whr,order);
+
+    if(fetch_user.suc > 0 && fetch_user.msg.length > 0){
+       var select = "a.branch_assign_id code,b.branch_name name",
+       table_name = "td_assign_branch_user a, md_branch b",
+       whr = `a.branch_assign_id = b.branch_code`,
+       order = null;
+       var user_dtls = await db_Select(select,table_name,whr,order);
+
+       fetch_user['brn_assign_dt'] = user_dtls.suc > 0 ? (user_dtls.msg.length > 0 ? user_dtls.msg : []) : [];
+    }
 
     res.send(fetch_user)
 });
