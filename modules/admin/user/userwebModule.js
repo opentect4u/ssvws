@@ -7,6 +7,8 @@ module.exports = {
 
             //SAVE USER DETAILS
             try {
+                console.log(data,'lolo');
+                
                 var table_name = "md_user",
                 fields = `(emp_id,brn_code,user_type,password,user_status,created_by,created_at)`,
                 values = `('${data.emp_id}','${data.brn_code}','${data.user_type}','$2b$10$GKfgEjJu9WuKkOUWzg28VOMWS6E214C3K.VizYE2Z3UXGTe/UaCEC','A','${data.created_by}','${datetime}')`,
