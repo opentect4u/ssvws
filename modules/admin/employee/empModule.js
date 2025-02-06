@@ -24,7 +24,7 @@ module.exports = {
     emp_details_save: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(data,'data');
+                // console.log(data,'data');
                 
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             emp_code = await emp_id(data.branch_code)
