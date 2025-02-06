@@ -33,7 +33,7 @@ module.exports = {
                             
                             var table_name = "td_assign_branch_user",
                             fields = `(ho_user_id,user_type,branch_assign_id,created_by,created_at)`,
-                            values = `(${data.emp_id},''${data.user_type}',${dt.branch_assign_id}','${data.created_by}','${datetime}')`,
+                            values = `('${data.emp_id}','${data.user_type}','${dt.branch_assign_id}','${data.created_by}','${datetime}')`,
                             whr = null,
                             flag = 0;
                         var assign_dt = await db_Insert(table_name, fields, values, whr, flag);
