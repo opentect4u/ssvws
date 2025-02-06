@@ -25,32 +25,39 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
     //fetch employee details
     try {
-        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type,d.branch_assign_id";
-        table_name = "md_user a, md_employee b, md_designation c, td_assign_branch_user d";
-        whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND b.designation = c.desig_code AND a.user_type = d.user_type AND a.emp_id = d.ho_user_id AND a.emp_id = '${data.emp_id}'`,
+        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type";
+        table_name = "md_user a, md_employee b, md_designation c";
+        whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND b.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
         order = null;
         var user_dt = await db_Select(select, table_name, whr, order);
 
-
         if (user_dt.suc > 0 && Array.isArray(user_dt.msg) && user_dt.msg.length > 0) {
-            // Employee ID already exists in 'md_user'
-            return res.send({
-                suc: 1,
-                msg: user_dt.msg,
-                details: "Employee already exists in md_user"
-            });
-        }
+          // Employee ID already exists in 'md_user'
+          return res.send({
+              suc: 1,
+              msg: user_dt.msg,
+              details: "Employee already exists in md_user"
+          });
+      }
 
-            var select1 = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
-            table_name1 = "md_employee a, md_branch b, md_designation c";
-            whr1 = `a.branch_id = b.branch_code AND a.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
-            order1 = null;
-            var fetch_emp_dt = await db_Select(select1, table_name1, whr1, order1);
+            var select = "a.branch_assign_id code,b.branch_name name",
+            table_name = "td_assign_branch_user a, md_branch b",
+            whr = `a.branch_assign_id = b.branch_code`,
+            order = null;
+            var user_dtls = await db_Select(select,table_name,whr,order);
+        
+
+            var select = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
+            table_name = "md_employee a, md_branch b, md_designation c";
+            whr = `a.branch_id = b.branch_code AND a.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
+            order = null;
+            var fetch_emp_dt = await db_Select(select, table_name, whr, order);
             if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
                 // If employee details found
                 return res.send({
                     suc: 1,
-                    msg: fetch_emp_dt.msg
+                    msg: fetch_emp_dt.msg,
+                    user_dtls: user_dtls.msg
                 });
             } else {
                 // If no details found in 'md_employee'
