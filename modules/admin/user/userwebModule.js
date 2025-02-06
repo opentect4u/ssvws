@@ -30,7 +30,8 @@ module.exports = {
                         console.log(save_dtls_user.msg[0].user_status == '3' || save_dtls_user.msg[0].user_status == '10','loloiuyt');
                         
                         for (let dt of data.assigndtls) {
-
+                            console.log(dt,'kiki');
+                            
                             var table_name = "td_assign_branch_user",
                             fields = `(ho_user_id,branch_assign_id,created_by,created_at)`,
                             values = `(${data.emp_id},'${dt.branch_assign_id}','${data.created_by}','${datetime}')`,
