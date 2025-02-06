@@ -7,7 +7,7 @@ module.exports = {
 
             //SAVE USER DETAILS
             try {
-                console.log(data,'lolo');
+                // console.log(data,'lolo');
                 
                 var table_name = "md_user",
                 fields = `(emp_id,brn_code,user_type,password,user_status,created_by,created_at)`,
@@ -29,11 +29,11 @@ module.exports = {
                     if(data.user_type == '3' || data.user_type == '10'){
                         
                         for (let dt of data.assigndtls) {
-                            console.log(dt,'kiki');
+                            // console.log(dt,'kiki');
                             
                             var table_name = "td_assign_branch_user",
-                            fields = `(ho_user_id,branch_assign_id,created_by,created_at)`,
-                            values = `(${data.emp_id},'${dt.branch_assign_id}','${data.created_by}','${datetime}')`,
+                            fields = `(ho_user_id,user_type,branch_assign_id,created_by,created_at)`,
+                            values = `(${data.emp_id},''${data.user_type}',${dt.branch_assign_id}','${data.created_by}','${datetime}')`,
                             whr = null,
                             flag = 0;
                         var assign_dt = await db_Insert(table_name, fields, values, whr, flag);
