@@ -1,4 +1,4 @@
-const { db_Insert, db_Select } = require("../../../model/mysqlModel");
+const { db_Insert, db_Select, db_Delete } = require("../../../model/mysqlModel");
 
 module.exports = {
     save_user_dtls: (data) => {
@@ -102,6 +102,7 @@ edit_user_dt : (data) => {
             
                 var edit_dtls_user = await db_Insert(table_name, fields, values, whr, flag);
 
+                if(edit_dtls_user.suc > 0 && edit_dtls_user.msg.length > 0){
                 var table_name = "md_employee",
                 fields = `designation = '${data.designation}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                 values = null,
@@ -110,13 +111,45 @@ edit_user_dt : (data) => {
 
                 var edit_user_dtls = await db_Insert(table_name,fields,values,whr,flag);
             
+                if (data.user_type == '3' || data.user_type == '10') {
+                    // Get the currently assigned branches for the user
 
-                resolve({"suc": 1, "msg": edit_user_dtls})
+                    var select = "branch_assign_id";
+                    var table_name = "td_assign_branch_user";
+                    var whr = `ho_user_id = '${data.emp_id}'`;
+                    var assign_brn = await db_Select(select, table_name, whr, null);
 
-            }catch (error){
-                reject({"suc": 2, "msg": "Error occurred during saving user details", details: error });
-                
+                    let existing_brn_dt = assign_brn.msg.map(row => row.branch_assign_id);
+                    let new_brn_id = data.assigndtls.map(dt => dt.branch_assign_id);
+
+                    // Find branches to DELETE (unselected by user)
+                    let brn_del = existing_brn_dt.filter(id => !new_brn_id.includes(id));
+
+                    if (brn_del.length > 0) {
+                        let delete_brn = await db_Delete('td_assign_branch_user', `ho_user_id = '${data.emp_id}' AND branch_assign_id IN (${brn_del.map(id => `'${id}'`).join(",")})`)
+                    }
+
+                    // Find branches to INSERT (newly selected by user)
+                    let brn_add = data.assigndtls.filter(dt => !existing_brn_dt.includes(dt.branch_assign_id));
+
+                    for (let dt of brn_add) {
+                        var table_name = "td_assign_branch_user",
+                            fields = `(ho_user_id,user_type,branch_assign_id,created_by,created_at)`,
+                            values = `('${data.emp_id}','${data.user_type}','${dt.branch_assign_id}','${data.created_by}','${datetime}')`,
+                            whr = null,
+                            flag = 0;
+
+                        await db_Insert(table_name, fields, values, whr, flag);
+                    }
+                }
+
+                resolve({ "suc": 1, "msg": "User details updated successfully" });
+            } else {
+                reject({ "suc": 2, "msg": "Failed to update user details" });
             }
+        } catch (error) {
+            reject({ "suc": 2, "msg": "Error occurred during saving user details", details: error });
+        }
     });
 },
 
