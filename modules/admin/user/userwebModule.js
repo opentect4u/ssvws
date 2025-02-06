@@ -39,7 +39,7 @@ module.exports = {
                     }
                 }
 
-                resolve({"suc": 1, "msg": "Branch details assigned successfully."})
+                resolve({"suc": 1, "msg": "Branch details assigned successfully.", assign_dt})
 
             }catch (error){
                 reject({"suc": 2, "msg": "Error occurred during saving user details", details: error });
