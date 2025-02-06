@@ -26,6 +26,27 @@ userRouter.post("/fetch_emp_type", async (req, res) => {
   }
 });
 
+userRouter.post("/fetch_brn_assign", async (req, res) => {
+  try{
+    var data = req.body;
+
+    var select = "a.branch_assign_id code,b.branch_name name",
+    table_name = "td_assign_branch_user a, md_branch b",
+    whr = `a.branch_assign_id = b.branch_code AND a.ho_user_id = '${data.emp_id}'`,
+    order = null;
+    var fetch_brn = await db_Select(select,table_name,whr,order);
+  
+    if(fetch_brn.suc > 0 && fetch_brn.msg.length > 0){
+      res.send(fetch_brn)
+    }else {
+      res.send({ suc: 0, msg: "No data found"})
+    }
+  }catch (error) {
+    console.error(error);
+    return res.send({ suc: 0, msg: "Internal Server error", error: error.message });
+  }
+});
+
 userRouter.post('/login_app', async (req, res) => {
     var data = req.body,
         result;
