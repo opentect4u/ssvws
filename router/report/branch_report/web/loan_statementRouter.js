@@ -51,7 +51,7 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
     table_name = `(
         select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,a.tr_type tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.od_balance +a.intt_balance) total,b.curr_roi,b.period,b.period_mode,b.tot_emi
         from td_loan_transactions a,td_loan b  
-        where a.branch_id = '${data.branch_id}' AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
+        where a.branch_id = '${data.branch_code}' AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
         AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
         GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.curr_roi,b.period,b.period_mode,b.tot_emi
         ORDER BY a.payment_date,a.payment_id)a`,
