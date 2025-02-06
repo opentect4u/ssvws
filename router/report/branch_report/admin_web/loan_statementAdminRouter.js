@@ -10,7 +10,7 @@ loan_statementAdminRouter.post("/loan_statement_memb_dtls_admin", async (req, re
     //FETCH MEMBER DETAILS
     var select = "a.branch_code,a.member_code,b.group_code,a.client_name,b.loan_id,c.branch_name,d.group_name",
     table_name = "md_member a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.branch_code = d.branch_code AND b.group_code = d.group_code",
-    whr = `a.member_code like '%${data.memb}%' OR a.client_name like '%${data.memb}%'`,
+    whr = `a.branch_code = '${data.branch_code}' AND (a.member_code like '%${data.memb}%' OR a.client_name like '%${data.memb}%')`,
     order = null;
     var member_dt = await db_Select(select,table_name,whr,order);
 
@@ -23,7 +23,7 @@ loan_statementAdminRouter.post("/loan_statement_report_admin", async (req, res) 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
     var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,a.balance prn_bal,a.od_balance,a.intt_balance intt_bal,(a.balance + a.intt_balance) total,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
     table_name = "td_loan_transactions a, td_loan b",
-    whr = `a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
+    whr = `a.branch_id = '${data.branch_id}' AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
     order = `ORDER BY date(a.payment_date),a.payment_id`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
