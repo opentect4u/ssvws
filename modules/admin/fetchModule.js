@@ -11,7 +11,7 @@ module.exports = {
             var table_name = "md_group",
             fields = data.group_code > 0 ? `group_name = '${data.group_name}', group_type = '${data.group_type}',
              phone1 = '${data.phone1 == '' ? 0 : data.phone1}', phone2 = '${data.phone2 == '' ? 0 : data.phone2}', email_id = '${data.email_id}', grp_addr = '${data.grp_addr}',
-             disctrict = '${data.district}', block = ${data.block == '' ? 'NULL' : `'${data.block}'`}, pin_no = '${data.pin_no}', bank_name =  '${data.bank_name}', branch_name = '${data.branch_name}',
+             disctrict = '${data.district}', block = '${data.block == '' ? 0 : data.block}, pin_no = '${data.pin_no}', bank_name =  '${data.bank_name}', branch_name = '${data.branch_name}',
               ifsc =  '${data.ifsc}', micr = '${data.micr}', acc_no1 = '${data.acc_no1 == '' ? 0 : data.acc_no1}', acc_no2 = '${data.acc_no2 == '' ? 0 : data.acc_no2}',
             modified_by = '${data.modified_by}', modified_at =  '${datetime}'` : `(group_code, branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, bank_name, branch_name, ifsc, micr, acc_no1, acc_no2, open_close_flag, grp_open_dt, approval_status, created_by, created_at)`,
             values = `('${group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1 == '' ? 0 : data.phone1}', '${data.phone2 == '' ? 0 : data.phone2}',
