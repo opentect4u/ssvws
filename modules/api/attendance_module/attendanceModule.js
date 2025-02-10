@@ -17,12 +17,15 @@ module.exports = {
                     var get_start_time = await db_Select(select,table_name,whr,order);
   
                     if(get_start_time.suc > 0 && get_start_time.msg.length > 0){
-                       var start_time_dt = get_start_time.msg[0].start_time
+                       var start_time_dt = get_start_time.msg[0].start_time;
                       //  console.log(start_time_dt,'dt');
-                       
+
+
+                      let clock_in_time = data.in_date_time.split(" ")[1];
+
                       var table_name = "td_emp_attendance",
                       fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,late_in,created_by,created_at)',
-                      values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}',${data.in_date_time <= start_time_dt ? "NULL" : "'L'"},'${data.created_by}','${datetime}')`,
+                      values = `('${data.emp_id}','${datetime}','${data.in_date_time}','${data.in_lat}','${data.in_long}','${data.in_addr.split("'").join("\\'")}',${clock_in_time <= start_time_dt ? "NULL" : "'L'"},'${data.created_by}','${datetime}')`,
                       whr = null,
                       flag = 0;
                       var attendance_data = await db_Insert(table_name, fields, values, whr, flag);
