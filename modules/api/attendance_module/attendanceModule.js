@@ -48,20 +48,27 @@ module.exports = {
               
                   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-                  var select = "end_time",
+                  var select = "start_time,end_time",
                   table_name = "md_check_in_out",
                   whr = null,
                   order = null;
-                  var get_end_time = await db_Select(select,table_name,whr,order);
+                  var get_time = await db_Select(select,table_name,whr,order);
 
-                  if(get_end_time.suc > 0 && get_end_time.msg.length > 0){
-                    var end_time_dt = get_end_time.msg[0].end_time
+                  if(get_time.suc > 0 && get_time.msg.length > 0){
+                    var start_time_dt = get_time.msg[0].start_time;
+                    var end_time_dt = get_time.msg[0].end_time
                     //  console.log(end_time_dt,'dts');
 
-                    var clock_out_time = data.out_date_time.split(" ")[1]; 
+                    var clock_in_time = data.in_date_time.split(" ")[1]; 
+                    var clock_out_time = data.out_date_time.split(" ")[1];
+
+                    let late_status = "NULL";
+                    if (clock_in_time > start_time_dt) {
+                        late_status = clock_out_time >= end_time_dt ? "NULL" : "'L'";
+                    }
 
                     var table_name = "td_emp_attendance",
-                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O', late_in = ${clock_out_time >= end_time_dt ? "NULL" : "'E'"}, modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
+                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O', late_in = ${late_status}, modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
                     values = null,
                     whr = `emp_id = '${data.emp_id}' AND in_date_time = '${data.in_date_time}'`,
                     flag = 1;
