@@ -55,6 +55,7 @@ module.exports = {
                   var get_time = await db_Select(select,table_name,whr,order);
 
                   if(get_time.suc > 0 && get_time.msg.length > 0){
+
                     var start_time_dt = get_time.msg[0].start_time;
                     var end_time_dt = get_time.msg[0].end_time
                     //  console.log(end_time_dt,'dts');
@@ -63,9 +64,18 @@ module.exports = {
                     var clock_out_time = data.out_date_time.split(" ")[1];
 
                     let late_status = "NULL";
-                    if (clock_in_time > start_time_dt) {
-                        late_status = clock_out_time >= end_time_dt ? "NULL" : "'L'";
-                    }
+
+                     if (clock_in_time > start_time_dt) {
+                       late_status = "'L'"; 
+                     }
+
+                     if (clock_out_time < end_time_dt) {
+                      late_status = "'E'"; 
+                     }
+
+                     if (clock_in_time > start_time_dt && clock_out_time >= end_time_dt) {
+                      late_status = "'L'";
+                     }
 
                     var table_name = "td_emp_attendance",
                     fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O', late_in = ${late_status}, modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
