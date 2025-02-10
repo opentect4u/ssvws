@@ -21,7 +21,7 @@ module.exports = {
                       //  console.log(start_time_dt,'dt');
 
 
-                      let clock_in_time = data.in_date_time.split(" ")[1];
+                      var clock_in_time = data.in_date_time.split(" ")[1];
 
                       var table_name = "td_emp_attendance",
                       fields = '(emp_id,entry_dt,in_date_time,in_lat,in_long,in_addr,late_in,created_by,created_at)',
@@ -58,8 +58,10 @@ module.exports = {
                     var end_time_dt = get_end_time.msg[0].end_time
                     //  console.log(end_time_dt,'dts');
 
+                    var clock_out_time = data.out_date_time.split(" ")[1]; 
+
                     var table_name = "td_emp_attendance",
-                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O', late_in = ${data.out_date_time >= end_time_dt ? "NULL" : "'E'"}, modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
+                    fields = `out_date_time = '${data.out_date_time}',out_lat = '${data.out_lat}',out_long = '${data.out_long}',out_addr = '${data.out_addr.split("'").join("\\'")}',clock_status = 'O', late_in = ${clock_out_time >= end_time_dt ? "NULL" : "'E'"}, modified_by = '${data.modified_by}',modified_at = '${datetime}'`,
                     values = null,
                     whr = `emp_id = '${data.emp_id}' AND in_date_time = '${data.in_date_time}'`,
                     flag = 1;
