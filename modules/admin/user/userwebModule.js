@@ -26,7 +26,7 @@ module.exports = {
 
                     var edit_user_dtls = await db_Insert(table_name, fields, values, whr, flag);
                     
-                    if(data.user_type == '3' || data.user_type == '10'){
+                    if(data.user_type == '3' || data.user_type == '10' || data.user_type == '11'){
                         
                         for (let dt of data.assigndtls) {
                             // console.log(dt,'kiki');

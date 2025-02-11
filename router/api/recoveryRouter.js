@@ -80,7 +80,7 @@ dateFormat = require('dateformat');
 
 recoveryRouter.post("/search_group_app", async (req, res) => {
     var data = req.body;
-    console.log(data,'grp');
+    // console.log(data,'grp');
     
 
     // var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt,c.status",
