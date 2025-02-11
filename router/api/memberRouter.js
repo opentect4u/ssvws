@@ -16,7 +16,7 @@ memberRouter.post("/search_member", async (req, res) => {
     // whr = `a.branch_code = '${data.branch_code}' 
     // AND a.approval_status = '${data.flag}'
     // AND a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%'`,
-    whr = `a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%'`,
+    whr = `a.branch_code = '${data.branch_code}' AND (a.client_name like '%${data.search}%' OR a.client_mobile like '%${data.search}%' OR a.aadhar_no like '%${data.search}%' OR a.pan_no like '%${data.search}%')`,
     order = null;
     var search_mem = await db_Select(select,table_name,whr,order);
 
