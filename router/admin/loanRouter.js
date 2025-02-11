@@ -34,7 +34,7 @@ loanRouter.post("/scheme_dtls", async (req, res) => {
 loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
     var data = req.body;
 
-    var select = "group_code,group_name,group_type",
+    var select = "group_code,group_name,group_type,bank_name,branch_name,acc_no1,acc_no2,grp_open_dt",
     table_name = "md_group",
     whr = `branch_code = '${data.branch_code}' AND (group_code like '%${data.grp_dt}%' OR group_name like '%${data.grp_dt}%')`,
     order = `GROUP BY group_code, group_name, group_type`;
