@@ -43,7 +43,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
     table_name =
       "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
     whr = `a.branch_code = '${data.branch_code}' AND (a.group_code like '%${data.grp_dt}%' OR a.group_name like '%${data.grp_dt}%')`,
-    order = `GROUP BY a.group_code, a.group_name, a.group_type`;
+    order = `ORDER BY a.group_code, a.group_name, a.group_type`;
   var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
 
   res.send(fetch_appl_dtls);
