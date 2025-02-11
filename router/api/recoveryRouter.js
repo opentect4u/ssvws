@@ -91,7 +91,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     //search group in app
     var select = "a.group_code,a.group_name,a.group_type,SUM(b.prn_amt + b.od_prn_amt) AS total_prn_amt,SUM(b.intt_amt + b.od_intt_amt) AS total_intt_amt",
     table_name = "md_group a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_code = b.group_code",
-    whr = `a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%'`,
+    whr = `a.branch_code = '${data.branch_code}' AND a.group_code like '%${data.grp_dtls}%' OR a.group_name like '%${data.grp_dtls}%'`,
     order = `GROUP BY a.group_code, a.group_name, a.group_type`;
 
 
@@ -106,6 +106,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 table_name = "td_loan a, md_member b",
                 whr = `a.branch_code = b.branch_code 
                 AND a.member_code = b.member_code 
+                AND a.branch_code = '${data.branch_code}'
                 AND a.group_code = ${dt.group_code} AND a.outstanding > 0`,
                 order = null;
 
