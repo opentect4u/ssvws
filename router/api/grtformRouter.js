@@ -240,11 +240,11 @@ grtformRouter.post("/search_co", async (req, res) => {
     //search via co
     var select = "a.emp_id,a.emp_name,a.guardian_name,a.addr,a.pin_code",
     table_name = "md_employee a LEFT JOIN md_user b ON a.branch_id = b.brn_code AND a.emp_id = b.emp_id",
-    whr = `a.emp_id like '%${data.co_search}%' OR a.emp_name like '%${data.co_search}%'`,
+    whr = `a.branch_id = '${data.branch_code}' AND (a.emp_id like '%${data.co_search}%' OR a.emp_name like '%${data.co_search}%')`,
     order = null;
-    var search_co = await db_Select(select,table_name,whr,order);
+    var search_co_dt = await db_Select(select,table_name,whr,order);
 
-res.send(search_co)
+res.send(search_co_dt)
 });
 
 grtformRouter.post("/get_form_against_co", async (req, res) => {
