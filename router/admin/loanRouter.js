@@ -46,6 +46,20 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
     order = `ORDER BY a.group_code, a.group_name, a.group_type`;
   var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
 
+  if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
+    var select =
+        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt",
+      table_name =
+        "md_member a JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON b.form_no = c.form_no",
+      whr = `a.branch_code = '${data.branch_code}'
+    AND b.prov_grp_code = '${fetch_appl_dtls.msg[0].group_code}'`,
+      order = null;
+    var grp_mem_dt = await db_Select(select, table_name, whr, order);
+
+    fetch_appl_dtls.msg[0]["mem_dt_grp"] =
+      grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
+  }
+
   res.send(fetch_appl_dtls);
 });
 
