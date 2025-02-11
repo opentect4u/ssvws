@@ -48,9 +48,9 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
     var select =
-        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt",
+        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,c.sub_pupose,d.purpose_id,e.sub_purp_name",
       table_name =
-        "md_member a JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON b.form_no = c.form_no",
+        "md_member a JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN md_sub_purpose e ON c.sub_pupose = e.sub_purp_id",
       whr = `a.branch_code = '${data.branch_code}'
     AND b.prov_grp_code = '${fetch_appl_dtls.msg[0].group_code}'`,
       order = null;
