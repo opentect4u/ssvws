@@ -143,12 +143,21 @@ userwebRouter.post("/user_profile_details", async (req, res) => {
     var data = req.body;
 
     //fetch user profile details
-    var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,c.user_type type_name, d.branch_name",
-    table_name = "md_user a, md_employee b, md_user_type c, md_branch d",
-    whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.user_type = c.type_code AND a.brn_code = d.branch_code AND a.emp_id = '${data.emp_id}'`,
-    order = null;
-
-    var profile_dtls = await db_Select(select,table_name,whr,order);
+    if(data.id == '3' || data.id == '10' || data.id == '11'){
+      var select = "a.emp_id,a.user_type,b.emp_name,c.user_type type_name,d.branch_name",
+      table_name = "md_user a, md_employee b, md_user_type c, md_branch d, td_assign_branch_user e",
+      whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.user_type = c.type_code AND a.emp_id = e.ho_user_id AND e.branch_assign_id = d.branch_code AND a.emp_id = '${data.emp_id}'`,
+      order = null;
+  
+      var profile_dtls = await db_Select(select,table_name,whr,order);
+    }else {
+      var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,c.user_type type_name, d.branch_name",
+      table_name = "md_user a, md_employee b, md_user_type c, md_branch d",
+      whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND a.user_type = c.type_code AND a.brn_code = d.branch_code AND a.emp_id = '${data.emp_id}'`,
+      order = null;
+  
+      var profile_dtls = await db_Select(select,table_name,whr,order);
+    }
 
     res.send(profile_dtls)
 });
