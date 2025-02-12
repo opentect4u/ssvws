@@ -141,8 +141,8 @@ module.exports = {
                 console.log(payment_id,'pay_id22');
                 
                 var table_name = "td_loan_transactions",
-                fields =`(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,created_by,created_at)`,
-                values = `('${datetime}', '${payment_id}', '${data.branch_code == '' ? 0 : data.branch_code}', '${loan_code}', '${data.particulars.split("'").join("\\'")}', '0', '${dts.prn_disb_amt > 0 ?  dts.prn_disb_amt : 0}', '${data.bank_charge > 0 ? data.bank_charge : 0}', '${data.proc_charge > 0 ? data.proc_charge : 0}', '0', '0', '${dts.prn_disb_amt > 0 ? dts.prn_disb_amt : 0}', '0', '${intt_cal_amt}', 'D', 'B', '${data.bank_name}', '0', '0000-00-00', 'U', '${data.created_by}', '${datetime}')`,
+                fields =`(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,bank_name,cheque_id,status,created_by,created_at)`,
+                values = `('${datetime}', '${payment_id}', '${data.branch_code == '' ? 0 : data.branch_code}', '${loan_code}', '${data.particulars.split("'").join("\\'")}', '0', '${dts.prn_disb_amt > 0 ?  dts.prn_disb_amt : 0}', '${data.bank_charge > 0 ? data.bank_charge : 0}', '${data.proc_charge > 0 ? data.proc_charge : 0}', '0', '0', '${dts.prn_disb_amt > 0 ? dts.prn_disb_amt : 0}', '0', '${intt_cal_amt}', 'D', 'B', '${data.bank_name}', '0', 'U', '${data.created_by}', '${datetime}')`,
                 whr = null,
                 flag = 0;
                 var dtls = await db_Insert(table_name,fields,values,whr,flag);
