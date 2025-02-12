@@ -42,7 +42,7 @@ const getFormNo = () => {
   const groupCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
 
-        var select = "(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1",
+        var select = "(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1 AS group_code",
         table_name = "md_group",
         whr = null,
         order = null;
