@@ -83,39 +83,91 @@ const getFormNo = () => {
   
   
 
+  // const getMemberCode = (branch_code) => {
+  //   return new Promise(async (resolve, reject) => {
+
+  //       var select = "max(substr(member_code,3)) + 1 member_code",
+  //       table_name = "md_member",
+  //       whr = null,
+  //       order = null;
+  //       var res_dt = await db_Select(select, table_name, whr, order);
+
+  //       let newMemberCode = res_dt.msg[0].member_code;
+  //       let memberCode = `${branch_code}` + newMemberCode;
+  //       // console.log(memberCode,'code');
+        
+  //     resolve(memberCode);
+  //   });
+  // };
+
   const getMemberCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
-
-        var select = "max(substr(member_code,3)) + 1 member_code",
-        table_name = "md_member",
-        whr = null,
-        order = null;
+      try {
+        var select = "COALESCE(MAX(CAST(SUBSTR(member_code, 3) AS UNSIGNED)), 0) + 1 AS member_code";
+        var table_name = "md_member";
+        var whr = null;
+        var order = null;
+  
         var res_dt = await db_Select(select, table_name, whr, order);
-
-        let newMemberCode = res_dt.msg[0].member_code;
-        let memberCode = `${branch_code}` + newMemberCode;
-        // console.log(memberCode,'code');
-        
-      resolve(memberCode);
+  
+        // console.log("Database Response:", res_dt); // Debugging output
+  
+        let newMemberCode = res_dt.msg.length > 0 && res_dt.msg[0].member_code ? res_dt.msg[0].member_code : "01";
+        let memberCode = `${branch_code}${String(newMemberCode).padStart(2, "0")}`;
+  
+        // console.log("Generated Member Code:", memberCode); // Debugging output
+  
+        resolve(memberCode);
+      } catch (error) {
+        console.error("Error generating member code:", error);
+        reject(error);
+      }
     });
   };
+  
+
+  // const getLoanCode = (branch_code) => {
+  //   return new Promise(async (resolve, reject) => {
+
+  //       var select = "max(substr(loan_id,3)) + 1 loan_code",
+  //       table_name = "td_loan",
+  //       whr = null,
+  //       order = null;
+  //       var res_dt = await db_Select(select, table_name, whr, order);
+
+  //       let newLoanCode = res_dt.msg[0].loan_code;        
+  //       let loanCode = `${branch_code}` + newLoanCode;
+  //       // console.log(loanCode,'code');
+        
+  //     resolve(loanCode);
+  //   });
+  // };
 
   const getLoanCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
-
-        var select = "max(substr(loan_id,3)) + 1 loan_code",
-        table_name = "td_loan",
-        whr = null,
-        order = null;
+      try {
+        var select = "COALESCE(MAX(CAST(SUBSTR(loan_id, 3) AS UNSIGNED)), 0) + 1 AS loan_code";
+        var table_name = "td_loan";
+        var whr = null;
+        var order = null;
+  
         var res_dt = await db_Select(select, table_name, whr, order);
-
-        let newLoanCode = res_dt.msg[0].loan_code;        
-        let loanCode = `${branch_code}` + newLoanCode;
-        // console.log(loanCode,'code');
-        
-      resolve(loanCode);
+  
+        // console.log("Database Response:", res_dt); // Debugging output
+  
+        let newLoanCode = res_dt.msg.length > 0 && res_dt.msg[0].loan_code ? res_dt.msg[0].loan_code : "01";
+        let loanCode = `${branch_code}${String(newLoanCode).padStart(2, "0")}`;
+  
+        // console.log("Generated Loan Code:", loanCode); // Debugging output
+  
+        resolve(loanCode);
+      } catch (error) {
+        console.error("Error generating loan code:", error);
+        reject(error);
+      }
     });
   };
+  
 
   // const payment_code = (branch_code, trn_dt = null) => {
   //   return new Promise(async (resolve, reject) => {
