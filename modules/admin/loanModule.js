@@ -105,8 +105,8 @@ module.exports = {
             }
 
             let loan_code = await getLoanCode(data.branch_code);
-            let intt_cal_amt = await interest_cal_amt(data.prn_disb_amt,data.period,data.curr_roi,data.period_mode);
-            let prn_emi = await calculate_prn_emi(data.prn_disb_amt,data.period);
+            let intt_cal_amt = await interest_cal_amt(dts.prn_disb_amt,data.period,data.curr_roi,data.period_mode);
+            let prn_emi = await calculate_prn_emi(dts.prn_disb_amt,data.period);
             let intt_emi = await calculate_intt_emi(intt_cal_amt,data.period);
             
 
@@ -116,7 +116,7 @@ module.exports = {
                 var tot_emi = Math.round(parseFloat(prn_emi) + parseFloat(intt_emi));
             }
             
-            let outstanding = (parseFloat(data.prn_disb_amt)+parseFloat(data.old_prn_amt)+parseFloat(intt_cal_amt)+parseFloat(data.od_intt_amt))
+            let outstanding = (parseFloat(dts.prn_disb_amt)+parseFloat(data.old_prn_amt)+parseFloat(intt_cal_amt)+parseFloat(data.od_intt_amt))
             console.log(outstanding,'outstanding');
             
             let instl_date = await genDate(data.period, data.period_mode, data.recovery_date, data.recovery_date);
@@ -129,7 +129,7 @@ module.exports = {
 
             var table_name = "td_loan",
             fields =`(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,
-            values = `('${loan_code}','${data.branch_code == '' ? 0 : data.branch_code}','${data.group_code == '' ? 0 : data.group_code}','${dts.member_code == '' ? 0 : dts.member_code}','${dts.grt_form_no == '' ? 0 : dts.grt_form_no}','${data.purpose}','${data.sub_purpose}','${dts.applied_amt == '' ? 0 : dts.applied_amt}','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == '' ? 0 : data.period}','${data.curr_roi == '' ? 0 : data.curr_roi}','${data.od_roi == '' ? 0 : data.od_roi}','${datetime}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${intt_cal_amt}','${data.prn_disb_amt == '' ? 0 : data.prn_disb_amt}','${data.old_prn_amt == '' ? 0 : data.old_prn_amt}',NULL,'${intt_cal_amt}','${data.od_intt_amt == '' ? 0 : data.od_intt_amt}','${outstanding > 0 ? outstanding : 0}','${prn_emi == '' ? 0 : prn_emi}','${intt_emi == '' ? 0 : intt_emi}','${tot_emi > 0 ? tot_emi : 0}','${data.recovery_date}','${data.period_mode}', '${dateFormat(startDate, 'yyyy-mm-dd')}','${dateFormat(endDate, 'yyyy-mm-dd')}','${data.trans_date}','${data.created_by}','${datetime}')`,
+            values = `('${loan_code}','${data.branch_code == '' ? 0 : data.branch_code}','${data.group_code == '' ? 0 : data.group_code}','${dts.member_code == '' ? 0 : dts.member_code}','${dts.grt_form_no == '' ? 0 : dts.grt_form_no}','${data.purpose}','${data.sub_purpose}','${data.applied_amt == '' ? 0 : data.applied_amt}','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == '' ? 0 : data.period}','${data.curr_roi == '' ? 0 : data.curr_roi}','${data.od_roi == '' ? 0 : data.od_roi}','${datetime}','${dts.prn_disb_amt == '' ? 0 : dts.prn_disb_amt}','${intt_cal_amt}','${dts.prn_disb_amt == '' ? 0 : dts.prn_disb_amt}','${data.old_prn_amt == '' ? 0 : data.old_prn_amt}',NULL,'${intt_cal_amt}','${data.od_intt_amt == '' ? 0 : data.od_intt_amt}','${outstanding > 0 ? outstanding : 0}','${prn_emi == '' ? 0 : prn_emi}','${intt_emi == '' ? 0 : intt_emi}','${tot_emi > 0 ? tot_emi : 0}','${data.recovery_date}','${data.period_mode}', '${dateFormat(startDate, 'yyyy-mm-dd')}','${dateFormat(endDate, 'yyyy-mm-dd')}','${data.trans_date}','${data.created_by}','${datetime}')`,
             whr = null,
             flag = 0;
             var trans_dt = await db_Insert(table_name,fields,values,whr,flag);
@@ -142,7 +142,7 @@ module.exports = {
                 
                 var table_name = "td_loan_transactions",
                 fields =`(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,created_by,created_at)`,
-                values = `('${datetime}', '${payment_id}', '${data.branch_code == '' ? 0 : data.branch_code}', '${loan_code}', '${data.particulars.split("'").join("\\'")}', '0', '${data.prn_disb_amt > 0 ?  data.prn_disb_amt : 0}', '${data.bank_charge > 0 ? data.bank_charge : 0}', '${data.proc_charge > 0 ? data.proc_charge : 0}', '0', '0', '${data.prn_disb_amt > 0 ? data.prn_disb_amt : 0}', '0', '${intt_cal_amt}', '${data.tr_type}', '${data.tr_mode}', '${data.bank_name}', '${data.cheque_id == '' ? 0 : data.cheque_id}', ${data.chq_dt == '' ? null : `'${data.chq_dt}'`}, 'U', '${data.created_by}', '${datetime}')`,
+                values = `('${datetime}', '${payment_id}', '${data.branch_code == '' ? 0 : data.branch_code}', '${loan_code}', '${data.particulars.split("'").join("\\'")}', '0', '${dts.prn_disb_amt > 0 ?  dts.prn_disb_amt : 0}', '${data.bank_charge > 0 ? data.bank_charge : 0}', '${data.proc_charge > 0 ? data.proc_charge : 0}', '0', '0', '${dts.prn_disb_amt > 0 ? dts.prn_disb_amt : 0}', '0', '${intt_cal_amt}', 'D', 'B', '${data.bank_name}', '0', '0000-00-00', 'U', '${data.created_by}', '${datetime}')`,
                 whr = null,
                 flag = 0;
                 var dtls = await db_Insert(table_name,fields,values,whr,flag);
