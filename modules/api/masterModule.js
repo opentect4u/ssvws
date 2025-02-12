@@ -39,42 +39,48 @@ const getFormNo = () => {
   //   });
   // };
 
-  const groupCode = (branch_code) => {
-    return new Promise(async (resolve, reject) => {
-
-        var select = "(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1 AS group_code",
-        table_name = "md_group",
-        whr = null,
-        order = null;
-        var res_dt = await db_Select(select, table_name, whr, order);
-
-        let newGroupCode = res_dt.msg.length > 0 && res_dt.msg[0].group_code ? res_dt.msg[0].group_code : "01";
-        // let groupCode = `${branch_code}` + newGroupCode;
-        let groupCode = `${branch_code}${String(newGroupCode).padStart(2, "0")}`;
-
-      resolve(groupCode);
-    });
-  };
-
   // const groupCode = (branch_code) => {
   //   return new Promise(async (resolve, reject) => {
-  //     try {
-  //       var select = "COALESCE(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1 AS group_code";
-  //       var table_name = "md_group";
-  //       var whr = null;
-  //       var order = null;
-  
+
+  //       var select = "(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1 AS group_code",
+  //       table_name = "md_group",
+  //       whr = null,
+  //       order = null;
   //       var res_dt = await db_Select(select, table_name, whr, order);
-  
+
   //       let newGroupCode = res_dt.msg.length > 0 && res_dt.msg[0].group_code ? res_dt.msg[0].group_code : "01";
+  //       // let groupCode = `${branch_code}` + newGroupCode;
   //       let groupCode = `${branch_code}${String(newGroupCode).padStart(2, "0")}`;
-  
-  //       resolve(groupCode);
-  //     } catch (error) {
-  //       reject(error);
-  //     }
+
+  //     resolve(groupCode);
   //   });
   // };
+
+  const groupCode = (branch_code) => {
+    return new Promise(async (resolve, reject) => {
+      try {
+        var select = "COALESCE(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1 AS group_code";
+        var table_name = "md_group";
+        var whr = null;
+        var order = null;
+  
+        var res_dt = await db_Select(select, table_name, whr, order);
+  
+        console.log("Database Response:", res_dt); // Debugging output
+  
+        let newGroupCode = res_dt.msg.length > 0 && res_dt.msg[0].group_code ? res_dt.msg[0].group_code : "01";
+        let groupCode = `${branch_code}${String(newGroupCode).padStart(2, "0")}`;
+  
+        console.log("Generated Group Code:", groupCode); // Debugging output
+  
+        resolve(groupCode);
+      } catch (error) {
+        console.error("Error generating group code:", error);
+        reject(error);
+      }
+    });
+  };
+  
   
 
   const getMemberCode = (branch_code) => {
