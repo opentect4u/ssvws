@@ -42,13 +42,13 @@ const getFormNo = () => {
   const groupCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
 
-        var select = "max(substr(group_code,3)) + 1 group_code",
+        var select = "(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1",
         table_name = "md_group",
         whr = null,
         order = null;
         var res_dt = await db_Select(select, table_name, whr, order);
 
-        let newGroupCode = res_dt.group_code;
+        let newGroupCode = res_dt.msg[0].group_code;
         let groupCode = `${branch_code}` + newGroupCode;
 
       resolve(groupCode);
