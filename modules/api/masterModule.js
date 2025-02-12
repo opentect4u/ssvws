@@ -66,12 +66,12 @@ const getFormNo = () => {
   
         var res_dt = await db_Select(select, table_name, whr, order);
   
-        console.log("Database Response:", res_dt); // Debugging output
+        // console.log("Database Response:", res_dt); // Debugging output
   
         let newGroupCode = res_dt.msg.length > 0 && res_dt.msg[0].group_code ? res_dt.msg[0].group_code : "01";
         let groupCode = `${branch_code}${String(newGroupCode).padStart(2, "0")}`;
   
-        console.log("Generated Group Code:", groupCode); // Debugging output
+        // console.log("Generated Group Code:", groupCode); // Debugging output
   
         resolve(groupCode);
       } catch (error) {
