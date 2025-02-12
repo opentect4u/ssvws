@@ -48,7 +48,7 @@ const getFormNo = () => {
         order = null;
         var res_dt = await db_Select(select, table_name, whr, order);
 
-        let newGroupCode = res_dt.msg.group_code;
+        let newGroupCode = res_dt.group_code;
         let groupCode = `${branch_code}` + newGroupCode;
 
       resolve(groupCode);
