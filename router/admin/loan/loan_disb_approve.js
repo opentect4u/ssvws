@@ -8,13 +8,13 @@ loan_disb_approveRouter.post("/fetch_groupwise_disburse_admin", async (req, res)
     var data = req.body;
 
     //FETCH GROUPWISE DISBURSE DATA
-    var select = "a.payment_date transaction_date,a.loan_id, a.payment_id transaction_id, a.tr_type, a.debit, b.member_code, b.grt_form_no form_no, c.client_name",
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_member c ON b.member_code = c.member_code",
+    var select = "a.payment_date transaction_date,SUM(a.debit) debit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id",
     whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
     order = null;
-    var fetch_grp_dt = await db_Select(select,table_name,whr,order);
+    var fetch_grp_dt_disb = await db_Select(select,table_name,whr,order);
 
-    res.send(fetch_grp_dt);
+    res.send(fetch_grp_dt_disb);
     // console.log(fetch_grp_dt,'lo');
     
 });
