@@ -63,7 +63,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
   res.send(fetch_appl_dtls);
 });
 
-loanRouter.post("/fetch_disb_loan_dtls", async (req, res) => {
+loanRouter.post("/fetch_disb_trans_dtls", async (req, res) => {
   var data = req.body;
 
   var select = "DISTINCT a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.scheme_name,c.fund_name",
