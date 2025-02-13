@@ -48,9 +48,9 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
     var select =
-        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,c.sub_pupose,d.purpose_id,e.sub_purp_name",
+        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,c.sub_pupose,d.purpose_id,e.sub_purp_name,f.prn_disb_amt",
       table_name =
-        "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN md_sub_purpose e ON c.sub_pupose = e.sub_purp_id",
+        "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN md_sub_purpose e ON c.sub_pupose = e.sub_purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code",
       whr = `a.branch_code = '${data.branch_code}'
     AND b.prov_grp_code = '${fetch_appl_dtls.msg[0].group_code}'`,
       order = null;
@@ -71,17 +71,6 @@ loanRouter.post("/fetch_disb_trans_dtls", async (req, res) => {
   whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
   order = `GROUP BY a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.particulars,b.bank_charge,b.proc_charge,b.bank_name,c.scheme_name,d.fund_name,e.bank_name`;
   var fetch_disb_dtls = await db_Select(select,table_name,whr,order);
-
-  if(fetch_disb_dtls.suc > 0 && fetch_disb_dtls.msg.length > 0){
-    var select = "member_code,prn_disb_amt",
-    table_name = "td_loan",
-    whr = `branch_code = '${data.branch_code}' AND group_code = '${data.group_code}'`,
-    order = null;
-    var prn_disb = await db_Select(select,table_name,whr,order);
-
-    fetch_disb_dtls.msg[0]["mem_dt_trans"] =
-    prn_disb.suc > 0 && prn_disb.msg.length > 0 ? prn_disb.msg : [];
-  }
 
   res.send(fetch_disb_dtls);
 });
