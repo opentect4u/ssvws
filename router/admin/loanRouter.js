@@ -197,10 +197,11 @@ whr = `member_code IN (${data.member_code})`,
 order = null;
 var verify_tot_dib_dt = await db_Select(select,table_name,whr,order);
 
-let appliedAmt = verify_tot_dib_dt?.[0]?.applied_amt || 0;
+let appliedAmt = verify_tot_dib_dt.msg[0].applied_amt || 0;
+console.log(appliedAmt,'apply');
 
 if(appliedAmt <= data.tot_disb_amt){
-  res.send({"suc" : 0, "msg" : "disburse amount", appliedAmt});
+  res.send({"suc" : 1, "msg" : "disburse amount", appliedAmt});
 }else {
   res.send({"suc" : 0, "msg" : "disburse amount greater than applied amount", appliedAmt});
 }
