@@ -75,7 +75,7 @@ loanRouter.post("/fetch_disb_trans_dtls", async (req, res) => {
   if(fetch_disb_dtls.suc > 0 && fetch_disb_dtls.msg.length > 0){
     var select = "prn_disb_amt",
     table_name = "td_loan",
-    whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
+    whr = `branch_code = '${data.branch_code}' AND group_code = '${data.group_code}'`,
     order = null;
     var prn_disb = await db_Select(select,table_name,whr,order);
 
