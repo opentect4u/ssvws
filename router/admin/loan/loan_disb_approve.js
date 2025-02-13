@@ -59,30 +59,30 @@ loan_disb_approveRouter.post("/fetch_branch_co", async (req, res) => {
     res.send(branch_co_dt)
 });
 
-loan_disb_approveRouter.post("/fetch_cowise_recov_data", async (req, res) => {
+loan_disb_approveRouter.post("/fetch_cowise_disb_data", async (req, res) => {
     var data = req.body;
 
-     //FETCH COWISE RECOVERY DATA
-     var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
-     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id",
-     whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}'`,
-     order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,c.group_name,d.emp_name,a.tr_mode,b.branch_code`;
-     var fetch_grp_dt = await db_Select(select,table_name,whr,order);
+     //FETCH COWISE DISBURSE DATA
+     var select = "a.payment_date transaction_date,SUM(a.debit) debit_amt,b.group_code,a.created_by created_code,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,c.group_name,d.emp_name created_by,e.purpose_id,f.scheme_name",
+     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_purpose e ON b.purpose = e.purp_id LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id",
+     whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND a.created_by = '${data.co_id}'`,
+     order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,c.group_name,d.emp_name,e.purpose_id,f.scheme_name`;
+     var fetch_co_dt = await db_Select(select,table_name,whr,order);
  
-     res.send(fetch_grp_dt);
+     res.send(fetch_co_dt);
 });
 
-loan_disb_approveRouter.post("/fetch_cowise_recov_member_dtls", async (req, res) => {
+loan_disb_approveRouter.post("/fetch_cowise_disb_member_dtls", async (req, res) => {
     var data = req.body;
 
     //FETCH COWISE RECOVERY DATA OF MEMBER
-    var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
+    var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,e.client_name,a.debit amt,a.created_by creted_code,d.emp_name created_by",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-    whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
+    whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
     order = null;
-    var fetch_co_memb_dt = await db_Select(select,table_name,whr,order);
+    var fetch_co_memb_dt_disb = await db_Select(select,table_name,whr,order);
 
-    res.send(fetch_co_memb_dt);
+    res.send(fetch_co_memb_dt_disb);
 
 });
 
