@@ -91,6 +91,7 @@ const { attenAdminRouter } = require("./router/report/branch_report/admin_web/at
 const { attendancewebRouter } = require("./router/report/branch_report/web/attendancewebRouter");
 const { loan_closeRouter } = require("./router/report/branch_report/web/loan_close_reportRouter");
 const { userMenuRouter } = require("./router/api/userMenuRouter");
+const { loan_disb_approveRouter } = require("./router/admin/loan/loan_disb_approve");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -107,6 +108,7 @@ app.use(loan_transRouter)
 app.use(loan_demandRouter)
 app.use(loan_outstandingRouter)
 app.use(loan_recov_approveRouter)
+app.use(loan_disb_approveRouter)
 app.use(loan_summaryrouter)
 app.use(empRouter)
 app.use(userwebRouter)
