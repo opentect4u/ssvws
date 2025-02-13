@@ -68,7 +68,7 @@ loanRouter.post("/fetch_disb_loan_dtls", async (req, res) => {
 
   var select = "a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.bank_charge,b.proc_charge,b.bank_name code,c.scheme_name,d.fund_name,e.bank_name",
   table_name = "td_loan a JOIN td_loan_transactions b ON a.loan_id = b.loan_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_bank e ON b.bank_name = e.bank_code ",
-  whr = `a.branch_code = '${data.branch_code}' AND a.grt_form_no = '${data.form_no}'`,
+  whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
   order = null;
   var fetch_disb_dtls = await db_Select(select,table_name,whr,order);
 
