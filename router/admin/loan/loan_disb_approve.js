@@ -37,7 +37,7 @@ loan_disb_approveRouter.post("/fetch_memberwise_disburse_admin", async (req, res
     var data = req.body;
 
         //FETCH MEMBERWISE DISBURSE DATA 13.02.2025
-        var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,e.member_code,e.client_name,a.debit amt,a.created_by creted_code,d.emp_name created_by",
+        var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.grt_form_no,e.member_code,e.client_name,a.debit amt,a.created_by creted_code,d.emp_name created_by",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
         whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
         order = null;
