@@ -201,12 +201,16 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 
 //verify total disburse amount greater than applied amount
 loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
+  try{
   var data = req.body;
   console.log(data,'lolo');
   
+  let memberCodes = data.member_code.map(m => m.member_code); 
+  let memberCodesStr = memberCodes.join(","); 
+
 var select = "SUM(applied_amt) applied_amt",
 table_name = "td_loan",
-whr = `member_code IN (${data.member_code})`,
+whr = `member_code IN (${memberCodesStr})`,
 order = null;
 var verify_tot_dib_dt = await db_Select(select,table_name,whr,order);
 
@@ -217,6 +221,10 @@ if (data.tot_disb_amt > appliedAmt) {
   res.send({ "suc": 0, "msg": "Applied amount is greater than disbursed amount", appliedAmt });
 } else {
   res.send({ "suc": 1, "msg": "Disburse amount", appliedAmt });
+}
+} catch (error) {
+  console.error("Error:", error);
+  res.send({ "suc": 0, "msg": "Internal server error" });
 }
 });
 
