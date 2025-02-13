@@ -46,7 +46,7 @@ loan_disb_approveRouter.post("/fetch_memberwise_disburse_admin", async (req, res
         res.send(fetch_disb_memb_dt)
 });
 
-loan_disb_approveRouter.post("/fetch_branch_co", async (req, res) => {
+loan_disb_approveRouter.post("/fetch_branch_co_disb", async (req, res) => {
     var data = req.body;
 
      //FETCH BRANCHWISE CO NAME
