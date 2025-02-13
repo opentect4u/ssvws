@@ -187,6 +187,25 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
     });
 });
 
+//verify total disburse amount greater than applied amount
+loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
+  var data = req.body;
+
+var select = "SUM(applied_amt) applied_amt",
+table_name = "td_loan",
+whr = `member_code IN (${data.member_code})`,
+order = null;
+var verify_tot_dib_dt = await db_Select(select,table_name,whr,order);
+
+let appliedAmt = verify_tot_dib_dt?.[0]?.applied_amt || 0;
+
+if(appliedAmt <= data.tot_disb_amt){
+  res.send({"suc" : 0, "msg" : "disburse amount", appliedAmt});
+}else {
+  res.send({"suc" : 0, "msg" : "disburse amount greater than applied amount", appliedAmt});
+}
+});
+
 loanRouter.post("/fetch_recovery_day", async (req, res) => {
   var data = req.body;
 
