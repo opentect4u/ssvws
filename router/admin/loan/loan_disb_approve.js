@@ -11,7 +11,7 @@ loan_disb_approveRouter.post("/fetch_groupwise_disburse_admin", async (req, res)
     var select = "a.payment_date transaction_date,SUM(a.debit) debit_amt,b.group_code,a.created_by created_code,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,c.group_name,d.emp_name created_by,e.purpose_id,f.scheme_name",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_purpose e ON b.purpose = e.purp_id LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id",
     whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
-    order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.curr_roi,c.group_name,d.emp_name,a.tr_mode,e.purpose_id,f.scheme_name`;
+    order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,c.group_name,d.emp_name,e.purpose_id,f.scheme_name`;
     var fetch_grp_dt_disb = await db_Select(select,table_name,whr,order);
 
     res.send(fetch_grp_dt_disb);
