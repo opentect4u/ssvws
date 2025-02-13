@@ -66,9 +66,9 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 loanRouter.post("/fetch_disb_trans_dtls", async (req, res) => {
   var data = req.body;
 
-  var select = "a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.scheme_name,c.fund_name",
+  var select = "DISTINCT a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.scheme_name,c.fund_name",
   table_name = "td_loan a LEFT JOIN md_scheme b ON a.scheme_id = b.scheme_id LEFT JOIN md_fund c ON a.fund_id = c.fund_id",
-  whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}' AND last_trn_dt <= date(now()) AND instl_end_dt >= date(now());`,
+  whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
   order = null;
   var fetch_disb_dtls = await db_Select(select,table_name,whr,order);
 
