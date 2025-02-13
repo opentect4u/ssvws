@@ -203,7 +203,7 @@ console.log(appliedAmt,'apply');
 if (data.tot_disb_amt > appliedAmt) {
   res.send({ "suc": 0, "msg": "Applied amount is greater than disbursed amount", appliedAmt });
 } else {
-  res.send({ "suc": 1, "msg": "Disburse amount is valid", appliedAmt });
+  res.send({ "suc": 1, "msg": "Disburse amount", appliedAmt });
 }
 });
 
