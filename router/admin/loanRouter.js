@@ -198,7 +198,7 @@ order = null;
 var verify_tot_dib_dt = await db_Select(select,table_name,whr,order);
 
 let appliedAmt = verify_tot_dib_dt.msg[0].applied_amt || 0;
-console.log(appliedAmt,'apply');
+// console.log(appliedAmt,'apply');
 
 if (data.tot_disb_amt > appliedAmt) {
   res.send({ "suc": 0, "msg": "Applied amount is greater than disbursed amount", appliedAmt });
