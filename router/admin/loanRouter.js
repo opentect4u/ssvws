@@ -202,7 +202,8 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 //verify total disburse amount greater than applied amount
 loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
   var data = req.body;
-
+  console.log(data,'lolo');
+  
 var select = "SUM(applied_amt) applied_amt",
 table_name = "td_loan",
 whr = `member_code IN (${data.member_code})`,
