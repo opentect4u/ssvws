@@ -82,7 +82,7 @@ module.exports = {
     loan_trans: (data) => {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-            //  console.log(data,'kiki');
+             console.log(data,'kiki');
 
                var curr_date = new Date()
                var last_date = new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0)
