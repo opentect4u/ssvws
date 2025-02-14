@@ -244,6 +244,33 @@ loanRouter.post("/fetch_recovery_day", async (req, res) => {
   res.send(fetch_rec_dt);
 });
 
+// loanRouter.post("/verify_loan_disb", async (req, res) => {
+//   try{
+//   var data = req.body;
+
+//   var select = "loan_id,member_code",
+//   table_name = "td_loan",
+//   whr = `branch_code = '${data.branch_code}' AND group_code = '${data.group_code}'`,
+//   order = null;
+//   var loan_dt = await db_Select(select,table_name,whr,order);
+
+//   if(loan_dt.suc > 0 && loan_dt.msg.length > 0){
+//     var data = req.body;
+
+//     var select = "",
+//     table_name = "td_loan_transactions",
+//     whr = `branch_code = '${data.branch_code}' AND loan_id IN ${loan_dt.msg[0].loan_id} AND tr_type = 'D'`,
+//     order = null;
+//     var verify_loan_dtls = await db_Select(select,table_name,whr,order);
+//   }
+
+//   res.send(verify_loan_dtls)
+// } catch (error) {
+//   console.error("Error in verify_loan_disb:", error);
+//   res.send({ suc: 0, msg: "Internal Server Error" });
+// }
+// });
+
 loanRouter.post("/approve_loan_disbursement", async (req, res) => {
   var data = req.body;
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");

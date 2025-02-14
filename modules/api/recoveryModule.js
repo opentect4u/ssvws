@@ -244,6 +244,8 @@ module.exports = {
                     var trans_dtl = await db_Select(select,table_name,whr,order);
     
                     rec_dtls_prn.msg[0]['trans_dtl'] = trans_dtl.suc > 0 ? (trans_dtl.msg.length > 0 ? trans_dtl.msg : []) : [];
+                    console.log( rec_dtls_prn.msg[0]['trans_dtl'] = trans_dtl.suc > 0 ? (trans_dtl.msg.length > 0 ? trans_dtl.msg : []) : [],'lolo');
+                    
                     }
     
                 }
