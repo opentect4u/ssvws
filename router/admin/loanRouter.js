@@ -48,9 +48,9 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
     var select =
-        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,c.sub_pupose,d.purpose_id,e.sub_purp_name,f.prn_disb_amt",
+        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt",
       table_name =
-        "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN md_sub_purpose e ON c.sub_pupose = e.sub_purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code",
+        "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code",
       whr = `a.branch_code = '${data.branch_code}'
     AND b.prov_grp_code = '${fetch_appl_dtls.msg[0].group_code}'`,
       order = null;
@@ -466,9 +466,9 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
 
   //view loan details
   var select =
-      "a.loan_id,a.branch_code,a.group_code,a.member_code,a.grt_form_no,a.purpose,a.sub_purpose,a.applied_amt,a.applied_dt,a.scheme_id,a.fund_id,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day,a.period_mode,a.instl_paid,a.instl_start_dt,a.instl_end_dt,a.last_trn_dt,b.client_name,c.purpose_id,d.sub_purp_name,e.scheme_name,f.fund_name,g.group_name",
+      "a.loan_id,a.branch_code,a.group_code,a.member_code,a.grt_form_no,a.purpose,a.applied_amt,a.applied_dt,a.scheme_id,a.fund_id,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day,a.period_mode,a.instl_paid,a.instl_start_dt,a.instl_end_dt,a.last_trn_dt,b.client_name,c.purpose_id,e.scheme_name,f.fund_name,g.group_name",
     table_name =
-      "td_loan a JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_sub_purpose d ON a.sub_purpose = d.sub_purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
+      "td_loan a JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
     whr = `loan_id = '${data.loan_id}'`,
     order = null;
   var loan_dtls = await db_Select(select, table_name, whr, order);
