@@ -86,49 +86,49 @@ loan_disb_approveRouter.post("/fetch_cowise_disb_member_dtls", async (req, res) 
 
 });
 
-loan_disb_approveRouter.post("/approve_grpwise_recov", async (req, res) => {
+loan_disb_approveRouter.post("/approve_grpwise_disb", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
-    // console.log(data,'data');
+    console.log(data,'data');
 
-    //APPROVE GROUPWISE RECOVERY
-    if (data.grpdt.length > 0) {        
-        for (let dt of data.grpdt) {
+    //APPROVE GROUPWISE DISBURSE
+    if (data.grpdt_disb.length > 0) {        
+        for (let dt of data.grpdt_disb) {
         var select = "loan_id",
         table_name = "td_loan",
         whr = `branch_code = '${dt.branch_code}' AND group_code = '${dt.group_code}'`,
         order = null;
-        var fetch_loan_id = await db_Select(select,table_name,whr,order);
+        var fetch_loan_id_disb = await db_Select(select,table_name,whr,order);
 
-            if(fetch_loan_id.suc > 0 && fetch_loan_id.msg.length > 0){
-                var loan_id_arr = fetch_loan_id.msg.map(ldt => ldt.loan_id)
-                // console.log(loan_id_arr,'arr');
+            if(fetch_loan_id_disb.suc > 0 && fetch_loan_id_disb.msg.length > 0){
+                var loan_id_arr = fetch_loan_id_disb.msg.map(ldt => ldt.loan_id)
+                console.log(loan_id_arr,'arr');
                 
                 var table_name = "td_loan_transactions",
                 fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
                 values = null,
-                whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND loan_id IN (${loan_id_arr.join(',')}) AND tr_type != 'D'`,
+                whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND loan_id IN (${loan_id_arr.join(',')}) AND tr_type = 'D'`,
                 flag = 1;
-                var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
+                var approve_dt_disb = await db_Insert(table_name,fields,values,whr,flag);
              }
         }
     }
 
-    res.send(approve_dt)
+    res.send(approve_dt_disb)
 });
 
-loan_disb_approveRouter.post("/approve_member_recov", async (req, res) => {
+loan_disb_approveRouter.post("/approve_member_disb", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
-    // console.log(data,'memdata');
+    console.log(data,'memdata');
 
-    //APPROVE MEMBERWISE RECOVERY
-    if (data.membdt.length > 0) {        
-        for (let dt of data.membdt) {
+    //APPROVE MEMBERWISE DISBURSE
+    if (data.membdt_disb.length > 0) {        
+        for (let dt of data.membdt_disb) {
                 var table_name = "td_loan_transactions",
                 fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
                 values = null,
-                whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}' AND loan_id = '${dt.loan_id}' AND tr_type != 'D'`,
+                whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}' AND loan_id = '${dt.loan_id}' AND tr_type = 'D'`,
                 flag = 1;
                 var approve_dt_memb = await db_Insert(table_name,fields,values,whr,flag);
         }
