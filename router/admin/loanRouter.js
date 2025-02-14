@@ -203,7 +203,7 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
   try{
   var data = req.body;
-  // console.log(data,'lolo');
+  console.log(data,'lolo');
   
   let memberCodes = data.member_code.map(m => m.member_code); 
   let memberCodesStr = memberCodes.join(","); 
