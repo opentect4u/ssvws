@@ -76,8 +76,23 @@ grtformRouter.post("/fetch_co_brnwise", async (req, res) => {
     var fetch_co_data = await db_Select(select,table_name,whr,order);
 
     res.send(fetch_co_data);
-})
+});
 
+grtformRouter.post("/fetch_member_dtls_cowise", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.form_no,a.member_code,b.client_name",
+    table_name = "td_grt_basic a, md_member b",
+    whr = `a.member_code = b.member_code 
+    AND a.created_by = b.created_by
+    AND a.approval_status = 'U'
+    AND a.branch_code = '${data.branch_code}' 
+    AND a.created_by = '${data.co_id}'`,
+    order = null;
+    var fetch_mem_co = await db_Select(select,table_name,whr,order);
+
+    res.send(fetch_mem_co)
+});
 
 grtformRouter.post("/save_group", async (req, res) => {
     var data = req.body;
