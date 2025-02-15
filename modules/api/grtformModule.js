@@ -289,7 +289,7 @@ module.exports = {
             }
             }
 
-            grp_dt["group_code"] = group_code.msg[0].group_code;
+            grp_dt["group_code"] = group_code;
             grp_dt["group_name"] = data.group_name;
             grp_dt["grp_open_dt"] = datetime;
             resolve(grp_dt);
