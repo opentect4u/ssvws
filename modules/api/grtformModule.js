@@ -260,21 +260,38 @@ module.exports = {
 
     grp_save: (data) => {
         return new Promise(async (resolve, reject) => {
+            try{
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let group_code = await groupCode();
 
             var table_name = "md_group",
-            fields = "(group_code , branch_code, group_name, group_type, co_id, phone1, email_id, grp_addr, disctrict, block, grp_open_dt, created_by, created_at)",
-            values =  `('${group_code.msg[0].group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1}', '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.disctrict}', '${data.block}', '${datetime}', '${data.created_by}', '${datetime}')`,
+            fields = "(group_code , branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, bank_name, branch_name, ifsc, micr, acc_no1, acc_no2, grp_open_dt, created_by, created_at)",
+            values =  `('${group_code.msg[0].group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1}', '${data.phone2}', '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.disctrict}', '${data.block}', '${data.pin_no}', '${data.bank_name}', '${data.branch_name}',  '${data.ifsc}', '${data.micr}', '${data.acc_no1}', '${data.acc_no2}', '${datetime}', '${data.created_by}', '${datetime}')`,
             whr = null,
             flag = 0;
             var grp_dt = await db_Insert(table_name, fields, values, whr, flag);
             // console.log(grp_dt,'dt');
             
+            if(grp_dt.suc > 0 && grp_dt.msg.length > 0){
+                if (data.grp_memberdtls.length > 0) {
+                  for (let dt of data.grp_memberdtls) {
+                    var table_name = "td_grt_basic",
+                    fields = `prov_grp_code = '${group_code.msg[0].group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                    values = null,
+                    whr = `form_no = '${dt.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${dt.member_code}'`,
+                    flag = 1;
+                var grp_mem_dt = await db_Insert(table_name, fields, values, whr, flag);
+                  }
+            }
+            }
+
             grp_dt["group_code"] = group_code.msg[0].group_code;
             grp_dt["group_name"] = data.group_name;
             grp_dt["grp_open_dt"] = datetime;
             resolve(grp_dt);
+        } catch (error) {
+            reject(error);
+        }
         });
     },
 
