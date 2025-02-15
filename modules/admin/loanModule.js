@@ -82,7 +82,7 @@ module.exports = {
     loan_trans: (data) => {
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-             console.log(data,'kiki');
+            //  console.log(data,'kiki');
 
                var curr_date = new Date()
                var last_date = new Date(curr_date.getFullYear(), curr_date.getMonth()+1, 0)
@@ -138,7 +138,7 @@ module.exports = {
             if(trans_dt.suc > 0 && trans_dt.msg.length > 0){
 
                 let payment_id = await payment_code()
-                console.log(payment_id,'pay_id22');
+                // console.log(payment_id,'pay_id22');
                 
                 var table_name = "td_loan_transactions",
                 fields =`(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,bank_name,cheque_id,status,created_by,created_at)`,
