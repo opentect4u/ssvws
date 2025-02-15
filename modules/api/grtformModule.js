@@ -264,14 +264,8 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let group_code = await groupCode();
 
-            if (!group_code || !group_code.msg || !Array.isArray(group_code.msg) || group_code.msg.length === 0) {
-                console.error("Invalid group_code response:", group_code);
-                return reject(new Error("Invalid groupCode() response"));
-            }
-
-            let group_code_value = group_code.msg[0].group_code;
-            console.log(group_code_value,'ki');
-            
+            let group_code_value = group_code.msg[0].group_code || 0;
+            console.log(group_code_value,'lolo');
             
 
             var table_name = "md_group",
