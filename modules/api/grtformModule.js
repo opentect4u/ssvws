@@ -264,19 +264,23 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let group_code = await groupCode();
 
+            let group_code_value = group_code.msg[0].group_code || 0;
+            console.log(group_code_value,'lolo');
+            
+
             var table_name = "md_group",
             fields = "(group_code , branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, grp_open_dt, created_by, created_at)",
-            values =  `('${group_code.msg[0].group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1}', '${data.phone2}', '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.disctrict}', '${data.block}', '${data.pin_no}', '${datetime}', '${data.created_by}', '${datetime}')`,
+            values =  `('${group_code_value}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1}', '${data.phone2}', '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.disctrict}', '${data.block}', '${data.pin_no}', '${datetime}', '${data.created_by}', '${datetime}')`,
             whr = null,
             flag = 0;
             var grp_dt = await db_Insert(table_name, fields, values, whr, flag);
-            // console.log(grp_dt,'dt');
+            console.log(grp_dt,'dt');
             
             if(grp_dt.suc > 0 && grp_dt.msg.length > 0){
                 if (data.grp_memberdtls.length > 0) {
                   for (let dt of data.grp_memberdtls) {
                     var table_name = "td_grt_basic",
-                    fields = `prov_grp_code = '${group_code.msg[0].group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                    fields = `prov_grp_code = '${group_code_value}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                     values = null,
                     whr = `form_no = '${dt.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${dt.member_code}'`,
                     flag = 1;
