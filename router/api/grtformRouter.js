@@ -69,7 +69,7 @@ grtformRouter.post("/fetch_co_brnwise", async (req, res) => {
     var data = req.body;
 
     var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
-    table_name = "md_user, md_employee b",
+    table_name = "md_user a, md_employee b",
     whr = `a.brn_code = '${data.brn_code}' AND a.emp_id = b.emp_id AND b.user_type = '1'`,
     order = null;
 
