@@ -59,7 +59,7 @@ const getFormNo = () => {
   const groupCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
       try {
-        var select = "COALESCE(MAX(CAST(SUBSTR(group_code, 3) AS UNSIGNED)), 0) + 1 AS group_code";
+        var select = "COALESCE(MAX(CAST(SUBSTR(group_code, 4) AS UNSIGNED)), 0) + 1 AS group_code";
         var table_name = "md_group";
         var whr = null;
         var order = null;
