@@ -86,7 +86,7 @@ const getFormNo = () => {
   const getMemberCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
 
-        var select = "max(substr(member_code,4)) + 1 member_code",
+        var select = "COALESCE(MAX(CAST(SUBSTR(member_code, 4) AS UNSIGNED)), 0) + 1 AS member_code",
         table_name = "md_member",
         whr = null,
         order = null;
