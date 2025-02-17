@@ -94,10 +94,9 @@ fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     var data = req.query;
 
     //fetch occupation details in web
-    var select = "a.form_no,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
-    table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
-    whr = `a.loan_purpose = b.purp_id 
-    AND a.sub_pupose = c.sub_purp_id 
+    var select = "a.form_no,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id",
+    table_name = "td_grt_occupation_household a, md_purpose b",
+    whr = `a.loan_purpose = b.purp_id
     AND a.branch_code IN (${data.branch_code})
     AND a.form_no = '${data.form_no}'`,
     order = null;
