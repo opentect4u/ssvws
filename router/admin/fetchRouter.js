@@ -229,9 +229,12 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
   fetchRouter.post("/form_fwd_bm_to_mis_mem_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = " a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.remarks,b.rejected_by,b.rejected_at,c.branch_name",
-    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-    whr = `a.branch_code = '${data.branch_code}' AND b.prov_grp_code = '${data.prov_grp_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
+    var select = "a.form_no,a.grt_date,a.branch_code,a.member_code,a.remarks,a.delete_flag,a.rejected_by,a.rejected_at,b.client_name,c.branch_name",
+    table_name = "td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
+    whr = `a.branch_code = '${data.branch_code}'   
+           AND a.prov_grp_code = '${data.prov_grp_code}'
+           AND a.approval_status = '${data.approval_status}' 
+           AND a.delete_flag = 'N'`,
     order = null;
     var fwd_mis_mem = await db_Select(select,table_name,whr,order)
 
