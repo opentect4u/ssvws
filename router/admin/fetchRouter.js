@@ -226,6 +226,18 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
     res.send(fetch_bm_fwd_dt);
   });
 
+  fetchRouter.post("/form_fwd_bm_to_mis_mem_dtls", async (req, res) => {
+    var data = req.body;
+
+    var select = " a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.remarks,b.rejected_by,b.rejected_at,c.branch_name",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
+    whr = `a.branch_code = '${data.branch_code}' AND a.approval_status = '${data.approval_status}' AND a.delete_flag = 'N'`,
+    order = null;
+    var fwd_mis_mem = await db_Select(select,table_name,whr,order)
+
+    res.send(fwd_mis_mem);
+  })
+
   fetchRouter.post("/delete_member_mis", async (req, res) => {
     var data = req.body;
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
