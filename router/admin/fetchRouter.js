@@ -229,7 +229,7 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
   fetchRouter.post("/form_fwd_bm_to_mis_mem_dtls", async (req, res) => {
     var data = req.body;
 
-    var select = "a.form_no,a.grt_date,a.branch_code,a.member_code,a.remarks,a.delete_flag,a.rejected_by,a.rejected_at,b.client_name,c.branch_name",
+    var select = "a.form_no,a.grt_date,a.branch_code,a.member_code,a.approval_status,a.remarks,a.delete_flag,a.rejected_by,a.rejected_at,b.client_name,c.branch_name",
     table_name = "td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
     whr = `a.branch_code = '${data.branch_code}'   
            AND a.prov_grp_code = '${data.prov_grp_code}'
@@ -601,12 +601,12 @@ fetchRouter.post("/assign_group_to_mem", async (req, res) => {
 })
   });
 
-fetchRouter.post("/back_to_bm", async (req, res) => {
-    var data = req.body;
+// fetchRouter.post("/back_to_bm", async (req, res) => {
+//     var data = req.body;
 
-    //form details back to branch manager
-    var back_dt = await back_dt_to_bm(data);
-    res.send(back_dt)
-});
+//     //form details back to branch manager
+//     var back_dt = await back_dt_to_bm(data);
+//     res.send(back_dt)
+// });
 
 module.exports = {fetchRouter}
