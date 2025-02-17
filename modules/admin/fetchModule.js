@@ -58,7 +58,7 @@ module.exports = {
 
           if(edit_basic_dt_web.suc > 0){
             var table_name = "td_grt_basic",
-            fields = `grt_date = '${data.grt_date}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
+            fields = `grt_date = '${data.grt_date}',
             bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             // fields = `grt_date = '${data.grt_date}', 
             // bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
