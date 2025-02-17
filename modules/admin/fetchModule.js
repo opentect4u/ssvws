@@ -48,7 +48,7 @@ module.exports = {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
           var table_name = "md_member",
-          fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
+          fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr.split("'").join("\\'")}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
            religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
             dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
           values = null,
@@ -58,7 +58,9 @@ module.exports = {
 
           if(edit_basic_dt_web.suc > 0){
             var table_name = "td_grt_basic",
-            fields = `grt_date = '${data.grt_date}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
+            // fields = `grt_date = '${data.grt_date}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
+            // bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `grt_date = '${data.grt_date}', 
             bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
@@ -86,7 +88,7 @@ module.exports = {
           if(res_dt.msg.length > 0 && res_dt.suc > 0){
           var table_name = "td_grt_occupation_household",
             fields = `self_occu = '${data.self_occu}', self_income = '${data.self_income > 0 ? data.self_income : 0}', spouse_occu = '${data.spouse_occu}', spouse_income = '${data.spouse_income > 0 ? data.spouse_income : 0}', 
-                loan_purpose = '${data.loan_purpose}', sub_pupose = '${data.sub_pupose}', applied_amt = '${data.applied_amt > 0 ? data.applied_amt : 0}', other_loan_flag = '${data.other_loan_flag}',
+                loan_purpose = '${data.loan_purpose}', sub_pupose = '0', applied_amt = '${data.applied_amt > 0 ? data.applied_amt : 0}', other_loan_flag = '${data.other_loan_flag}',
                  other_loan_amt = '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', other_loan_emi = '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}',
                  modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
@@ -102,7 +104,7 @@ module.exports = {
         }else {
           var table_name = "td_grt_occupation_household",
           fields = "(form_no, branch_code, self_occu, self_income, spouse_occu, spouse_income, loan_purpose, sub_pupose, applied_amt, other_loan_flag, other_loan_amt, other_loan_emi, created_by, created_at)",
-          values =  `('${data.form_no}', '${data.branch_code}', '${data.self_occu}', '${data.self_income > 0 ? data.self_income : 0}', '${data.spouse_occu}', '${data.spouse_income > 0 ? data.spouse_income : 0}', '${data.loan_purpose}', '${data.sub_pupose}', '${data.applied_amt > 0 ? data.applied_amt : 0}', '${data.other_loan_flag}', '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}', '${data.created_by}', '${datetime}')`,
+          values =  `('${data.form_no}', '${data.branch_code}', '${data.self_occu}', '${data.self_income > 0 ? data.self_income : 0}', '${data.spouse_occu}', '${data.spouse_income > 0 ? data.spouse_income : 0}', '${data.loan_purpose}', '0', '${data.applied_amt > 0 ? data.applied_amt : 0}', '${data.other_loan_flag}', '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}', '${data.created_by}', '${datetime}')`,
           whr = null,
           flag = 0;
           var edit_occup_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -129,7 +131,7 @@ module.exports = {
           var table_name = "td_grt_occupation_household",
             fields = `no_of_rooms = '${data.no_of_rooms}', house_type = '${data.house_type}', own_rent = '${data.own_rent}', land = '${data.land == '' ? 0 : data.land}', tv_flag = '${data.tv_flag}', 
                     bike_flag = '${data.bike_flag}', fridge_flag = '${data.fridge_flag}', wm_flag = '${data.wm_flag}', poltical_flag = '${data.poltical_flag}',
-                 parental_addr = '${data.parental_addr}', parental_phone = '${data.parental_phone > 0 ? data.parental_phone : 0}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                 parental_addr = '${data.parental_addr.split("'").join("\\'")}', parental_phone = '${data.parental_phone > 0 ? data.parental_phone : 0}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}'`,
             flag = 1;
@@ -143,7 +145,7 @@ module.exports = {
         }else {
           var table_name = "td_grt_occupation_household",
           fields = `(no_of_rooms, house_type, own_rent, land, tv_flag, bike_flag, fridge_flag, wm_flag,poltical_flag,parental_addr,parental_phone,created_by,created_at)`,
-          values = `('${data.no_of_rooms}', '${data.house_type}', '${data.own_rent}', '${data.land == '' ? 0 : data.land}', '${data.tv_flag}', '${data.bike_flag}', '${data.fridge_flag}', '${data.wm_flag}','${data.poltical_flag}', '${data.parental_addr}', '${data.parental_phone == '' ? 0 : data.parental_phone}', '${data.created_by}', ${datetime})`,
+          values = `('${data.no_of_rooms}', '${data.house_type}', '${data.own_rent}', '${data.land == '' ? 0 : data.land}', '${data.tv_flag}', '${data.bike_flag}', '${data.fridge_flag}', '${data.wm_flag}','${data.poltical_flag}', '${data.parental_addr.split("'").join("\\'")}', '${data.parental_phone == '' ? 0 : data.parental_phone}', '${data.created_by}', ${datetime})`,
           whr = null,
           flag = 0;
           var edit_household_dt = await db_Insert(table_name, fields, values, whr, flag);
