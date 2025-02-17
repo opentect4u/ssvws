@@ -156,13 +156,13 @@ fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
         console.log(totalMembers);
 
         if (totalMembers > 4) {
-            return res.send({ msg: "Each group must have at least 4 members" });
+            res.send({ msg: "Each group must have at least 4 members" });
         }
      }
      
     } catch (error) {
         console.error(error);
-        return res.send({ msg: "Internal server error" });
+        return res.json({ msg: "Internal server error" });
     }
 });
 
