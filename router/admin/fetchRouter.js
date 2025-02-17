@@ -141,7 +141,6 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
 });
 
 fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
-    try {
     var data = req.body;
 
     var select = "COUNT(member_code) member_code",
@@ -156,14 +155,9 @@ fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
         console.log(totalMembers);
 
         if (totalMembers > 4) {
-            res.send({ msg: "Each group must have at least 4 members" });
+            res.send({"suc": 0, msg: "Each group must have at least 4 members" });
         }
      }
-     
-    } catch (error) {
-        console.error(error);
-        return res.json({ msg: "Internal server error" });
-    }
 });
 
 fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
