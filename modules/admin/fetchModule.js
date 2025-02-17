@@ -16,7 +16,7 @@ module.exports = {
               ifsc =  '${data.ifsc}', micr = '${data.micr}', acc_no1 = '${data.acc_no1 == '' ? 0 : data.acc_no1}', acc_no2 = '${data.acc_no2 == '' ? 0 : data.acc_no2}',
             modified_by = '${data.modified_by}', modified_at =  '${datetime}'` : `(group_code, branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, bank_name, branch_name, ifsc, micr, acc_no1, acc_no2, open_close_flag, grp_open_dt, approval_status, created_by, created_at)`,
             values = `('${group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1 == '' ? 0 : data.phone1}', '${data.phone2 == '' ? 0 : data.phone2}',
-            '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.district}', '${data.block ? data.block : 0}', '${data.pin_no}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc}', '${data.micr}', '${data.acc_no1 == '' ? 0 : data.acc_no1}',
+            '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.district}', '${data.block ? data.block : 0}', '${data.pin_no}', ${data.bank_name == '' ? 'NULL' : data.bank_name}, ${data.branch_name == '' ? 'NULL' : data.branch_name}, '${data.ifsc == '' ? 0 : data.ifsc}', '${data.micr == '' ? 0 : data.micr}', '${data.acc_no1 == '' ? 0 : data.acc_no1}',
             '${data.acc_no2 == '' ? 0 : data.acc_no2}', 'O', '${datetime}', 'U', '${data.modified_by}', '${datetime}')`,
             whr = data.group_code > 0 ? `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'` : null,
             flag = data.group_code > 0 ? 1 : 0;
