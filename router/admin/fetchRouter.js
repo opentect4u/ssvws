@@ -213,7 +213,7 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
 //     res.send(fetch_bm_fwd_dt);
 //   });
 
-fetchRouter.get("/fetch_form_fwd_bm_web", async (req, res) => {
+fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
     var data = req.query;
 
     //fetch form which forward by Branch manager to MIS in web groupwise
