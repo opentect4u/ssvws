@@ -140,6 +140,32 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
     res.send(edit_grp_dt);
 });
 
+fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
+    try {
+    var data = req.body;
+
+    var select = "COUNT(member_code) member_code",
+    table_name = "td_grt_basic",
+    whr = `branch_code = '${data.branch_code}' AND prov_grp_code = '${data.prov_grp_code}'`,
+    order = null;
+    var mem_assign_dtls = await db_Select(select,table_name,whr,order)
+
+     if(mem_assign_dtls.suc > 0 && mem_assign_dtls.msg.length > 0){
+
+        let totalMembers = mem_assign_dtls.msg[0].member_code || 0;
+        console.log(totalMembers);
+
+        if (totalMembers > 4) {
+            return res.send({ msg: "Each group must have at least 4 members" });
+        }
+     }
+     
+    } catch (error) {
+        console.error(error);
+        return res.send({ msg: "Internal server error" });
+    }
+});
+
 fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
     var data = req.body;
   
@@ -399,7 +425,7 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     var fetch_search_group_web = await db_Select(select,table_name,whr,order);
 
     if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
-        var select = "a.member_code,a.client_name,b.form_no,b.approval_status,SUM(c.outstanding) tot_outstanding",
+        var select = "a.member_code,a.client_name,b.form_no,b.group_code,b.approval_status,SUM(c.outstanding) tot_outstanding",
         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_loan c ON a.branch_code = c.branch_code AND a.member_code = c.member_code",
         whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}' AND b.approval_status != 'R'`,
         order = `GROUP BY a.member_code,a.client_name,b.form_no,b.approval_status`;
