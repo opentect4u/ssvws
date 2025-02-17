@@ -44,6 +44,7 @@ module.exports = {
 
     edit_basic_dt_web: (data) => {
         return new Promise(async (resolve, reject) => {
+          try{
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
           var table_name = "md_member",
@@ -65,11 +66,15 @@ module.exports = {
             var final_dt = await db_Insert(table_name,fields,values,whr,flag);
         }
           resolve(edit_basic_dt_web);
+        } catch (error) {
+          reject(error);
+      }
         });
       },
     
       edit_occup_dt_web: (data) => {
         return new Promise(async (resolve, reject) => {
+          try{
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
           var select = "form_no",
@@ -103,11 +108,15 @@ module.exports = {
           var edit_occup_dt = await db_Insert(table_name, fields, values, whr, flag);
       }
           resolve(edit_occup_dt);
+        } catch (error) {
+          reject(error);
+      }
         });
       },
     
       edit_household_dt_web: (data) => {
         return new Promise(async (resolve, reject) => {
+          try{
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
           var select = "form_no",
@@ -140,6 +149,9 @@ module.exports = {
           var edit_household_dt = await db_Insert(table_name, fields, values, whr, flag);
   }
           resolve(edit_household_dt);
+        } catch (error) {
+          reject(error);
+      }
         });
       },
 
@@ -183,6 +195,7 @@ module.exports = {
 
     fwd_mis_asst: (data) => {
       return new Promise(async (resolve, reject) => {
+        try{
         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
         var table_name = "td_grt_basic",
@@ -194,6 +207,9 @@ module.exports = {
         // console.log(fwd_dt,'dt');
 
         resolve(fwd_dt);
+      } catch (error) {
+        reject(error);
+      }
       });
     },
 
@@ -243,6 +259,7 @@ module.exports = {
 
   back_dt_to_bm: (data) => {
     return new Promise(async (resolve, reject) => {
+      try{
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
       var table_name = "td_grt_basic",
@@ -254,11 +271,15 @@ module.exports = {
       // console.log(back_dt_bm,'dt');
 
       resolve(back_dt_bm);
+    } catch (error) {
+      reject(error);
+  }
     });
   },
 
   remove_member_dtls: (data) => {
     return new Promise(async (resolve, reject) => {
+      try{
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       
       //FUNCTION OF RWEMOVE MEMBER DETAILS
@@ -272,6 +293,9 @@ module.exports = {
       // console.log(back_dt_bm,'dt');
 
       resolve(response_data);
+    } catch (error) {
+      reject(error);
+  }
     });
   },
   
