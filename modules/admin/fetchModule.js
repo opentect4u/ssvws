@@ -5,24 +5,40 @@ const { groupCode } = require("../api/masterModule");
 module.exports = {
     edit_grp_web: (data) => {
         return new Promise(async (resolve, reject) => {
+          try{
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let group_code = await groupCode(data.branch_code)
 
             var table_name = "md_group",
             fields = data.group_code > 0 ? `group_name = '${data.group_name}', group_type = '${data.group_type}',
-             phone1 = '${data.phone1 == '' ? 0 : data.phone1}', phone2 = '${data.phone2 == '' ? 0 : data.phone2}', email_id = '${data.email_id}', grp_addr = '${data.grp_addr}',
+             phone1 = '${data.phone1 == '' ? 0 : data.phone1}', phone2 = '${data.phone2 == '' ? 0 : data.phone2}', email_id = '${data.email_id}', grp_addr = '${data.grp_addr.split("'").join("\\'")}',
              disctrict = '${data.district}', block = '${data.block ? data.block : 0}', pin_no = '${data.pin_no}', bank_name =  '${data.bank_name}', branch_name = '${data.branch_name}',
               ifsc =  '${data.ifsc}', micr = '${data.micr}', acc_no1 = '${data.acc_no1 == '' ? 0 : data.acc_no1}', acc_no2 = '${data.acc_no2 == '' ? 0 : data.acc_no2}',
             modified_by = '${data.modified_by}', modified_at =  '${datetime}'` : `(group_code, branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, bank_name, branch_name, ifsc, micr, acc_no1, acc_no2, open_close_flag, grp_open_dt, approval_status, created_by, created_at)`,
             values = `('${group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1 == '' ? 0 : data.phone1}', '${data.phone2 == '' ? 0 : data.phone2}',
-            '${data.email_id}', '${data.grp_addr}', '${data.district}', '${data.block ? data.block : 0}', '${data.pin_no}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc}', '${data.micr}', '${data.acc_no1 == '' ? 0 : data.acc_no1}',
+            '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.district}', '${data.block ? data.block : 0}', '${data.pin_no}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc}', '${data.micr}', '${data.acc_no1 == '' ? 0 : data.acc_no1}',
             '${data.acc_no2 == '' ? 0 : data.acc_no2}', 'O', '${datetime}', 'U', '${data.modified_by}', '${datetime}')`,
             whr = data.group_code > 0 ? `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'` : null,
             flag = data.group_code > 0 ? 1 : 0;
             var edit_grp_dtls = await db_Insert(table_name, fields, values, whr, flag);
             // console.log(edit_grp_dt,'dt');
 
+            if(edit_grp_dtls.suc > 0 && edit_grp_dtls.msg.length > 0){
+              if (data.grp_memberdtls.length > 0) {
+                for (let dt of data.grp_memberdtls) {
+                  var table_name = "td_grt_basic",
+                  fields = `prov_grp_code = '${group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                  values = null,
+                  whr = `form_no = '${dt.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${dt.member_code}'`,
+                  flag = 1;
+              var grp_mem_dt = await db_Insert(table_name, fields, values, whr, flag);
+                }
+          }
+          }
             resolve(edit_grp_dtls);
+          } catch (error) {
+            reject(error);
+        }
         });
     },
 
