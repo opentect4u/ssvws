@@ -143,22 +143,25 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
 fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
     var data = req.body;
 
-    var select = "COUNT(member_code) member_code",
-    table_name = "td_grt_basic",
-    whr = `branch_code = '${data.branch_code}' AND prov_grp_code = '${data.prov_grp_code}'`,
-    order = null;
-    var mem_assign_dtls = await db_Select(select,table_name,whr,order)
+    var select = "COUNT(member_code) AS total_members",
+        table_name = "td_grt_basic",
+        whr = `branch_code = '${data.branch_code}' AND prov_grp_code = '${data.prov_grp_code}'`,
+        order = null;
 
-     if(mem_assign_dtls.suc > 0 && mem_assign_dtls.msg.length > 0){
+    var mem_assign_dtls = await db_Select(select, table_name, whr, order);
 
-        let totalMembers = mem_assign_dtls.msg[0].member_code || 0;
-        console.log(totalMembers);
+    if (mem_assign_dtls.suc > 0 && mem_assign_dtls.msg.length > 0) {
+        let totalMembers = mem_assign_dtls.msg[0].total_members || 0;
+        console.log("Total members in group:", totalMembers);
 
         if (totalMembers > 4) {
-            res.send({"suc": 0, msg: "Each group must have at least 4 members" });
+            return res.send({ "suc": 0, "msg": "Each group must have at least 4 members" });
         }
-     }
+    }
+
+    res.send({ "suc": 1, "msg": "Group verification successful" });
 });
+
 
 fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
     var data = req.body;
