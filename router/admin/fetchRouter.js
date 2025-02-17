@@ -231,7 +231,7 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
 
     var select = " a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.remarks,b.rejected_by,b.rejected_at,c.branch_name",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
+    whr = `a.branch_code = '${data.branch_code}' AND b.prov_grp_code = '${data.prov_grp_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
     order = null;
     var fwd_mis_mem = await db_Select(select,table_name,whr,order)
 
