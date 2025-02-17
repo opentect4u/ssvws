@@ -152,7 +152,7 @@ fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
 
     if (mem_assign_dtls.suc > 0 && mem_assign_dtls.msg.length > 0) {
         let totalMembers = mem_assign_dtls.msg[0].total_members || 0;
-        console.log("Total members in group:", totalMembers);
+        // console.log("Total members in group:", totalMembers);
 
         if (totalMembers > 4) {
             return res.send({ "suc": 0, "msg": "Each group must have at least 4 members" });
