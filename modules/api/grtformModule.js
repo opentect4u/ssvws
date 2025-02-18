@@ -20,10 +20,10 @@ module.exports = {
             // if(mobile_dt.suc > 0 && mobile_dt.msg.length == 0){
                
                     var table_name = "md_member",
-                    fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr}',
-                    pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, client_addr, pin_no, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
+                    fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = ${data.gurd_name == '' ? 'NULL' : data.gurd_name}, gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = ${data.husband_name == 'NULL' ? '' : data.husband_name}, client_addr = '${data.client_addr.split("'").join("\\'")}',
+                    pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
                     values =  `('${data.branch_code}', '${member_code}', '${data.gender}', '${data.client_name}', '${datetime}',
-                    '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.client_addr}', '${data.pin_no}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.religion}', '${data.religion == 'Others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'Others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'Others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
+                    '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', ${data.husband_name == 'NULL' ? '' : data.husband_name}, '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.religion}', '${data.religion == 'Others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'Others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'Others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
                     whr = data.member_code > 0 ? `member_code = '${data.member_code}'` : null,
                     flag = data.member_code > 0 ? 1 : 0;
                     var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -32,7 +32,7 @@ module.exports = {
 
                     var table_name = "td_grt_basic",
                     fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
-                    values = `('${form_no}', '${data.grt_date}', '${data.branch_code}', '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+                    values = `('${form_no}', '${data.grt_date}', '${data.branch_code}', '0', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
                     whr = null,
                     flag =  0;
                     var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -53,7 +53,7 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
             var table_name = "td_grt_basic",
-                fields = `grt_date = '${datetime}', prov_grp_code = '${data.prov_grp_code}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
+                fields = `grt_date = '${datetime}', prov_grp_code = '0', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
                  religion = '${data.religion}', caste = '${data.caste}', education = '${data.education}', dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `form_no = '${data.form_no}'`,
@@ -117,7 +117,7 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
             var table_name = "md_member",
-            fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
+            fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = ${data.husband_name == 'NULL' ? '' : data.husband_name}, client_addr = '${data.client_addr.split("'").join("\\'")}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
              religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
               dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
@@ -127,7 +127,7 @@ module.exports = {
 
             if(edit_basic_dt.suc > 0){
                 var table_name = "td_grt_basic",
-                fields = `grt_date = '${data.grt_date}', prov_grp_code = '${data.prov_grp_code == '' ? 0 : data.prov_grp_code}',
+                fields = `grt_date = '${data.grt_date}', prov_grp_code = '0',
                 bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,
