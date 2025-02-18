@@ -151,7 +151,7 @@ module.exports = {
             if(res_dt.msg.length > 0 && res_dt.suc > 0){
                 var table_name = "td_grt_occupation_household",
                 fields = `self_occu = '${data.self_occu}', self_income = '${data.self_income > 0 ? data.self_income : 0}', spouse_occu = '${data.spouse_occu}', spouse_income = '${data.spouse_income > 0 ? data.spouse_income : 0}', 
-                loan_purpose = '${data.loan_purpose}', sub_pupose = '${data.sub_pupose}', applied_amt = '${data.applied_amt > 0 ? data.applied_amt : 0}', other_loan_flag = '${data.other_loan_flag}',
+                loan_purpose = '${data.loan_purpose}', sub_pupose = '0', applied_amt = '${data.applied_amt > 0 ? data.applied_amt : 0}', other_loan_flag = '${data.other_loan_flag}',
                  other_loan_amt = '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', other_loan_emi = '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}',
                  modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
@@ -161,7 +161,7 @@ module.exports = {
             }else {
                 var table_name = "td_grt_occupation_household",
                 fields = "(form_no, branch_code, self_occu, self_income, spouse_occu, spouse_income, loan_purpose, sub_pupose, applied_amt, other_loan_flag, other_loan_amt, other_loan_emi, created_by, created_at)",
-                values =  `('${data.form_no}', '${data.branch_code}', '${data.self_occu}', '${data.self_income > 0 ? data.self_income : 0}', '${data.spouse_occu}', '${data.spouse_income > 0 ? data.spouse_income : 0}', '${data.loan_purpose}', '${data.sub_pupose}', '${data.applied_amt > 0 ? data.applied_amt : 0}', '${data.other_loan_flag}', '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}', '${data.created_by}', '${datetime}')`,
+                values =  `('${data.form_no}', '${data.branch_code}', '${data.self_occu}', '${data.self_income > 0 ? data.self_income : 0}', '${data.spouse_occu}', '${data.spouse_income > 0 ? data.spouse_income : 0}', '${data.loan_purpose}', '0', '${data.applied_amt > 0 ? data.applied_amt : 0}', '${data.other_loan_flag}', '${data.other_loan_amt > 0 ? data.other_loan_amt : 0}', '${data.other_loan_emi > 0 ? data.other_loan_emi : 0}', '${data.created_by}', '${datetime}')`,
                 whr = null,
                 flag = 0;
                 var occup_dt = await db_Insert(table_name, fields, values, whr, flag);

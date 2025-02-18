@@ -221,10 +221,9 @@ grtformRouter.get("/fetch_occup_dtls", async (req, res) => {
     var data = req.query;
 
     //fetch occupation details
-    var select = "a.form_no,a.branch_code,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.sub_pupose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id,c.sub_purp_name",
-    table_name = "td_grt_occupation_household a, md_purpose b, md_sub_purpose c",
-    whr = `a.loan_purpose = b.purp_id 
-    AND a.sub_pupose = c.sub_purp_id 
+    var select = "a.form_no,a.branch_code,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,b.purpose_id",
+    table_name = "td_grt_occupation_household a, md_purpose b",
+    whr = `a.loan_purpose = b.purp_id
     AND a.form_no = '${data.form_no}' AND a.branch_code = '${data.branch_code}'`,
     order = null;
     var occup_dtls = await db_Select(select,table_name,whr,order)
