@@ -7,6 +7,8 @@ module.exports = {
     save_basic_dtls: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
+                console.log(data);
+                
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let form_no = await getFormNo()
             let member_code = await getMemberCode(data.branch_code)
