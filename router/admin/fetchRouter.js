@@ -600,12 +600,12 @@ fetchRouter.post("/assign_group_to_mem", async (req, res) => {
 })
   });
 
-// fetchRouter.post("/back_to_bm", async (req, res) => {
-//     var data = req.body;
+fetchRouter.post("/back_to_bm", async (req, res) => {
+    var data = req.body;
 
-//     //form details back to branch manager
-//     var back_dt = await back_dt_to_bm(data);
-//     res.send(back_dt)
-// });
+    //form details back to branch manager
+    var back_dt = await back_dt_to_bm(data);
+    res.send(back_dt)
+});
 
 module.exports = {fetchRouter}
