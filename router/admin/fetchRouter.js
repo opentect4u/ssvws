@@ -199,18 +199,18 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
 })
   });
 
-//   fetchRouter.get("/fetch_form_fwd_bm_web", async (req, res) => {
-//     var data = req.query;
+  fetchRouter.get("/fetch_form_fwd_bm_web", async (req, res) => {
+    var data = req.query;
 
-//     //fetch form which forward by Branch manager in web
-//     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.remarks,b.rejected_by,b.rejected_at,c.branch_name",
-//     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-//     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
-//     order = null;
-//     var fetch_bm_fwd_dt = await db_Select(select,table_name,whr,order)
+    //fetch form which forward by Branch manager in web
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.remarks,b.rejected_by,b.rejected_at,c.branch_name",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
+    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = '${data.approval_status}' AND b.delete_flag = 'N'`,
+    order = null;
+    var fetch_bm_fwd_dt = await db_Select(select,table_name,whr,order)
 
-//     res.send(fetch_bm_fwd_dt);
-//   });
+    res.send(fetch_bm_fwd_dt);
+  });
 
 fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
     var data = req.body;
