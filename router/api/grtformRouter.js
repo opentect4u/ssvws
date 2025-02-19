@@ -308,7 +308,7 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
         console.log("Total members in group:", group_code);
 
         if (group_code == 0) {
-            return res.send({ "suc": 0, "msg": "Please assign Group through Web" });
+            return res.send({ "suc": 0, "msg": "Please assign Group through Web", group_code: group_code });
         }
     }
 
