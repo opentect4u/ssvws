@@ -322,18 +322,18 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
     order = null;
     var search_bm_pending = await db_Select(select,table_name,whr,order);
 
-    if (data.bm_search_pending && data.bm_search_pending.trim() !== "") {
-        whr += ` AND (a.member_code LIKE '%${data.bm_search_pending}%' 
-            OR a.client_name LIKE '%${data.bm_search_pending}%' 
-            OR a.client_mobile LIKE '%${data.bm_search_pending}%' 
-            OR a.aadhar_no LIKE '%${data.bm_search_pending}%' 
-            OR a.pan_no LIKE '%${data.bm_search_pending}%')`;
-    } else {
-        // If bm_search_pending is empty, return no data
-        return res.send({ "suc": 0, "msg": "No records found" });
-    }
-
     if(search_bm_pending.suc > 0 && search_bm_pending.msg.length > 0){
+        if (data.bm_search_pending && data.bm_search_pending.trim() !== "") {
+            whr += ` AND (a.member_code LIKE '%${data.bm_search_pending}%' 
+                OR a.client_name LIKE '%${data.bm_search_pending}%' 
+                OR a.client_mobile LIKE '%${data.bm_search_pending}%' 
+                OR a.aadhar_no LIKE '%${data.bm_search_pending}%' 
+                OR a.pan_no LIKE '%${data.bm_search_pending}%')`;
+        } else {
+            // If bm_search_pending is empty, return no data
+            return res.send({ "suc": 0, "msg": "No records found" });
+        }
+        
         let group_code = search_bm_pending.msg[0].prov_grp_code || 0;
         console.log("Total members in group:", group_code);
 
