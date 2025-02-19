@@ -292,7 +292,7 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
     var data = req.body;
 
     //branch manager search pending form
-    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status",
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.prov_grp_code",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code",
     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U'   AND b.delete_flag = 'N' AND (a.member_code like '%${data.bm_search_pending}%' OR a.client_name like '%${data.bm_search_pending}%' OR a.client_mobile like '%${data.bm_search_pending}%' OR a.aadhar_no like '%${data.bm_search_pending}%' OR a.pan_no like '%${data.bm_search_pending}%')`,
     order = null;
