@@ -312,7 +312,7 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
         }
         return res.send(search_bm_pending);
     }else {
-        return res.send({ "suc": 0, "msg": "No records found", search_bm_pending });
+        return res.send({ "suc": 0, "msg": "No records found"});
     }
 });
 
