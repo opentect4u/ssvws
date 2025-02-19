@@ -305,15 +305,15 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
 
     if(search_bm_pending.suc > 0 && search_bm_pending.msg.length > 0){
         let group_code = search_bm_pending.msg[0].prov_grp_code || 0;
-        console.log("Total members in group:", group_code);
+        // console.log("Total members in group:", group_code);
 
         if (group_code == 0) {
             return res.send({ "suc": 0, "msg": "Please assign Group through Web", group_code: group_code });
         }
+        return res.send(search_bm_pending);
+    }else {
+        return res.send({ "suc": 0, "msg": "No records found", search_bm_pending });
     }
-
-    res.send(search_bm_pending);
-
 });
 
 module.exports = {grtformRouter}
