@@ -298,6 +298,15 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
     order = null;
     var search_bm_pending = await db_Select(select,table_name,whr,order);
 
+    if(search_bm_pending.suc > 0 && search_bm_pending.msg.length > 0){
+        let group_code = search_bm_pending.msg[0].prov_grp_code || 0;
+        console.log("Total members in group:", group_code);
+
+        if (group_code == 0) {
+            return res.send({ "suc": 0, "msg": "Please assign Group through Web" });
+        }
+    }
+
     res.send(search_bm_pending);
 
 })
