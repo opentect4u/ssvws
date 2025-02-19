@@ -288,52 +288,22 @@ grtformRouter.post("/get_form_against_co", async (req, res) => {
 res.send(search_co)
 });
 
-// grtformRouter.post("/bm_search_pending_form", async (req, res) => {
-//     var data = req.body;
-
-//     //branch manager search pending form
-//     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.prov_grp_code",
-//     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code",
-//     whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U'   AND b.delete_flag = 'N'; 
-//     AND (a.member_code like '%${data.bm_search_pending}%' OR a.client_name like '%${data.bm_search_pending}%' OR a.client_mobile like '%${data.bm_search_pending}%' OR a.aadhar_no like '%${data.bm_search_pending}%' OR a.pan_no like '%${data.bm_search_pending}%')`,
-//     order = null;
-//     var search_bm_pending = await db_Select(select,table_name,whr,order);
-
-//     if(search_bm_pending.suc > 0 && search_bm_pending.msg.length > 0){
-//         let group_code = search_bm_pending.msg[0].prov_grp_code || 0;
-//         console.log("Total members in group:", group_code);
-
-//         if (group_code == 0) {
-//             return res.send({ "suc": 0, "msg": "Please assign Group through Web" });
-//         }
-//     }
-
-//     res.send(search_bm_pending);
-
-// })
-
 grtformRouter.post("/bm_search_pending_form", async (req, res) => {
     var data = req.body;
+
+    if(!data.bm_search_pending || data.bm_search_pending.trim() === "") {
+        return res.send({ "suc": 0, "msg": "No records found" });
+    }
 
     //branch manager search pending form
     var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.prov_grp_code",
     table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code",
-    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U'   AND b.delete_flag = 'N'`,
+    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U'   AND b.delete_flag = 'N' 
+    AND (a.member_code like '%${data.bm_search_pending}%' OR a.client_name like '%${data.bm_search_pending}%' OR a.client_mobile like '%${data.bm_search_pending}%' OR a.aadhar_no like '%${data.bm_search_pending}%' OR a.pan_no like '%${data.bm_search_pending}%')`,
     order = null;
     var search_bm_pending = await db_Select(select,table_name,whr,order);
 
     if(search_bm_pending.suc > 0 && search_bm_pending.msg.length > 0){
-        if (data.bm_search_pending && data.bm_search_pending.trim() !== "") {
-            whr += ` AND (a.member_code LIKE '%${data.bm_search_pending}%' 
-                OR a.client_name LIKE '%${data.bm_search_pending}%' 
-                OR a.client_mobile LIKE '%${data.bm_search_pending}%' 
-                OR a.aadhar_no LIKE '%${data.bm_search_pending}%' 
-                OR a.pan_no LIKE '%${data.bm_search_pending}%')`;
-        } else {
-            // If bm_search_pending is empty, return no data
-            return res.send({ "suc": 0, "msg": "No records found" });
-        }
-        
         let group_code = search_bm_pending.msg[0].prov_grp_code || 0;
         console.log("Total members in group:", group_code);
 
@@ -344,6 +314,6 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
 
     res.send(search_bm_pending);
 
-})
+});
 
 module.exports = {grtformRouter}
