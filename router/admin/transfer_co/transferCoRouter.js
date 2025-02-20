@@ -4,8 +4,8 @@ const express = require('express'),
 transferCoRouter = express.Router(),
 dateFormat = require('dateformat');
 
-transferCoRouter.get("/fetch_group_name_brnwise", async (req, res) => {
-    var data = req.query;
+transferCoRouter.post("/fetch_group_name_brnwise", async (req, res) => {
+    var data = req.body;
 
     if(!data.grp || data.grp.trim() === "") {
         return res.send({ "suc": 0, "msg": "No records found" });
