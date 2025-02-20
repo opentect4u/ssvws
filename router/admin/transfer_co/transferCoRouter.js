@@ -89,4 +89,23 @@ transferCoRouter.post("/transfer_co", async (req, res) => {
     }
 });
 
+//APPROVE TRANSFER CO DETAILS
+transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
+    var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    try {
+        var table_name = "td_co_transfer",
+        fields = `remarks = '${data.remarks.split("'").join("\\'")}', approval_status = 'A', approved_by = '${data.approved_by}', modified_at = '${datetime}'`,
+        values = null,
+        whr = `group_code = '${data.group_code}'`,
+        flag = 1;
+        var approve_grp_co_dtls = await db_Insert(table_name,fields,values,whr,flag);
+
+        res.send(approve_grp_co_dtls);
+    }catch (error){
+        res.send({"suc": 2, "msg": "Error occurred", details: error });
+        
+    }
+});
+
 module.exports = {transferCoRouter}
