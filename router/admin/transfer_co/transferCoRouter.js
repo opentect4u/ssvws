@@ -10,7 +10,7 @@ transferCoRouter.get("/fetch_group_name_brnwise", async (req, res) => {
     //get group details
     var select = "group_code,branch_code,group_name,group_type,co_id,phone1",
     table_name = "md_group",
-    whr = `branch_code = '${data.branch_code}'`,
+    whr = `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A'`,
     order = `ORDER BY group_name`;
     var group_dt = await db_Select(select,table_name,whr,order);
     res.send(group_dt) 
