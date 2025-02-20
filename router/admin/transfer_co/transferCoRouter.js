@@ -47,4 +47,16 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     }
 });
 
+transferCoRouter.post("/fetch_co_brnwise", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.emp_id,a.emp_name,b.user_type",
+    table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
+    whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
+    order = null;
+    var co_data = await db_Select (select,table_name,whr,order);
+
+    res.send(co_data)
+});
+
 module.exports = {transferCoRouter}
