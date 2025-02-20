@@ -7,14 +7,28 @@ dateFormat = require('dateformat');
 transferCoRouter.get("/fetch_group_name_brnwise", async (req, res) => {
     var data = req.query;
 
+    if(!data.grp || data.grp.trim() === "") {
+        return res.send({ "suc": 0, "msg": "No records found" });
+    }
+
+    try {
     //get group details
     var select = "group_code,branch_code,group_name,group_type,co_id,phone1",
     table_name = "md_group",
-    whr = `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A'`,
+    whr = `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A' AND (group_code like '%${data.grp}%' OR group_name like '%${data.grp}%')`,
     order = `ORDER BY group_name`;
     var group_dt = await db_Select(select,table_name,whr,order);
-    res.send(group_dt) 
-})
+
+    if(group_dt.suc > 0 && group_dt.msg.length > 0){
+        return res.send(group_dt);
+    }else {
+        return res.send({ "suc": 0, "msg": "No data found"});
+    }
+}catch{
+    console.error("Error fetching when search group:", error);
+    return res.send({ suc: 0, msg: "Internal server error" });
+}
+});
 
 transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     var data = req.body;
