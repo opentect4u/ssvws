@@ -81,7 +81,7 @@ transferCoRouter.post("/transfer_co", async (req, res) => {
                     var update_grp_co_dtls = await db_Insert(table_name,fields,values,whr,flag);  
                 }
 
-                res.send({"suc": 1, "msg" : "Saved successfully", update_grp_co_dtls});
+                res.send(update_grp_co_dtls);
 
     }catch (error){
         res.send({"suc": 2, "msg": "Error occurred", details: error });
