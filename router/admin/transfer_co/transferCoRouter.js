@@ -47,7 +47,7 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     }
 });
 
-transferCoRouter.post("/fetch_co_brnwise", async (req, res) => {
+transferCoRouter.post("/fetch_co_branch", async (req, res) => {
     var data = req.body;
 
     var select = "a.emp_id,a.emp_name,b.user_type",
