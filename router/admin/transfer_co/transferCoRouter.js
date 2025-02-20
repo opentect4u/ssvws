@@ -21,9 +21,9 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
 
     //FETCH GROUP CO DETAILS FOR TRANSFER
     try {
-            var select = "a.branch_code grp_brn,a.group_name,a.co_id";
-            table_name = "md_group";
-            whr = ``,
+            var select = "a.branch_code grp_brn,a.group_name,a.co_id,b.branch_id,b.emp_name";
+            table_name = "md_group a, md_employee b";
+            whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
             order = null;
             var fetch_grp_co_dt = await db_Select(select, table_name, whr, order);
             if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
