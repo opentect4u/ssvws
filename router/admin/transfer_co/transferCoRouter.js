@@ -108,4 +108,22 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
     }
 });
 
+// TRANSFER CO DETAILS FOR VIEW
+
+transferCoRouter.post("/trans_co_view", async (req, res) => {
+  var data = req.body;
+
+  try{
+    var select = "a.trf_date,a.group_code,a.from_co,a.from_brn,a.to_co,a.to_brn,a.remarks,a.approval_status",
+    table_name = "td_co_transfer a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON a.from_co = c.emp_id LEFT JOIN md_employee d ON a.to_co = b.emp_id",
+    whr = `a.group_code = '${data.group_code}'`,
+    order = null;
+    var view_co_trans_dt = await db_Select(select,table_name,whr,order);
+
+    res.send(view_co_trans_dt)
+  }catch (error) {
+    res.send({"suc": 2, "msg": "Error occurred", error })
+  }
+});
+
 module.exports = {transferCoRouter}

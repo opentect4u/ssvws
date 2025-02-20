@@ -271,8 +271,8 @@ module.exports = {
             
 
             var table_name = "md_group",
-            fields = "(group_code , branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, grp_open_dt, created_by, created_at)",
-            values =  `('${group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1}', '${data.phone2}', '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.disctrict}', '${data.block}', '${data.pin_no}', '${datetime}', '${data.created_by}', '${datetime}')`,
+            fields = "(group_code , branch_code, group_name, group_type, co_id, phone1, phone2, email_id, grp_addr, disctrict, block, pin_no, open_close_flag, grp_open_dt, approval_status, created_by, created_at)",
+            values =  `('${group_code}', '${data.branch_code}', '${data.group_name}', '${data.group_type}', '${data.co_id}', '${data.phone1}', '${data.phone2}', '${data.email_id}', '${data.grp_addr.split("'").join("\\'")}', '${data.disctrict}', '${data.block}', '${data.pin_no}', 'O', '${datetime}', 'A', '${data.created_by}', '${datetime}')`,
             whr = null,
             flag = 0;
             var grp_dt = await db_Insert(table_name, fields, values, whr, flag);
