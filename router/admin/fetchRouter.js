@@ -76,9 +76,10 @@ fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
     var data = req.body;
 
     //fetch basic details in web
-    var select = "a.*,b.*",
-    table_name = "md_member a, td_grt_basic b",
+    var select = "a.*,b.*, c.branch_name",
+    table_name = "md_member a, td_grt_basic b, md_branch c",
     whr = `a.branch_code = b.branch_code 
+    AND a.branch_code = c.branch_code
     AND a.member_code = b.member_code 
     AND a.branch_code IN (${data.branch_code})
     AND b.form_no = '${data.form_no}' 
