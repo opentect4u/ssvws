@@ -95,7 +95,7 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     try {
         var table_name = "td_co_transfer",
-        fields = `remarks = '${data.remarks.split("'").join("\\'")}', approval_status = 'A', approved_by = '${data.approved_by}', modified_at = '${datetime}'`,
+        fields = `remarks = '${data.remarks.split("'").join("\\'")}', approval_status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
         values = null,
         whr = `group_code = '${data.group_code}'`,
         flag = 1;
