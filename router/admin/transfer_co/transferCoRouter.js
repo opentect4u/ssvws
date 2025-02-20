@@ -26,20 +26,21 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
             whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
             order = null;
             var fetch_grp_co_dt = await db_Select(select, table_name, whr, order);
-            if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
-                // If employee details found
-                return res.send({
-                    suc: 1,
-                    msg: fetch_grp_co_dt.msg
-                });
-            } else {
-                // If no details found in 'md_employee'
-                return res.send({
-                    suc: 0,
-                    msg: [],
-                    details: "Employee details not found"
-                });
-            }
+            // if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
+            //     // If employee details found
+            //     return res.send({
+            //         suc: 1,
+            //         msg: fetch_grp_co_dt.msg
+            //     });
+            // } else {
+            //     // If no details found in 'md_employee'
+            //     return res.send({
+            //         suc: 0,
+            //         msg: [],
+            //         details: "Employee details not found"
+            //     });
+            // }
+            res.send(fetch_grp_co_dt)
     } catch (error) {
         // Handle errors gracefully
         console.error("Error fetching group co details:", error);
