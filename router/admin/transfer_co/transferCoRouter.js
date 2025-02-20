@@ -21,26 +21,25 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
 
     //FETCH GROUP CO DETAILS FOR TRANSFER
     try {
-            var select = "a.branch_code grp_brn,a.group_name,a.co_id,b.branch_id,b.emp_name";
-            table_name = "md_group a, md_employee b";
-            whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
+            var select = "a.group_code,a.branch_code grp_brn,a.group_name,a.co_id,b.emp_name co_name,b.branch_id co_brn_id,c.branch_name co_brn_name";
+            table_name = "md_group a, md_employee b, md_branch c";
+            whr = `a.co_id = b.emp_id AND b.branch_id = c.branch_code AND a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
             order = null;
             var fetch_grp_co_dt = await db_Select(select, table_name, whr, order);
-            // if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
-            //     // If employee details found
-            //     return res.send({
-            //         suc: 1,
-            //         msg: fetch_grp_co_dt.msg
-            //     });
-            // } else {
-            //     // If no details found in 'md_employee'
-            //     return res.send({
-            //         suc: 0,
-            //         msg: [],
-            //         details: "Employee details not found"
-            //     });
-            // }
-            res.send(fetch_grp_co_dt)
+            if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
+                // If employee details found
+                return res.send({
+                    suc: 1,
+                    msg: fetch_grp_co_dt.msg
+                });
+            } else {
+                // If no details found in 'md_employee'
+                return res.send({
+                    suc: 0,
+                    msg: [],
+                    details: "CO details not found"
+                });
+            }
     } catch (error) {
         // Handle errors gracefully
         console.error("Error fetching group co details:", error);
