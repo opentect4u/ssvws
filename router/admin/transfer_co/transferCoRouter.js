@@ -75,12 +75,12 @@ transferCoRouter.post("/fetch_branch_name", async (req, res) => {
 });
 
 //FETCH CO NAME
-transferCoRouter.post("/fetch_co_branch", async (req, res) => {
+transferCoRouter.post("/fetch_co_name_branchwise", async (req, res) => {
     var data = req.body;
 
     var select = "a.emp_id to_co_id,a.branch_id to_brn_id,a.emp_name to_co_name,b.user_type,c.branch_name to_brn_name",
     table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
-    whr = `b.user_type = '1' AND b.user_status = 'A'`,
+    whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
     order = null;
     var co_data = await db_Select(select,table_name,whr,order);
 
