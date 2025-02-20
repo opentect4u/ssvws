@@ -169,4 +169,16 @@ transferCoRouter.post("/transfer_co_view_all_details", async (req, res) => {
   }
 });
 
+transferCoRouter.post("/groupwise_mem_details", async (req, res) => {
+    var data = req.body;
+
+    var select = "a.loan_id,a.group_code,a.member_code,a.outstanding,b.client_name,c.group_name",
+    table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.group_code = c.group_code",
+    whr = `a.group_code = '${data.group_code}'`,
+    order = null;
+    var grp_mem_details = await db_Select(select,table_name,whr,order);
+
+    res.send(grp_mem_details);
+});
+
 module.exports = {transferCoRouter}
