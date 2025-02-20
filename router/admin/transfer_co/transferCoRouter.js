@@ -19,7 +19,7 @@ transferCoRouter.get("/fetch_group_name_brnwise", async (req, res) => {
 transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     var data = req.body;
 
-    //FETCH GROUP CO DETAILS FOR TRANSFER
+    //FETCH GROUP CO DETAILS FOR TRANSFER 
     try {
             var select = "a.branch_code grp_brn,a.group_name,a.co_id,b.branch_id,b.emp_name";
             table_name = "md_group a, md_employee b";
