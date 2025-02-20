@@ -61,6 +61,19 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     }
 });
 
+//FETCH BRANCH NAME
+transferCoRouter.post("/fetch_branch_name", async (req, res) => {
+    var data = req.body;
+
+    var select = "branch_code,branch_name",
+    table_name = "md_branch",
+    whr = `branch_code like '%${data.branch}%' OR branch_name like '%${data.branch}%'`,
+    order = null;
+    var branch_data = await db_Select(select,table_name,whr,order);
+
+    res.send(branch_data)
+});
+
 //FETCH CO NAME
 transferCoRouter.post("/fetch_co_branch", async (req, res) => {
     var data = req.body;
