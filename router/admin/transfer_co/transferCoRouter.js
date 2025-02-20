@@ -1,4 +1,4 @@
-const { db_Select } = require('../../../model/mysqlModel');
+const { db_Select, db_Insert } = require('../../../model/mysqlModel');
 
 const express = require('express'),
 transferCoRouter = express.Router(),
@@ -47,6 +47,7 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     }
 });
 
+//FETCH CO NAME
 transferCoRouter.post("/fetch_co_branch", async (req, res) => {
     var data = req.body;
 
@@ -57,6 +58,35 @@ transferCoRouter.post("/fetch_co_branch", async (req, res) => {
     var co_data = await db_Select(select,table_name,whr,order);
 
     res.send(co_data)
+});
+
+// TRANSFER CO 
+transferCoRouter.post("/transfer_co", async (req, res) => {
+    var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    try {
+        var table_name = "td_co_transfer",
+                fields = `(trf_date,group_code,from_co,from_brn,to_co,to_brn,created_by,created_at)`,
+                values = `('${datetime}','${data.group_code}','${data.from_co}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.created_by}','${datetime}')`,
+                whr = null,
+                flag = 0;
+                var save_trans_co_dtls = await db_Insert(table_name,fields,values,whr,flag);  
+                
+                if(save_trans_co_dtls.suc > 0 && save_trans_co_dtls.msg.length > 0){
+                    var table_name = "md_group",
+                    fields = `co_id = '${data.to_co}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                    values = null,
+                    whr = `group_code = '${data.group_code}'`,
+                    flag = 1;
+                    var update_grp_co_dtls = await db_Insert(table_name,fields,values,whr,flag);  
+                }
+
+                res.send({"suc": 1, "msg" : "Saved successfully", update_grp_co_dtls});
+
+    }catch (error){
+        res.send({"suc": 2, "msg": "Error occurred", details: error });
+        
+    }
 });
 
 module.exports = {transferCoRouter}
