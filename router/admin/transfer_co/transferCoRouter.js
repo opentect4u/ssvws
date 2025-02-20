@@ -50,7 +50,7 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
 transferCoRouter.post("/fetch_co_branch", async (req, res) => {
     var data = req.body;
 
-    var select = "a.emp_id,a.emp_name,b.user_type",
+    var select = "a.emp_id to_co_id,a.branch_id to_brn_id,a.emp_name to_co_name,b.user_type",
     table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
     whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
     order = null;
