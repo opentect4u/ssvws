@@ -167,13 +167,21 @@ transferCoRouter.post("/transfer_co_view_all_details", async (req, res) => {
  var data = req.body;
 
  try{
+    if(data.flag == 'P'){
     var select = "a.trf_date,a.group_code,a.from_co,a.from_brn,a.to_co,a.to_brn,a.remarks,a.approval_status,b.group_name,c.emp_name from_co_name,d.emp_name to_co_name,e.branch_name from_brn_name,f.branch_name to_brn_name",
     table_name = "td_co_transfer a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON a.from_co = c.emp_id LEFT JOIN md_employee d ON a.to_co = d.emp_id LEFT JOIN md_branch e ON a.from_brn = e.branch_code LEFT JOIN md_branch f ON a.to_brn = f.branch_code",
-    whr = `a.group_code = '${data.group_code}'`,
+    whr = `a.group_code = '${data.group_code}' AND a.approval_status = 'U'`,
     order = null;
     var view_co_trans_dt = await db_Select(select,table_name,whr,order);
    
     res.send(view_co_trans_dt)
+    }else {
+        var select = "a.trf_date,a.group_code,a.from_co,a.from_brn,a.to_co,a.to_brn,a.remarks,a.approval_status,b.group_name,c.emp_name from_co_name,d.emp_name to_co_name,e.branch_name from_brn_name,f.branch_name to_brn_name",
+        table_name = "td_co_transfer a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON a.from_co = c.emp_id LEFT JOIN md_employee d ON a.to_co = d.emp_id LEFT JOIN md_branch e ON a.from_brn = e.branch_code LEFT JOIN md_branch f ON a.to_brn = f.branch_code",
+        whr = `a.group_code = '${data.group_code}' AND a.approval_status = 'A'`,
+        order = null;
+        var view_co_trans_dt = await db_Select(select,table_name,whr,order); 
+    }
   }catch (error) {
     res.send({"suc": 2, "msg": "Error occurred", error })
   }
