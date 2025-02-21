@@ -137,17 +137,27 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
 
 // TRANSFER CO DETAILS FOR VIEW
 
-transferCoRouter.post("/trans_co_view", async (req, res) => {
+transferCoRouter.post("/trans_co_view_unapprove_list", async (req, res) => {
   var data = req.body;
 
   try{
+    if(data.flag == 'P'){
+        var select = "a.trf_date,a.group_code,b.group_name",
+        table_name = "td_co_transfer a, md_group b",
+        whr = `a.group_code = b.group_code AND a.approval_status = 'U'`,
+        order = null;
+        var view_data = await db_Select(select,table_name,whr,order);
+       
+        res.send(view_data)
+    }else {
     var select = "a.trf_date,a.group_code,b.group_name",
     table_name = "td_co_transfer a, md_group b",
-    whr = `a.group_code = b.group_code`,
+    whr = `a.group_code = b.group_code AND a.approval_status = 'A'`,
     order = null;
     var view_data = await db_Select(select,table_name,whr,order);
    
     res.send(view_data)
+    }
   }catch (error) {
     res.send({"suc": 2, "msg": "Error occurred", error })
   }
