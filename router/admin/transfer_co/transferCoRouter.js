@@ -128,6 +128,15 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
         flag = 1;
         var approve_grp_co_dtls = await db_Insert(table_name,fields,values,whr,flag);
 
+        if(approve_grp_co_dtls.suc > 0 && approve_grp_co_dtls.msg.length > 0){
+            var table_name = "md_group",
+            fields = `co_id = '${data.to_co}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            values = null,
+            whr = `group_code = '${data.group_code}'`,
+            flag = 1;
+            var update_grp_co_dtl = await db_Insert(table_name,fields,values,whr,flag);  
+        }
+
         res.send(approve_grp_co_dtls);
     }catch (error){
         res.send({"suc": 2, "msg": "Error occurred", details: error });
