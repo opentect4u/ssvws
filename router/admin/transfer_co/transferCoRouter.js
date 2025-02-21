@@ -181,6 +181,7 @@ transferCoRouter.post("/transfer_co_view_all_details", async (req, res) => {
         whr = `a.group_code = '${data.group_code}' AND a.approval_status = 'A'`,
         order = null;
         var view_co_trans_dt = await db_Select(select,table_name,whr,order); 
+        res.send(view_co_trans_dt)
     }
   }catch (error) {
     res.send({"suc": 2, "msg": "Error occurred", error })
