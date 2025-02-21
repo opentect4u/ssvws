@@ -175,7 +175,7 @@ transferCoRouter.post("/groupwise_mem_details", async (req, res) => {
     var select = "a.loan_id,a.group_code,a.member_code,SUM(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) outstanding,b.client_name,c.group_name",
     table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.group_code = c.group_code",
     whr = `a.group_code = '${data.group_code}'`,
-    order = null;
+    order = `GROUP BY a.loan_id,a.group_code,a.member_code,b.client_name,c.group_name`;
     var grp_mem_details = await db_Select(select,table_name,whr,order);
 
     res.send(grp_mem_details);
