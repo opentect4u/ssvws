@@ -137,7 +137,7 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
 
 // TRANSFER CO DETAILS FOR VIEW
 
-transferCoRouter.post("/trans_co_view_unapprove_list", async (req, res) => {
+transferCoRouter.post("/trans_co_view", async (req, res) => {
   var data = req.body;
 
   try{
