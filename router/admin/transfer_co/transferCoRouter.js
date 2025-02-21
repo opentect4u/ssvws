@@ -151,7 +151,7 @@ transferCoRouter.post("/trans_co_view", async (req, res) => {
 
   try{
     if(data.flag == 'P'){
-        var select = "a.trf_date,a.group_code,b.group_name,a.approval_status",
+        var select = "a.trf_date,a.group_code,a.from_co,b.group_name,a.approval_status",
         table_name = "td_co_transfer a, md_group b",
         whr = `a.group_code = b.group_code AND a.approval_status = 'U'`,
         order = null;
@@ -159,7 +159,7 @@ transferCoRouter.post("/trans_co_view", async (req, res) => {
        
         res.send(view_data)
     }else {
-    var select = "a.trf_date,a.group_code,b.group_name,a.approval_status",
+    var select = "a.trf_date,a.group_code,a.from_co,b.group_name,a.approval_status",
     table_name = "td_co_transfer a, md_group b",
     whr = `a.group_code = b.group_code AND a.approval_status = 'A'`,
     order = null;
