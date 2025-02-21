@@ -52,7 +52,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
       table_name =
         "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code",
       whr = `a.branch_code = '${data.branch_code}'
-    AND b.prov_grp_code = '${fetch_appl_dtls.msg[0].group_code}'`,
+    AND b.prov_grp_code = '${fetch_appl_dtls.msg[0].group_code}' AND a.delete_flag = 'N' AND b.approval_status = 'A'`,
       order = null;
     var grp_mem_dt = await db_Select(select, table_name, whr, order);
 
