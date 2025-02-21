@@ -93,8 +93,8 @@ transferCoRouter.post("/transfer_co", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     try {
         var table_name = "td_co_transfer",
-                fields = `(trf_date,group_code,from_co,from_brn,to_co,to_brn,created_by,created_at)`,
-                values = `('${datetime}','${data.group_code}','${data.from_co}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.created_by}','${datetime}')`,
+                fields = `(trf_date,group_code,from_co,from_brn,to_co,to_brn,remarks,created_by,created_at)`,
+                values = `('${datetime}','${data.group_code}','${data.from_co}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.remarks.split("'").join("\\'")}','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var save_trans_co_dtls = await db_Insert(table_name,fields,values,whr,flag);  
@@ -122,7 +122,7 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     try {
         var table_name = "td_co_transfer",
-        fields = `remarks = '${data.remarks.split("'").join("\\'")}', approval_status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
+        fields = `approval_status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
         values = null,
         whr = `group_code = '${data.group_code}'`,
         flag = 1;
