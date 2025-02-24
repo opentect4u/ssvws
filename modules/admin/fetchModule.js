@@ -21,7 +21,7 @@ module.exports = {
             whr = data.group_code > 0 ? `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'` : null,
             flag = data.group_code > 0 ? 1 : 0;
             var edit_grp_dtls = await db_Insert(table_name, fields, values, whr, flag);
-            console.log(group_code,'dt');
+            console.log(edit_grp_dtls.msg.group_code,'dt');
 
             if(edit_grp_dtls.suc > 0 && edit_grp_dtls.msg.length > 0){
               if (data.grp_memberdtls.length > 0) {
