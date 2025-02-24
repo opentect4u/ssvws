@@ -93,6 +93,7 @@ const { loan_closeRouter } = require("./router/report/branch_report/web/loan_clo
 const { userMenuRouter } = require("./router/api/userMenuRouter");
 const { loan_disb_approveRouter } = require("./router/admin/loan/loan_disb_approve");
 const { transferCoRouter } = require("./router/admin/transfer_co/transferCoRouter");
+const { transferMemRouter } = require("./router/admin/transfer_member/transferMemRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -115,6 +116,7 @@ app.use(empRouter)
 app.use(userwebRouter)
 app.use(transferUserRouter)
 app.use(transferCoRouter)
+app.use(transferMemRouter)
 app.use(dmd_vs_collRouter)
 app.use(attendanceRouter)
 app.use(app_attendanceRouter)
