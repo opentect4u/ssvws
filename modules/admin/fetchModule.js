@@ -25,7 +25,11 @@ module.exports = {
 
             if(edit_grp_dtls.suc > 0 && edit_grp_dtls.msg.length > 0){
               if (data.grp_memberdtls.length > 0) {
+                let assignedCount = 0; 
                 for (let dt of data.grp_memberdtls) {
+                  if (data.group_code == 0 && assignedCount >= 1) {
+                    break;
+                }
                   var table_name = "td_grt_basic",
                   fields = `prov_grp_code = '${group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                   values = null,
