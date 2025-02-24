@@ -27,7 +27,7 @@ module.exports = {
               if (data.grp_memberdtls.length > 0) {
                 for (let dt of data.grp_memberdtls) {
                   var table_name = "td_grt_basic",
-                  fields = `prov_grp_code = '${group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                  fields = `prov_grp_code = '${data.group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                   values = null,
                   whr = `form_no = '${dt.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${dt.member_code}'`,
                   flag = 1;
