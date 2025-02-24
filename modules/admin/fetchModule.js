@@ -23,11 +23,18 @@ module.exports = {
             var edit_grp_dtls = await db_Insert(table_name, fields, values, whr, flag);
             console.log(edit_grp_dtls.msg.group_code,'dt');
 
-            if(edit_grp_dtls.suc > 0 && edit_grp_dtls.msg.length > 0){
+            let final_group_code = data.group_code > 0 
+                ? data.group_code  // If updating, keep the same group_code
+                : edit_grp_dtls.msg.insertId || group_code; // If inserting, use the generated code
+
+            console.log(final_group_code, 'final_group_code'); // Debugging
+
+            // if(edit_grp_dtls.suc > 0 && edit_grp_dtls.msg.length > 0){
+              if (edit_grp_dtls.suc > 0) {
               if (data.grp_memberdtls.length > 0) {
                 for (let dt of data.grp_memberdtls) {
                   var table_name = "td_grt_basic",
-                  fields = `prov_grp_code = '${data.group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                  fields = `prov_grp_code = '${final_group_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                   values = null,
                   whr = `form_no = '${dt.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${dt.member_code}'`,
                   flag = 1;
