@@ -21,13 +21,13 @@ module.exports = {
             whr = data.group_code > 0 ? `group_code = '${data.group_code}' AND branch_code = '${data.branch_code}'` : null,
             flag = data.group_code > 0 ? 1 : 0;
             var edit_grp_dtls = await db_Insert(table_name, fields, values, whr, flag);
-            console.log(edit_grp_dtls.msg.group_code,'dt');
+            // console.log(edit_grp_dtls.msg.group_code,'dt');
 
             let final_group_code = data.group_code > 0 
                 ? data.group_code  // If updating, keep the same group_code
                 : edit_grp_dtls.msg.insertId || group_code; // If inserting, use the generated code
 
-            console.log(final_group_code, 'final_group_code'); // Debugging
+            // console.log(final_group_code, 'final_group_code'); // Debugging
 
             // if(edit_grp_dtls.suc > 0 && edit_grp_dtls.msg.length > 0){
               if (edit_grp_dtls.suc > 0) {
