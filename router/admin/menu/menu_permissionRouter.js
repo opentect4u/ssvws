@@ -72,13 +72,11 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
 
         var count_user_type = await db_Select(select, table_name, whr, order);
 
-        // Extract the count value safely
         count_user_type["user_type_no"] = count_user_type.msg.length > 0 ? count_user_type.msg[0].user_type_no : 0;
 
-        var menu_permission_data = null;
-
         if (count_user_type.user_type_no > 0) {
-            var fields = `
+            var table_name = "td_menu_permission",
+            fields = `
                 grt = '${data.grt}', 
                 applications = '${data.applications}', 
                 search_member = '${data.search_member}', 
@@ -112,14 +110,13 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
                 transfer_user = '${data.transfer_user}', 
                 modified_by = '${data.modified_by}', 
                 modified_at = '${datetime}'
-            `;
-        
-            var whr = `user_type = '${data.user_type}'`;
-            var flag = 1;
-        
-            menu_permission_data = await db_Insert(table_name, fields, null, whr, flag);
+            `,
+            whr = `user_type = '${data.user_type}'`,
+            flag = 1;
+            var menu_permission_data = await db_Insert(table_name, fields, null, whr, flag);
         } else {
-            var fields = `(
+            var table_name = "td_menu_permission",
+            fields = `(
                 user_type, grt, applications, search_member, groups, edit_group, add_group, 
                 transfer_group, approve_group_transfer, view_group_transfer, attendance, 
                 attendance_dashboard, loans, disburse_loan, view_loan, approve_transaction, 
@@ -127,27 +124,11 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
                 fundwise_report, schemewise_report, demand_vs_collection, master, banks, 
                 employees, designation, user_management, create_user, manage_user, transfer_user, 
                 created_by, created_at
-            )`;
-        
-            var values = `(
-                '${data.user_type}', '${data.grt}', '${data.applications}', '${data.search_member}', 
-                '${data.groups}', '${data.edit_group}', '${data.add_group}', '${data.transfer_group}', 
-                '${data.approve_group_transfer}', '${data.view_group_transfer}', '${data.attendance}', 
-                '${data.attendance_dashboard}', '${data.loans}', '${data.disburse_loan}', 
-                '${data.view_loan}', '${data.approve_transaction}', '${data.reports}', 
-                '${data.loan_statement}', '${data.loan_transactions}', '${data.demand_report}', 
-                '${data.outstanding_report}', '${data.fundwise_report}', '${data.schemewise_report}', 
-                '${data.demand_vs_collection}', '${data.master}', '${data.banks}', 
-                '${data.employees}', '${data.designation}', '${data.user_management}', 
-                '${data.create_user}', '${data.manage_user}', '${data.transfer_user}', 
-                '${data.created_by}', '${datetime}'
-            )`;
-        
-            var flag = 0;
-            menu_permission_data = await db_Insert(table_name, fields, values, null, flag);
+            )`,
+            values = `(${data.user_type ? `'${data.user_type}'` : 'NULL'}',${data.grt ? `'${data.grt}'` : 'NULL'}',${data.applications ? `'${data.applications}'` : 'NULL'}',${data.search_member ? `'${data.search_member}'` : 'NULL'}',${data.groups ? `'${data.groups}'` : 'NULL'}',${data.edit_group ? `'${data.edit_group}'` : 'NULL'}',${data.add_group ? `'${data.add_group}'` : 'NULL'}',${data.transfer_group ? `'${data.transfer_group}'` : 'NULL'}',${data.approve_group_transfer ? `'${data.approve_group_transfer}'` : 'NULL'}',${data.view_group_transfer ? `'${data.view_group_transfer}'` : 'NULL'}',${data.attendance ? `'${data.attendance}'` : 'NULL'}',${data.attendance_dashboard ? `'${data.attendance_dashboard}'` : 'NULL'}',${data.loans ? `'${data.loans}'` : 'NULL'}',${data.disburse_loan ? `'${data.disburse_loan}'` : 'NULL'}',${data.view_loan ? `'${data.view_loan}'` : 'NULL'}',${data.approve_transaction ? `'${data.approve_transaction}'` : 'NULL'}',${data.reports ? `'${data.reports}'` : 'NULL'}',${data.loan_statement ? `'${data.loan_statement}'` : 'NULL'}',${data.loan_transactions ? `'${data.loan_transactions}'` : 'NULL'}',${data.demand_report ? `'${data.demand_report}'` : 'NULL'}',${data.outstanding_report ? `'${data.outstanding_report}'` : 'NULL'}',${data.fundwise_report ? `'${data.fundwise_report}'` : 'NULL'}',${data.schemewise_report ? `'${data.schemewise_report}'` : 'NULL'}',${data.demand_vs_collection ? `'${data.demand_vs_collection}'` : 'NULL'}',${data.master ? `'${data.master}'` : 'NULL'}',${data.banks ? `'${data.banks}'` : 'NULL'}',${data.employees ? `'${data.employee}'` : 'NULL'}',${data.designation ? `'${data.designation}'` : 'NULL'}',${data.user_management ? `'${data.user_management}'` : 'NULL'}',${data.create_user ? `'${data.create_user}'` : 'NULL'}',${data.manage_user ? `'${data.manage_user}'` : 'NULL'}',${data.transfer_user ? `'${data.transfer_user}'` : 'NULL'}','${data.created_by}','${datetime}')`,
+            flag = 0;
+            var menu_permission_data = await db_Insert(table_name, fields, values, null, flag);
         }
-        
-
         res.send({ "suc": 1, "msg": "Menu permission updated successfully", menu_permission_data });
     } catch (error) {
         console.error(error);
