@@ -94,6 +94,7 @@ const { userMenuRouter } = require("./router/api/userMenuRouter");
 const { loan_disb_approveRouter } = require("./router/admin/loan/loan_disb_approve");
 const { transferCoRouter } = require("./router/admin/transfer_co/transferCoRouter");
 const { transferMemRouter } = require("./router/admin/transfer_member/transferMemRouter");
+const { menu_permissionRouter } = require("./router/admin/menu/menu_permissionRouter");
 
 app.use(LoginRouter)
 app.use(DashboardRouter)
@@ -131,6 +132,7 @@ app.use('/adminreport', dmd_vs_collAdminRouter)
 app.use('/adminreport', loan_demandAdminRouter)
 app.use('/adminreport', attenAdminRouter)
 app.use('/user_menu', userMenuRouter)
+app.use('/menu', menu_permissionRouter)
 
 app.get("/",async (req, res) => {
   // const bcrypt = require("bcrypt");
