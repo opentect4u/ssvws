@@ -113,13 +113,13 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
                 modified_by = '${data.modified_by}', 
                 modified_at = '${datetime}'
             `;
-
+        
             var whr = `user_type = '${data.user_type}'`;
             var flag = 1;
-
+        
             menu_permission_data = await db_Insert(table_name, fields, null, whr, flag);
         } else {
-            var fields = `
+            var fields = `(
                 user_type, grt, applications, search_member, groups, edit_group, add_group, 
                 transfer_group, approve_group_transfer, view_group_transfer, attendance, 
                 attendance_dashboard, loans, disburse_loan, view_loan, approve_transaction, 
@@ -127,9 +127,9 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
                 fundwise_report, schemewise_report, demand_vs_collection, master, banks, 
                 employees, designation, user_management, create_user, manage_user, transfer_user, 
                 created_by, created_at
-            `;
-
-            var values = `
+            )`;
+        
+            var values = `(
                 '${data.user_type}', '${data.grt}', '${data.applications}', '${data.search_member}', 
                 '${data.groups}', '${data.edit_group}', '${data.add_group}', '${data.transfer_group}', 
                 '${data.approve_group_transfer}', '${data.view_group_transfer}', '${data.attendance}', 
@@ -141,11 +141,12 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
                 '${data.employees}', '${data.designation}', '${data.user_management}', 
                 '${data.create_user}', '${data.manage_user}', '${data.transfer_user}', 
                 '${data.created_by}', '${datetime}'
-            `;
-
+            )`;
+        
             var flag = 0;
             menu_permission_data = await db_Insert(table_name, fields, values, null, flag);
         }
+        
 
         res.send({ "suc": 1, "msg": "Menu permission updated successfully", menu_permission_data });
     } catch (error) {
