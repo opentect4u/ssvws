@@ -4,7 +4,8 @@ const emp_id = (branch_code) => {
     return new Promise(async (resolve, reject) => {
 
         //make employee id
-        var select = "max(substr(emp_id,-5)) + 1  emp_id",
+        // var select = "max(substr(emp_id,-5)) + 1  emp_id",
+        var select = "COALESCE(MAX(CAST(SUBSTR(emp_id, 4) AS UNSIGNED)), 0) + 1 AS emp_id"
         table_name = "md_employee",
         whr = null,
         order = null;
