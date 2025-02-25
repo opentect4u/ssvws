@@ -20,11 +20,13 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
     let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
 
-    var select = "COUNT(user_type) sl_no",
+    var select = "COUNT(user_type) user_type_no",
     table_name = "td_menu_permission",
     whr = `user_type = '${data.user_type}'`,
     order = null;
     var count_user_type = await db_Select(select,table_name,whr,order);
+    count_user_type["user_type"] = user_type_no;
+
 
     if(count_user_type.suc > 0 && count_user_type.msg.length > 0){
         var data = req.body;
