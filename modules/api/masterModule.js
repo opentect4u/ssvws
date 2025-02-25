@@ -149,7 +149,7 @@ const getFormNo = () => {
   const getLoanCode = (branch_code) => {
     return new Promise(async (resolve, reject) => {
       try {
-        var select = "COALESCE(MAX(CAST(SUBSTR(loan_id, 3) AS UNSIGNED)), 0) + 1 AS loan_code";
+        var select = "COALESCE(MAX(CAST(SUBSTR(loan_id, 4) AS UNSIGNED)), 0) + 1 AS loan_code";
         var table_name = "td_loan";
         var whr = null;
         var order = null;
@@ -158,8 +158,11 @@ const getFormNo = () => {
   
         // console.log("Database Response:", res_dt); // Debugging output
   
-        let newLoanCode = res_dt.msg.length > 0 && res_dt.msg[0].loan_code ? res_dt.msg[0].loan_code : "01";
-        let loanCode = `${branch_code}${String(newLoanCode).padStart(2, "0")}`;
+        // let newLoanCode = res_dt.msg.length > 0 && res_dt.msg[0].loan_code ? res_dt.msg[0].loan_code : "01";
+        // let loanCode = `${branch_code}${String(newLoanCode).padStart(2, "0")}`;
+
+        let newLoanCode = res_dt.msg[0].loan_code;
+        let loanCode = `${branch_code}` + newLoanCode;
   
         // console.log("Generated Loan Code:", loanCode); // Debugging output
   
