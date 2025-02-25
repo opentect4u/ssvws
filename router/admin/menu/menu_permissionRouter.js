@@ -116,18 +116,52 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
             var menu_permission_data = await db_Insert(table_name, fields, null, whr, flag);
         } else {
             var table_name = "td_menu_permission",
-            fields = `(
-                user_type, grt, applications, search_member, groups, edit_group, add_group, 
-                transfer_group, approve_group_transfer, view_group_transfer, attendance, 
-                attendance_dashboard, loans, disburse_loan, view_loan, approve_transaction, 
-                reports, loan_statement, loan_transactions, demand_report, outstanding_report, 
-                fundwise_report, schemewise_report, demand_vs_collection, master, banks, 
-                employees, designation, user_management, create_user, manage_user, transfer_user, 
-                created_by, created_at
-            )`,
-            values = `(${data.user_type ? `'${data.user_type}'` : 'NULL'},${data.grt ? `'${data.grt}'` : 'NULL'},${data.applications ? `'${data.applications}'` : 'NULL'},${data.search_member ? `'${data.search_member}'` : 'NULL'},${data.groups ? `'${data.groups}'` : 'NULL'},${data.edit_group ? `'${data.edit_group}'` : 'NULL'},${data.add_group ? `'${data.add_group}'` : 'NULL'},${data.transfer_group ? `'${data.transfer_group}'` : 'NULL'},${data.approve_group_transfer ? `'${data.approve_group_transfer}'` : 'NULL'},${data.view_group_transfer ? `'${data.view_group_transfer}'` : 'NULL'},${data.attendance ? `'${data.attendance}'` : 'NULL'},${data.attendance_dashboard ? `'${data.attendance_dashboard}'` : 'NULL'},${data.loans ? `'${data.loans}'` : 'NULL'},${data.disburse_loan ? `'${data.disburse_loan}'` : 'NULL'},${data.view_loan ? `'${data.view_loan}'` : 'NULL'},${data.approve_transaction ? `'${data.approve_transaction}'` : 'NULL'},${data.reports ? `'${data.reports}'` : 'NULL'},${data.loan_statement ? `'${data.loan_statement}'` : 'NULL'},${data.loan_transactions ? `'${data.loan_transactions}'` : 'NULL'},${data.demand_report ? `'${data.demand_report}'` : 'NULL'},${data.outstanding_report ? `'${data.outstanding_report}'` : 'NULL'},${data.fundwise_report ? `'${data.fundwise_report}'` : 'NULL'},${data.schemewise_report ? `'${data.schemewise_report}'` : 'NULL'},${data.demand_vs_collection ? `'${data.demand_vs_collection}'` : 'NULL'},${data.master ? `'${data.master}'` : 'NULL'},${data.banks ? `'${data.banks}'` : 'NULL'},${data.employees ? `'${data.employee}'` : 'NULL'},${data.designation ? `'${data.designation}'` : 'NULL'},${data.user_management ? `'${data.user_management}'` : 'NULL'},${data.create_user ? `'${data.create_user}'` : 'NULL'},${data.manage_user ? `'${data.manage_user}'` : 'NULL'},${data.transfer_user ? `'${data.transfer_user}'` : 'NULL'},'${data.created_by}','${datetime}')`,
-            flag = 0;
-            var menu_permission_data = await db_Insert(table_name, fields, values, null, flag);
+    fields = `(
+        user_type, grt, applications, search_member, \`groups\`, edit_group, add_group, 
+        transfer_group, approve_group_transfer, view_group_transfer, attendance, 
+        attendance_dashboard, loans, disburse_loan, view_loan, approve_transaction, 
+        reports, loan_statement, loan_transactions, demand_report, outstanding_report, 
+        fundwise_report, schemewise_report, demand_vs_collection, master, banks, 
+        employees, designation, user_management, create_user, manage_user, transfer_user, 
+        created_by, created_at
+    )`,
+    values = `(${data.user_type ? `'${data.user_type}'` : 'NULL'},
+        ${data.grt ? `'${data.grt}'` : 'NULL'},
+        ${data.applications ? `'${data.applications}'` : 'NULL'},
+        ${data.search_member ? `'${data.search_member}'` : 'NULL'},
+        ${data.groups ? `'${data.groups}'` : 'NULL'},
+        ${data.edit_group ? `'${data.edit_group}'` : 'NULL'},
+        ${data.add_group ? `'${data.add_group}'` : 'NULL'},
+        ${data.transfer_group ? `'${data.transfer_group}'` : 'NULL'},
+        ${data.approve_group_transfer ? `'${data.approve_group_transfer}'` : 'NULL'},
+        ${data.view_group_transfer ? `'${data.view_group_transfer}'` : 'NULL'},
+        ${data.attendance ? `'${data.attendance}'` : 'NULL'},
+        ${data.attendance_dashboard ? `'${data.attendance_dashboard}'` : 'NULL'},
+        ${data.loans ? `'${data.loans}'` : 'NULL'},
+        ${data.disburse_loan ? `'${data.disburse_loan}'` : 'NULL'},
+        ${data.view_loan ? `'${data.view_loan}'` : 'NULL'},
+        ${data.approve_transaction ? `'${data.approve_transaction}'` : 'NULL'},
+        ${data.reports ? `'${data.reports}'` : 'NULL'},
+        ${data.loan_statement ? `'${data.loan_statement}'` : 'NULL'},
+        ${data.loan_transactions ? `'${data.loan_transactions}'` : 'NULL'},
+        ${data.demand_report ? `'${data.demand_report}'` : 'NULL'},
+        ${data.outstanding_report ? `'${data.outstanding_report}'` : 'NULL'},
+        ${data.fundwise_report ? `'${data.fundwise_report}'` : 'NULL'},
+        ${data.schemewise_report ? `'${data.schemewise_report}'` : 'NULL'},
+        ${data.demand_vs_collection ? `'${data.demand_vs_collection}'` : 'NULL'},
+        ${data.master ? `'${data.master}'` : 'NULL'},
+        ${data.banks ? `'${data.banks}'` : 'NULL'},
+        ${data.employees ? `'${data.employees}'` : 'NULL'},
+        ${data.designation ? `'${data.designation}'` : 'NULL'},
+        ${data.user_management ? `'${data.user_management}'` : 'NULL'},
+        ${data.create_user ? `'${data.create_user}'` : 'NULL'},
+        ${data.manage_user ? `'${data.manage_user}'` : 'NULL'},
+        ${data.transfer_user ? `'${data.transfer_user}'` : 'NULL'},
+        '${data.created_by}', '${datetime}')`,
+    flag = 0;
+
+var menu_permission_data = await db_Insert(table_name, fields, values, null, flag);
+
         }
         res.send({ "suc": 1, "msg": "Menu permission updated successfully", menu_permission_data });
     } catch (error) {
