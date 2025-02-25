@@ -114,30 +114,87 @@ module.exports = {
         });
     },
 
+    // edit_basic_dt: (data) => {
+    //     console.log(data,'data');
+        
+    //     return new Promise(async (resolve, reject) => {
+    //         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    //         var table_name = "md_member",
+    //         fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = ${data.husband_name == 'NULL' ? '' : data.husband_name}, client_addr = '${data.client_addr.split("'").join("\\'")}', pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
+    //           dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+    //         values = null,
+    //         whr = `member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
+    //         flag = 1;
+    //         var edit_basic_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+    //         if(edit_basic_dt.suc > 0){
+    //             var table_name = "td_grt_basic",
+    //             fields = `grt_date = '${data.grt_date}', prov_grp_code = '0',
+    //             bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+    //             values = null,
+    //             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,
+    //             flag = 1;
+    //             var final_dt = await db_Insert(table_name,fields,values,whr,flag);
+    //         }
+    //         resolve(edit_basic_dt)
+    //     });
+    // },
+
     edit_basic_dt: (data) => {
+        console.log(data,'data');
+        
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
+    
             var table_name = "md_member",
-            fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = ${data.husband_name == 'NULL' ? '' : data.husband_name}, client_addr = '${data.client_addr.split("'").join("\\'")}', pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
-              dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `gender = '${data.gender}', 
+                      client_name = '${data.client_name}', 
+                      client_mobile = '${data.client_mobile}', 
+                      email_id = '${data.email_id}', 
+                      gurd_name = '${data.gurd_name}', 
+                      gurd_mobile = ${data.gurd_mobile == '' ? 0 : `'${data.gurd_mobile}'`}, 
+                      husband_name = ${data.husband_name == 'NULL' ? 'NULL' : `'${data.husband_name}'`}, 
+                      client_addr = '${data.client_addr.split("'").join("\\'")}', 
+                      pin_no = '${data.pin_no}', 
+                      nominee_name = '${data.nominee_name}', 
+                      aadhar_no = '${data.aadhar_no}', 
+                      pan_no = '${data.pan_no}', 
+                      voter_id = '${data.voter_id}', 
+                      religion = '${data.religion}', 
+                      other_religion = ${data.religion == 'Others' ? `'${data.other_religion}'` : 'NULL'}, 
+                      caste = '${data.caste}', 
+                      other_caste = ${data.caste == 'Others' ? `'${data.other_caste}'` : 'NULL'}, 
+                      education = '${data.education}', 
+                      other_education = ${data.education == 'Others' ? `'${data.other_education}'` : 'NULL'}, 
+                      dob = '${data.dob}', 
+                      modified_by = '${data.modified_by}', 
+                      modified_at = '${datetime}'`,
             values = null,
             whr = `member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
             flag = 1;
+    
             var edit_basic_dt = await db_Insert(table_name, fields, values, whr, flag);
-
-            if(edit_basic_dt.suc > 0){
+    
+            if (edit_basic_dt.suc > 0) {
                 var table_name = "td_grt_basic",
-                fields = `grt_date = '${data.grt_date}', prov_grp_code = '0',
-                bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                fields = `grt_date = '${data.grt_date}', 
+                          prov_grp_code = '0',
+                          bm_lat_val = '${data.bm_lat_val}', 
+                          bm_long_val = '${data.bm_long_val}', 
+                          bm_gps_address = '${data.bm_gps_address}', 
+                          modified_by = '${data.modified_by}', 
+                          modified_at = '${datetime}'`,
                 values = null,
                 whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,
                 flag = 1;
-                var final_dt = await db_Insert(table_name,fields,values,whr,flag);
+    
+                var final_dt = await db_Insert(table_name, fields, values, whr, flag);
             }
-            resolve(edit_basic_dt)
+            resolve(edit_basic_dt);
         });
     },
+    
 
     edit_occup_dt: (data) => {
         return new Promise(async (resolve, reject) => {
