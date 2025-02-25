@@ -53,7 +53,7 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
         flag = data.user_type > 0 ? 1 : 0;
         var menu_permission_data = await db_Insert(table_name,fields,values,whr,flag);
     }
-    res.send({"suc" : 1, "msg":"menu permission solved successfully", menu_permission_data})
+    res.send({"suc" : 1, menu_permission_data})
   } catch (error) {
     console.log(error);
     res.send({ "suc": 0, "msg": "Error updating menu permission", "error": error.message });
