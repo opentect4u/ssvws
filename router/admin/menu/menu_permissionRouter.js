@@ -25,7 +25,7 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
     whr = `user_type = '${data.user_type}'`,
     order = null;
     var count_user_type = await db_Select(select,table_name,whr,order);
-    count_user_type["user_type"] = user_type_no;
+    count_user_type["user_type_no"] = user_type_no;
 
 
     if(count_user_type.suc > 0 && count_user_type.msg.length > 0){
