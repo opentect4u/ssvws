@@ -40,7 +40,7 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
     }
     res.send({"suc" : 1, "msg":"menu permission solved successfully", menu_permission_data})
   } catch (error) {
-    reject(error);
+    console.log(error);
   }
 });
 
