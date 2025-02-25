@@ -33,7 +33,7 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
 
         var table_name = "td_menu_permission",
         fields = data.user_type > 0 ? `grt = '${data.grt}', applications = '${data.applications}', search_member = '${data.search_member}', 
-       \`groups\` = '${data.groups}', edit_group = '${data.edit_group}', add_group = '${data.add_group}', 
+       groups = '${data.groups}', edit_group = '${data.edit_group}', add_group = '${data.add_group}', 
        transfer_group = '${data.transfer_group}', approve_group_transfer = '${data.approve_group_transfer}', 
        view_group_transfer = '${data.view_group_transfer}', attendance = '${data.attendance}', 
        attendance_dashboard = '${data.attendance_dashboard}', loans = '${data.loans}', 
@@ -53,7 +53,7 @@ menu_permissionRouter.post("/menu_permission", async (req, res) => {
         flag = data.user_type > 0 ? 1 : 0;
         var menu_permission_data = await db_Insert(table_name,fields,values,whr,flag);
     }
-    res.send({"suc" : 1, menu_permission_data})
+    res.send(menu_permission_data)
   } catch (error) {
     console.log(error);
     res.send({ "suc": 0, "msg": "Error updating menu permission", "error": error.message });
