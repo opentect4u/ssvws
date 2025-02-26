@@ -77,6 +77,17 @@ adminuserRouter.post('/password_change_user', async (req, res) => {
         res.send(result)
     }
 });
+
+adminuserRouter.get("/fetch_district", async (req, res) => {
+  var data = req.query;
+
+  var select = "dist_id,state_id,dist_name",
+  table_name = "md_district",
+  whr = null,
+  order = null;
+  var district_data = await db_Select(select,table_name,whr,order);
+  res.send(district_data);
+});
     
 adminuserRouter.post("/save_bank_dtls", async (req, res) => {
     var data = req.body;
