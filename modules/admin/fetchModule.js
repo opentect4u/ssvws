@@ -42,6 +42,7 @@ module.exports = {
                 }
           }
           }
+          edit_grp_dtls["group_code"] = group_code;
             resolve(edit_grp_dtls);
           } catch (error) {
             reject(error);
