@@ -48,6 +48,8 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
     let group_code = fetch_appl_dtls.msg[0].group_code;
+    console.log(group_code,'code');
+    
 
     var select = "COUNT(group_code) group_code",
     table_name = "td_loan",
