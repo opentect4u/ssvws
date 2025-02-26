@@ -67,8 +67,8 @@ transferCoRouter.post("/fetch_branch_name", async (req, res) => {
 
     var select = "branch_code,branch_name",
     table_name = "md_branch",
-    whr = `branch_code like '%${data.branch}%' OR branch_name like '%${data.branch}%'`,
-    order = null;
+    whr = `brn_status = 'O' AND (branch_code like '%${data.branch}%' OR branch_name like '%${data.branch}%')`,
+    order = `ORDER BY branch_name`;
     var branch_data = await db_Select(select,table_name,whr,order);
 
     res.send(branch_data)

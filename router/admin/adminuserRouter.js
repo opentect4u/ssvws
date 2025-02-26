@@ -10,8 +10,8 @@ adminuserRouter.get('/fetch_branch', async (req, res) => {
     //fetch branch details
     var select = "branch_code,branch_name,brn_addr",
     table_name = "md_branch",
-    whr = null,
-    order = null;
+    whr = `brn_status = 'O'`,
+    order = `ORDER BY branch_name`;
     var branch_dt = await db_Select(select,table_name,whr,order)
     res.send(branch_dt);
 })

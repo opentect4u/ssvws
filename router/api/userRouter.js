@@ -32,8 +32,8 @@ userRouter.post("/fetch_brn_assign", async (req, res) => {
 
     var select = "a.branch_assign_id code,b.branch_name name",
     table_name = "td_assign_branch_user a, md_branch b",
-    whr = `a.branch_assign_id = b.branch_code AND a.ho_user_id = '${data.emp_id}'`,
-    order = null;
+    whr = `a.branch_assign_id = b.branch_code AND brn_status = 'O' AND a.ho_user_id = '${data.emp_id}'`,
+    order = `ORDER BY b.branch_name`;
     var fetch_brn = await db_Select(select,table_name,whr,order);
   
     if(fetch_brn.suc > 0 && fetch_brn.msg.length > 0){
