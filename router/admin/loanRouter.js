@@ -61,7 +61,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
     if (fetch_already_disb_data.suc > 0 && fetch_already_disb_data.msg[0].group_count > 0) {
       return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
     }else {
-
+      let group_code = fetch_appl_dtls.msg[0].group_code;
     var select =
         "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt",
       table_name =
