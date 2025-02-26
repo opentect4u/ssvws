@@ -83,7 +83,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
   // Fetch group details
   var select =
-    "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.branch_name brn_name";
+    "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.branch_name brn_name, 0 loan_exist, '' loan_exist_msg";
   var table_name =
     "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code";
   var whr = `a.branch_code = '${data.branch_code}' AND (a.group_code LIKE '%${data.grp_dt}%' OR a.group_name LIKE '%${data.grp_dt}%')`;
@@ -92,23 +92,22 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
   var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
-    let group_code = fetch_appl_dtls.msg[0].group_code;
-    console.log(group_code, "code");
-
-    // Check if the group code exists in td_loan
-    var loanCheckQuery = await db_Select(
-      "COUNT(group_code) AS group_count",
-      "td_loan",
-      `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
-      null
-    );
-
-    if (
-      loanCheckQuery.suc > 0 &&
-      loanCheckQuery.msg.length > 0 &&
-      loanCheckQuery.msg[0].group_count > 0
-    ) {
-      return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
+    for(let dt of fetch_appl_dtls.msg){
+      let group_code = dt.group_code;
+      console.log(group_code, "code");
+  
+      // Check if the group code exists in td_loan
+      var loanCheckQuery = await db_Select(
+        "COUNT(group_code) AS group_count",
+        "td_loan",
+        `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
+        null
+      );
+  
+      if ( loanCheckQuery.suc > 0 && loanCheckQuery.msg.length > 0 && loanCheckQuery.msg[0].group_count > 0 ) {
+        dt['loan_exist'] = loanCheckQuery.msg[0].group_count
+        dt['loan_exist_msg'] = 'Loan already disbursed on this group'
+      }
     }
 
     // Fetch member details only if no loan exists
