@@ -54,6 +54,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
     whr = `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
     order = null;
     var fetch_already_disb_data = await db_Select(select,table_name,whr,order);
+  }
 
     if (fetch_already_disb_data.suc > 0 && fetch_already_disb_data.msg[0].group_count > 0) {
       return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
@@ -71,7 +72,6 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
     fetch_appl_dtls.msg[0]["mem_dt_grp"] =
       grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
     }
-  }
 
   res.send(fetch_appl_dtls);
 });
