@@ -107,23 +107,23 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
       if ( loanCheckQuery.suc > 0 && loanCheckQuery.msg.length > 0 && loanCheckQuery.msg[0].group_count > 0 ) {
         dt['loan_exist'] = loanCheckQuery.msg[0].group_count
         dt['loan_exist_msg'] = 'Loan already disbursed on this group'
+      }else{
+        // Fetch member details only if no loan exists
+        select =
+          "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt";
+        table_name =
+          "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code";
+        whr = `a.branch_code = '${data.branch_code}' 
+          AND b.prov_grp_code = '${group_code}' 
+          AND a.delete_flag = 'N' 
+          AND b.approval_status = 'A'`;
+    
+        var grp_mem_dt = await db_Select(select, table_name, whr, null);
+    
+        dt["mem_dt_grp"] =
+          grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
       }
     }
-
-    // Fetch member details only if no loan exists
-    select =
-      "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt";
-    table_name =
-      "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code";
-    whr = `a.branch_code = '${data.branch_code}' 
-      AND b.prov_grp_code = '${group_code}' 
-      AND a.delete_flag = 'N' 
-      AND b.approval_status = 'A'`;
-
-    var grp_mem_dt = await db_Select(select, table_name, whr, null);
-
-    fetch_appl_dtls.msg[0]["mem_dt_grp"] =
-      grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
   }
 
   res.send(fetch_appl_dtls);
