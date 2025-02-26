@@ -400,7 +400,7 @@ masterRouter.get("/get_bank", async (req, res) => {
     //get bank details
     var select = "*",
     table_name = "md_bank",
-    whr = null,
+    whr = `dist_code = '${data.dist_code}'`,
     order = null;
     var bank_dt = await db_Select(select,table_name,whr,order);
     res.send(bank_dt) 
