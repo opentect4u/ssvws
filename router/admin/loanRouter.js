@@ -47,6 +47,18 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
   var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
+    let group_code = fetch_appl_dtls.msg[0].group_code;
+
+    var select = "COUNT(group_code) group_code",
+    table_name = "td_loan",
+    whr = `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
+    order = null;
+    var fetch_already_disb_data = await db_Select(select,table_name,whr,order);
+
+    if (fetch_already_disb_data.suc > 0 && fetch_already_disb_data.msg[0].group_count > 0) {
+      return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
+    }else {
+
     var select =
         "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt",
       table_name =
@@ -58,6 +70,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
     fetch_appl_dtls.msg[0]["mem_dt_grp"] =
       grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
+    }
   }
 
   res.send(fetch_appl_dtls);
