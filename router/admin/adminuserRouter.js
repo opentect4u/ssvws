@@ -104,6 +104,18 @@ adminuserRouter.post("/save_bank_dtls", async (req, res) => {
     var bank_dt = await db_Insert(table_name,fields,values,whr,flag);
 
     res.send(bank_dt);
-})
+});
+
+adminuserRouter.post("/show_bank_dtls", async (req, res) => {
+    var data = req.body;
+   
+    //get bank details
+    var select = "*",
+    table_name = "md_bank",
+    whr = null,
+    order = null;
+    var banks_dt = await db_Select(select,table_name,whr,order);
+    res.send(banks_dt) 
+   });  
 
 module.exports = {adminuserRouter}
