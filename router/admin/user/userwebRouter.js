@@ -105,8 +105,8 @@ userwebRouter.post("/fetch_assign_branch", async (req, res) => {
 
     var select = "a.branch_assign_id code,b.branch_name name",
     table_name = "td_assign_branch_user a, md_branch b",
-    whr = `a.branch_assign_id = b.branch_code AND a.ho_user_id = '${data.emp_id}'`,
-    order = null;
+    whr = `a.branch_assign_id = b.branch_code AND brn_status = 'O' AND a.ho_user_id = '${data.emp_id}'`,
+    order = `ORDER BY branch_name`;
     var fetch_user_dtls = await db_Select(select,table_name,whr,order);
 
     res.send(fetch_user_dtls)
