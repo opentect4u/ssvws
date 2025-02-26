@@ -395,7 +395,7 @@ masterRouter.get("/get_tr_mode", async (req, res) => {
    });   
    
 masterRouter.post("/get_bank", async (req, res) => {
-    var data = req.query;
+    var data = req.body;
    
     //get bank details
     var select = "*",
