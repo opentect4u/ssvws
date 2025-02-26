@@ -35,100 +35,100 @@ loanRouter.post("/scheme_dtls", async (req, res) => {
 //     res.send(fetch_appl_dtls)
 // });
 
-loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
-  var data = req.body;
-
-  var select =
-      "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.branch_name brn_name",
-    table_name =
-      "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
-    whr = `a.branch_code = '${data.branch_code}' AND (a.group_code like '%${data.grp_dt}%' OR a.group_name like '%${data.grp_dt}%')`,
-    order = `ORDER BY a.group_code, a.group_name, a.group_type`;
-  var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
-
-  if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
-    let group_code = fetch_appl_dtls.msg[0].group_code;
-    console.log(group_code,'code');
-    
-
-    var select = "COUNT(group_code) group_code",
-    table_name = "td_loan",
-    whr = `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
-    order = null;
-    var fetch_already_disb_data = await db_Select(select,table_name,whr,order);
-  }
-
-    if (fetch_already_disb_data.suc > 0 && fetch_already_disb_data.msg[0].group_count > 0) {
-      return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
-    }else {
-      let group_code = fetch_appl_dtls.msg[0].group_code;
-    var select =
-        "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt",
-      table_name =
-        "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code",
-      whr = `a.branch_code = '${data.branch_code}'
-    AND b.prov_grp_code = '${group_code}' AND a.delete_flag = 'N' AND b.approval_status = 'A'`,
-      order = null;
-    var grp_mem_dt = await db_Select(select, table_name, whr, order);
-
-    fetch_appl_dtls.msg[0]["mem_dt_grp"] =
-      grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
-    }
-
-  res.send(fetch_appl_dtls);
-});
-
 // loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 //   var data = req.body;
 
-//   // Fetch group details
 //   var select =
-//     "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.branch_name brn_name";
-//   var table_name =
-//     "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code";
-//   var whr = `a.branch_code = '${data.branch_code}' AND (a.group_code LIKE '%${data.grp_dt}%' OR a.group_name LIKE '%${data.grp_dt}%')`;
-//   var order = `ORDER BY a.group_code, a.group_name, a.group_type`;
-
+//       "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.branch_name brn_name",
+//     table_name =
+//       "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
+//     whr = `a.branch_code = '${data.branch_code}' AND (a.group_code like '%${data.grp_dt}%' OR a.group_name like '%${data.grp_dt}%')`,
+//     order = `ORDER BY a.group_code, a.group_name, a.group_type`;
 //   var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
 
 //   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
 //     let group_code = fetch_appl_dtls.msg[0].group_code;
-//     console.log(group_code, "code");
+//     console.log(group_code,'code');
+    
 
-//     // Check if the group code exists in td_loan
-//     var loanCheckQuery = await db_Select(
-//       "COUNT(group_code) AS group_count",
-//       "td_loan",
-//       `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
-//       null
-//     );
+//     var select = "COUNT(group_code) group_code",
+//     table_name = "td_loan",
+//     whr = `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
+//     order = null;
+//     var fetch_already_disb_data = await db_Select(select,table_name,whr,order);
+//   }
 
-//     if (
-//       loanCheckQuery.suc > 0 &&
-//       loanCheckQuery.msg.length > 0 &&
-//       loanCheckQuery.msg[0].group_count > 0
-//     ) {
+//     if (fetch_already_disb_data.suc > 0 && fetch_already_disb_data.msg[0].group_count > 0) {
 //       return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
-//     }
-
-//     // Fetch member details only if no loan exists
-//     select =
-//       "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt";
-//     table_name =
-//       "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code";
-//     whr = `a.branch_code = '${data.branch_code}' 
-//       AND b.prov_grp_code = '${group_code}' 
-//       AND a.delete_flag = 'N' 
-//       AND b.approval_status = 'A'`;
-
-//     var grp_mem_dt = await db_Select(select, table_name, whr, null);
+//     }else {
+//       let group_code = fetch_appl_dtls.msg[0].group_code;
+//     var select =
+//         "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt",
+//       table_name =
+//         "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code",
+//       whr = `a.branch_code = '${data.branch_code}'
+//     AND b.prov_grp_code = '${group_code}' AND a.delete_flag = 'N' AND b.approval_status = 'A'`,
+//       order = null;
+//     var grp_mem_dt = await db_Select(select, table_name, whr, order);
 
 //     fetch_appl_dtls.msg[0]["mem_dt_grp"] =
 //       grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
-//   }
+//     }
 
 //   res.send(fetch_appl_dtls);
 // });
+
+loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
+  var data = req.body;
+
+  // Fetch group details
+  var select =
+    "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.branch_name brn_name";
+  var table_name =
+    "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code";
+  var whr = `a.branch_code = '${data.branch_code}' AND (a.group_code LIKE '%${data.grp_dt}%' OR a.group_name LIKE '%${data.grp_dt}%')`;
+  var order = `ORDER BY a.group_code, a.group_name, a.group_type`;
+
+  var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
+
+  if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
+    let group_code = fetch_appl_dtls.msg[0].group_code;
+    console.log(group_code, "code");
+
+    // Check if the group code exists in td_loan
+    var loanCheckQuery = await db_Select(
+      "COUNT(group_code) AS group_count",
+      "td_loan",
+      `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
+      null
+    );
+
+    if (
+      loanCheckQuery.suc > 0 &&
+      loanCheckQuery.msg.length > 0 &&
+      loanCheckQuery.msg[0].group_count > 0
+    ) {
+      return res.send({ suc: 0, msg: "Loan already disbursed for this group." });
+    }
+
+    // Fetch member details only if no loan exists
+    select =
+      "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,d.purpose_id,f.prn_disb_amt";
+    table_name =
+      "md_member a JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_grt_occupation_household c ON a.branch_code = c.branch_code AND b.form_no = c.form_no LEFT JOIN md_purpose d ON c.loan_purpose = d.purp_id LEFT JOIN td_loan f ON a.member_code = f.member_code";
+    whr = `a.branch_code = '${data.branch_code}' 
+      AND b.prov_grp_code = '${group_code}' 
+      AND a.delete_flag = 'N' 
+      AND b.approval_status = 'A'`;
+
+    var grp_mem_dt = await db_Select(select, table_name, whr, null);
+
+    fetch_appl_dtls.msg[0]["mem_dt_grp"] =
+      grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
+  }
+
+  res.send(fetch_appl_dtls);
+});
 
 
 loanRouter.post("/fetch_disb_trans_dtls", async (req, res) => {
