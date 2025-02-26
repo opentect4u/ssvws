@@ -86,8 +86,8 @@ adminuserRouter.post("/save_bank_dtls", async (req, res) => {
 
     //save bank details
     var table_name = "md_bank",
-    fields = data.bank_code > 0 ? `bank_name = '${data.bank_name}', branch_name = '${data.branch_name}', ifsc = '${data.ifsc > 0 ? data.ifsc : 0}', branch_addr = '${data.branch_addr.split("'").join("\\'")}', sol_id = '${data.sol_id > 0 ? data.sol_id : 0}', phone_no = '${data.phone_no > 0 ? data.phone_no : 0}', modified_by = '${data.modified_by}', modified_at = '${datetime}'` : `(bank_code, bank_name, branch_name, ifsc, branch_addr, sol_id, phone_no, created_by, created_at)`,
-    values = `('${bank_code}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc == '' ? 0 : data.ifsc}', '${data.branch_addr.split("'").join("\\'")}', '${data.sol_id == '' ? 0 : data.sol_id}', '${data.phone_no == '' ? 0 : data.phone_no}', '${data.created_by}', '${datetime}')`,
+    fields = data.bank_code > 0 ? `bank_name = '${data.bank_name}', branch_name = '${data.branch_name}', ifsc = '${data.ifsc == '' ? 0 : data.ifsc}', branch_addr = '${data.branch_addr.split("'").join("\\'")}', sol_id = '${data.sol_id == '' ? 0 : data.sol_id}', phone_no = '${data.phone_no > 0 ? data.phone_no : 0}', dist_code = '${data.dist_code == '' ? 0 : data.dist_code}', modified_by = '${data.modified_by}', modified_at = '${datetime}'` : `(bank_code, bank_name, branch_name, ifsc, branch_addr, sol_id, dist_code, phone_no, created_by, created_at)`,
+    values = `('${bank_code}', '${data.bank_name}', '${data.branch_name}', '${data.ifsc == '' ? 0 : data.ifsc}', '${data.branch_addr.split("'").join("\\'")}', '${data.sol_id == '' ? 0 : data.sol_id}', '${data.phone_no == '' ? 0 : data.phone_no}', '${data.dist_code == '' ? 0 : data.dist_code}', '${data.created_by}', '${datetime}')`,
     whr = data.bank_code > 0 ? `bank_code = ${data.bank_code}` : null,
     flag = data.bank_code > 0 ? 1 : 0;
     var bank_dt = await db_Insert(table_name,fields,values,whr,flag);
