@@ -61,28 +61,28 @@ transferMemRouter.post("/fetch_grp_dtls", async (req, res) => {
   }
 });
 
-transferMemRouter.post("/fetch_grp_member_dtls_for_transfer", async (req, res) => {
+transferMemRouter.post("/fetch_grp_member_dtls", async (req, res) => {
     var data = req.body;
 
     //FETCH GROUP MEMBER DETAILS FOR TRANSFER
     try {
             var select = "a.loan_id,a.group_code,c.group_name,a.member_code,b.client_name,SUM(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) outstanding";
             table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.group_code = c.group_code";
-            whr = ``,
-            order = null;
-            var fetch_grp_co_dt = await db_Select(select, table_name, whr, order);
-            if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
-                // If employee details found
+            whr = `a.group_code = '${data.group_code}'`,
+            order = `GROUP BY a.loan_id,a.group_code,a.member_code,b.client_name,c.group_name`;
+            var fetch_grp_mem_dt = await db_Select(select, table_name, whr, order);
+            if (fetch_grp_mem_dt.suc > 0 && fetch_grp_mem_dt.msg.length > 0) {
+                // If member details found
                 return res.send({
                     suc: 1,
-                    msg: fetch_grp_co_dt.msg
+                    msg: fetch_grp_mem_dt.msg
                 });
             } else {
-                // If no details found in 'md_employee'
+                // If no details found
                 return res.send({
                     suc: 0,
                     msg: [],
-                    details: "CO details not found"
+                    details: "Member details not found"
                 });
             }
     } catch (error) {
