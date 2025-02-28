@@ -35,10 +35,25 @@ transferMemRouter.post("/fetch_grp_dtls", async (req, res) => {
 
   //FETCH GROUP DETAILS
   try{
-     var select = "",
-     table_name = "",
-     whr = ``,
+     var select = "a.group_code,a.group_name,a.co_id,b.emp_name co_name,b.branch_id,c.branch_name",
+     table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code",
+     whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
      order = null;
+     var fetch_grp_details = await db_Select(select,table_name,whr,order);
+     if (fetch_grp_details.suc > 0 && fetch_grp_details.msg.length > 0) {
+        // If employee details found
+        return res.send({
+            suc: 1,
+            msg: fetch_grp_details.msg
+        });
+    } else {
+        // If no details found in 'md_employee'
+        return res.send({
+            suc: 0,
+            msg: [],
+            details: "CO details not found"
+        });
+    }
   } catch(error){
     // Handle errors gracefully
     console.error("Error fetching details:", error);
