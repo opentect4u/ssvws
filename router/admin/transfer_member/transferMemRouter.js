@@ -106,10 +106,9 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
             for (let dt of data.trans_mem_dtls) {
                 console.log(dt, 'dts');
 
-                var grp_code_arr = data.trans_mem_dtls.map(pdt => `'${pdt.from_group}'`);
                 var member_code_arr = data.trans_mem_dtls.map(pdt => `'${pdt.member_code}'`);
 
-                console.log(grp_code_arr, member_code_arr, 'poiu');
+                console.log(member_code_arr, 'poiu');
 
                 var table_name = "td_member_transfer",
                     fields = `(mem_trans_date,member_code,from_group,from_branch,from_co,to_group,to_branch,to_co,remarks,created_by,created_at)`,
@@ -122,7 +121,7 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
                 if (save_trans_mem_dtls.suc > 0 && save_trans_mem_dtls.msg.length > 0) {
                     var select = "form_no,grt_date,branch_code,prov_grp_code,member_code,approval_status,remarks,grp_added_by,grp_added_at,delete_flag,deleted_by,deleted_at,created_by,created_at,modified_by,modified_at,approved_by,approved_at,rejected_by,rejected_at,co_lat_val,co_long_val,co_gps_address,bm_lat_val,bm_long_val,bm_gps_address",
                         table_name = "td_grt_basic",
-                        whr = `prov_grp_code IN (${grp_code_arr.join(',')}) AND member_code IN (${member_code_arr.join(',')})`,
+                        whr = `prov_grp_code = '${data.from_group}' AND member_code IN (${member_code_arr.join(',')})`,
                         order = null;
 
                     var fetch_member = await db_Select(select, table_name, whr, order);
