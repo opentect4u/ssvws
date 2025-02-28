@@ -4,6 +4,7 @@ const express = require('express'),
 transferMemRouter = express.Router(),
 dateFormat = require('dateformat');
 
+//get group details
 transferMemRouter.post("/fetch_group_name_fr_mem_trans", async (req, res) => {
     var data = req.body;
 
@@ -12,7 +13,6 @@ transferMemRouter.post("/fetch_group_name_fr_mem_trans", async (req, res) => {
     }
 
     try {
-    //get group details
     var select = "group_code,branch_code,group_name,group_type,co_id,phone1",
     table_name = "md_group",
     whr = `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A' AND (group_code like '%${data.grp_mem}%' OR group_name like '%${data.grp_mem}%')`,
@@ -30,10 +30,10 @@ transferMemRouter.post("/fetch_group_name_fr_mem_trans", async (req, res) => {
 }
 });
 
+//FETCH GROUP DETAILS
 transferMemRouter.post("/fetch_grp_dtls", async (req, res) => {
   var data = req.body;
 
-  //FETCH GROUP DETAILS
   try{
      var select = "a.group_code,a.group_name,a.co_id,b.emp_name co_name,b.branch_id,c.branch_name",
      table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code",
@@ -61,10 +61,10 @@ transferMemRouter.post("/fetch_grp_dtls", async (req, res) => {
   }
 });
 
-transferMemRouter.post("/fetch_grp_member_dtls", async (req, res) => {
+//FETCH GROUP MEMBER DETAILS FOR TRANSFER
+transferMemRouter.post("/fetch_group_member_dtls", async (req, res) => {
     var data = req.body;
 
-    //FETCH GROUP MEMBER DETAILS FOR TRANSFER
     try {
             var select = "a.loan_id,a.group_code,c.group_name,a.member_code,b.client_name,SUM(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) outstanding";
             table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.group_code = c.group_code";
