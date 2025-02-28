@@ -227,7 +227,7 @@ transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => 
  try{
     if(data.flag == 'P'){
     var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_branch from_branch_code,a.from_co from_co_id,a.to_group from_group_code,a.to_branch to_branch_code,a.to_co to_co_id,a.remarks,a.approval_status,a.created_by created_code,a.created_at,b.client_name,c.group_name from_group,d.emp_name from_co,e.branch_name from_branch,f.group_name to_group,g.emp_name to_co,h.branch_name to_branch",
-    table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_branch e ON a.from_branch = e.branch_id LEFT JOIN md_group f ON a.to_group = f.group_code LEFT JOIN md_employee g ON a.to_co = g.emp_id LEFT JOIN md_branch h ON a.to_branch = h.branch_id",
+    table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_branch e ON a.from_branch = e.branch_code LEFT JOIN md_group f ON a.to_group = f.group_code LEFT JOIN md_employee g ON a.to_co = g.emp_id LEFT JOIN md_branch h ON a.to_branch = h.branch_code",
     whr = `a.from_group = '${data.from_group}' AND a.member_code = '${data.member_code}' AND a.approval_status = 'U'`,
     order = null;
     var view_co_trans_dt = await db_Select(select,table_name,whr,order);
@@ -235,7 +235,7 @@ transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => 
     res.send(view_co_trans_dt)
     }else {
         var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_branch from_branch_code,a.from_co from_co_id,a.to_group from_group_code,a.to_branch to_branch_code,a.to_co to_co_id,a.remarks,a.approval_status,a.created_by created_code,a.created_at,b.client_name,c.group_name from_group,d.emp_name from_co,e.branch_name from_branch,f.group_name to_group,g.emp_name to_co,h.branch_name to_branch",
-        table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_branch e ON a.from_branch = e.branch_id LEFT JOIN md_group f ON a.to_group = f.group_code LEFT JOIN md_employee g ON a.to_co = g.emp_id LEFT JOIN md_branch h ON a.to_branch = h.branch_id",
+        table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_branch e ON a.from_branch = e.branch_code LEFT JOIN md_group f ON a.to_group = f.group_code LEFT JOIN md_employee g ON a.to_co = g.emp_id LEFT JOIN md_branch h ON a.to_branch = h.branch_code",
         whr = `a.from_group = '${data.from_group}' AND a.member_code = '${data.member_code}' AND a.approval_status = 'A'`,
         order = null;
         var view_co_trans_dt = await db_Select(select,table_name,whr,order); 
