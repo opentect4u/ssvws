@@ -166,35 +166,7 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
     }
 });
 
-
-//APPROVE TRANSFER MEMBER DETAILS
-transferMemRouter.post("/approve_member_trans_dt", async (req, res) => {
-    var data = req.body;
-    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    try {
-        var table_name = "td_member_transfer",
-        fields = `to_group = '${data.to_group}', to_branch = '${data.to_branch}', to_co = '${data.to_co}', remarks = '${data.remarks.split("'").join("\\'")}', approval_status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
-        values = null,
-        whr = `member_code = '${data.member_code}'`,
-        flag = 1;
-        var approve_grp_member_dtls = await db_Insert(table_name,fields,values,whr,flag);
-
-        if(approve_grp_member_dtls.suc > 0 && approve_grp_member_dtls.msg.length > 0){
-            var table_name = "td_grt_basic",
-            fields = `prov_grp_code = '${data.to_group}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
-            values = null,
-            whr = `member_code IN (${member_code_arr.join(',')})`,
-            flag = 1;
-            var update_grt_group_dtls = await db_Insert(table_name,fields,values,whr,flag);  
-        }
-
-        res.send(update_grt_group_dtls);
-    }catch (error){
-        res.send({"suc": 2, "msg": "Error occurred", details: error });
-        
-    }
-});
-
+//view transfer member details
 transferMemRouter.post("/transfer_member_view", async (req, res) => {
   var data = req.body;
 
@@ -221,6 +193,7 @@ transferMemRouter.post("/transfer_member_view", async (req, res) => {
   }
 });
 
+//show all details via member code and group code
 transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => {
  var data = req.body;
 
@@ -244,6 +217,34 @@ transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => 
   }catch (error) {
     res.send({"suc": 2, "msg": "Error occurred", error })
   }
+});
+
+//APPROVE TRANSFER MEMBER DETAILS
+transferMemRouter.post("/approve_member_trans_dt", async (req, res) => {
+    var data = req.body;
+    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    try {
+        var table_name = "td_member_transfer",
+        fields = `to_group = '${data.to_group}', to_branch = '${data.to_branch}', to_co = '${data.to_co}', remarks = '${data.remarks.split("'").join("\\'")}', approval_status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
+        values = null,
+        whr = `member_code = '${data.member_code}'`,
+        flag = 1;
+        var approve_grp_member_dtls = await db_Insert(table_name,fields,values,whr,flag);
+
+        if(approve_grp_member_dtls.suc > 0 && approve_grp_member_dtls.msg.length > 0){
+            var table_name = "td_grt_basic",
+            fields = `prov_grp_code = '${data.to_group}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            values = null,
+            whr = `member_code = '${data.member_code}'`,
+            flag = 1;
+            var update_grt_group_dtls = await db_Insert(table_name,fields,values,whr,flag);  
+        }
+
+        res.send(update_grt_group_dtls);
+    }catch (error){
+        res.send({"suc": 2, "msg": "Error occurred", details: error });
+        
+    }
 });
 
 module.exports = {transferMemRouter}
