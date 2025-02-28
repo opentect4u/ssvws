@@ -195,4 +195,30 @@ transferMemRouter.post("/approve_member_trans_dt", async (req, res) => {
     }
 });
 
+transferMemRouter.post("/transfer_member_view", async (req, res) => {
+  var data = req.body;
+
+  try{
+    if(data.flag == 'P'){
+        var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,b.from_co from_co_id,a.to_group from_group_code,a.to_co to_co_id,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co",
+        table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id",
+        whr = `a.approval_status = 'U'`,
+        order = `ORDER BY a.mem_trans_date`;
+        var view_data = await db_Select(select,table_name,whr,order);
+       
+        res.send(view_data)
+    }else {
+    var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,b.from_co from_co_id,a.to_group from_group_code,a.to_co to_co_id,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co",
+    table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id",
+    whr = `a.approval_status = 'A'`,
+    order = `ORDER BY a.mem_trans_date`;
+    var view_data = await db_Select(select,table_name,whr,order);
+   
+    res.send(view_data)
+    }
+  }catch (error) {
+    res.send({"suc": 2, "msg": "Error occurred", error })
+  }
+});
+
 module.exports = {transferMemRouter}
