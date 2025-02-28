@@ -138,7 +138,7 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
 
                             grt_date = isValidDate(member.grt_date) ? dateFormat(member.grt_date, "yyyy-mm-dd") : null;
                             grp_added_at = isValidDate(member.grp_added_at) ? dateFormat(member.grp_added_at, "yyyy-mm-dd") : null;
-                            deleted_at = isValidDate(member.deleted_at) ? dateFormat(member.deleted_at, "yyyy-mm-dd") : null;
+                            // deleted_at = isValidDate(member.deleted_at) ? dateFormat(member.deleted_at, "yyyy-mm-dd") : null;
                             created_at = isValidDate(member.created_at) ? dateFormat(member.created_at, "yyyy-mm-dd") : null;
                             modified_at = isValidDate(member.modified_at) ? dateFormat(member.modified_at, "yyyy-mm-dd") : null;
                             approved_at = isValidDate(member.approved_at) ? dateFormat(member.approved_at, "yyyy-mm-dd") : null;
@@ -146,7 +146,7 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
 
                             var table_name = "td_grt_basic_rep",
                                 fields = `(form_no,grt_date,branch_code,prov_grp_code,member_code,approval_status,remarks,grp_added_by,grp_added_at,delete_flag,deleted_by,deleted_at,created_by,created_at,modified_by,modified_at,approved_by,approved_at,rejected_by,rejected_at,co_lat_val,co_long_val,co_gps_address,bm_lat_val,bm_long_val,bm_gps_address)`,
-                                values = `('${member.form_no}',${member.grt_date && member.grt_date !== '0000-00-00' ? `'${member.grt_date}'` : 'NULL'},'${member.branch_code}','${member.prov_grp_code}','${member.member_code}','${member.approval_status}',${member.remarks ?  `'${member.remarks}'` : 'NULL'},'${member.grp_added_by}',${member.grp_added_at ? `'${member.grp_added_at}'` : 'NULL'},'${member.delete_flag}','${member.deleted_by}',${member.deleted_at ? `'${member.deleted_at}'` : 'NULL'},'${member.created_by}',${member.created_at ? `'${member.created_at}'` : 'NULL'},'${member.modified_by}',${member.modified_at ? `'${member.modified_at}'` : 'NULL'},'${member.approved_by}',${member.approved_at ? `'${member.approved_at}'` : 'NULL'},'${member.rejected_by}',${member.rejected_at ? `'${member.rejected_at}'` : 'NULL'},'${member.co_lat_val}','${member.co_long_val}','${member.co_gps_address}','${member.bm_lat_val}','${member.bm_long_val}','${member.bm_gps_address}')`,
+                                values = `('${member.form_no}',${member.grt_date && member.grt_date !== '0000-00-00' ? `'${member.grt_date}'` : 'NULL'},'${member.branch_code}','${member.prov_grp_code}','${member.member_code}','${member.approval_status}',${member.remarks ?  `'${member.remarks}'` : 'NULL'},'${member.grp_added_by}',${member.grp_added_at ? `'${member.grp_added_at}'` : 'NULL'},'${member.delete_flag}','${member.deleted_by}','${dateFormat(member.deleted_at, "yyyy-mm-dd")}','${member.created_by}',${member.created_at ? `'${member.created_at}'` : 'NULL'},'${member.modified_by}',${member.modified_at ? `'${member.modified_at}'` : 'NULL'},'${member.approved_by}',${member.approved_at ? `'${member.approved_at}'` : 'NULL'},'${member.rejected_by}',${member.rejected_at ? `'${member.rejected_at}'` : 'NULL'},'${member.co_lat_val}','${member.co_long_val}','${member.co_gps_address}','${member.bm_lat_val}','${member.bm_long_val}','${member.bm_gps_address}')`,
                                 whr = null,
                                 flag = 0;
 
