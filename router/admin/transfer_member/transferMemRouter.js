@@ -95,13 +95,22 @@ transferMemRouter.post("/fetch_group_member_dtls", async (req, res) => {
 // TRANSFER MEMBER ONE GROUP TO ANOTHER GROUP
 transferMemRouter.post("/transfer_member", async (req, res) => {
     var data = req.body;
+    console.log(data,'data');
+    
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     try {
         if (data.trans_mem_dtls.length > 0) {
+            console.log(data.trans_mem_dtls,'kiki');
+            
             for (let dt of data.trans_mem_dtls) {
+                console.log(dt,'dts');
+                
                 var grp_code_arr = data.trans_mem_dtls.map(pdt => `'${pdt.from_group}'`)
                 var member_code_arr = data.trans_mem_dtls.map(pdt => `'${pdt.member_code}'`)
                 var branch_code_arr = data.trans_mem_dtls.map(pdt => `'${pdt.branch_code}'`)
+
+                console.log(grp_code_arr,member_code_arr,branch_code_arr,'poiu');
+                
 
                 var table_name = "td_member_transfer",
                 fields = `(mem_trans_date,member_code,from_group,from_branch,from_co,to_group,to_branch,to_co,remarks,created_by,created_at)`,
@@ -121,7 +130,8 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
 
                 if(fetch_member.suc > 0 && fetch_member.msg.length > 0){
                     for (let dt of fetch_member.msg) {
-
+                          console.log(dt,'dt');
+                          
                         var table_name = "td_grt_basic_rep",
                         fields = `(form_no,grt_date,branch_code,prov_grp_code,member_code,approval_status,remarks,grp_added_by,grp_added_at,delete_flag,deleted_by,deleted_at,created_by,created_at,modified_by,modified_at,approved_by,approved_at,rejected_by,rejected_at,co_lat_val,co_long_val,co_gps_address,bm_lat_val,bm_long_val,bm_gps_address)`,
                         values = `('${dt.form_no}','${dateFormat(dt.grt_date, 'yyyy-mm-dd')}','${dt.branch_code}','${dt.prov_grp_code}','${dt.member_code}','${dt.approval_status}','${dt.remarks.split("'").join("\\'")}','${dt.grp_added_by}','${dt.grp_added_at}','${dt.delete_flag}','${dt.deleted_by}','${dt.deleted_at}','${dt.created_by}','${dt.created_at}','${dt.modified_by}','${dt.modified_at}','${dt.approved_by}','${dt.approved_at}','${dt.rejected_by}','${dt.rejected_at}','${dt.co_lat_val}','${dt.co_long_val}','${dt.co_gps_address}','${dt.bm_lat_val}','${dt.bm_long_val}','${dt.bm_gps_address}')`,
