@@ -141,7 +141,7 @@ loan_disb_approveRouter.post("/reject_disb_transaction", async (req, res) => {
     try {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body, del_loans_disb = {};
-    console.log(data,'juju');
+    // console.log(data,'juju');
     
     //REJECT DISBURSE TRANSACTION MEMBERWISE
     if (data.reject_membdt_disb.length > 0) {   
