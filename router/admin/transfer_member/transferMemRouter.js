@@ -133,12 +133,11 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
                     console.log(fetch_member, 'fetch_member');
 
                     if (fetch_member.suc > 0 && fetch_member.msg.length > 0) {
-                        var checkResult = await db_Select("COUNT(*) as count", "td_grt_basic_rep", `member_code = '${member.member_code}'`);
-
-                        if (checkResult.suc > 0 && checkResult.msg[0].count == 0) {
-                        
                         for (let member of fetch_member.msg) {
                             console.log(member, 'member data');
+                            var checkResult = await db_Select("COUNT(*) as count", "td_grt_basic_rep", `member_code = '${member.member_code}'`);
+
+                        if (checkResult.suc > 0 && checkResult.msg[0].count == 0) {
 
                             grt_date = isValidDate(member.grt_date) ? dateFormat(member.grt_date, "yyyy-mm-dd") : null;
                             grp_added_at = isValidDate(member.grp_added_at) ? dateFormat(member.grp_added_at, "yyyy-mm-dd") : null;
