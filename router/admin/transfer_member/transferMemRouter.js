@@ -66,10 +66,15 @@ transferMemRouter.post("/fetch_group_member_dtls", async (req, res) => {
     var data = req.body;
 
     try {
-            var select = "a.loan_id,a.group_code,c.group_name,a.member_code,b.client_name,SUM(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) outstanding";
-            table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.group_code = c.group_code";
-            whr = `a.group_code = '${data.group_code}'`,
-            order = `GROUP BY a.loan_id,a.group_code,a.member_code,b.client_name,c.group_name`;
+            // var select = "a.group_code,c.group_name,a.member_code,b.client_name,SUM(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) outstanding";
+            // table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.group_code = c.group_code";
+            // whr = `a.group_code = '${data.group_code}'`,
+            // order = `GROUP BY a.loan_id,a.group_code,a.member_code,b.client_name,c.group_name`;
+
+            var select = "a.prov_grp_code,a.member_code,b.client_name,c.group_name,SUM(d.prn_amt + d.od_prn_amt + d.intt_amt + d.od_intt_amt) outstanding";
+            table_name = "td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.prov_grp_code = c.group_code LEFT JOIN td_loan d ON a.member_code = d.member_code";
+            whr = `a.prov_grp_code = '${data.group_code}'`,
+            order = `GROUP BY a.prov_grp_code,a.member_code,b.client_name,c.group_name`;
             var fetch_grp_mem_dt = await db_Select(select, table_name, whr, order);
             if (fetch_grp_mem_dt.suc > 0 && fetch_grp_mem_dt.msg.length > 0) {
                 // If member details found
