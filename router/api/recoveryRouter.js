@@ -167,6 +167,36 @@ recoveryRouter.post("/recovery_transaction", async (req, res) => {
 
 });
 
+recoveryRouter.post("/verify_recovery", async (req, res) => {
+  var data = req.body;
+  let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+  try{
+  var select = "a.loan_id,b.payment_date",
+  table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
+  whr = `a.group_code = '${data.group_code}' AND b.payment_date = '${dateFormat(datetime, "yyyy-mm-dd")}' AND b.tr_type = 'R'`,
+  order = null;
+  var verify_recov_data = await db_Select(select,table_name,whr,order);
+
+  if(verify_recov_data.suc > 0 && verify_recov_data.msg.length > 0){
+    return res.send({
+        suc: 1,
+        msg: "Transaction already done by today", verify_recov_data
+    });
+  } else {
+    return res.send({
+        suc: 0,
+        msg: [],
+        details: ""
+    });
+}
+} catch(error){
+    // Handle errors gracefully
+    console.error("Error fetching details:", error);
+    return res.send({ suc: 0, msg: "Internal server error" });
+  }
+});
+
 recoveryRouter.post("/view_transaction", async (req, res) => {
     var data = req.body;
 
