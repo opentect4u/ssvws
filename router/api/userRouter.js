@@ -74,12 +74,12 @@ userRouter.post('/login_app', async (req, res) => {
           console.log(app_data,app_data.version,'poii');
           
           if (Array.isArray(app_data) && app_data.length > 0) {
-            requiredVersion = app_data[0].version; // Extract version
+            requiredVersion = parseFloat(app_data[0].version); // Extract version
         } else {
             return res.send({ suc: 0, msg: "App version information not found.", requiredVersion });
         }
     
-        console.log("Required Version:", requiredVersion, "User App Version:", data.app_version);
+        // console.log("Required Version:", requiredVersion, "User App Version:", data.app_version);
     
         // Check app version
         if (!data.app_version || parseFloat(data.app_version) < parseFloat(requiredVersion)) {
