@@ -239,7 +239,7 @@ module.exports = {
 
             if(res_dt.msg.length > 0 && res_dt.suc > 0){
                 var table_name = "td_grt_occupation_household",
-                    fields = `no_of_rooms = '0', house_type = ${data.house_type ? `'${data.house_type}'` : 'NULL'}, own_rent = ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, land = '${data.land == '' ? 0 : data.land}', tv_flag = ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, 
+                    fields = `house_type = ${data.house_type ? `'${data.house_type}'` : 'NULL'}, own_rent = ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, land = '${data.land == '' ? 0 : data.land}', tv_flag = ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, 
                     bike_flag = ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, fridge_flag = ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, wm_flag = ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'}, poltical_flag = ${data.political_flag ? `'${data.political_flag}'` : 'NULL'},
                  parental_addr = '${data.parental_addr.split("'").join("\\'")}', parental_phone = '${data.parental_phone == '' ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                     values = null,
@@ -248,8 +248,8 @@ module.exports = {
                     var house_hold_dt = await db_Insert(table_name, fields, values, whr, flag);
             }else {
                 var table_name = "td_grt_occupation_household",
-                    fields = `(no_of_rooms, house_type, own_rent, land, tv_flag, bike_flag, fridge_flag, wm_flag,poltical_flag,parental_addr,parental_phone,created_by,created_at)`,
-                    values = `('0', ${data.house_type ? `'${data.house_type}'` : 'NULL'}, ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, '${data.land == '' ? 0 : data.land}', ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'},${data.political_flag ? `'${data.political_flag}'` : 'NULL'}, '${data.parental_addr.split("'").join("\\'")}', '${data.parental_phone == '' ? 0 : data.parental_phone}', '${data.created_by}', ${datetime})`,
+                    fields = `(house_type, own_rent, land, tv_flag, bike_flag, fridge_flag, wm_flag,poltical_flag,parental_addr,parental_phone,created_by,created_at)`,
+                    values = `(${data.house_type ? `'${data.house_type}'` : 'NULL'}, ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, '${data.land == '' ? 0 : data.land}', ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'},${data.political_flag ? `'${data.political_flag}'` : 'NULL'}, '${data.parental_addr.split("'").join("\\'")}', '${data.parental_phone == '' ? 0 : data.parental_phone}', '${data.created_by}', ${datetime})`,
                     whr = null,
                     flag = 0;
                     var house_hold_dt = await db_Insert(table_name, fields, values, whr, flag);
