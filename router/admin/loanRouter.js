@@ -558,7 +558,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
   ) {
     var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name`,
       table_name =
-        "td_loan a JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
+        "td_loan a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
       whr = `a.group_code = '${data.group_code}'`,
       order = null;
     var grp_mem_dtls = await db_Select(select, table_name, whr, order);
