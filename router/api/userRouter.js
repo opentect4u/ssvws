@@ -71,7 +71,7 @@ userRouter.post('/login_app', async (req, res) => {
       // Fetch app version if flag is 'A'
       if (data.flag === 'A') {
           let app_data = await db_Select("version", "md_app_version", null, null);
-          console.log(app_data,app_data.version,'poii');
+          console.log(app_data,app_data[0].version,'poii');
           
           if (Array.isArray(app_data) && app_data.length > 0) {
             requiredVersion = app_data.version; // Extract version
