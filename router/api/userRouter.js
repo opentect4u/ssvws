@@ -60,58 +60,55 @@ userRouter.get("/fetch_app_version", async (req, res) => {
 });
 
 userRouter.post('/login_app', async (req, res) => {
-    var data = req.body,
-        result;
-    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  console.log(data,'data');
-  
-    //check version
-    let app_data;
-    if(data.flag === 'A'){
-      app_data = await db_Select("version","md_app_version",null,null);
-      if (app_data && app_data.length > 0) {
-        var app_data_inf = app_data[0].version; // Extract version number from the first row
-        console.log(app_data_inf);
-        
-    } else {
-        return res.send({ suc: 0, msg: "App version information not found.",app_data_inf });
-    }
-    }
+  var data = req.body,
+      result;
+  const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  console.log(data, 'Received Data');
 
-   // Check if app version is outdated
-   if (data.flag === 'A' && (!data.app_version || parseFloat(data.app_version) < parseFloat(app_data_inf))) {
-    return res.send({ suc: 0, msg: `Please update your app to version ${app_data_inf} or higher.` });
-}
+  try {
+      let requiredVersion = null;
+      
+      // Fetch app version if flag is 'A'
+      if (data.flag === 'A') {
+          let app_data = await db_Select("version", "md_app_version", null, null);
+          if (app_data && app_data.length > 0) {
+              requiredVersion = parseFloat(app_data[0].version); // Extract version
+          } else {
+              return res.send({ suc: 0, msg: "App version information not found." });
+          }
 
-    //login app
-    var log_dt = await app_login_data(data);
-    // console.log(log_dt);
-   
-    if (log_dt.suc > 0) {
-        if (log_dt.msg.length > 0) {
-          if (await bcrypt.compare(data.password.toString(), log_dt.msg[0].password)) {
-            try{
-                await db_Insert('md_user', `created_by = "${data.emp_id}", created_at="${datetime}"`, null, `emp_id='${log_dt.msg[0].emp_id}'`, 1)
-            }catch (error) {
-                console.log(err);
-            }
-            res.send({ suc: 1, msg: `${log_dt.msg[0].user_type} Login successfully`, user_dtls: log_dt.msg[0] });
-          } else {
-            result = {
-              suc: 0,
-              msg: "Please check your userid or password",
-            };
-            res.send(result)
+          // Check app version
+          if (!data.app_version || parseFloat(data.app_version) < requiredVersion) {
+              return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion} or higher.` });
           }
+      }
+
+      // Proceed with login after version check
+      var log_dt = await app_login_data(data);
+
+      if (log_dt.suc > 0 && log_dt.msg.length > 0) {
+          let user = log_dt.msg[0];
+          let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
+
+          if (passwordMatch) {
+              try {
+                  await db_Insert('md_user', `created_by = "${data.emp_id}", created_at="${datetime}"`, null, `emp_id='${user.emp_id}'`, 1);
+              } catch (err) {
+                  console.error("Error inserting user log:", err);
+              }
+              return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user });
           } else {
-            result = { suc: 2, msg: "No data found", dt: log_dt };
-            res.send(result)
+              return res.send({ suc: 0, msg: "Incorrect user ID or password" });
           }
-        }  else {
-          result = { suc: 0, msg: log_dt.msg, dt: log_dt };
-          res.send(result)
-        }
-  });
+      } else {
+          return res.send({ suc: 2, msg: "No user data found", dt: log_dt });
+      }
+  } catch (error) {
+      console.error("Login Error:", error);
+      return res.send({ suc: 0, msg: "An unexpected error occurred, please try again." });
+  }
+});
+
 
 
   // userRouter.post('/bm_login', async (req, res) => {
