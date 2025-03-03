@@ -83,7 +83,7 @@ userRouter.post('/login_app', async (req, res) => {
     
         // Check app version
         if (!data.app_version || data.app_version < requiredVersion) {
-            return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion}` });
+            return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion}`});
         }
       }
 
