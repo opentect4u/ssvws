@@ -63,7 +63,8 @@ userRouter.post('/login_app', async (req, res) => {
     var data = req.body,
         result;
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-
+  console.log(data,'data');
+  
     //check version
     if(data.flag == 'A'){
       var app_data = await db_Select("version","md_app_version",null,null);
