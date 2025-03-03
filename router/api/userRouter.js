@@ -74,7 +74,7 @@ userRouter.post('/login_app', async (req, res) => {
         console.log(app_data_inf);
         
     } else {
-        return res.send({ suc: 0, msg: "App version information not found." });
+        return res.send({ suc: 0, msg: "App version information not found.",app_data_inf });
     }
     }
 
