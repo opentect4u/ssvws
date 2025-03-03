@@ -74,7 +74,7 @@ userRouter.post('/login_app', async (req, res) => {
           if (app_data && app_data.length > 0) {
               requiredVersion = app_data[0].version; // Extract version
           } else {
-              return res.send({ suc: 0, msg: "App version information not found." });
+              return res.send({ suc: 0, msg: "App version information not found.",requiredVersion });
           }
 
           // Check app version
