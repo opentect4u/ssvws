@@ -70,8 +70,8 @@ userRouter.post('/login_app', async (req, res) => {
     if(data.flag === 'A'){
       app_data = await db_Select("version","md_app_version",null,null);
       if (app_data && app_data.length > 0) {
-        app_data = app_data[0].version; // Extract version number from the first row
-        console.log(app_data);
+        var app_data_inf = app_data[0].version; // Extract version number from the first row
+        console.log(app);
         
     } else {
         return res.send({ suc: 0, msg: "App version information not found." });
@@ -79,8 +79,8 @@ userRouter.post('/login_app', async (req, res) => {
     }
 
    // Check if app version is outdated
-   if (data.flag === 'A' && (!data.app_version || parseFloat(data.app_version) < parseFloat(app_data))) {
-    return res.send({ suc: 0, msg: `Please update your app to version ${app_data} or higher.` });
+   if (data.flag === 'A' && (!data.app_version || parseFloat(data.app_version) < parseFloat(app_data_inf))) {
+    return res.send({ suc: 0, msg: `Please update your app to version ${app_data_inf} or higher.` });
 }
 
     //login app
