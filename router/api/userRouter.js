@@ -71,7 +71,7 @@ userRouter.post('/login_app', async (req, res) => {
 
      // Check if app version is outdated
      if (!data.app_version || data.app_version < app_data) {
-      return res.send({ suc: 0, msg: `Please update your app to version ${app_data} or higher.` });
+      return res.send({ suc: 0, msg: `Please update your app to version ${data.app_data} or higher.` });
   }
 
     //login app
