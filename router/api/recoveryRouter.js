@@ -181,7 +181,7 @@ recoveryRouter.post("/verify_recovery", async (req, res) => {
   if(verify_recov_data.suc > 0 && verify_recov_data.msg.length > 0){
     return res.send({
         suc: 1,
-        msg: "Transaction already done by today", verify_recov_data
+        msg: "Transaction already done by today"
     });
   } else {
     return res.send({
