@@ -65,7 +65,9 @@ userRouter.post('/login_app', async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     //check version
-    var app_data = await db_Select("version","md_app_version",null,null);
+    if(data.flag == 'A'){
+      var app_data = await db_Select("version","md_app_version",null,null);
+    }
 
      // Check if app version is outdated
      if (!data.app_version || data.app_version < app_data) {
