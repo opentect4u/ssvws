@@ -47,6 +47,18 @@ userRouter.post("/fetch_brn_assign", async (req, res) => {
   }
 });
 
+userRouter.get("/fetch_app_version", async (req, res) => {
+  var data = req.body;
+
+  var select = "version",
+  table_name = "md_app_version",
+  whr = null,
+  order = null;
+  var app_data = await db_Select(select,table_name,whr,order)
+
+  res.send(app_data)
+});
+
 userRouter.post('/login_app', async (req, res) => {
     var data = req.body,
         result;
