@@ -72,7 +72,7 @@ userRouter.post('/login_app', async (req, res) => {
       if (data.flag === 'A') {
           let app_data = await db_Select("version", "md_app_version", null, null);
           if (app_data && app_data.length > 0) {
-              requiredVersion = app_data[0].version; // Extract version
+              requiredVersion = app_data.version; // Extract version
           } else {
               return res.send({ suc: 0, msg: "App version information not found.",requiredVersion });
           }
