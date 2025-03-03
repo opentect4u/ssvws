@@ -154,7 +154,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
 recoveryRouter.post("/recovery_transaction", async (req, res) => {
     var data = req.body,res_dt;
-    console.log(data,'dt');
+    // console.log(data,'dt');
     
     //save recovery transaction
     recovery_trans(data).then(data => {

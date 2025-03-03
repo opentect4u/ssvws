@@ -195,7 +195,7 @@ loan_recov_approveRouter.post("/reject_recovery_transaction", async (req, res) =
                 // console.log(last_row,'last_row');
 
                 if(last_row.suc > 0 && last_row.msg.length > 0){
-                    console.log(last_row,'lass');
+                    // console.log(last_row,'lass');
                     
                     var prn_amt = last_row.msg[0].balance
                     var od_prn_amt = last_row.msg[0].od_balance

@@ -89,7 +89,7 @@ loan_disb_approveRouter.post("/fetch_cowise_disb_member_dtls", async (req, res) 
 loan_disb_approveRouter.post("/approve_grpwise_disb", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
-    console.log(data,'data');
+    // console.log(data,'data');
 
     //APPROVE GROUPWISE DISBURSE
     if (data.grpdt_disb.length > 0) {        
@@ -102,7 +102,7 @@ loan_disb_approveRouter.post("/approve_grpwise_disb", async (req, res) => {
 
             if(fetch_loan_id_disb.suc > 0 && fetch_loan_id_disb.msg.length > 0){
                 var loan_id_arr = fetch_loan_id_disb.msg.map(ldt => ldt.loan_id)
-                console.log(loan_id_arr,'arr');
+                // console.log(loan_id_arr,'arr');
                 
                 var table_name = "td_loan_transactions",
                 fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
@@ -120,7 +120,7 @@ loan_disb_approveRouter.post("/approve_grpwise_disb", async (req, res) => {
 loan_disb_approveRouter.post("/approve_member_disb", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
-    console.log(data,'memdata');
+    // console.log(data,'memdata');
 
     //APPROVE MEMBERWISE DISBURSE
     if (data.membdt_disb.length > 0) {        
@@ -149,7 +149,7 @@ loan_disb_approveRouter.post("/reject_disb_transaction", async (req, res) => {
         var loan_id_arr = data.reject_membdt_disb.map(pdt => `'${pdt.loan_id}'`)
         var branch_code_arr = data.reject_membdt_disb.map(pdt => `'${pdt.branch_code}'`)
 
-        console.log(payment_date_arr,loan_id_arr,branch_code_arr,'array');
+        // console.log(payment_date_arr,loan_id_arr,branch_code_arr,'array');
         
     
         var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by",
@@ -195,7 +195,7 @@ loan_disb_approveRouter.post("/reject_disb_transaction", async (req, res) => {
                 // console.log(last_row,'last_row');
 
                 if(last_row.suc > 0 && last_row.msg.length > 0){
-                    console.log(last_row,'lass');
+                    // console.log(last_row,'lass');
                     
                     var prn_amt = last_row.msg[0].balance
                     var od_prn_amt = last_row.msg[0].od_balance
@@ -228,7 +228,7 @@ loan_disb_approveRouter.post("/reject_grp_co_wise_disb", async (req, res) => {
     try {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body, del_loan_disburse = {};
-    console.log(data,'data');
+    // console.log(data,'data');
 
     //REJECT GROUPWISE / COWISE DISBURSE
     if (data.reject_dt_disb.length > 0) {        

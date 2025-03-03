@@ -18,7 +18,7 @@ adminuserRouter.get('/fetch_branch', async (req, res) => {
 
 adminuserRouter.post('/save_profile_web', async (req, res) => {
     var data = req.body;
-    console.log(data);
+    // console.log(data);
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     //save profile details in web

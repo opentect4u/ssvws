@@ -94,7 +94,7 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
     for(let dt of fetch_appl_dtls.msg){
       let group_code = dt.group_code;
-      console.log(group_code, "code");
+      // console.log(group_code, "code");
   
       // Check if the group code exists in td_loan
       var loanCheckQuery = await db_Select(
@@ -298,7 +298,7 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
   try {
     var data = req.body;
-    console.log("Received Data:", data);
+    // console.log("Received Data:", data);
 
     if (!Array.isArray(data.member_code)) {
       return res.send({ suc: 0, msg: "Invalid member_code format. Expected an array." });
