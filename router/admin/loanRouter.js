@@ -595,8 +595,8 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
   var select =
       "a.loan_id,a.branch_code,a.group_code,a.member_code,a.grt_form_no,a.purpose,a.applied_amt,a.applied_dt,a.scheme_id,a.fund_id,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day,a.period_mode,a.instl_paid,a.instl_start_dt,a.instl_end_dt,a.last_trn_dt,b.client_name,c.purpose_id,e.scheme_name,f.fund_name,g.group_name",
     table_name =
-      "td_loan a JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
-    whr = `loan_id = '${data.loan_id}'`,
+      "td_loan a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
+    whr = `a.loan_id = '${data.loan_id}'`,
     order = null;
   var loan_dtls = await db_Select(select, table_name, whr, order);
 
@@ -605,7 +605,7 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
         "payment_date,payment_id,particulars,credit,debit,prn_recov,intt_recov,balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,trn_lat,trn_long,trn_addr",
       table_name = "td_loan_transactions",
       whr = `loan_id = '${data.loan_id}'`,
-      order = null;
+      order = `ORDER BY payment_date,payment_id desc`;
 
     var transaction_dt = await db_Select(select, table_name, whr, order);
 
