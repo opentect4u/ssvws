@@ -55,7 +55,7 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
             var table_name = "td_grt_basic",
-                fields = `grt_date = '${datetime}', prov_grp_code = '0', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
+                fields = `grt_date = '${datetime}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile}', client_addr = '${data.client_addr}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}',
                  religion = '${data.religion}', caste = '${data.caste}', education = '${data.education}', dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `form_no = '${data.form_no}'`,
@@ -179,7 +179,6 @@ module.exports = {
             if (edit_basic_dt.suc > 0) {
                 var table_name = "td_grt_basic",
                 fields = `grt_date = '${data.grt_date}', 
-                          prov_grp_code = '0',
                           bm_lat_val = '${data.bm_lat_val}', 
                           bm_long_val = '${data.bm_long_val}', 
                           bm_gps_address = '${data.bm_gps_address}', 
