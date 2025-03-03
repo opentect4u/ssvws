@@ -65,15 +65,21 @@ userRouter.post('/login_app', async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   console.log(data,'data');
   
-  //   //check version
-  //   if(data.flag == 'A'){
-  //     var app_data = await db_Select("version","md_app_version",null,null);
-  //   }
+    //check version
+    let app_data;
+    if(data.flag === 'A'){
+      app_data = await db_Select("version","md_app_version",null,null);
+      if (app_data && app_data.length > 0) {
+        app_data = app_data[0].version; // Extract version number from the first row
+    } else {
+        return res.send({ suc: 0, msg: "App version information not found." });
+    }
+    }
 
-  //    // Check if app version is outdated
-  //    if (!app_data || !data.app_version || data.app_version < app_data) {
-  //     return res.send({ suc: 0, msg: `Please update your app to version ${data.app_version} or higher.` });
-  // }
+   // Check if app version is outdated
+   if (data.flag === 'A' && (!data.app_version || parseFloat(data.app_version) < parseFloat(app_data))) {
+    return res.send({ suc: 0, msg: `Please update your app to version ${app_data} or higher.` });
+}
 
     //login app
     var log_dt = await app_login_data(data);
