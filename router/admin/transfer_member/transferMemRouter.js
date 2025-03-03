@@ -105,20 +105,20 @@ const isValidDate = (dateString) => {
 // TRANSFER MEMBER ONE GROUP TO ANOTHER GROUP
 transferMemRouter.post("/transfer_member", async (req, res) => {
     var data = req.body;
-    console.log(data, 'data');
+    // console.log(data, 'data');
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
     try {
         if (data.trans_mem_dtls && data.trans_mem_dtls.length > 0) {
-            console.log(data.trans_mem_dtls, 'trans_mem_dtls');
+            // console.log(data.trans_mem_dtls, 'trans_mem_dtls');
 
             for (let dt of data.trans_mem_dtls) {
-                console.log(dt, 'dts');
+                // console.log(dt, 'dts');
 
                 var member_code_arr = data.trans_mem_dtls.map(pdt => `'${pdt.member_code}'`);
 
-                console.log(member_code_arr, 'poiu');
+                // console.log(member_code_arr, 'poiu');
 
                 var table_name = "td_member_transfer",
                     fields = `(mem_trans_date,member_code,from_group,from_branch,from_co,to_group,to_branch,to_co,remarks,created_by,created_at)`,
@@ -135,11 +135,11 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
                         order = null;
 
                     var fetch_member = await db_Select(select, table_name, whr, order);
-                    console.log(fetch_member, 'fetch_member');
+                    // console.log(fetch_member, 'fetch_member');
 
                     if (fetch_member.suc > 0 && fetch_member.msg.length > 0) {
                         for (let member of fetch_member.msg) {
-                            console.log(member, 'member data');
+                            // console.log(member, 'member data');
                             var checkResult = await db_Select("COUNT(*) as count", "td_grt_basic_rep", `member_code = '${member.member_code}'`);
 
                         if (checkResult.suc > 0 && checkResult.msg[0].count == 0) {
@@ -160,7 +160,7 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
                                 flag = 0;
 
                             var member_data = await db_Insert(table_name, fields, values, whr, flag);
-                            console.log(member_data, 'member_data');
+                            // console.log(member_data, 'member_data');
                         }
                     }
                     }

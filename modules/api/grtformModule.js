@@ -7,7 +7,7 @@ module.exports = {
     save_basic_dtls: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(data);
+                // console.log(data);
                 
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let form_no = await getFormNo()
@@ -142,7 +142,7 @@ module.exports = {
     // },
 
     edit_basic_dt: (data) => {
-        console.log(data,'data');
+        // console.log(data,'data');
         
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -332,7 +332,7 @@ module.exports = {
             whr = null,
             flag = 0;
             var grp_dt = await db_Insert(table_name, fields, values, whr, flag);
-            console.log(grp_dt,'dt');
+            // console.log(grp_dt,'dt');
             
             if(grp_dt.suc > 0 && grp_dt.msg.length > 0){
                 if (data.grp_memberdtls.length > 0) {
