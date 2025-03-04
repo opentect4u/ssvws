@@ -544,24 +544,25 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
   var data = req.body;
 
   //fetch search group view details
-  var select =
-      "a.group_name,a.group_type,a.branch_code,a.phone1,a.phone2,a.grp_addr,a.disctrict,a.pin_no,a.bank_name,a.branch_name bank_branch,a.acc_no1,a.acc_no2,b.block_name,c.emp_name,d.branch_name",
-    table_name =
-      "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+  var select ="a.*, b.block_name,c.emp_name,d.branch_name brn_name",
+    table_name ="md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
     whr = `a.group_code = '${data.group_code}'`,
     order = null;
   var fetch_search_group_view = await db_Select(select, table_name, whr, order);
 
-  if (
-    fetch_search_group_view.suc > 0 &&
-    fetch_search_group_view.msg.length > 0
-  ) {
+  if (fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0) {
     var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name`,
       table_name =
         "td_loan a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
       whr = `a.group_code = '${data.group_code}'`,
       order = null;
     var grp_mem_dtls = await db_Select(select, table_name, whr, order);
+
+  //   var select = `a.member_code,b.client_name,c.loan_id,(c.)`,
+  //   table_name ="td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan c ON a.member_code = c.member_code AND a.prov_grp_code = c.group_code",
+  //   whr = ``,
+  //   order = null;
+  // var grp_mem_dtls = await db_Select(select, table_name, whr, order);
 
     var select = `SUM(outstanding) AS total_outstanding`,
       table_name = "td_loan",
@@ -604,8 +605,8 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
     var select =
         "payment_date,payment_id,particulars,credit,debit,prn_recov,intt_recov,balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,trn_lat,trn_long,trn_addr",
       table_name = "td_loan_transactions",
-      whr = `loan_id = '${data.loan_id}'`,
-      order = null;
+      whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
+      order = `ORDER BY payment_date,payment_id desc`;
 
     var transaction_dt = await db_Select(select, table_name, whr, order);
 
