@@ -168,5 +168,29 @@ module.exports = {
 
             resolve(res_dt)
             });
-        }
+        },
+
+    loan_trans_date: (data) => {
+            return new Promise(async (resolve, reject) => {
+                let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    
+                var table_name = "td_loan_transactions",
+                fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                values = null,
+                whr = `loan_id = '${data.loan_id}'`,
+                flag = 1;
+                var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+                if(res_dt.suc > 0 && res_dt.msg.legth > 0){
+                    var table_name = "td_loan",
+                fields = `last_trn_dt = '${data.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                values = null,
+                whr = `loan_id = '${data.loan_id}'`,
+                flag = 1;
+                var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
+                }
+    
+                resolve(res_dtls)
+                });
+            }    
 }

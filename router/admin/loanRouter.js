@@ -2,6 +2,7 @@ const { db_Select, db_Insert, db_Delete } = require("../../model/mysqlModel");
 const {
   loan_trans,
   save_loan_dtls,
+  loan_trans_date,
 } = require("../../modules/admin/loanModule");
 const { getLoanDmd } = require("../../modules/api/masterModule");
 
@@ -645,6 +646,23 @@ loanRouter.post("/save_loan_details", async (req, res) => {
 
   //save loan details
   save_loan_dtls(data)
+    .then((data) => {
+      res_data = data;
+    })
+    .catch((err) => {
+      res_data = err;
+    })
+    .finally(() => {
+      res.send(res_data);
+    });
+});
+
+loanRouter.post("/change_loan_trans_date", async (req, res) => {
+  var data = req.body,
+    res_data;
+
+  //save loan details
+  loan_trans_date(data)
     .then((data) => {
       res_data = data;
     })
