@@ -183,7 +183,7 @@ module.exports = {
 
                 if(res_dt.suc > 0 && res_dt.msg.legth > 0){
                     var table_name = "td_loan",
-                fields = `last_trn_dt = '${data.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                fields = `last_trn_dt = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                 values = null,
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
