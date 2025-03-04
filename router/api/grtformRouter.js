@@ -86,7 +86,7 @@ grtformRouter.post("/fetch_member_dtls_cowise", async (req, res) => {
     whr = `a.member_code = b.member_code 
     AND a.created_by = b.created_by
     AND a.prov_grp_code = '0'
-    AND a.approval_status = 'U'
+    AND a.approval_status IN ('U','S')
     AND a.branch_code = '${data.branch_code}' 
     AND a.created_by = '${data.co_id}'`,
     order = null;
