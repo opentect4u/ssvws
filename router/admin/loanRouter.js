@@ -533,7 +533,7 @@ loanRouter.post("/search_grp_view", async (req, res) => {
   //search group for view
   var select = "group_code,group_name,group_type",
     table_name = "md_group",
-    whr = `branch_code = '${data.branch_code}' AND group_name like '%${data.group_name_view}%'`,
+    whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%')`,
     order = null;
   var search_grp_view = await db_Select(select, table_name, whr, order);
 
