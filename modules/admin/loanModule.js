@@ -174,22 +174,27 @@ module.exports = {
             return new Promise(async (resolve, reject) => {
                 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
-                var table_name = "td_loan_transactions",
-                fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
-                values = null,
-                whr = `loan_id = '${data.loan_id}' AND tr_type != 'D'`,
-                flag = 1;
-                var res_dt = await db_Insert(table_name,fields,values,whr,flag);
-
-                
-                var table_name = "td_loan",
-                fields = `last_trn_dt = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
-                values = null,
-                whr = `loan_id = '${data.loan_id}'`,
-                flag = 1;
-                var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
-
+                if (data.trans_dt.length > 0) {
+                    for (let dt of data.trans_dt) {
+                        var table_name = "td_loan_transactions",
+                        fields = `payment_date = '${dt.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                        values = null,
+                        whr = `loan_id = '${data.loan_id}' AND payment_id = '${dt.payment_id}' AND tr_type != 'D'`,
+                        flag = 1;
+                        var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+        
+                        
+                        var table_name = "td_loan",
+                        fields = `last_trn_dt = '${dt.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                        values = null,
+                        whr = `loan_id = '${data.loan_id}'`,
+                        flag = 1;
+                        var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
+                    }
                 resolve(res_dtls)
+                }else {
+                    reject({ "suc": 0, "msg": "No trans details found" });
+                }
                 });
-            }    
+            },    
 }
