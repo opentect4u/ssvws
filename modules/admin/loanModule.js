@@ -181,15 +181,14 @@ module.exports = {
                 flag = 1;
                 var res_dt = await db_Insert(table_name,fields,values,whr,flag);
 
-                if(res_dt.suc > 0 && res_dt.msg.legth > 0){
-                    var table_name = "td_loan",
+                
+                var table_name = "td_loan",
                 fields = `last_trn_dt = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                 values = null,
                 whr = `loan_id = '${data.loan_id}'`,
                 flag = 1;
                 var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
-                }
-    
+
                 resolve(res_dtls)
                 });
             }    
