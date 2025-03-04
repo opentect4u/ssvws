@@ -481,7 +481,7 @@ fetchRouter.post("/remove_member_from_group", async (req, res) => {
 //DROP OUT MEMBER FROM GROUP
     var remove_memb_dt = await remove_member_dtls(data);
     res.send(remove_memb_dt)
-})
+});
 
 fetchRouter.post("/search_member_web", async (req, res) => {
     var data = req.body;
