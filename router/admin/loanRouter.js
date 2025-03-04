@@ -615,7 +615,7 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
       "a.loan_id,a.branch_code,a.group_code,g.group_name,a.member_code,b.client_name,a.purpose,c.purpose_id,a.scheme_id,e.scheme_name,a.period_mode,a.fund_id,f.fund_name,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day",
     table_name =
       "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
-    whr = `a.loan_id = '${data.loan_id}' AND branch_code = '${data.branch_code}'`,
+    whr = `a.loan_id = '${data.loan_id}' AND a.branch_code = '${data.branch_code}'`,
     order = null;
   var loan_dtls = await db_Select(select, table_name, whr, order);
 
