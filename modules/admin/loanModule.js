@@ -175,7 +175,7 @@ module.exports = {
                 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
                 var table_name = "td_loan_transactions",
-                fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                 values = null,
                 whr = `loan_id = '${data.loan_id}' AND tr_type != 'D'`,
                 flag = 1;
