@@ -550,6 +550,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     order = null;
   var fetch_search_group_view = await db_Select(select, table_name, whr, order);
 
+  //fetch member details on that group
   if (fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0) {
     // var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name`,
     //   table_name =
@@ -564,6 +565,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     order = null;
   var grp_mem_dtls = await db_Select(select, table_name, whr, order);
 
+  //outstanding details
     var select = `SUM(outstanding) AS total_outstanding`,
       table_name = "td_loan",
       whr = `group_code = '${data.group_code}'`,
@@ -575,6 +577,18 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
       order
     );
 
+    //fetch disbursement details on that group
+    var select = "a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,SUM(a.applied_amt) applied_amt, SUM(a.prn_disb_amt) disburse_amt,a.disb_dt,(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) curr_outstanding",
+    table_name = "td_loan a LEFT JOIN md_purpose ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id",
+    whr = `group_code = '${data.group_code}'`,
+    order = null;
+  var disburse_details = await db_Select(
+    select,
+    table_name,
+    whr,
+    order
+  );
+
     fetch_search_group_view.msg[0]["memb_dt"] =
       grp_mem_dtls.suc > 0 && grp_mem_dtls.msg.length > 0
         ? grp_mem_dtls.msg
@@ -584,6 +598,10 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
       total_outstanding_result.msg.length > 0
         ? total_outstanding_result.msg[0]["total_outstanding"]
         : 0;
+    fetch_search_group_view.msg[0]["disb_details"] =
+        disburse_details.suc > 0 && disburse_details.msg.length > 0
+          ? disburse_details.msg
+          : [];    
   }
 
   res.send(fetch_search_group_view);
