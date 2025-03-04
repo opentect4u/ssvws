@@ -579,7 +579,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
 
     //fetch disbursement details on that group
     var select = "a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,SUM(a.applied_amt) applied_amt, SUM(a.prn_disb_amt) disburse_amt,a.disb_dt,(a.prn_amt + a.od_prn_amt + a.intt_amt + a.od_intt_amt) curr_outstanding",
-    table_name = "td_loan a LEFT JOIN md_purpose ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id",
+    table_name = "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id",
     whr = `group_code = '${data.group_code}'`,
     order = null;
   var disburse_details = await db_Select(
