@@ -160,7 +160,7 @@ module.exports = {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
             var table_name = "td_loan",
-            fields = `purpose = '${data.purpose}', sub_purpose = '${data.sub_purpose}', fund_id = '${data.fund_id}', tot_emi = '${data.tot_emi}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+            fields = `purpose = '${data.purpose}', disb_dt = '${data.disb_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
             values = null,
             whr = `loan_id = '${data.loan_id}'`,
             flag = 1;
