@@ -173,9 +173,12 @@ module.exports = {
     loan_trans_date: (data) => {
             return new Promise(async (resolve, reject) => {
                 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    
+                 console.log(data,'data');
+                 
                 if (data.trans_dt.length > 0) {
                     for (let dt of data.trans_dt) {
+                        console.log(dt,'dt');
+                        
                         var table_name = "td_loan_transactions",
                         fields = `payment_date = '${dt.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                         values = null,
