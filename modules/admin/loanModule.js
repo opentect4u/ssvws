@@ -177,7 +177,7 @@ module.exports = {
                 var table_name = "td_loan_transactions",
                 fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
                 values = null,
-                whr = `loan_id = '${data.loan_id}'`,
+                whr = `loan_id = '${data.loan_id}' AND tr_type != 'D'`,
                 flag = 1;
                 var res_dt = await db_Insert(table_name,fields,values,whr,flag);
 
