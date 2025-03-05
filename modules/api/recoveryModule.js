@@ -152,7 +152,7 @@ module.exports = {
 
                     // let payment_id = await payment_code(data.branch_code, dt.last_trn_dt)     //interest
                     let payment_id = await payment_code()     //interest
-                    // console.log(payment_id,'id_intt');
+                    console.log(payment_id,'id_intt');
  
                     var table_name = "td_loan_transactions",
                     fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,balance,intt_balance,tr_type,tr_mode,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
@@ -160,13 +160,13 @@ module.exports = {
                     whr = null,
                     flag = 0;
                     var rec_dtls_int = await db_Insert(table_name,fields,values,whr,flag);
-                    // console.log(rec_dtls_int);
+                    console.log(rec_dtls_int);
 
     
                     if(rec_dtls_int.suc > 0 && rec_dtls_int.msg.length > 0){
                     //   payment_id = await payment_code(data.branch_code, dt.last_trn_dt)
                       payment_id = await payment_code()
-                        // console.log(payment_id,'id_recov');
+                        console.log(payment_id,'id_recov');
                         
     
                         // let prn_recov = parseFloat(data.balance) - parseFloat(dt.prn_emi);
@@ -187,7 +187,7 @@ module.exports = {
                         whr = null,
                         flag = 0;
                         var rec_dtls_prn = await db_Insert(table_name,fields,values,whr,flag);  
-                        //  console.log(rec_dtls_prn);
+                         console.log(rec_dtls_prn);
 
                     }
                 }
@@ -217,7 +217,7 @@ module.exports = {
                     whr = `loan_id = '${dt.loan_id}'`,
                     flag = 1;
                     var rec_dt = await db_Insert(table_name,fields,values,whr,flag);
-                    // console.log(rec_dt);
+                    console.log(rec_dt);
                     
                     // rec_dt["outstanding"] = outstanding;
                     // rec_dt["instl_paid"] = dt.instl_paid;
