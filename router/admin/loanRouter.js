@@ -626,7 +626,7 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
       table_name = "td_loan_transactions",
       // whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
       whr = `loan_id = '${data.loan_id}'`,
-      order = `ORDER BY payment_date desc,payment_id desc`;
+      order = `ORDER BY payment_id desc,payment_date desc`;
 
     var transaction_dt = await db_Select(select, table_name, whr, order);
 
