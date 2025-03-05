@@ -72,16 +72,31 @@ fetchRouter.get("/fetch_form_dtls_web", async (req, res) => {
     res.send(fetch_dtls_web);
 });
 
+// fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
+//     var data = req.body;
+
+//     //fetch basic details in web
+//     var select = "a.*,b.*, c.branch_name",
+//     table_name = "md_member a, td_grt_basic b, md_branch c",
+//     whr = `a.branch_code = b.branch_code 
+//     AND a.branch_code = c.branch_code
+//     AND a.member_code = b.member_code 
+//     AND a.branch_code IN (${data.branch_code})
+//     AND b.form_no = '${data.form_no}' 
+//     AND b.approval_status = '${data.approval_status}'`,
+//     order = null;
+//     var fetch_basic = await db_Select(select,table_name,whr,order)
+
+//     res.send(fetch_basic);
+// });
+
 fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
     var data = req.body;
 
     //fetch basic details in web
-    var select = "a.*,b.*, c.branch_name",
-    table_name = "md_member a, td_grt_basic b, md_branch c",
-    whr = `a.branch_code = b.branch_code 
-    AND a.branch_code = c.branch_code
-    AND a.member_code = b.member_code 
-    AND a.branch_code IN (${data.branch_code})
+    var select = "a.*,b.*, c.branch_name,d.emp_name created,e.emp_name modified,f.emp_name approved,g.emp_name rejected",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_employee e ON a.modified_by = e.emp_id LEFT JOIN md_employee f ON a.approved_by = f.emp_id LEFT JOIN g ON a.rejected_by = g.emp_id",
+    whr = `a.branch_code IN (${data.branch_code})
     AND b.form_no = '${data.form_no}' 
     AND b.approval_status = '${data.approval_status}'`,
     order = null;
