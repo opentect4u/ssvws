@@ -173,7 +173,7 @@ module.exports = {
     loan_trans_date: (data) => {
             return new Promise(async (resolve, reject) => {
                 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-                 console.log(data,'data');
+                //  console.log(data,'data');
                  
                 // if (data.trans_dt.length > 0) {
                 //     for (let dt of data.trans_dt) {
