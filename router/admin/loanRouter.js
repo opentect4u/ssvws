@@ -624,7 +624,8 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
     var select =
         "payment_date,payment_id,particulars,credit,debit,(balance + od_balance)prn_bal,intt_balance,(balance + od_balance + intt_balance)outstanding,tr_type,tr_mode,status",
       table_name = "td_loan_transactions",
-      whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
+      // whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
+      whr = `loan_id = '${data.loan_id}'`,
       order = `ORDER BY payment_date desc,payment_id desc`;
 
     var transaction_dt = await db_Select(select, table_name, whr, order);
