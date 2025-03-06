@@ -562,7 +562,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
 
     var select = `a.member_code,b.client_name,c.loan_id,(c.prn_amt + c.od_prn_amt + c.intt_amt + c.od_intt_amt) curr_outstanding`,
     table_name ="td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan c ON a.member_code = c.member_code AND a.prov_grp_code = c.group_code",
-    whr = `a.prov_grp_code = '${data.group_code}'`,
+    whr = `a.prov_grp_code = '${data.group_code}' AND c.outstanding > 0`,
     order = null;
   var grp_mem_dtls = await db_Select(select, table_name, whr, order);
 
@@ -624,8 +624,8 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
     var select =
         "payment_date,payment_id,particulars,credit,debit,(balance + od_balance)prn_bal,intt_balance,(balance + od_balance + intt_balance)outstanding,tr_type,tr_mode,status",
       table_name = "td_loan_transactions",
-      // whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
-      whr = `loan_id = '${data.loan_id}'`,
+      whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
+      // whr = `loan_id = '${data.loan_id}'`,
       order = `ORDER BY payment_id desc,payment_date desc`;
 
     var transaction_dt = await db_Select(select, table_name, whr, order);
