@@ -829,7 +829,7 @@ const get_prn_amt = (loan_id, get_date) => {
         var fetch_max_pay_id = await db_Select(select, table_name, whr, order);
 
         if (fetch_max_pay_id.suc > 0 && fetch_max_pay_id.msg.length > 0) {
-          var select = "sum(balance + od_balance)",
+          var select = "sum(balance + od_balance) prn_amt",
             table_name = "td_loan_transactions",
             whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(fetch_max_pay_date.msg[0].payment_date,'yyyy-mm-dd')}' AND payment_id = '${fetch_max_pay_id.msg[0].payment_id}'`,
             order = null;
@@ -838,7 +838,7 @@ const get_prn_amt = (loan_id, get_date) => {
       }else {
         reject({ suc: 0, msg: "fetch payment date wrong" });
       }
-      resolve(fetch_balance);
+      resolve(fetch_balance.msg[0].prn_amt);
     } catch (error) {
       console.error("Error on calculating principal amount:", error);
       reject(error);
