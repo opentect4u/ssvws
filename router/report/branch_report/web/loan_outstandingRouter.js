@@ -24,87 +24,43 @@ dateFormat = require('dateformat');
 //     }
 // });
 
-// loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, res) => {
-//     try {
-//         var data = req.body;
-
-//         var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,b.bank_name,b.acc_no2,b.co_id,d.emp_name,a.recovery_day,a.fund_id,e.fund_name,a.scheme_id,f.scheme_name,a.applied_amt,a.disb_dt,a.prn_disb_amt,(prn_amt + od_prn_amt)prn_amt,intt_amt,(prn_amt + od_prn_amt+intt_amt)outstanding",
-//         table_name = "td_loan a,md_group b,md_member c,md_employee d,md_fund e,md_scheme f",
-//         whr = ` a.group_code = b.group_code
-//                 AND a.member_code = c.member_code
-//                 AND b.co_id = d.emp_id
-//                 AND a.fund_id = e.fund_id
-//                 AND a.scheme_id = f.scheme_id
-//                 AND a.branch_code = '${data.branch_code}'
-//                 AND a.disb_dt <= '${data.get_date}'`,
-//         order = null;
-//         var res_dt = await db_Select(select,table_name,whr,order);
-
-//         if(res_dt.suc > 0 && res_dt.msg.length > 0){
-//             try {
-//                 const prnAmtResult = await get_prn_amt(loan.loan_id, data.get_date);
-//                 const inttAmtResult = await get_intt_amt(loan.loan_id, data.get_date);
-                
-//                 loan.prn_amt = prnAmtResult.suc > 0 ? prnAmtResult.msg[0].prn_amt || 0 : 0;
-//                 loan.intt_amt = inttAmtResult.suc > 0 ? inttAmtResult.msg[0].intt_balance || 0 : 0;
-//                 loan.outstanding = loan.prn_amt + loan.intt_amt;
-//             } catch (error) {
-//                 console.error(`Error fetching amounts for loan_id: ${loan.loan_id}`, error);
-//                 loan.prn_amt = 0;
-//                 loan.intt_amt = 0;
-//                 loan.outstanding = 0;
-//             }
-//         }
-//         res.send(res_dt);
-//     } catch (error) {
-//         console.error("Error fetching loan outstanding report:", error);
-//         res.send({ suc: 0, msg: "An error occurred" });
-//     }
-// });
-
 loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, res) => {
     try {
         var data = req.body;
 
-        var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,b.bank_name,b.acc_no2,b.co_id,d.emp_name,a.recovery_day,a.fund_id,e.fund_name,a.scheme_id,f.scheme_name,a.applied_amt,a.disb_dt,a.prn_disb_amt",
-            table_name = "td_loan a,md_group b,md_member c,md_employee d,md_fund e,md_scheme f",
-            whr = ` a.group_code = b.group_code
-                    AND a.member_code = c.member_code
-                    AND b.co_id = d.emp_id
-                    AND a.fund_id = e.fund_id
-                    AND a.scheme_id = f.scheme_id
-                    AND a.branch_code = '${data.branch_code}'
-                    AND a.disb_dt <= '${data.get_date}'`,
-            order = null;
+        var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,b.bank_name,b.acc_no2,b.co_id,d.emp_name,a.recovery_day,a.fund_id,e.fund_name,a.scheme_id,f.scheme_name,a.applied_amt,a.disb_dt,a.prn_disb_amt,(prn_amt + od_prn_amt)prn_amt,intt_amt,(prn_amt + od_prn_amt+intt_amt)outstanding",
+        table_name = "td_loan a,md_group b,md_member c,md_employee d,md_fund e,md_scheme f",
+        whr = ` a.group_code = b.group_code
+                AND a.member_code = c.member_code
+                AND b.co_id = d.emp_id
+                AND a.fund_id = e.fund_id
+                AND a.scheme_id = f.scheme_id
+                AND a.branch_code = '${data.branch_code}'
+                AND a.disb_dt <= '${data.get_date}'`,
+        order = null;
+        var res_dt = await db_Select(select,table_name,whr,order);
 
-        var res_dt = await db_Select(select, table_name, whr, order);
-
-        if (res_dt.suc > 0 && res_dt.msg.length > 0) {
-            // Fetch prn_amt and intt_amt for each loan_id
-            await Promise.all(res_dt.msg.map(async (loan) => {
-                try {
-                    const prnAmtResult = await get_prn_amt(loan.loan_id, data.get_date);
-                    const inttAmtResult = await get_intt_amt(loan.loan_id, data.get_date);
-                    
-                    loan.prn_amt = prnAmtResult.suc > 0 ? prnAmtResult.msg[0].prn_amt || 0 : 0;
-                    loan.intt_amt = inttAmtResult.suc > 0 ? inttAmtResult.msg[0].intt_balance || 0 : 0;
-                    loan.outstanding = loan.prn_amt + loan.intt_amt;
-                } catch (error) {
-                    console.error(`Error fetching amounts for loan_id: ${loan.loan_id}`, error);
-                    loan.prn_amt = 0;
-                    loan.intt_amt = 0;
-                    loan.outstanding = 0;
-                }
-            }));
+        if(res_dt.suc > 0 && res_dt.msg.length > 0){
+            try {
+                const prnAmtResult = await get_prn_amt(loan.loan_id, data.get_date);
+                const inttAmtResult = await get_intt_amt(loan.loan_id, data.get_date);
+                
+                loan.prn_amt = prnAmtResult.suc > 0 ? prnAmtResult.msg[0].prn_amt || 0 : 0;
+                loan.intt_amt = inttAmtResult.suc > 0 ? inttAmtResult.msg[0].intt_balance || 0 : 0;
+                loan.outstanding = loan.prn_amt + loan.intt_amt;
+            } catch (error) {
+                console.error(`Error fetching amounts for loan_id: ${loan.loan_id}`, error);
+                loan.prn_amt = 0;
+                loan.intt_amt = 0;
+                loan.outstanding = 0;
+            }
         }
-
         res.send(res_dt);
     } catch (error) {
         console.error("Error fetching loan outstanding report:", error);
         res.send({ suc: 0, msg: "An error occurred" });
     }
 });
-
 
 loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, res) => {
     try {
