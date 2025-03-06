@@ -1,5 +1,5 @@
 const { db_Select, db_RunProcedureAndFetchData } = require('../../../../model/mysqlModel');
-const { loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding, get_prn_amt } = require('../../../../modules/api/masterModule');
+const { loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding, get_prn_amt, get_intt_amt } = require('../../../../modules/api/masterModule');
 
 const express = require('express'),
 loan_outstandingRouter = express.Router(),
@@ -88,12 +88,12 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
                     
                     loan.prn_amt = prnAmtResult.suc > 0 ? prnAmtResult.msg[0].prn_amt || 0 : 0;
                     loan.intt_amt = inttAmtResult.suc > 0 ? inttAmtResult.msg[0].intt_balance || 0 : 0;
-                    loan.outstanding = loan.prn_amt + loan.intt_amt;
+                    // loan.outstanding = loan.prn_amt + loan.intt_amt;
                 } catch (error) {
                     console.error(`Error fetching amounts for loan_id: ${loan.loan_id}`, error);
                     loan.prn_amt = 0;
                     loan.intt_amt = 0;
-                    loan.outstanding = 0;
+                    // loan.outstanding = 0;
                 }
             }));
         }
