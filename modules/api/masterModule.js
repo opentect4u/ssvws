@@ -815,11 +815,9 @@ const get_prn_amt = (loan_id, get_date) => {
 
       var select = "max(payment_date) payment_date",
         table_name = "td_loan_transactions",
-        whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date = '${get_date}'`,
+        whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${get_date}'`,
         order = null;
-      var fetch_max_pay_date = await db_Select(select, table_name, whr, order);
-      console.log(fetch_max_pay_date.msg[0].payment_date,fetch_max_pay_date.payment_date);
-      
+      var fetch_max_pay_date = await db_Select(select, table_name, whr, order);      
 
       if (fetch_max_pay_date.suc > 0 && fetch_max_pay_date.msg.length > 0) {
         var select = "max(payment_id) payment_id",
