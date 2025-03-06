@@ -5,24 +5,24 @@ const express = require('express'),
 loan_outstandingRouter = express.Router(),
 dateFormat = require('dateformat');
 
-// loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, res) => {
-//     try {
-//         var data = req.body;
-//         const pro_name = 'p_loan_out_standing',
-//         pro_params = `?,?`,
-//         pro_params_val = [data.branch_code, data.os_dt],
-//         sel_table_name = `tt_loan_outstanding a, md_group b, md_member c`,
-//         sel_fields = `a.loan_id, a.branch_code, a.group_code, b.group_name, a.member_code, c.client_name, a.disbursed_date disb_dt, a.current_roi curr_roi, a.period, a.period_mode, a.total_emi tot_emi, a.installment_end_date instl_end_dt, a.current_principal balance, a.overdue_principal od_balance, a.interest_amount intt_balance, (a.current_principal + a.overdue_principal + a.interest_amount) total_outstanding`,
-//         sel_whr_fields = `a.group_code=b.group_code AND a.member_code = c.member_code`,
-//         sel_whr_arr = [],
-//         sel_order = `ORDER BY a.disbursed_date`;
-//         var res_dt = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
-//         res.send(res_dt);
-//     } catch (error) {
-//         console.error("Error fetching loan outstanding report:", error);
-//         res.send({ suc: 0, msg: "An error occurred" });
-//     }
-// });
+loan_outstandingRouter.post("/loan_outstanding_report_memberwise_1", async (req, res) => {
+    try {
+        var data = req.body;
+        const pro_name = 'p_loan_out_standing',
+        pro_params = `?,?`,
+        pro_params_val = [data.branch_code, data.os_dt],
+        sel_table_name = `tt_loan_outstanding a, md_group b, md_member c`,
+        sel_fields = `a.loan_id, a.branch_code, a.group_code, b.group_name, a.member_code, c.client_name, a.disbursed_date disb_dt, a.current_roi curr_roi, a.period, a.period_mode, a.total_emi tot_emi, a.installment_end_date instl_end_dt, a.current_principal balance, a.overdue_principal od_balance, a.interest_amount intt_balance, (a.current_principal + a.overdue_principal + a.interest_amount) total_outstanding`,
+        sel_whr_fields = `a.group_code=b.group_code AND a.member_code = c.member_code`,
+        sel_whr_arr = [],
+        sel_order = `ORDER BY a.disbursed_date`;
+        var res_dt = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
+        res.send(res_dt);
+    } catch (error) {
+        console.error("Error fetching loan outstanding report:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }
+});
 
 // loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, res) => {
 //     try {
