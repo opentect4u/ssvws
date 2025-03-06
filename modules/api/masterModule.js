@@ -846,6 +846,45 @@ const get_prn_amt = (loan_id, get_date) => {
   });
 };
 
+const get_intt_amt = (loan_id, get_date) => {
+  console.log(loan_id, get_date, "fetch_data");
+  return new Promise(async (resolve, reject) => {
+    try {
+      var fetch_intt_balance = {suc : 0, msg : []};
+
+      var select = "max(payment_date) payment_date",
+        table_name = "td_loan_transactions",
+        whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${get_date}'`,
+        order = null;
+      var fetch_intt_max_pay_date = await db_Select(select, table_name, whr, order);  
+      console.log(fetch_intt_max_pay_date.msg[0].payment_date);
+          
+
+      if (fetch_intt_max_pay_date.suc > 0 && fetch_intt_max_pay_date.msg.length > 0) {
+        var select = "max(payment_id) payment_id",
+          table_name = "td_loan_transactions",
+          whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date = '${dateFormat(fetch_intt_max_pay_date.msg[0].payment_date,'yyyy-mm-dd')}'`,
+          order = null;
+        var fetch_intt_max_pay_id = await db_Select(select, table_name, whr, order);
+
+        if (fetch_intt_max_pay_id.suc > 0 && fetch_intt_max_pay_id.msg.length > 0) {
+          var select = "intt_amt",
+            table_name = "td_loan_transactions",
+            whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(fetch_intt_max_pay_date.msg[0].payment_date,'yyyy-mm-dd')}' AND payment_id = '${fetch_intt_max_pay_id.msg[0].payment_id}'`,
+            order = null;
+          fetch_intt_balance = await db_Select(select, table_name, whr, order);
+        }
+      }else {
+        reject({ suc: 0, msg: "fetch payment date wrong" });
+      }
+      resolve(fetch_intt_balance);
+    } catch (error) {
+      console.error("Error on calculating principal amount:", error);
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getFormNo,
   groupCode,
@@ -867,4 +906,5 @@ module.exports = {
   loan_intt_balance_outstanding,
   fetch_last_date,
   get_prn_amt,
+  get_intt_amt,
 };
