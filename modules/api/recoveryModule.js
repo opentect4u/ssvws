@@ -374,13 +374,13 @@ module.exports = {
                     
                                     rec_dtls_prn.msg[0]['trans_dtl'] = trans_dtl.suc > 0 ? (trans_dtl.msg.length > 0 ? trans_dtl.msg : []) : [];
                                 }else{
-                                    reject({ "suc": 0, "msg": "No recovery balance provided" });
+                                    reject({ "suc": 0, "msg": "Print receipt data not generated" });
                                 }
                             }else{
-                                reject({ "suc": 0, "msg": "No recovery balance provided" });
+                                reject({ "suc": 0, "msg": "Amount not updated in td_loan table" });
                             }
                         }else{
-                            reject({ "suc": 0, "msg": "No recovery balance provided" });
+                            reject({ "suc": 0, "msg": "No recovery balance row inserted" });
                         }
                     }else {
                         reject({ "suc": 0, "msg": "No recovery balance provided" });
