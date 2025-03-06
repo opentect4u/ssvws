@@ -838,7 +838,7 @@ const get_prn_amt = (loan_id, get_date) => {
       }else {
         reject({ suc: 0, msg: "fetch payment date wrong" });
       }
-      resolve(fetch_balance.msg[0].prn_amt);
+      resolve(fetch_balance);
     } catch (error) {
       console.error("Error on calculating principal amount:", error);
       reject(error);
