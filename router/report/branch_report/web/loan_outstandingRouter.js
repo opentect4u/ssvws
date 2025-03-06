@@ -66,7 +66,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
     try {
         var data = req.body;
 
-        var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,b.bank_name,b.acc_no2,b.co_id,d.emp_name,a.recovery_day,a.fund_id,e.fund_name,a.scheme_id,f.scheme_name,a.applied_amt,a.disb_dt,a.prn_disb_amt",
+        var select = "a.loan_id,a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name,b.bank_name,b.acc_no2,b.co_id,d.emp_name,a.recovery_day,a.fund_id,e.fund_name,a.scheme_id,f.scheme_name,a.applied_amt,a.disb_dt,a.prn_disb_amt,(prn_amt + od_prn_amt)prn_amt,intt_amt,(prn_amt + od_prn_amt+intt_amt)outstanding",
             table_name = "td_loan a,md_group b,md_member c,md_employee d,md_fund e,md_scheme f",
             whr = ` a.group_code = b.group_code
                     AND a.member_code = c.member_code
