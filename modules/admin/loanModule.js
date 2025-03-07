@@ -198,22 +198,37 @@ module.exports = {
                 // }else {
                 //     reject({ "suc": 0, "msg": "No trans details found" });
                 // }
-                        
-                        var table_name = "td_loan_transactions",
-                        fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
-                        values = null,
-                        whr = `loan_id = '${data.loan_id}' AND payment_id = '${data.payment_id}'`,
-                        flag = 1;
-                        var res_dt = await db_Insert(table_name,fields,values,whr,flag);
-        
-                        
-                        var table_name = "td_loan",
-                        fields = `last_trn_dt = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
-                        values = null,
-                        whr = `loan_id = '${data.loan_id}'`,
-                        flag = 1;
-                        var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
-                resolve(res_dtls)
+                        if(data.tr_type == 'R'){
+                            var table_name = "td_loan_transactions",
+                            fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                            values = null,
+                            whr = `loan_id = '${data.loan_id}' AND payment_id = '${data.payment_id}'`,
+                            flag = 1;
+                            var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+                            var table_name = "td_loan",
+                            fields = `last_trn_dt = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                            values = null,
+                            whr = `loan_id = '${data.loan_id}'`,
+                            flag = 1;
+                            var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
+                            resolve(res_dtls)
+                        }else {
+                            var table_name = "td_loan_transactions",
+                            fields = `payment_date = '${data.payment_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                            values = null,
+                            whr = `loan_id = '${data.loan_id}' AND payment_id = '${data.payment_id}'`,
+                            flag = 1;
+                            var res_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+                            var table_name = "td_loan",
+                            fields = `disb_dt = '${data.payment_date}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+                            values = null,
+                            whr = `loan_id = '${data.loan_id}'`,
+                            flag = 1;
+                            var res_dtls = await db_Insert(table_name,fields,values,whr,flag);
+                            resolve(res_dtls) 
+                        }
                 });
             },    
 }
