@@ -6,7 +6,7 @@ dateFormat = require('dateformat');
 
 monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
     try {
-      var select = "a.branch_code, a.branch_name, b.closed_upto",
+      var select = "a.branch_code, a.branch_name, DATEADD(month, 1, b.closed_upto) AS closed_upto",
         table_name =
           "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
         whr = `a.branch_code <> 100`,
@@ -14,34 +14,13 @@ monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
   
       var branch_data = await db_Select(select, table_name, whr, order);
   
-      // Modify closed_upto by adding one month
-      if (branch_data && branch_data.length > 0) {
-        branch_data = branch_data.map((row) => {
-          if (row.closed_upto) {
-            let closedDate = new Date(row.closed_upto);
-            closedDate.setMonth(closedDate.getMonth() + 1);
-  
-            // Handle month-end transitions to ensure correct dates
-            let newMonth = closedDate.getMonth();
-            let expectedMonth = (new Date(row.closed_upto).getMonth() + 1) % 12;
-            if (newMonth !== expectedMonth) {
-              closedDate.setDate(0); // Set to last day of previous month
-            }
-  
-            // Overwrite closed_upto with modified date
-            row.closed_upto = closedDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
-          }
-          return row;
-        });
-      }
-  
       res.send(branch_data);
     } catch (error) {
       console.error("Error fetching month-end branch details:", error);
       res.status(500).send({ error: "Internal Server Error" });
     }
   });
-
+  
 monthEndRouter.post("/update_month_end_data", async (req, res) => {
     var data = req.body;
     console.log(data);
