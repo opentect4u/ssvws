@@ -888,25 +888,31 @@ const get_intt_amt = (loan_id, get_date) => {
 };
 
 //Function to get date
-const fetch_date = (branch_code,get_dt) => {
+const fetch_date = (branch_code, get_dt) => {
   console.log(branch_code, get_dt, "fetch_data");
+
   return new Promise(async (resolve, reject) => {
     try {
-      var fetch_date_dtls = {suc : 0, msg : []};
+      let fetch_date_dtls = { suc: 0, msg: [] };
 
-      var select = "closed_upto",
-      table_name = "td_month_close",
-      whr = `branch_code = '${branch_code}' AND closed_upto = '${dateFormat(get_dt,'yyyy-mm-dd')}'`,
-      order = null;
-    var fetch_date_dtls = await db_Select(select, table_name, whr, order);  
-    if(fetch_date_dtls.suc > 0 && fetch_date_dtls.msg.length > 0){
-      resolve(fetch_date_dtls)
-    }else {
-      reject({ suc: 0, msg: "fetch payment date wrong" });
-    }
+      // Ensure get_dt is a valid date
+      let formattedDate = dateFormat(new Date(get_dt), "yyyy-mm-dd");
+
+      let select = "closed_upto",
+        table_name = "td_month_close",
+        whr = `branch_code = '${branch_code}' AND closed_upto = '${formattedDate}'`,
+        order = null;
+
+      let result = await db_Select(select, table_name, whr, order);
+
+      if (result && Array.isArray(result) && result.length > 0) {
+        resolve({ suc: 1, msg: result });
+      } else {
+        reject({ suc: 0, msg: "No matching closed_upto date found" });
+      }
     } catch (error) {
-      console.error("Error on calculating date:", error);
-      reject(error);
+      console.error("Error on fetching date:", error);
+      reject({ suc: 0, msg: "Error fetching data", error: error.message });
     }
   });
 };
