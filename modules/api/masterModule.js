@@ -902,11 +902,12 @@ const fetch_date = (branch_code, get_dt) => {
 
       let result = await db_Select(select, table_name, whr, order);
 
-      if (result && Array.isArray(result) && result.length > 0) {
-        resolve({ suc: 1, msg: result });
-      } else {
-        reject({ suc: 0, msg: "No matching closed_upto date found" });
-      }
+      // if (result && Array.isArray(result) && result.length > 0) {
+      //   resolve({ suc: 1, msg: result });
+      // } else {
+      //   reject({ suc: 0, msg: "No matching closed_upto date found" });
+      // }
+      resolve(result)
     } catch (error) {
       console.error("Error on fetching date:", error);
       // reject({ suc: 0, msg: "Error fetching data", error: error.message });
