@@ -4,15 +4,46 @@ const express = require('express'),
 monthEndRouter = express.Router(),
 dateFormat = require('dateformat');
 
-monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
-  var data = req.body;
+// monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
+//   var data = req.body;
 
-  var select = "a.branch_code,a.branch_name,b.closed_upto,b.close_flag",
-  table_name = "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
-  whr = `a.branch_code <> 100`,
-  order = null;
-  var branch_data = await db_Select(select,table_name,whr,order);
-  res.send(branch_data);
+//   var select = "a.branch_code,a.branch_name,b.closed_upto,b.close_flag",
+//   table_name = "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
+//   whr = `a.branch_code <> 100`,
+//   order = null;
+//   var branch_data = await db_Select(select,table_name,whr,order);
+//   res.send(branch_data);
+// });
+
+monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
+  try {
+    var data = req.body;
+
+    var select = "a.branch_code, a.branch_name, b.closed_upto",
+      table_name =
+        "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
+      whr = `a.branch_code <> 100`,
+      order = null;
+
+    var branch_data = await db_Select(select, table_name, whr, order);
+
+    // Modify closed_upto by adding one month
+    if (branch_data && branch_data.length > 0) {
+      branch_data = branch_data.map((row) => {
+        if (row.closed_upto) {
+          let closedDate = new Date(row.closed_upto);
+          closedDate.setMonth(closedDate.getMonth() + 1);
+          row.closed_upto = closedDate.toISOString().split("T")[0]; 
+        }
+        return row;
+      });
+    }
+
+    res.send(branch_data);
+  } catch (error) {
+    console.error("Error fetching month-end branch details:", error);
+    res.status(500).send({ error: "Internal Server Error" });
+  }
 });
 
 monthEndRouter.post("/update_month_end_data", async (req, res) => {
