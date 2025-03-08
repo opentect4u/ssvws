@@ -902,15 +902,29 @@ const fetch_date = (branch_code, get_dt) => {
 
       let result = await db_Select(select, table_name, whr, order);
 
-      // if (result && Array.isArray(result) && result.length > 0) {
-      //   resolve({ suc: 1, msg: result });
-      // } else {
-      //   reject({ suc: 0, msg: "No matching closed_upto date found" });
-      // }
-      resolve(result)
+      if (result && Array.isArray(result) && result.length > 0) {
+        let closed_upto = result[0].closed_upto; 
+        
+        if (!closed_upto) {
+          reject({ suc: 0, msg: "closed_upto date is missing" });
+          return;
+        }
+
+        // Convert both dates to Date objects for comparison
+        let closedDate = new Date(closed_upto);
+        let formDate = new Date(formattedDate);
+
+        if (formDate > closedDate) {
+          resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." });
+        } else {
+          reject({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
+        }
+      } else {
+        reject({ suc: 0, msg: "No matching record found for this branch_code." });
+      }
     } catch (error) {
       console.error("Error on fetching date:", error);
-      // reject({ suc: 0, msg: "Error fetching data", error: error.message });
+      reject({ suc: 0, msg: "Error fetching data", error: error.message });
     }
   });
 };
