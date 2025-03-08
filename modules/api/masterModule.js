@@ -897,7 +897,7 @@ const fetch_date = (branch_code, get_dt) => {
 
       let select = "closed_upto",
         table_name = "td_month_close",
-        whr = `branch_code = '${branch_code}' AND closed_upto = '${formattedDate}'`,
+        whr = `branch_code = '${branch_code}'`,
         order = null;
 
       let result = await db_Select(select, table_name, whr, order);
