@@ -902,7 +902,7 @@ const fetch_date = (branch_code, get_dt) => {
 
       let result = await db_Select(select, table_name, whr, order);
 
-      if (result && Array.isArray(result) && result.length > 0) {
+      // if (result && Array.isArray(result) && result.length > 0) {
         let closed_upto = result[0].closed_upto; 
         
         if (!closed_upto) {
@@ -919,9 +919,9 @@ const fetch_date = (branch_code, get_dt) => {
         } else {
           reject({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
         }
-      } else {
-        reject({ suc: 0, msg: "No matching record found for this branch_code." });
-      }
+      // } else {
+      //   reject({ suc: 0, msg: "No matching record found for this branch_code." });
+      // }
     } catch (error) {
       console.error("Error on fetching date:", error);
       reject(error);
