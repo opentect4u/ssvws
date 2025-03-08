@@ -6,7 +6,7 @@ dateFormat = require('dateformat');
 
 monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
     try {
-      var select = "a.branch_code, a.branch_name, DATEADD(month, 1, b.closed_upto) AS closed_upto",
+      var select = "a.branch_code, a.branch_name, DATE_ADD(b.closed_upto, INTERVAL 1 MONTH) AS closed_upto",
         table_name =
           "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
         whr = `a.branch_code <> 100`,
@@ -20,7 +20,7 @@ monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
       res.status(500).send({ error: "Internal Server Error" });
     }
   });
-  
+
 monthEndRouter.post("/update_month_end_data", async (req, res) => {
     var data = req.body;
     console.log(data);
