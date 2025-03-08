@@ -919,7 +919,7 @@ const fetch_date = (branch_code, get_dt) => {
         if (closedDate >= formDate) {
           resolve({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
         } else {
-          resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." });
+          resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." `${closedDate}`});
         }
       } else {
         reject({ suc: 0, msg: "No matching record found for this branch_code." });
