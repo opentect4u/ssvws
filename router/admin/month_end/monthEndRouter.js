@@ -6,7 +6,7 @@ dateFormat = require('dateformat');
 
 monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
     try {
-      var select = "a.branch_code, a.branch_name, b.closed_upto",
+      var select = "a.branch_code, a.branch_name, b.closed_upto, b.close_flag",
         table_name =
           "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
         whr = `a.branch_code <> 100`,
@@ -20,12 +20,15 @@ monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
           if (row.closed_upto) {
             let closedDate = new Date(row.closed_upto);
             closedDate.setMonth(closedDate.getMonth() + 1);
-            
-            // Ensure date doesn't go out of bounds when transitioning months
-            if (closedDate.getDate() !== new Date(row.closed_upto).getDate()) {
+  
+            // Handle month-end transitions to ensure correct dates
+            let newMonth = closedDate.getMonth();
+            let expectedMonth = (new Date(row.closed_upto).getMonth() + 1) % 12;
+            if (newMonth !== expectedMonth) {
               closedDate.setDate(0); // Set to last day of previous month
             }
   
+            // Overwrite closed_upto with modified date
             row.closed_upto = closedDate.toISOString().split("T")[0]; // Format as YYYY-MM-DD
           }
           return row;
