@@ -913,15 +913,14 @@ const fetch_date = (branch_code, get_dt) => {
         // }
 
         // Convert both dates to Date objects for comparison
-        let closedDate = new Date(closed_upto);
-        let formDate = new Date(formattedDate);
+        let closedDate = (dateFormat(closed_upto,'yyyy-mm-dd'));
+        let formDate = (dateFormat(formattedDate,'yyyy-mm-dd'));
+        console.log(closedDate,formDate,'formDate');
 
         if (closedDate >= formDate) {
           resolve({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
         } else {
-          resolve({ suc: 1, msg: `Success! formDate is greater than closed_upto ${closedDate}` });
-          console.log(closedDate,formDate,'formDate');
-          
+          resolve({ suc: 1, msg: `Success! formDate ${formDate} is greater than closed_upto ${closedDate}` });          
         }
       } else {
         reject({ suc: 0, msg: "No matching record found for this branch_code." });
