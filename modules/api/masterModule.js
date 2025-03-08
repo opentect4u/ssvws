@@ -902,8 +902,8 @@ const fetch_date = (branch_code, get_dt) => {
 
       let result = await db_Select(select, table_name, whr, order);
 
-      // if (result && Array.isArray(result) && result.length > 0) {
-        let closed_upto = result.msg[0].closed_upto; 
+      if (result.suc > 0 && result.msg.length > 0) {
+        let closed_upto = result[0].closed_upto; 
         
         if (!closed_upto) {
           reject({ suc: 0, msg: "closed_upto date is missing" });
