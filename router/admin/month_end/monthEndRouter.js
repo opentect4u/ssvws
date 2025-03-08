@@ -7,7 +7,7 @@ dateFormat = require('dateformat');
 monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
   var data = req.body;
 
-  var select = "a.branch_code,a.branch_name,b.closed_upto",
+  var select = "a.branch_code,a.branch_name,b.closed_upto,b.close_flag",
   table_name = "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
   whr = `a.branch_code <> 100`,
   order = null;
