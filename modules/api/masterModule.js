@@ -904,6 +904,8 @@ const fetch_date = (branch_code, get_dt) => {
 
       if (result.suc > 0 && result.msg.length > 0) {
         let closed_upto = result.msg[0].closed_upto; 
+        console.log(closed_upto,'upppp');
+        
         
         if (!closed_upto) {
           reject({ suc: 0, msg: "closed_upto date is missing" });
@@ -914,7 +916,7 @@ const fetch_date = (branch_code, get_dt) => {
         let closedDate = new Date(closed_upto);
         let formDate = new Date(formattedDate);
 
-        if (formDate >= closedDate) {
+        if (formDate > closedDate) {
           resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." });
         } else {
           reject({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
