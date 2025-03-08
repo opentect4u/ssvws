@@ -894,7 +894,7 @@ const fetch_date = (branch_code,get_dt) => {
     try {
       var fetch_date_dtls = {suc : 0, msg : []};
 
-      var select = "closed_upto,close_flag",
+      var select = "closed_upto",
       table_name = "td_month_close",
       whr = `branch_code = '${branch_code}' AND closed_upto = '${dateFormat(get_dt,'yyyy-mm-dd')}'`,
       order = null;
