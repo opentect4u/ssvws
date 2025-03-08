@@ -38,9 +38,9 @@ monthEndRouter.post("/update_month_end_data", async (req, res) => {
                 
    
                    var table_name = "td_month_close",
-                       fields = `close_flag = 'C', closed_by = '${data.closed_by}', closed_at = '${datetime}'`,
+                       fields = `closed_upto = '${dt.closed_upto}', closed_by = '${data.closed_by}', closed_at = '${datetime}'`,
                        values = null,
-                       whr = `branch_code IN (${brn_code_arr.join(',')}) AND closed_upto = '${dt.closed_upto}'`,
+                       whr = `branch_code IN (${brn_code_arr.join(',')})`,
                        flag = 1;
    
                    var month_end_details_save = await db_Insert(table_name, fields, values, whr, flag);
