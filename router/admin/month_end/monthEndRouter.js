@@ -4,8 +4,8 @@ const express = require('express'),
 monthEndRouter = express.Router(),
 dateFormat = require('dateformat');
 
-monthEndRouter.post("/get_branch_name_in_month_end_screen", async (req, res) => {
-  var data = req.body;
+monthEndRouter.get("/get_branch_name_in_month_end_screen", async (req, res) => {
+  var data = req.query;
 
   var select = "branch_code,branch_name",
   table_name = "md_branch",
