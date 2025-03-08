@@ -20,7 +20,7 @@ testRouter.get("/test_1", async (req, res) => {
     // var gets_data = await emp_id(120)
     // var gets_data = await get_prn_amt(12020622,'2025-03-06')
     // var gets_data = await get_intt_amt(12085933,'2025-03-06')
-    var get_dt_dtls = await fetch_date(101,'2025-03-08')
+    // var get_dt_dtls = await fetch_date(101,'2025-03-08')
     res.send(get_dt_dtls);
     // console.log(get_data,'ok');
     
