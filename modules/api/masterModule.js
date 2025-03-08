@@ -893,9 +893,6 @@ const fetch_date = (branch_code, get_dt) => {
 
   return new Promise(async (resolve, reject) => {
     try {
-      let fetch_date_dtls = { suc: 0, msg: [] };
-
-      // Ensure get_dt is a valid date
       let formattedDate = dateFormat(new Date(get_dt), "yyyy-mm-dd");
 
       let select = "closed_upto",
