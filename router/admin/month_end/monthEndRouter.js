@@ -17,13 +17,19 @@ monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
 
 monthEndRouter.post("/update_month_end_data", async (req, res) => {
     var data = req.body;
+    console.log(data);
+    
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
        try {
            if (data.month_end_dt && data.month_end_dt.length > 0) {
    
                for (let dt of data.month_end_dt) {
+                console.log(dt,'dt');
+                
                 var brn_code_arr = data.month_end_dt.map(pdt => `'${pdt.branch_code}'`);
+                console.log(brn_code_arr,'brn_code');
+                
    
                    var table_name = "td_month_close",
                        fields = `close_flag = 'C', closed_by = '${data.closed_by}', closed_at = '${datetime}'`,

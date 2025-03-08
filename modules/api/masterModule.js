@@ -887,6 +887,31 @@ const get_intt_amt = (loan_id, get_date) => {
   });
 };
 
+//Function to get date
+const fetch_date = (branch_code,get_dt) => {
+  console.log(loan_id, get_date, "fetch_data");
+  return new Promise(async (resolve, reject) => {
+    try {
+      var fetch_date_dtls = {suc : 0, msg : []};
+
+      var select = "closed_upto,close_flag",
+      table_name = "td_month_close",
+      whr = `branch_code = '${branch_code}' AND closed_upto = '${dateFormat(get_dt,'yyyy-mm-dd')}'`,
+      order = null;
+    var fetch_date_dtls = await db_Select(select, table_name, whr, order);  
+    if(fetch_date_dtls.suc > 0 && fetch_date_dtls.msg.length > 0){
+
+    }else {
+      reject({ suc: 0, msg: "fetch payment date wrong" });
+    }
+    resolve(fetch_date_dtls)
+    } catch (error) {
+      console.error("Error on calculating date:", error);
+      reject(error);
+    }
+  });
+};
+
 module.exports = {
   getFormNo,
   groupCode,
@@ -909,4 +934,5 @@ module.exports = {
   fetch_last_date,
   get_prn_amt,
   get_intt_amt,
+  fetch_date
 };
