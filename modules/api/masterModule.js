@@ -889,7 +889,7 @@ const get_intt_amt = (loan_id, get_date) => {
 
 //Function to get date
 const fetch_date = (branch_code,get_dt) => {
-  console.log(loan_id, get_date, "fetch_data");
+  console.log(branch_code, get_dt, "fetch_data");
   return new Promise(async (resolve, reject) => {
     try {
       var fetch_date_dtls = {suc : 0, msg : []};
@@ -900,11 +900,10 @@ const fetch_date = (branch_code,get_dt) => {
       order = null;
     var fetch_date_dtls = await db_Select(select, table_name, whr, order);  
     if(fetch_date_dtls.suc > 0 && fetch_date_dtls.msg.length > 0){
-
+      resolve(fetch_date_dtls)
     }else {
       reject({ suc: 0, msg: "fetch payment date wrong" });
     }
-    resolve(fetch_date_dtls)
     } catch (error) {
       console.error("Error on calculating date:", error);
       reject(error);
