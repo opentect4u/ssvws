@@ -924,7 +924,7 @@ const fetch_date = (branch_code, get_dt) => {
       }
     } catch (error) {
       console.error("Error on fetching date:", error);
-      reject({ suc: 0, msg: "Error fetching data", error: error.message });
+      reject(error);
     }
   });
 };
