@@ -4,11 +4,11 @@ const express = require('express'),
 monthEndRouter = express.Router(),
 dateFormat = require('dateformat');
 
-monthEndRouter.get("/get_branch_name_in_month_end_screen", async (req, res) => {
-  var data = req.query;
+monthEndRouter.post("/get_branch_name_in_month_end_screen", async (req, res) => {
+  var data = req.body;
 
-  var select = "branch_code,branch_name",
-  table_name = "md_branch",
+  var select = "a.branch_code,a.branch_name,b.closed_upto",
+  table_name = "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
   whr = null,
   order = null;
   var branch_data = await db_Select(select,table_name,whr,order);
