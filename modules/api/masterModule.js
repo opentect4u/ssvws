@@ -914,7 +914,7 @@ const fetch_date = (branch_code, get_dt) => {
         let closedDate = new Date(closed_upto);
         let formDate = new Date(formattedDate);
 
-        if (formDate > closedDate) {
+        if (formDate >= closedDate) {
           resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." });
         } else {
           reject({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
