@@ -907,19 +907,19 @@ const fetch_date = (branch_code, get_dt) => {
         console.log(closed_upto,'upppp');
         
         
-        if (!closed_upto) {
-          reject({ suc: 0, msg: "closed_upto date is missing" });
-          return;
-        }
+        // if (!closed_upto) {
+        //   reject({ suc: 0, msg: "closed_upto date is missing" });
+        //   return;
+        // }
 
         // Convert both dates to Date objects for comparison
         let closedDate = new Date(closed_upto);
         let formDate = new Date(formattedDate);
 
-        if (formDate > closedDate) {
-          resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." });
+        if (closedDate >= formDate) {
+          resolve({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
         } else {
-          reject({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });
+          resolve({ suc: 1, msg: "Success! formDate is greater than closed_upto." });
         }
       } else {
         reject({ suc: 0, msg: "No matching record found for this branch_code." });
