@@ -277,8 +277,8 @@ module.exports = {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var trans_dtl = { suc: 0, msg: "" };
       try {
-        let datevalidation = await fetch_date(data.branch_code,data.last_trn_dt)
-        console.log(datevalidation,data.branch_code,data.last_trn_dt,'log');
+        let datevalidation = await fetch_date(data.branch_code,data.recovdtls[0].last_trn_dt)
+        console.log(datevalidation,data.branch_code,data.recovdtls[0].last_trn_dt,'log');
 
         if(datevalidation.suc > 0){
         if (data.recovdtls.length > 0) {
