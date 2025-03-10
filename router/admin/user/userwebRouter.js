@@ -1,3 +1,4 @@
+const { decrypt } = require('dotenv');
 const { db_Select, db_Insert } = require('../../../model/mysqlModel');
 const { save_user_dtls, edit_user_dt, change_pass_data } = require('../../../modules/admin/user/userwebModule');
 
@@ -204,6 +205,20 @@ userwebRouter.post("/change_password", async (req, res) => {
   }
   res.send(result);
 
-})
+});
+
+userwebRouter.post("/fetch_data_same_pass", async (req, res) => {
+  var data = req.body;
+
+  var pass = decrypt(1234)
+  console.log(pass);
+  
+  var select = "emp_id",
+  table_name = "md_user",
+  whr = `password = 1234`,
+  order = null;
+  var res_dt = await db_Select(select,table_name,whr,order);
+  res.send(pass);
+});
 
 module.exports = {userwebRouter}
