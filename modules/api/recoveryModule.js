@@ -271,14 +271,14 @@ module.exports = {
   //05.03.2025 (problem create like interest row inserted recovery row not)
 
   recovery_trans: (data) => {
-    console.log(data,'data');
+    // console.log(data,'data');
     
     return new Promise(async (resolve, reject) => {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var trans_dtl = { suc: 0, msg: "" };
       try {
         let datevalidation = await fetch_date(data.branch_code,data.recovdtls[0].last_trn_dt)
-        console.log(datevalidation,data.branch_code,data.recovdtls[0].last_trn_dt,'log');
+        // console.log(datevalidation,data.branch_code,data.recovdtls[0].last_trn_dt,'log');
 
         if(datevalidation.suc > 0){
         if (data.recovdtls.length > 0) {

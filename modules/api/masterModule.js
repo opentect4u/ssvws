@@ -889,7 +889,7 @@ const get_intt_amt = (loan_id, get_date) => {
 
 //Function to get date
 const fetch_date = (branch_code, get_dt) => {
-  console.log(branch_code, get_dt, "fetch_data");
+  // console.log(branch_code, get_dt, "fetch_data");
 
   return new Promise(async (resolve, reject) => {
     try {

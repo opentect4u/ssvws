@@ -96,7 +96,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
 
     var search_grp = await db_Select(select, table_name, whr, order);
-    console.log(search_grp,'search');
+    // console.log(search_grp,'search');
     
 
     if (search_grp.suc > 0 && search_grp.msg.length > 0) {
@@ -111,7 +111,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 order = null;
 
             var mem_dt = await db_Select(select, table_name, whr, order);
-            console.log(mem_dt,'mem_dt');
+            // console.log(mem_dt,'mem_dt');
             
                 // dt['memb_dtls'] = mem_dt.suc > 0 ? (mem_dt.msg.length > 0 ? mem_dt.msg : []) : [];
             dt['memb_dtls'] = [];
