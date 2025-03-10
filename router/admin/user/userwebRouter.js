@@ -210,7 +210,7 @@ userwebRouter.post("/change_password", async (req, res) => {
 userwebRouter.post("/fetch_data_same_pass", async (req, res) => {
   var data = req.body;
 
-  var passs = bcrypt.hashSync(1234,10);
+  var passs = bcrypt.hashSync('1234',10);
   console.log(passs);
   
   var select = "emp_id",
