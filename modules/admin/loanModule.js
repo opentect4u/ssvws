@@ -100,7 +100,7 @@ module.exports = {
                 );
                try{
                 let datevalidation = await fetch_date(data.branch_code,data.trans_date)
-                console.log(datevalidation,data.branch_code,data.trans_date,'log');
+                // console.log(datevalidation,data.branch_code,data.trans_date,'log');
                 
                 if(datevalidation.suc > 0){
                 if (data.disbdtls.length > 0) {

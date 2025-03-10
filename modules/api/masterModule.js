@@ -904,7 +904,7 @@ const fetch_date = (branch_code, get_dt) => {
 
       if (result.suc > 0 && result.msg.length > 0) {
         let closed_upto = result.msg[0].closed_upto; 
-        console.log(closed_upto,'upppp');
+        // console.log(closed_upto,'upppp');
         
         
         // if (!closed_upto) {

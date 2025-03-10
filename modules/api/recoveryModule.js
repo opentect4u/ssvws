@@ -1,6 +1,6 @@
 var dateFormat = require("dateformat");
 const { db_Insert, db_Select } = require("../../model/mysqlModel");
-const { payment_code } = require("./masterModule");
+const { payment_code, fetch_date } = require("./masterModule");
 
 module.exports = {
   // recovery_trans: (data) => {
@@ -275,6 +275,10 @@ module.exports = {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var trans_dtl = { suc: 0, msg: "" };
       try {
+        let datevalidation = await fetch_date(data.branch_code,data.last_trn_dt)
+        console.log(datevalidation,data.branch_code,data.last_trn_dt,'log');
+
+        if(datevalidation.suc > 0){
         if (data.recovdtls.length > 0) {
           for (let dt of data.recovdtls) {
             // console.log(dt,'dtdtd');
@@ -436,6 +440,9 @@ module.exports = {
         } else {
           reject({ suc: 0, msg: "No recovery details provided" });
         }
+      }else {
+        reject({ suc: 0, msg: "Transaction date must be greater than closed_upto date" });
+      }
       } catch (error) {
         console.error("Error in recovery_trans:", error);
         reject({ suc: 0, msg: "Internal Server Error" });
