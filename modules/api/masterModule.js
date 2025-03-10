@@ -809,7 +809,7 @@ const fetch_last_date = (get_year, get_month) => {
 
 //Function to get the principal amount against a loan id on a particular date
 const get_prn_amt = (loan_id, get_date) => {
-  console.log(loan_id, get_date, "fetch_data");
+  // console.log(loan_id, get_date, "fetch_data");
   return new Promise(async (resolve, reject) => {
     try {
       var fetch_balance = {suc : 0, msg : []};
@@ -849,7 +849,7 @@ const get_prn_amt = (loan_id, get_date) => {
 
 //Function to get the interest amount against a loan id on a particular date
 const get_intt_amt = (loan_id, get_date) => {
-  console.log(loan_id, get_date, "fetch_data");
+  // console.log(loan_id, get_date, "fetch_data");
   return new Promise(async (resolve, reject) => {
     try {
       var fetch_intt_balance = {suc : 0, msg : []};

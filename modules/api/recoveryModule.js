@@ -271,6 +271,8 @@ module.exports = {
   //05.03.2025 (problem create like interest row inserted recovery row not)
 
   recovery_trans: (data) => {
+    console.log(data,'data');
+    
     return new Promise(async (resolve, reject) => {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
       var trans_dtl = { suc: 0, msg: "" };
