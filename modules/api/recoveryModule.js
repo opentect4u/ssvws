@@ -443,7 +443,7 @@ module.exports = {
           reject({ suc: 0, msg: "No recovery details provided" });
         }
       }else {
-        reject({ suc: 0, msg: "Transaction date must be greater than closed_upto date" });
+        reject({ suc: 0, msg: "Transaction date must be greater than closing date" });
       }
       } catch (error) {
         console.error("Error in recovery_trans:", error);
