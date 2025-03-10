@@ -209,16 +209,13 @@ userwebRouter.post("/change_password", async (req, res) => {
 
 userwebRouter.post("/fetch_data_same_pass", async (req, res) => {
   var data = req.body;
-
-  var passs = bcrypt.hashSync('SSVWS@2025',10);
-  console.log(passs);
   
   var select = "emp_id",
   table_name = "md_user",
-  whr = `password = 1234`,
+  whr = `password = '$2b$10$GKfgEjJu9WuKkOUWzg28VOMWS6E214C3K.VizYE2Z3UXGTe/UaCEC'`,
   order = null;
   var res_dt = await db_Select(select,table_name,whr,order);
-  res.send(passs);
+  res.send(res_dt);
 });
 
 module.exports = {userwebRouter}
