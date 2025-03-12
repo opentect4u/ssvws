@@ -82,15 +82,13 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) =>
           var res_dt = await db_Select(select, table_name, whr, null);
 
           if (res_dt.suc > 0 && res_dt.msg.length > 0) {
-            unapprovedDetails.push(res_dt.msg[0].branch_id || []);
-          // console.log(unapprovedDetails,'unapp');
-          }else {
-            unapprovedDetails.push(""); 
-          }
+            res_dt.msg.forEach((item) => {
+              unapprovedDetails.push(item.branch_id);
+          });
           
         }
-
-        res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails });
+      }
+        res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails.length > 0 ? unapprovedDetails : [] });
         // console.log(unapprovedDetails,'deta');
         
       } else {
