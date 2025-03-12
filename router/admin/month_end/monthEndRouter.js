@@ -24,19 +24,19 @@ monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
 
 monthEndRouter.post("/update_month_end_data", async (req, res) => {
   var data = req.body;
-  console.log(data);
+  // console.log(data);
 
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
   try {
     if (data.month_end_dt && data.month_end_dt.length > 0) {
       for (let dt of data.month_end_dt) {
-        console.log(dt, "dt");
+        // console.log(dt, "dt");
 
         var brn_code_arr = data.month_end_dt.map(
           (pdt) => `'${pdt.branch_code}'`
         );
-        console.log(brn_code_arr, "brn_code");
+        // console.log(brn_code_arr, "brn_code");
 
         var table_name = "td_month_close",
           fields = `closed_upto = '${dt.closed_upto}', closed_by = '${data.closed_by}', closed_at = '${datetime}'`,
@@ -64,14 +64,14 @@ monthEndRouter.post("/update_month_end_data", async (req, res) => {
 
 monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) => {
     var data = req.body;
-    console.log(data,'ll');
+    // console.log(data,'ll');
     
     try {
       if (data.month_end_dtls && data.month_end_dtls.length > 0) {
         let unapprovedDetails = [];
 
         for (let dt of data.month_end_dtls) {
-          console.log(dt,'lolo');
+          // console.log(dt,'lolo');
           
           var select = "branch_id, count(*) AS tot_unapprove",
             table_name = "td_loan_transactions",
@@ -84,15 +84,14 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) =>
           if (res_dt.suc > 0 && res_dt.msg.length > 0) {
             unapprovedDetails.push({
               branch_code: res_dt.msg[0].branch_id,
-              tot_unapprove: res_dt.msg[0].tot_unapprove,
             });
-          console.log(unapprovedDetails,'unapp');
+          // console.log(unapprovedDetails,'unapp');
           }
           
         }
 
         res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails });
-        console.log(unapprovedDetails,'deta');
+        // console.log(unapprovedDetails,'deta');
         
       } else {
         res.send({ suc: 0, msg: "No details provided" });
