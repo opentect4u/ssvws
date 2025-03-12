@@ -64,12 +64,15 @@ monthEndRouter.post("/update_month_end_data", async (req, res) => {
 
 monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) => {
     var data = req.body;
-
+    console.log(data,'ll');
+    
     try {
       if (data.month_end_dtls && data.month_end_dtls.length > 0) {
         let unapprovedDetails = [];
 
         for (let dt of data.month_end_dtls) {
+          console.log(dt,'lolo');
+          
           var select = "branch_id, count(*) AS tot_unapprove",
             table_name = "td_loan_transactions",
             whr = `branch_id = '${dt.branch_code}'
