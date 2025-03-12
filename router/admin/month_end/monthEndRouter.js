@@ -84,6 +84,8 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) =>
           if (res_dt.suc > 0 && res_dt.msg.length > 0) {
             unapprovedDetails.push(res_dt.msg[0].branch_id);
           // console.log(unapprovedDetails,'unapp');
+          }else {
+            unapprovedDetails.push(""); 
           }
           
         }
