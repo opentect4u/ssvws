@@ -81,18 +81,18 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) =>
 
           var res_dt = await db_Select(select, table_name, whr, null);
 
-          if (res_dt && res_dt.length > 0) {
+          if (res_dt.suc > 0 && res_dt.msg.length > 0) {
             unapprovedDetails.push({
               branch_code: dt.branch_code,
               tot_unapprove: res_dt[0].tot_unapprove,
             });
-          }
           console.log(unapprovedDetails,'unapp');
+          }
           
         }
 
         res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails });
-        console.log(details,'deta');
+        console.log(unapprovedDetails,'deta');
         
       } else {
         res.send({ suc: 0, msg: "No details provided" });
