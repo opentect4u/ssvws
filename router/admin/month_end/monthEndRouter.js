@@ -87,9 +87,13 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) =>
               tot_unapprove: res_dt[0].tot_unapprove,
             });
           }
+          console.log(unapprovedDetails,'unapp');
+          
         }
 
         res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails });
+        console.log(details,'deta');
+        
       } else {
         res.send({ suc: 0, msg: "No details provided" });
       }
