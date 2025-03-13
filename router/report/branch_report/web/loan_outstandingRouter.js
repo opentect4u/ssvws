@@ -61,14 +61,14 @@ dateFormat = require('dateformat');
     loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, res) => {
             try {
                 var data = req.body;
-                console.log(data,'datas');
+                // console.log(data,'datas');
                 
                 const currentDate = new Date();
                 const supplyDate = new Date(data.supply_date);
 
                 // Identify supply date type
                 const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
-                console.log(isCurrentDate,'iscurrent');
+                // console.log(isCurrentDate,'iscurrent');
                 
         
                 // Choose table based on date
@@ -103,6 +103,54 @@ dateFormat = require('dateformat');
                 res.send({ suc: 0, msg: "An error occurred" });
             }
         });
+
+     //Outstanding report fundwise 13.03.2025
+     
+     loan_outstandingRouter.post("/loan_outstanding_report_fundwise", async (req, res) => {
+        try {
+            var data = req.body;
+            console.log(data,'datas');
+            
+            const currentDate = new Date();
+            const supplyDate = new Date(data.supply_date);
+
+            // Identify supply date type
+            const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
+            console.log(isCurrentDate,'iscurrent');
+            
+    
+            // Choose table based on date
+            if (isCurrentDate) {
+                var select = "a.fund_id,b.fund_name,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
+                table_name = "td_loan a LEFT JOIN md_fund b ON a.fund_id = b.fund_id",
+                whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.supply_date}' AND a.fund_id = '${data.fund_id}'`,
+                order = `GROUP BY a.fund_id,b.fund_name`;
+                var outstanding_fund_data = await db_Select(select,table_name,whr,order);
+                res.send({outstanding_fund_data,  balance_date: currentDate.toISOString().split('T')[0]});
+            }else {
+                var select = "MAX(balance_date) balance_date",
+                table_name = "td_loan_month_balance",
+                whr = `branch_code = '${data.branch_code}' AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
+                order = null;
+                var res_dt = await db_Select(select,table_name,whr,order);
+
+                if(res_dt.suc > 0 && res_dt.msg.length > 0){
+                    var balance_date = dateFormat(res_dt.msg[0].balance_date, 'yyyy-mm-dd');
+
+                var select = "b.fund_id,c.fund_name,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
+                table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_fund c ON b.fund_id = c.fund_id",
+                whr = `a.balance_date = '${balance_date}' AND b.branch_code = '${data.branch_code}' AND b.fund_id = '${data.fund_id}'`,
+                order = `GROUP BY b.fund_id,c.fund_name`;
+                var outstanding_fund_data = await db_Select(select,table_name,whr,order);
+                // outstanding_fund_data['balance_date'] = balance_date
+                res.send({outstanding_fund_data,balance_date});
+            }
+          }
+        } catch (error) {
+            console.error("Error fetching loan outstanding report:", error);
+            res.send({ suc: 0, msg: "An error occurred" });
+        }
+    });
 
 
 module.exports = {loan_outstandingRouter}
