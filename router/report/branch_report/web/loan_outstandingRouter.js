@@ -78,7 +78,7 @@ dateFormat = require('dateformat');
                     whr = `a.branch_code = '${data.branch_code}'`,
                     order = `GROUP BY a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
-                    res.send(outstanding_data);
+                    res.send({outstanding_data,  balance_date: currentDate.toISOString().split('T')[0]});
                 }else {
                     var select = "MAX(balance_date) balance_date",
                     table_name = "td_loan_month_balance",
@@ -94,7 +94,7 @@ dateFormat = require('dateformat');
                     whr = `a.balance_date = '${balance_date}' AND b.branch_code = '${data.branch_code}'`,
                     order = `GROUP BY b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,d.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
-                    res.send(outstanding_data);
+                    res.send({outstanding_data, balance_date});
                 }
               }
             } catch (error) {
