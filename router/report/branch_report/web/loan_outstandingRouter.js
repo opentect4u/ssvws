@@ -80,10 +80,10 @@ dateFormat = require('dateformat');
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     res.send(outstanding_data);
                 }else {
-                    var select = "a.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,b.prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
+                    var select = "b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,b.prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
                     table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
                     whr = `a.balance_date = '${data.supply_date}'`,
-                    order = `GROUP BY a.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,b.prn_disb_amt,d.emp_name`;
+                    order = `GROUP BY b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,b.prn_disb_amt,d.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     res.send(outstanding_data);
                 }
