@@ -78,7 +78,7 @@ dateFormat = require('dateformat');
                     whr = `a.branch_code = '${data.branch_code}'`,
                     order = `GROUP BY a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
-                    res.send(outstanding_data);
+                    res.send(outstanding_data,isCurrentDate);
                 }else {
                     var select = "MAX(balance_date) balance_date",
                     table_name = "td_loan_month_balance",
@@ -87,12 +87,14 @@ dateFormat = require('dateformat');
                     var res_dt = await db_Select(select,table_name,whr,order);
 
                     if(res_dt.suc > 0 && res_dt.msg.length > 0){
+                        var balance_date = dateFormat(res_dt.msg[0].balance_date, 'yyyy-mm-dd');
+
                     var select = "b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
                     table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
-                    whr = `a.balance_date = '${dateFormat(res_dt.msg[0].balance_date,'yyyy-mm-dd')}' AND b.branch_code = '${data.branch_code}'`,
+                    whr = `a.balance_date = '${balance_date}' AND b.branch_code = '${data.branch_code}'`,
                     order = `GROUP BY b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,d.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
-                    res.send(outstanding_data);
+                    res.send(outstanding_data,balance_date);
                 }
               }
             } catch (error) {
