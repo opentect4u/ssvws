@@ -82,7 +82,7 @@ dateFormat = require('dateformat');
                 }else {
                     var select = "MAX(balance_date) balance_date",
                     table_name = "td_loan_month_balance",
-                    whr = `branch_code = '${data.branch_code}' AND balance_date <= '${dateFormat(data.supply_date,yyyy-mm-dd)}'`,
+                    whr = `branch_code = '${data.branch_code}' AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
                     order = null;
                     var res_dt = await db_Select(select,table_name,whr,order);
 
