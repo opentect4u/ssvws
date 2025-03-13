@@ -73,10 +73,10 @@ dateFormat = require('dateformat');
         
                 // Choose table based on date
                 if (isCurrentDate) {
-                    var select = "a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
+                    var select = "a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
                     table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id",
                     whr = `a.branch_code = '${data.branch_code}'`,
-                    order = `GROUP BY a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,c.emp_name`;
+                    order = `GROUP BY a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     res.send(outstanding_data);
                 }else {
@@ -87,10 +87,10 @@ dateFormat = require('dateformat');
                     var res_dt = await db_Select(select,table_name,whr,order);
 
                     if(res_dt.suc > 0 && res_dt.msg.length > 0){
-                    var select = "b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
+                    var select = "b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
                     table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
                     whr = `a.balance_date = '${dateFormat(res_dt.msg[0].balance_date,'yyyy-mm-dd')}' AND b.branch_code = '${data.branch_code}'`,
-                    order = `GROUP BY b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,d.emp_name`;
+                    order = `GROUP BY b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,d.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     res.send(outstanding_data);
                 }
