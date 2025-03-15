@@ -170,7 +170,7 @@ dateFormat = require('dateformat');
         
                 // Choose table based on date
                 if (isCurrentDate) {
-                    var select = "a.group_code,b.group_name,b.co_id,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
+                    var select = "a.group_code,b.group_name,b.co_id,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
                     table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id",
                     whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.supply_date}' AND b.co_id = '${data.co_id}'`,
                     order = `GROUP BY a.group_code,b.group_name,b.co_id,c.emp_name`;
