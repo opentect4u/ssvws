@@ -201,5 +201,54 @@ dateFormat = require('dateformat');
             }
         });
 
+    
+    //Outstanding report branchwise 13.03.2025
+    
+    loan_outstandingRouter.post("/loan_outstanding_report_branchwise", async (req, res) => {
+        try {
+                var data = req.body;
+                console.log(data,'datas_brn');
+                
+                const currentDate = new Date();
+                const supplyDate = new Date(data.supply_date);
+    
+                // Identify supply date type
+                const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
+                console.log(isCurrentDate,'iscurrent_brn');
+                
+        
+                // Choose table based on date
+                if (isCurrentDate) {
+                    var select = "a.branch_code,b.branch_name,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
+                    table_name = "td_loan a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
+                    whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.supply_date}'`,
+                    order = `GROUP BY a.branch_code,b.branch_name`;
+                    var outstanding_branch_data = await db_Select(select,table_name,whr,order);
+                    res.send({outstanding_branch_data,  balance_date: currentDate.toISOString().split('T')[0]});
+                }else {
+                    var select = "MAX(balance_date) balance_date",
+                    table_name = "td_loan_month_balance",
+                    whr = `branch_code = '${data.branch_code}' AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
+                    order = null;
+                    var res_dt = await db_Select(select,table_name,whr,order);
+    
+                    if(res_dt.suc > 0 && res_dt.msg.length > 0){
+                        var balance_date = dateFormat(res_dt.msg[0].balance_date, 'yyyy-mm-dd');
+    
+                        var select = "a.branch_code,c.branch_name,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
+                        table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
+                        whr = `a.balance_date = '${balance_date}' AND a.branch_code = '${data.branch_code}'`,
+                        order = `GROUP BY a.branch_code,c.branch_name`;
+                    var outstanding_branch_data = await db_Select(select,table_name,whr,order);
+                    // outstanding_branch_data['balance_date'] = balance_date
+                    res.send({outstanding_branch_data,balance_date});
+                }
+              }
+            } catch (error) {
+                console.error("Error fetching loan outstanding report:", error);
+                res.send({ suc: 0, msg: "An error occurred" });
+            }
+        });
+
 
 module.exports = {loan_outstandingRouter}
