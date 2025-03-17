@@ -152,6 +152,21 @@ dateFormat = require('dateformat');
         }
     });
 
+    //Fetch branchwise CO 17.03.2025
+
+    loan_outstandingRouter.post("/fetch_brn_co", async (req, res) => {
+        var data = req.body;
+    
+         //FETCH BRANCHWISE CO NAME
+        var select = "a.emp_id,a.emp_name,b.user_type",
+        table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
+        whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
+        order = null;
+        var branch_co = await db_Select(select,table_name,whr,order);
+    
+        res.send(branch_co)
+    });
+
 
     //Outstanding report cowise 13.03.2025
      
