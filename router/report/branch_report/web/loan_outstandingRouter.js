@@ -158,9 +158,15 @@ dateFormat = require('dateformat');
         var data = req.body;
     
          //FETCH BRANCHWISE CO NAME
-        var select = "a.emp_id,a.emp_name,b.user_type",
-        table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
-        whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
+        // var select = "a.emp_id,a.emp_name,b.user_type",
+        // table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
+        // whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
+        // order = null;
+        // var branch_co = await db_Select(select,table_name,whr,order);
+
+        var select = "DISTINCT a.co_id,b.emp_name",
+        table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id",
+        whr = `a.branch_code = '${data.branch_code}'`,
         order = null;
         var branch_co = await db_Select(select,table_name,whr,order);
     
