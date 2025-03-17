@@ -103,7 +103,7 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
   try{
     var data = req.body;
  
-    var select = "c.co_id,d.emp_name co_name,COUNT(c.group_code) AS total_group,c.group_name,COUNT(b.member_code) AS total_member,b.fund_id,e.fund_name,SUM(a.debit)debit,SUM(a.credit)credit",
+    var select = "c.co_id,d.emp_name co_name,COUNT(c.group_code) AS total_group,COUNT(b.member_code) AS total_member,b.fund_id,e.fund_name,SUM(a.debit)debit,SUM(a.credit)credit",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_fund e ON b.fund_id = e.fund_id",
     whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND c.co_id = '${data.co_id}' AND a.tr_type != 'I'`,
