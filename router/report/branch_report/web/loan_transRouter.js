@@ -67,7 +67,7 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
    whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
           AND a.tr_type != 'I'`,
-   order = `GROUP BY b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name
+   order = `GROUP BY b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
             ORDER BY b.group_code,c.group_name desc`;
    var transaction_group_data = await db_Select(select,table_name,whr,order);
    res.send({transaction_group_data})
@@ -87,7 +87,7 @@ loan_transRouter.post("/transaction_report_fundwise", async (req, res) => {
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_fund e ON b.fund_id = e.fund_id",
     whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND b.fund_id = '${data.fund_id}' AND a.tr_type != 'I'`,
-    order = `GROUP BY b.group_code,c.group_name,b.fund_id,e.fund_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name
+    order = `GROUP BY b.group_code,c.group_name,b.fund_id,e.fund_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
     ORDER BY b.group_code,c.group_name,e.fund_name desc`;
     var transaction_fund_data = await db_Select(select,table_name,whr,order);
     res.send({transaction_fund_data})
