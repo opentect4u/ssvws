@@ -109,14 +109,14 @@ dateFormat = require('dateformat');
      loan_outstandingRouter.post("/loan_outstanding_report_fundwise", async (req, res) => {
         try {
             var data = req.body;
-            console.log(data,'datas');
+            // console.log(data,'datas');
             
             const currentDate = new Date();
             const supplyDate = new Date(data.supply_date);
 
             // Identify supply date type
             const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
-            console.log(isCurrentDate,'iscurrent');
+            // console.log(isCurrentDate,'iscurrent');
             
     
             // Choose table based on date
@@ -173,14 +173,14 @@ dateFormat = require('dateformat');
     loan_outstandingRouter.post("/loan_outstanding_report_cowise", async (req, res) => {
         try {
                 var data = req.body;
-                console.log(data,'datas_co');
+                // console.log(data,'datas_co');
                 
                 const currentDate = new Date();
                 const supplyDate = new Date(data.supply_date);
     
                 // Identify supply date type
                 const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
-                console.log(isCurrentDate,'iscurrent_co');
+                // console.log(isCurrentDate,'iscurrent_co');
                 
         
                 // Choose table based on date
@@ -222,14 +222,14 @@ dateFormat = require('dateformat');
     loan_outstandingRouter.post("/loan_outstanding_report_branchwise", async (req, res) => {
         try {
                 var data = req.body;
-                console.log(data,'datas_brn');
+                // console.log(data,'datas_brn');
                 
                 const currentDate = new Date();
                 const supplyDate = new Date(data.supply_date);
     
                 // Identify supply date type
                 const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
-                console.log(isCurrentDate,'iscurrent_brn');
+                // console.log(isCurrentDate,'iscurrent_brn');
                 
         
                 // Choose table based on date
@@ -271,14 +271,14 @@ dateFormat = require('dateformat');
     loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, res) => {
         try {
             var data = req.body;
-            console.log(data,'datas_member');
+            // console.log(data,'datas_member');
             
             const currentDate = new Date();
             const supplyDate = new Date(data.supply_date);
 
             // Identify supply date type
             const isCurrentDate = supplyDate.toDateString() === currentDate.toDateString();
-            console.log(isCurrentDate,'iscurrent_member');
+            // console.log(isCurrentDate,'iscurrent_member');
             
     
             // Choose table based on date
