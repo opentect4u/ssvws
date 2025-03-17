@@ -203,7 +203,7 @@ dateFormat = require('dateformat');
     
                         var select = "b.group_code,c.group_name,c.co_id,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
                         table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
-                        whr = `a.balance_date = '${balance_date}' AND a.branch_code = '${data.branch_code}' AND b.co_id = '${data.co_id}'`,
+                        whr = `a.balance_date = '${balance_date}' AND a.branch_code = '${data.branch_code}' AND c.co_id = '${data.co_id}'`,
                         order = `GROUP BY b.group_code,c.group_name,c.co_id,d.emp_name`;
                     var outstanding_co_data = await db_Select(select,table_name,whr,order);
                     // outstanding_co_data['balance_date'] = balance_date
