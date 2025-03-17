@@ -57,25 +57,25 @@ dateFormat = require('dateformat');
 //       }
 // });
 
-// Transaction report groupwise 17.03.2025
+// Transaction report groupwise 13.03.2025
 
 loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
- try{
-   var data = req.body;
-
-   var select = "b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.debit)debit,SUM(a.credit)credit",
-   table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
-   whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-          AND a.tr_type = '${data.tr_type}'`,
-   order = `GROUP BY b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
-            ORDER BY b.group_code,c.group_name desc`;
-   var transaction_group_data = await db_Select(select,table_name,whr,order);
-   res.send({transaction_group_data})
- }catch (error){
-  console.error("Error fetching transaction report groupwise:", error);
-  res.send({ suc: 0, msg: "An error occurred" });
- }
-});
+  try{
+    var data = req.body;
+ 
+    var select = "b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.debit)debit,SUM(a.credit)credit",
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
+    whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+           AND a.tr_type = '${data.tr_type}'`,
+    order = `GROUP BY b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
+             ORDER BY b.group_code,c.group_name desc`;
+    var transaction_group_data = await db_Select(select,table_name,whr,order);
+    res.send({transaction_group_data})
+  }catch (error){
+   console.error("Error fetching transaction report groupwise:", error);
+   res.send({ suc: 0, msg: "An error occurred" });
+  }
+ });
 
 // Transaction report fundwise 17.03.2025
 
@@ -97,7 +97,7 @@ loan_transRouter.post("/transaction_report_fundwise", async (req, res) => {
   }
  });
 
- // Transaction report cowise 17.03.2025
+// Transaction report cowise 17.03.2025
 
 loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
   try{
@@ -118,20 +118,20 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
 
   // Transaction report memberwise 17.03.2025
 
-loan_transRouter.post("/transaction_report_memberwise", async (req, res) => {
-  try{
-    var data = req.body;
- 
-    var select = "b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,b.loan_id,b.member_code,e.client_name,b.scheme_id,f.scheme_name,a.payment_id transaction_id,a.payment_date transaction_date,a.particulars,a.debit,a.credit,(a.balance + a.od_balance + a.intt_balance)balance,a.created_by created_code,a.created_at,g.emp_name created_by,a.approved_at,a.approved_by approved_code,h.emp_name approved_by",
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id LEFT JOIN md_employee g ON a.created_by = g.emp_id LEFT JOIN md_employee h ON a.approved_by = h.emp_id",
-    whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
-    order = `ORDER BY payment_id desc, payment_date desc`;
-    var transaction_member_data = await db_Select(select,table_name,whr,order);
-    res.send({transaction_member_data})
-  }catch (error){
-   console.error("Error fetching transaction report memberwise:", error);
-   res.send({ suc: 0, msg: "An error occurred" });
-  }
- });
+  loan_transRouter.post("/transaction_report_memberwise", async (req, res) => {
+    try{
+      var data = req.body;
+   
+      var select = "b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,b.loan_id,b.member_code,e.client_name,b.scheme_id,f.scheme_name,a.payment_id transaction_id,a.payment_date transaction_date,a.particulars,a.debit,a.credit,(a.balance + a.od_balance + a.intt_balance)balance,a.created_by created_code,a.created_at,g.emp_name created_by,a.approved_at,a.approved_by approved_code,h.emp_name approved_by",
+      table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id LEFT JOIN md_employee g ON a.created_by = g.emp_id LEFT JOIN md_employee h ON a.approved_by = h.emp_id",
+      whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
+      order = `ORDER BY payment_id desc, payment_date desc`;
+      var transaction_member_data = await db_Select(select,table_name,whr,order);
+      res.send({transaction_member_data})
+    }catch (error){
+     console.error("Error fetching transaction report memberwise:", error);
+     res.send({ suc: 0, msg: "An error occurred" });
+    }
+   });
 
 module.exports = {loan_transRouter}
