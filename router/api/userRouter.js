@@ -104,6 +104,10 @@ userRouter.post('/login_app', async (req, res) => {
              const token = await createToken(tokenPayload);
              console.log('Generated Token:',token);
              
+             if (!token) {
+              console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
+              return res.send({ suc: 0, msg: "Token generation failed." });
+          }
 
              // 🔹 Set Token in Cookie
              res.cookie('auth_token', token, {
