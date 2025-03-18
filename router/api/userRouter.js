@@ -93,15 +93,27 @@ userRouter.post('/login_app', async (req, res) => {
 
       if (log_dt.suc > 0 && log_dt.msg.length > 0) {
           let user = log_dt.msg[0];
+          console.log(user,'user123');
+          
           let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
 
           if (passwordMatch) {
+            // const tokenPayload = { emp_id: user.emp_id, user_type: user.user_type };
               try {
+                 //token 18.03.2025
+             const token = await createToken(user);
+             console.log('Generated Token:',token);
+             
+             if (!token) {
+              console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
+              return res.send({ suc: 0, msg: "Token generation failed." });
+          }
                   await db_Insert('md_user', `created_by = "${data.emp_id}", created_at="${datetime}"`, null, `emp_id='${user.emp_id}'`, 1);
-              } catch (err) {
-                  console.error("Error inserting user log:", err);
-              }
+            
               return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user, token });
+            } catch (err) {
+              console.error("Error inserting user log:", err);
+          }
           } else {
               return res.send({ suc: 0, msg: "Incorrect user ID or password" });
           }
