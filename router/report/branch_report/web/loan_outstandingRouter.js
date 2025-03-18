@@ -164,9 +164,9 @@ dateFormat = require('dateformat');
         // order = null;
         // var branch_co = await db_Select(select,table_name,whr,order);
 
-        var select = "DISTINCT a.co_id,b.emp_name",
+        var select = "DISTINCT a.co_id,ifnull(b.emp_name,'NA')emp_name",
         table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id",
-        whr = `a.branch_code = '${data.branch_code}' AND a.co_id > 0`,
+        whr = `a.branch_code = '${data.branch_code}'`,
         order = null;
         var branch_co = await db_Select(select,table_name,whr,order);
     
