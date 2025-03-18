@@ -3,6 +3,7 @@ dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
 const { app_login_data, bm_login_data, superadmin_login_data } = require('../../modules/api/userModule');
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
+const { createToken } = require('../../middleware/authMiddleware');
 
 userRouter.post("/fetch_emp_type", async (req, res) => {
   try{
@@ -92,15 +93,30 @@ userRouter.post('/login_app', async (req, res) => {
 
       if (log_dt.suc > 0 && log_dt.msg.length > 0) {
           let user = log_dt.msg[0];
+          console.log(user,'user123');
+          
           let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
 
           if (passwordMatch) {
+            const tokenPayload = { emp_id: user.emp_id, user_type: user.user_type };
               try {
+                 //token 18.03.2025
+             const token = await createToken(tokenPayload);
+             console.log('Generated Token:',token);
+             
+
+             // 🔹 Set Token in Cookie
+             res.cookie('auth_token', token, {
+                 httpOnly: true, 
+                 secure: false, 
+                 maxAge: 60 * 60 * 1000  // Token expiry (60 minutes)
+             });
                   await db_Insert('md_user', `created_by = "${data.emp_id}", created_at="${datetime}"`, null, `emp_id='${user.emp_id}'`, 1);
-              } catch (err) {
-                  console.error("Error inserting user log:", err);
-              }
-              return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user });
+            
+              return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user, token });
+            } catch (err) {
+              console.error("Error inserting user log:", err);
+          }
           } else {
               return res.send({ suc: 0, msg: "Incorrect user ID or password" });
           }

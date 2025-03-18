@@ -95,7 +95,9 @@ const { loan_disb_approveRouter } = require("./router/admin/loan/loan_disb_appro
 const { transferCoRouter } = require("./router/admin/transfer_co/transferCoRouter");
 const { transferMemRouter } = require("./router/admin/transfer_member/transferMemRouter");
 const { menu_permissionRouter } = require("./router/admin/menu/menu_permissionRouter");
+const { authCheckForLogin } = require("./middleware/authMiddleware");
 
+app.use(authCheckForLogin);
 app.use(LoginRouter)
 app.use(DashboardRouter)
 app.use(masterRouter)
