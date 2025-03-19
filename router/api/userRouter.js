@@ -99,29 +99,7 @@ userRouter.post('/login_app', async (req, res) => {
       if (passwordMatch) {
         // const tokenPayload = { emp_id: user.emp_id, user_type: user.user_type };
         try {
-//           console.log('Request Session ID:', data.session_id);
-// console.log('Stored Session ID:', user.session_id);
-
           var checkUserToken = false
-          // if ((user.session_id != '' || user.session_id != null || user.session_id != 'null') && (user.refresh_token != '' || user.refresh_token != null || user.refresh_token != 'null')) {
-          //   console.log(typeof(user.session_id),typeof(user.refresh_token));
-          //   console.log(user.session_id,user.refresh_token);
-            
-          //   if (data.session_id == user.session_id) {
-          //     console.log(data.session_id,user.session_id,'------');
-              
-          //     var verify_token = await verifyRefreshToken(user.refresh_token, data.emp_id)
-          //     if (verify_token.suc == 2) {
-          //       checkUserToken = true
-          //     }
-          //   }else{
-          //     return res.send({ suc: 0, msg: "Session id not matched" });
-          //   }
-          // } else {
-          //   checkUserToken = true
-          // }
-
-
           if (user.session_id && user.session_id !== 'null' && user.refresh_token && user.refresh_token !== 'null') {
             console.log('Request Session ID:', data.session_id);
             console.log('Stored Session ID:', user.session_id);
@@ -140,6 +118,23 @@ userRouter.post('/login_app', async (req, res) => {
             checkUserToken = true;
         }
 
+        // if ((user.session_id != '' || user.session_id != null || user.session_id != 'null') && (user.refresh_token != '' || user.refresh_token != null || user.refresh_token != 'null')) {
+          //   console.log(typeof(user.session_id),typeof(user.refresh_token));
+          //   console.log(user.session_id,user.refresh_token);
+            
+          //   if (data.session_id == user.session_id) {
+          //     console.log(data.session_id,user.session_id,'------');
+              
+          //     var verify_token = await verifyRefreshToken(user.refresh_token, data.emp_id)
+          //     if (verify_token.suc == 2) {
+          //       checkUserToken = true
+          //     }
+          //   }else{
+          //     return res.send({ suc: 0, msg: "Session id not matched" });
+          //   }
+          // } else {
+          //   checkUserToken = true
+          // }
 
           // return new Error()
           //token 18.03.2025
