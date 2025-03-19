@@ -2,6 +2,12 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const CryptoJS = require('crypto-js');
 
+const checkTime = (session_time) => {
+  var currentDate = new Date()
+  var dateDiff = Math.floor(Math.abs((currentDate - new Date(session_time)) / (1000*60*60)))
+  return dateDiff
+}
+
 module.exports = {
   createToken: (userData) => {
     return new Promise((resolve, reject) => {
@@ -40,10 +46,12 @@ module.exports = {
   },
 
   // Generate Refresh Token
- generateRefreshToken: (userId,sessionId) => {
+ generateRefreshToken: (userdata,sessionId) => {
   return new Promise((resolve, reject) => {
-  if (userId && sessionId) {
-    const ref_token = CryptoJS.AES.encrypt(JSON.stringify({userId,sessionId}), process.env.REFRESH_TOKEN_SECRET).toString()
+     let datetime = new Date().getTime();
+    
+  if (userdata && sessionId) {
+    const ref_token = CryptoJS.AES.encrypt(JSON.stringify({userdata,sessionId,datetime}), process.env.REFRESH_TOKEN_SECRET).toString()
     resolve(ref_token)
     console.log(ref_token,'ref_token');
   } else {
@@ -51,5 +59,38 @@ module.exports = {
   }
    })
 },
+
+// Verify Refresh Token
+ verifyRefreshToken: (ref_token, userId) => {
+  try {
+      const bytes = CryptoJS.AES.decrypt(ref_token, process.env.REFRESH_TOKEN_SECRET);
+      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+      // console.log(decryptedData,'decryptedData');
+      var timeDiff = checkTime(decryptedData.datetime)
+      // console.log(timeDiff, '-----------');
+      if(timeDiff < process.env.REFRESH_TOKEN_EXPIRATION){
+        if(decryptedData.userdata){
+          if(decryptedData.userdata.emp_id == userId){
+            return {suc: 1, msg: 'Accepted'}
+          }else{
+            return {suc: 0, msg: 'Unauthorised'}
+          }
+        }else{
+          return {suc: 0, msg: 'Invalid refresh token.'};
+        }
+      }else{
+        return {suc: 2, msg: 'Token time expired.'}
+      }
+      
+      // if (!decryptedData || !decryptedData.userId) {
+      //     throw new Error('Invalid token data');
+      // }
+
+      // return decryptedData;
+  } catch (error) {
+      console.error('Invalid token:', error.message);
+      return null;
+  }
+}
 
 }
