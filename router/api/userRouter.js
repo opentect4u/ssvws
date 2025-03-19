@@ -130,18 +130,24 @@ userRouter.post('/login_app', async (req, res) => {
   }
 });
 
-userRouter.post('/logout', async(req, res) => {
-   var data = req.body;
-   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+userRouter.post('/logout', async (req, res) => {
+  var data = req.body;
+  var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
-   var table_name = "md_user",
-   fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
-   whr = `emp_id = '${data.emp_id}' AND session_id = '${data.session_id}'`,
-   flag = 1;
-  var del_ref_token = await db_Insert(table_name,fields,whr,flag);
+  var table_name = "md_user";
+  var fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+  var whr = `emp_id = '${data.emp_id}' AND session_id = '${data.session_id}'`;
+  var flag = 1;
 
-  res.send(del_ref_token);
+  try {
+      var del_ref_token = await db_Insert(table_name, fields, whr, flag); 
+      res.send(del_ref_token);
+  } catch (error) {
+      console.error('SQL Error:', error);
+      res.send({ error: 'Database error. Please try again.' });
+  }
 });
+
 
 
 
