@@ -101,8 +101,8 @@ userRouter.post('/login_app', async (req, res) => {
         try {
           var checkUserToken = false
           if ((user.session_id != '' || user.session_id != null) && (user.refresh_token != '' || user.refresh_token != null)) {
-            var verify_token = await verifyRefreshToken(user.refresh_token, data.emp_id)
             if (data.session_id == user.session_id) {
+              var verify_token = await verifyRefreshToken(user.refresh_token, data.emp_id)
               if (verify_token.suc == 2) {
                 checkUserToken = true
               }
@@ -114,7 +114,7 @@ userRouter.post('/login_app', async (req, res) => {
           }
           // return new Error()
           //token 18.03.2025
-          
+
           delete user.password;
           delete user.refresh_token;
 
