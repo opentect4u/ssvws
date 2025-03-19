@@ -97,12 +97,11 @@ userRouter.post('/login_app', async (req, res) => {
 
           //19.03.2025
            // 🔹 Session ID Check
-           let sessionCheck = await db_Select(
-            "session_id", 
-            "md_user", 
-            `emp_id='${user.emp_id}',
-            null`
-        );
+          var select = "session_id",
+          table_name = "md_user",
+          whr = `emp_id = '${user.emp_id}'`,
+          order = null;
+          var sessionCheck = await db_Select(select,table_name,whr,order);
 
         if (sessionCheck.suc > 0 && sessionCheck.msg.length > 0) {
             const existingSessionId = sessionCheck.msg[0].session_id;
