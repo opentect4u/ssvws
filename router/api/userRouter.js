@@ -102,7 +102,7 @@ userRouter.post('/login_app', async (req, res) => {
               try {
                  //token 18.03.2025
              const token = await createToken(user);
-             const refresh_token = await generateRefreshToken(user);
+             const refresh_token = await generateRefreshToken(user,data.session_id);
 
              console.log('Generated Token:',token);
              console.log('Refresh token:', refresh_token);
@@ -112,7 +112,7 @@ userRouter.post('/login_app', async (req, res) => {
               console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
               return res.send({ suc: 0, msg: "Token generation failed." });
           }
-                  await db_Insert('md_user', `created_by = "${data.emp_id}", created_at="${datetime}"`, null, `emp_id='${user.emp_id}'`, 1);
+                  await db_Insert('md_user', `refresh_token = '${refresh_token}', session_id = '${data.session_id}', created_by = '${data.emp_id}', created_at='${datetime}'`, null, `emp_id='${user.emp_id}'`, 1);
             
               return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user, token });
             } catch (err) {

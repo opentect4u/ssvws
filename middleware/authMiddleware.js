@@ -40,33 +40,16 @@ module.exports = {
   },
 
   // Generate Refresh Token
- generateRefreshToken: (userId) => {
+ generateRefreshToken: (userId,sessionId) => {
   return new Promise((resolve, reject) => {
-  if (Object.keys(userId).length > 0) {
-    const ref_token = CryptoJS.AES.encrypt(JSON.stringify(userId), process.env.REFRESH_TOKEN_SECRET).toString()
+  if (userId && sessionId) {
+    const ref_token = CryptoJS.AES.encrypt(JSON.stringify({userId,sessionId}), process.env.REFRESH_TOKEN_SECRET).toString()
     resolve(ref_token)
     console.log(ref_token,'ref_token');
   } else {
-    reject('No Object Found')
+    reject('User ID or Session ID missing')
   }
    })
-},
-
-// Verify Refresh Token
-verifyRefreshToken: (ref_token)=> {
-  try {
-      const bytes = CryptoJS.AES.decrypt(ref_token, REFRESH_TOKEN_SECRET);
-      const decryptedData = JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
-
-      if (!decryptedData || !decryptedData.userId) {
-          throw new Error('Invalid token data');
-      }
-
-      return decryptedData;
-  } catch (error) {
-      console.error('Invalid token:', error.message);
-      return null;
-  }
 },
 
 }
