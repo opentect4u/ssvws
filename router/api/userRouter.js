@@ -130,6 +130,19 @@ userRouter.post('/login_app', async (req, res) => {
   }
 });
 
+userRouter.post('/logout', async(req, res) => {
+   var data = req.body;
+   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+   var table_name = "md_user",
+   fields = `refresh_token = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`
+   whr = `emp_id = '${data.emp_id}' AND session_id = '${data.session_id}'`,
+   flag = 1;
+  var del_ref_token = await db_Insert(table_name,fields,whr,flag);
+
+  res.send(del_ref_token);
+});
+
 
 
 module.exports = {userRouter}
