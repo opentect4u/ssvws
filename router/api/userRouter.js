@@ -179,6 +179,8 @@ userRouter.post('/login_app', async (req, res) => {
 
 userRouter.post('/logout', async (req, res) => {
   var data = req.body;
+  console.log(data,'logoutdata');
+  
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
   var table_name = "md_user";
