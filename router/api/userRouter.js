@@ -3,7 +3,7 @@ dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
 const { app_login_data, bm_login_data, superadmin_login_data } = require('../../modules/api/userModule');
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
-const { createToken } = require('../../middleware/authMiddleware');
+const { createToken, generateRefreshToken } = require('../../middleware/authMiddleware');
 
 userRouter.post("/fetch_emp_type", async (req, res) => {
   try{
@@ -102,9 +102,13 @@ userRouter.post('/login_app', async (req, res) => {
               try {
                  //token 18.03.2025
              const token = await createToken(user);
+             const refresh_token = await generateRefreshToken(user);
+
              console.log('Generated Token:',token);
+             console.log('Refresh token:', refresh_token);
              
-             if (!token) {
+             
+             if (!token || !refresh_token) {
               console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
               return res.send({ suc: 0, msg: "Token generation failed." });
           }
