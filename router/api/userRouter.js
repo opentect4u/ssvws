@@ -100,8 +100,8 @@ userRouter.post('/login_app', async (req, res) => {
            let sessionCheck = await db_Select(
             "session_id", 
             "md_user", 
-            null, 
-            `emp_id='${user.emp_id}'`
+            `emp_id='${user.emp_id}',
+            null`
         );
 
         if (sessionCheck.suc > 0 && sessionCheck.msg.length > 0) {
