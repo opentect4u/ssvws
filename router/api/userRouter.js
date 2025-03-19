@@ -136,7 +136,7 @@ userRouter.post('/logout', async (req, res) => {
 
   var table_name = "md_user";
   fields = refresh_token = '', session_id = '', modified_by = '${data.modified_by}', modified_at = '${datetime}';
-  whr = `emp_id = ${data.emp_id} AND session_id = ${data.session_id}`;
+  whr = `session_id = ${data.session_id}`;
   flag = 1;
 
   try {
