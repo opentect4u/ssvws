@@ -94,6 +94,22 @@ userRouter.post('/login_app', async (req, res) => {
       if (log_dt.suc > 0 && log_dt.msg.length > 0) {
           let user = log_dt.msg[0];
           console.log(user,'user123');
+
+          //19.03.2025
+           // 🔹 Session ID Check
+           let sessionCheck = await db_Select(
+            "session_id", 
+            "md_user", 
+            null, 
+            `emp_id='${user.emp_id}'`
+        );
+
+        if (sessionCheck.suc > 0 && sessionCheck.msg.length > 0) {
+            const existingSessionId = sessionCheck.msg[0].session_id;
+            if (existingSessionId === data.session_id) {
+                return res.send({ suc: 0, msg: "Session already active, login denied." });
+            }
+        }
           
           let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
 
