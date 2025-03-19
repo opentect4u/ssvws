@@ -93,7 +93,7 @@ userRouter.post('/login_app', async (req, res) => {
 
     if (log_dt.suc > 0 && log_dt.msg.length > 0) {
       let user = log_dt.msg[0];
-      console.log(user,'user123');
+      // console.log(user,'user123');
       let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
 
       if (passwordMatch) {
@@ -101,11 +101,11 @@ userRouter.post('/login_app', async (req, res) => {
         try {
           var checkUserToken = false
           if (user.session_id && user.session_id !== 'null' && user.refresh_token && user.refresh_token !== 'null') {
-            console.log('Request Session ID:', data.session_id);
-            console.log('Stored Session ID:', user.session_id);
+            // console.log('Request Session ID:', data.session_id);
+            // console.log('Stored Session ID:', user.session_id);
         
             if (String(data.session_id).trim() === String(user.session_id).trim()) {
-                console.log("Session IDs Match!");
+                // console.log("Session IDs Match!");
                 var verify_token = await verifyRefreshToken(user.refresh_token, data.emp_id);
                 if (verify_token.suc === 2) {
                     checkUserToken = true;
