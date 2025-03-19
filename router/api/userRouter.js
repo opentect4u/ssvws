@@ -140,7 +140,7 @@ userRouter.post('/logout', async (req, res) => {
   flag = 1;
 
   try {
-      var del_ref_token = await db_Insert(table_name, fields, whr, flag); 
+      var del_ref_token = await db_Insert(table_name, fields, values, whr, flag); 
       res.send(del_ref_token);
   } catch (error) {
       console.error('SQL Error:', error);
