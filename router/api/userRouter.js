@@ -345,6 +345,8 @@ try{
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['Authorization'];
+  console.log(authHeader,'iii');
+  
   // const token = authHeader && authHeader.split(' ')[1];
 
   // if (!token) return res.json({ error: 'Token is required' });
