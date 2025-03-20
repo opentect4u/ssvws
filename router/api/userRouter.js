@@ -225,5 +225,27 @@ userRouter.post("/clear_session", async (req, res) => {
   }
 });
 
+userRouter.post("/check_session_id", async (req, res) => {
+try{
+  var data = req.body;
+  console.log(data,'check_session_iddata');
+
+ var select = "session_id",
+ table_name = "md_user",
+ whr = `emp_id = '${data.emp_id}'`,
+ order = null;
+ var fetch_session_id = await db_Select(select,table_name,whr,order);
+
+ if (fetch_session_id.suc > 0 && fetch_session_id.msg.length > 0) {
+  var isMatch = fetch_session_id.msg[0].session_id === data.session_id;
+  res.send({ success: true, match: isMatch });
+} else {
+  res.send({ success: false, match: false, message: 'No session data found.' });
+}
+}catch(error){
+  console.error('SQL Error:', error);
+    res.send({ error: 'Please try again.' });
+}
+});
 
 module.exports = { userRouter }
