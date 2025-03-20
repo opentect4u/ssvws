@@ -1,7 +1,7 @@
 const userRouter = require('express').Router();
 dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
-const { app_login_data, bm_login_data, superadmin_login_data } = require('../../modules/api/userModule');
+const { app_login_data, bm_login_data, superadmin_login_data, app_login_data_web } = require('../../modules/api/userModule');
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
 const { createToken, generateRefreshToken, verifyRefreshToken } = require('../../middleware/authMiddleware');
 
@@ -70,26 +70,25 @@ userRouter.post('/login_web', async (req, res) => {
     let requiredVersion = null;
 
     // Fetch app version if flag is 'A'
-    if (data.flag === 'A') {
-      let app_data = await db_Select("version", "md_app_version", null, null);
-      // console.log(app_data,'poii');
+    // if (data.flag === 'A') {
+    //   let app_data = await db_Select("version", "md_app_version", null, null);
+    //   // console.log(app_data,'poii');
 
-      if (app_data.suc > 0 && app_data.msg.length > 0) {
-        requiredVersion = app_data.msg[0].version; // Extract version
-      } else {
-        return res.send({ suc: 0, msg: "App version information not found.", requiredVersion });
-      }
+    //   if (app_data.suc > 0 && app_data.msg.length > 0) {
+    //     requiredVersion = app_data.msg[0].version; // Extract version
+    //   } else {
+    //     return res.send({ suc: 0, msg: "App version information not found.", requiredVersion });
+    //   }
 
-      // console.log("Required Version:", requiredVersion, "User App Version:", data.app_version);
 
-      // Check app version
-      if (!data.app_version || data.app_version != requiredVersion) {
-        return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion}` });
-      }
-    }
+    //   // Check app version
+    //   if (!data.app_version || data.app_version != requiredVersion) {
+    //     return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion}` });
+    //   }
+    // }
 
     // Proceed with login after version check
-    var log_dt = await app_login_data(data);
+    var log_dt = await app_login_data_web(data);
 
     if (log_dt.suc > 0 && log_dt.msg.length > 0) {
       let user = log_dt.msg[0];
@@ -97,12 +96,9 @@ userRouter.post('/login_web', async (req, res) => {
       let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
 
       if (passwordMatch) {
-        // const tokenPayload = { emp_id: user.emp_id, user_type: user.user_type };
         try {
           var checkUserToken = false
           if (user.session_id && user.session_id !== 'null' && user.refresh_token && user.refresh_token !== 'null') {
-            // console.log('Request Session ID:', data.session_id);
-            // console.log('Stored Session ID:', user.session_id);
         
             if (String(data.session_id).trim() === String(user.session_id).trim()) {
                 // console.log("Session IDs Match!");
@@ -151,11 +147,6 @@ userRouter.post('/login_web', async (req, res) => {
             }
             await db_Insert('md_user', `refresh_token = '${refresh_token}', session_id = '${data.session_id}', created_by = '${data.emp_id}', created_at='${datetime}'`, null, `emp_id='${user.emp_id}'`, 1);
           }
-
-          //  console.log('Generated Token:',token);
-          //  console.log('Refresh token:', refresh_token);
-
-
           if (!token) {
             console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
             return res.send({ suc: 0, msg: "Token generation failed." });
@@ -177,7 +168,59 @@ userRouter.post('/login_web', async (req, res) => {
   }
 });
 
+userRouter.post('/login_app', async (req, res) => {
+  var data = req.body,
+      result;
+  const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  // console.log(data, 'Received Data');
 
+  try {
+      let requiredVersion = null;
+      
+      // Fetch app version if flag is 'A'
+      if (data.flag === 'A') {
+          let app_data = await db_Select("version", "md_app_version", null, null);
+          // console.log(app_data,'poii');
+          
+          if (app_data.suc > 0 && app_data.msg.length > 0) {
+            requiredVersion = app_data.msg[0].version; // Extract version
+        } else {
+            return res.send({ suc: 0, msg: "App version information not found.", requiredVersion });
+        }
+    
+        // console.log("Required Version:", requiredVersion, "User App Version:", data.app_version);
+    
+        // Check app version
+        if (!data.app_version || data.app_version != requiredVersion) {
+            return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion}`});
+        }
+      }
+
+      // Proceed with login after version check
+      var log_dt = await app_login_data(data);
+
+      if (log_dt.suc > 0 && log_dt.msg.length > 0) {
+          let user = log_dt.msg[0];
+          let passwordMatch = await bcrypt.compare(data.password.toString(), user.password);
+
+          if (passwordMatch) {
+              try {
+                  await db_Insert('md_user', `created_by = "${data.emp_id}", created_at="${datetime}"`, null, `emp_id='${user.emp_id}'`, 1);
+              } catch (err) {
+                  console.error("Error inserting user log:", err);
+              }
+              return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user });
+          } else {
+              return res.send({ suc: 0, msg: "Incorrect user ID or password" });
+          }
+      } else {
+          return res.send({ suc: 2, msg: "No user data found", dt: log_dt });
+      }
+  } catch (error) {
+      console.error("Login Error:", error);
+      return res.send({ suc: 0, msg: "An unexpected error occurred, please try again." });
+  }
+});
 
 userRouter.post('/logout', async (req, res) => {
   var data = req.body;
