@@ -60,7 +60,7 @@ userRouter.get("/fetch_app_version", async (req, res) => {
   res.send(app_data)
 });
 
-userRouter.post('/login_app', async (req, res) => {
+userRouter.post('/login_web', async (req, res) => {
   var data = req.body,
     result;
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
