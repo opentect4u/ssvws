@@ -343,39 +343,42 @@ try{
 
 // Middleware for Authentication
 
-const authenticateToken = (req, res, next,userData) => {
-  var authHeader = req.headers['authorization'];
-  console.log(authHeader,'iii');
-  
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+
   if (!authHeader) {
-    return res.status(401).json({ error: 'Authorization header is required' });
+      return res.status(401).json({ error: 'Authorization header is required' });
   }
 
   const token = authHeader.split(' ')[1];
   if (!token) {
       return res.status(403).json({ error: 'Token is missing' });
   }
-  // Verify the token
+
   jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
-    if (err) {
-        return res.status(403).json({ error: 'Invalid token' });
-    }
+      if (err) {
+          return res.status(403).json({ error: 'Invalid token' });
+      }
 
-    // Token verified successfully
-    req.user = user;
+      // Generate a new token with 2-minute expiry
+      const newToken = jwt.sign(
+          { id: user.id, username: user.username }, 
+          process.env.SECRET_KEY,
+          { expiresIn: '2m' } 
+      );
 
-    // Generate a new token after 2 minutes
-    const newToken = jwt.sign(JSON.parse(JSON.stringify(userData)), process.env.SECRET_KEY, {
-      expiresIn: process.env.TOKEN_EXPIRATION // New token expiry
+      req.user = user;    // Store user data for later use
+      req.newToken = newToken; // Store the new token for the next handler
+      next();
   });
-
-    // Attach the new token to the response headers
-    res.setHeader('Authorization', `Bearer ${newToken}`);
-    next();
-});
 };
 
 userRouter.get('/refresh', authenticateToken, (req, res) => {
-  res.json({ message: `Welcome User` });
+  res.json({
+      message: 'Protected data accessed successfully',
+      user: req.user,
+      newToken: req.newToken  // Send new token here
+  });
 });
+
 module.exports = { userRouter }
