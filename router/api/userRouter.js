@@ -340,14 +340,24 @@ try{
 //     }
 // });
 
-userRouter.post("/refresh", async (req, res) => {
-  var data = req.body;
+// Middleware for Authentication
 
-  var select = "session_id",
-  table_name = "md_user",
-  whr = `emp_id = '${data.emp_id}'`,
-  order = null;
-  var result = await db_Select(select,table_name,whr,order);
-  res.send(result)
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) return res.json({ error: 'Token is required' });
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+      if (err) return res.json({ error: 'Invalid token' });
+
+      req.user = user;
+      next();
+  });
+};
+
+
+userRouter.get('/refresh', authenticateToken, (req, res) => {
+  res.json({ message: `Welcome User` });
 });
 module.exports = { userRouter }
