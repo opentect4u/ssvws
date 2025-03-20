@@ -343,22 +343,37 @@ try{
 
 // Middleware for Authentication
 
-const authenticateToken = (req, res, next) => {
-  var authHeader = req.headers['Authorization'];
+const authenticateToken = (req, res, next,userData) => {
+  var authHeader = req.headers['authorization'];
   console.log(authHeader,'iii');
   
-  // const token = authHeader && authHeader.split(' ')[1];
+  if (!authHeader) {
+    return res.status(401).json({ error: 'Authorization header is required' });
+  }
 
-  // if (!token) return res.json({ error: 'Token is required' });
+  const token = authHeader.split(' ')[1];
+  if (!token) {
+      return res.status(403).json({ error: 'Token is missing' });
+  }
+  // Verify the token
+  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+    if (err) {
+        return res.status(403).json({ error: 'Invalid token' });
+    }
 
-  jwt.verify(authHeader, process.env.SECRET_KEY, (err, user) => {
-      if (err) return res.json({ error: 'Invalid token' });
+    // Token verified successfully
+    req.user = user;
 
-      req.user = user;
-      next();
+    // Generate a new token after 2 minutes
+    const newToken = jwt.sign(JSON.parse(JSON.stringify(userData)), process.env.SECRET_KEY, {
+      expiresIn: process.env.TOKEN_EXPIRATION // New token expiry
   });
-};
 
+    // Attach the new token to the response headers
+    res.setHeader('Authorization', `Bearer ${newToken}`);
+    next();
+});
+};
 
 userRouter.get('/refresh', authenticateToken, (req, res) => {
   res.json({ message: `Welcome User` });
