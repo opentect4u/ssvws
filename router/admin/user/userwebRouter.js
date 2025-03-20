@@ -210,8 +210,8 @@ userwebRouter.post("/change_password", async (req, res) => {
 userwebRouter.post("/fetch_data_same_pass", async (req, res) => {
   var data = req.body;
   
-  var select = "emp_id",
-  table_name = "md_user",
+  var select = "a.emp_id,b.emp_name",
+  table_name = "md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
   whr = `password = '$2b$10$GKfgEjJu9WuKkOUWzg28VOMWS6E214C3K.VizYE2Z3UXGTe/UaCEC'`,
   order = null;
   var res_dt = await db_Select(select,table_name,whr,order);
