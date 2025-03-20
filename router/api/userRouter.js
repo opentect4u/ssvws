@@ -202,6 +202,7 @@ userRouter.post("/clear_session", async (req, res) => {
   try{
  var data = req.body;
  console.log(data,'clear_sessiondata');
+ var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
  var select = "refresh_token,session_id",
  table_name = "md_user",
