@@ -294,4 +294,60 @@ try{
 }
 });
 
+// userRouter.post("/regenerate_access_token", async (req, res) => {
+// const { refreshToken } = req.body;
+//     if (!refreshToken) {
+//         return res.json({ message: 'Refresh token required' });
+//     }
+
+//     try {
+//         // Check if refresh token exists in the database
+//         const tokenData = await db_Select('SELECT * FROM md_user WHERE token = ?', [refreshToken]);
+//         console.log(tokenData,'tokendata');
+        
+//         if (!tokenData.length) {
+//             return res.json({ message: 'Invalid refresh token' });
+//         }
+
+//         // Verify token expiration
+//         const expiresAt = new Date(tokenData[0].expiresAt);
+//         if (expiresAt < new Date()) {
+//             return res.json({ message: 'Refresh token expired' });
+//         }
+
+//         // Verify token with secret key
+//         const decoded = jwt.verify(refreshToken, process.env.ref);
+
+//         // Check if user and session are valid
+//         const userSession = await db_Select('SELECT * FROM md_user WHERE id = ? AND session_id = ?', [
+//             decoded.userId,
+//             decoded.sessionId
+//         ]);
+//         if (!userSession.length) {
+//             return res.json({ message: 'Invalid session or user not found' });
+//         }
+
+//         // Generate a new access token
+//         const accessToken = jwt.sign(
+//             { userId: decoded.userId, sessionId: decoded.sessionId },
+//             process.env.ACCESS_TOKEN_SECRET,
+//             { expiresIn: '15m' }
+//         );
+
+//         res.json({ accessToken });
+//     } catch (error) {
+//         res.json({ message: 'Server error', error: error.message });
+//     }
+// });
+
+userRouter.post("/refresh", async (req, res) => {
+  var data = req.body;
+
+  var select = "session_id",
+  table_name = "md_user",
+  whr = `emp_id = '${data.emp_id}'`,
+  order = null;
+  var result = await db_Select(select,table_name,whr,order);
+  res.send(result)
+});
 module.exports = { userRouter }
