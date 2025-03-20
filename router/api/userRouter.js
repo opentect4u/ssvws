@@ -186,8 +186,6 @@ userRouter.post('/login_app', async (req, res) => {
   try {
     let requiredVersion = null;
 
-    const isWebLogin = data.flag === 'W';
-
     // Fetch app version if flag is 'A'
     if (!isWebLogin && data.flag === 'A') {
       let app_data = await db_Select("version", "md_app_version", null, null);
@@ -205,11 +203,6 @@ userRouter.post('/login_app', async (req, res) => {
       if (!data.app_version || data.app_version != requiredVersion) {
         return res.send({ suc: 0, msg: `Please update your app to version ${requiredVersion}` });
       }
-      }else if (isWebLogin) {
-        // Web Login Conditions
-        if (data.app_version !== '0' || data.session_id !== '0') {
-          return res.send({ suc: 0, msg: "Invalid login parameters for web." });
-        }
     }
     
     // Proceed with login after version check
@@ -224,7 +217,7 @@ userRouter.post('/login_app', async (req, res) => {
         // const tokenPayload = { emp_id: user.emp_id, user_type: user.user_type };
         try {
           var checkUserToken = false
-          if (!isWebLogin && user.session_id && user.session_id !== 'null' && user.refresh_token && user.refresh_token !== 'null') {
+          if (user.session_id && user.session_id !== 'null' && user.refresh_token && user.refresh_token !== 'null') {
             // console.log('Request Session ID:', data.session_id);
             // console.log('Stored Session ID:', user.session_id);
         
