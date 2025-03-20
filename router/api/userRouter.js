@@ -179,7 +179,7 @@ userRouter.post('/login_app', async (req, res) => {
 
 userRouter.post('/logout', async (req, res) => {
   var data = req.body;
-  console.log(data,'logoutdata');
+  // console.log(data,'logoutdata');
   
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
@@ -198,7 +198,31 @@ userRouter.post('/logout', async (req, res) => {
   }
 });
 
+userRouter.post("/clear_session", async (req, res) => {
+  try{
+ var data = req.body;
+ console.log(data,'clear_sessiondata');
 
+ var select = "refresh_token,session_id",
+ table_name = "md_user",
+ whr = `emp_id = '${data.emp_id}'`,
+ order = null;
+ var employee_data = await db_Select(select,table_name,whr,order);
+
+ if (employee_data.suc > 0 && employee_data.msg.length > 0) {
+  var table_name = "md_user";
+  fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+  values = null;
+  whr = `emp_id = '${data.emp_id}'`;
+  flag = 1;
+  var clear_token_session = await db_Insert(table_name, fields, values, whr, flag);
+  res.send(clear_token_session);
+ }
+  }catch(error) {
+    console.error('SQL Error:', error);
+    res.send({ error: 'Please try again.' });
+  }
+});
 
 
 module.exports = { userRouter }
