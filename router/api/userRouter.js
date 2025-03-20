@@ -140,7 +140,7 @@ userRouter.post('/login_web', async (req, res) => {
 
           const token = await createToken(user);
           if (checkUserToken) {
-            const refresh_token = await generateRefreshToken(user, data.session_id);
+            var refresh_token = await generateRefreshToken(user, data.session_id);
             if (!refresh_token) {
               console.error("Refresh Token generation failed!"); // 🔍 Error if token is null/undefined
               return res.send({ suc: 0, msg: "Refresh Token generation failed." });
