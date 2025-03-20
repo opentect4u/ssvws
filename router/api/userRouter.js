@@ -236,15 +236,15 @@ try{
  order = null;
  var fetch_session_id = await db_Select(select,table_name,whr,order);
 
+ let isMatch = false; // Declare isMatch with a default value
+
  if (fetch_session_id.suc > 0 && fetch_session_id.msg.length > 0) {
-  var isMatch = fetch_session_id.msg[0].session_id === data.session_id;
-  res.send({ suc: 0, match: isMatch });
-} else {
-  res.send({ suc: 1, match: isMatch });
-}
+   isMatch = fetch_session_id.msg[0].session_id === data.session_id;
+ } 
+ res.send({ suc: 1, match: isMatch });
 }catch(error){
   console.error('SQL Error:', error);
-    res.send({ error: 'Please try again.' });
+    res.send({ suc: 0, error: 'Please try again.' });
 }
 });
 
