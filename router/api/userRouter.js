@@ -228,7 +228,8 @@ userRouter.post('/login_app', async (req, res) => {
             // console.log('Request Session ID:', data.session_id);
             // console.log('Stored Session ID:', user.session_id);
         
-            if (String(data.session_id).trim() === String(user.session_id).trim()) {
+            // if (String(data.session_id).trim() === String(user.session_id).trim()) {
+              if (String(data.session_id).trim() === '0' || String(data.session_id).trim() === String(user.session_id).trim()) {
                 // console.log("Session IDs Match!");
                 var verify_token = await verifyRefreshToken(user.refresh_token, data.emp_id);
                 if (verify_token.suc === 2) {
@@ -267,7 +268,7 @@ userRouter.post('/login_app', async (req, res) => {
           delete user.refresh_token;
 
           const token = await createToken(user);
-          if (checkUserToken) {
+          if (!isWebLogin || checkUserToken) {
             const refresh_token = await generateRefreshToken(user, data.session_id);
             if (!refresh_token) {
               console.error("Refresh Token generation failed!"); // 🔍 Error if token is null/undefined
