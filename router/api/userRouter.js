@@ -352,12 +352,12 @@ const authenticateToken = (req, res, next) => {
       return res.status(401).json({ error: 'Authorization header is required' });
   }
 
-  const token = authHeader.split(' ')[1];
-  if (!token) {
-      return res.status(403).json({ error: 'Token is missing' });
-  }
+  // const token = authHeader.split(' ')[1];
+  // if (!token) {
+  //     return res.status(403).json({ error: 'Token is missing' });
+  // }
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+  jwt.verify(authHeader, process.env.SECRET_KEY, (err, user) => {
       if (err) {
           return res.status(403).json({ error: 'Invalid token' });
       }
