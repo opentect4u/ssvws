@@ -176,9 +176,10 @@ userRouter.post('/login_app', async (req, res) => {
 
   try {
       let requiredVersion = null;
+      var session_id = 0;
       
       // Fetch app version if flag is 'A'
-      if (data.flag === 'A') {
+      if (data.flag === 'A' && session_id) {
           let app_data = await db_Select("version", "md_app_version", null, null);
           // console.log(app_data,'poii');
           
