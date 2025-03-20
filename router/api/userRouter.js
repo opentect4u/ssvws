@@ -238,9 +238,9 @@ try{
 
  if (fetch_session_id.suc > 0 && fetch_session_id.msg.length > 0) {
   var isMatch = fetch_session_id.msg[0].session_id === data.session_id;
-  res.send({ success: true, match: isMatch });
+  res.send({ suc: 0, match: isMatch });
 } else {
-  res.send({ success: false, match: false, message: 'No session data found.' });
+  res.send({ suc: 1, match: isMatch });
 }
 }catch(error){
   console.error('SQL Error:', error);
