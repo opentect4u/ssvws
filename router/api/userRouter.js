@@ -344,11 +344,11 @@ try{
 
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['Authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
+  // const token = authHeader && authHeader.split(' ')[1];
 
-  if (!token) return res.json({ error: 'Token is required' });
+  // if (!token) return res.json({ error: 'Token is required' });
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, user) => {
+  jwt.verify(authHeader, process.env.SECRET_KEY, (err, user) => {
       if (err) return res.json({ error: 'Invalid token' });
 
       req.user = user;
