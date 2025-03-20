@@ -152,7 +152,7 @@ userRouter.post('/login_web', async (req, res) => {
             return res.send({ suc: 0, msg: "Token generation failed." });
           }
 
-          return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user, token });
+          return res.send({ suc: 1, msg: `${user.user_type} Login successfully`, user_dtls: user, token, refresh_token });
         } catch (err) {
           console.error("Error inserting user log:", err);
         }
