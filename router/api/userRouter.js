@@ -201,7 +201,7 @@ userRouter.post('/logout', async (req, res) => {
 userRouter.post("/clear_session", async (req, res) => {
   try{
  var data = req.body;
- console.log(data,'clear_sessiondata');
+//  console.log(data,'clear_sessiondata');
  var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
  var select = "refresh_token,session_id",
@@ -228,7 +228,7 @@ userRouter.post("/clear_session", async (req, res) => {
 userRouter.post("/check_session_id", async (req, res) => {
 try{
   var data = req.body;
-  console.log(data,'check_session_iddata');
+  // console.log(data,'check_session_iddata');
 
  var select = "session_id",
  table_name = "md_user",
