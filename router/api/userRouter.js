@@ -295,8 +295,22 @@ try{
 }
 });
 
-userRouter.post("/verify_token", verifyToken, async (req, res) => {
-  return res.json({ message: "Token is valid", user: req.user });
-})
+userRouter.get("/verify_token", (req, res, next) => {
+  const token = req.headers['authorization']?.split(" ")[1];
+  console.log(token);
+  
+  if (!token){
+    res.send({ suc: 0, error: 'Please provide a valid token.' });
+  }
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+  // jwt.verify(token, SECRET_KEY, (err, user) => {
+      if (err){
+        res.send({ suc: 0, error: 'Token expired.' });
+      }
+     req.user = decoded;
+     next();
+  });
+});
 
 module.exports = { userRouter }
