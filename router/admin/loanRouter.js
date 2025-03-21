@@ -584,7 +584,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     // table_name = "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id",
     // whr = `group_code = '${data.group_code}'`,
     // order = `GROUP BY a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,a.disb_dt`;
-    var select = "a.loan_id,a.member_code,e.client_name,a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,(a.prn_disb_amt) disburse_amt,a.disb_dt,(a.prn_amt + a.od_prn_amt) prn_amount,a.intt_amt",
+    var select = "a.loan_id,a.member_code,e.client_name,a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,(a.prn_disb_amt) disburse_amt,a.disb_dt,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
     table_name = "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_member e ON a.member_code = e.member_code",
     whr = `group_code = '${data.group_code}'`,
     order = `ORDER BY a.disb_dt DESC`;
