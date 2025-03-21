@@ -53,7 +53,7 @@ module.exports = {
   if (userdata && sessionId) {
     const ref_token = CryptoJS.AES.encrypt(JSON.stringify({userdata,sessionId,datetime}), process.env.REFRESH_TOKEN_SECRET).toString()
     resolve(ref_token)
-    console.log(ref_token,'ref_token');
+    // console.log(ref_token,'ref_token');
   } else {
     reject('User ID or Session ID missing')
   }
