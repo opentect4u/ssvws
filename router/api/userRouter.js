@@ -328,33 +328,7 @@ userRouter.post("/refresh", async (req, res) => {
     res_dt = {suc: 1, msg: token}
   }
   res.send(res_dt)
-
-//  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
-//   db_Select('SELECT * FROM md_user WHERE emp_id = ? and session_id =?',[decoded.emp_id, decoded.session_id], (err, user) => {
-//     if(err || !user){
-//       return res.sendStatus(403);
-//     }
-//     const accessToken = createToken(user);
-//     res.json({ accessToken });
-//   });
-//  });
 });
 
-// userRouter.get("/verify_token", (req, res, next) => {
-//   const token = req.headers['authorization']?.split(" ")[1];
-//   console.log(token);
-  
-//   if (!token){
-//     return res.send({ suc: 0, error: 'Please provide a valid token.' });
-//   }
-
-//   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-//       if (err){
-//        return res.send({ suc: 0, error: 'Token expired.' });
-//       }
-//      req.user = decoded;
-//      next();
-//   });
-// });
 
 module.exports = { userRouter }
