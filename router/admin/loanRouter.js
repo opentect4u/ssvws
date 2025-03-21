@@ -564,7 +564,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     table_name ="td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan c ON a.member_code = c.member_code AND a.prov_grp_code = c.group_code",
     // whr = `a.prov_grp_code = '${data.group_code}' AND c.outstanding > 0`,
     whr = `a.prov_grp_code = '${data.group_code}'`,
-    order = `c.loan_id desc`;
+    order = `ORDER BY c.loan_id desc`;
   var grp_mem_dtls = await db_Select(select, table_name, whr, order);
 
   //outstanding details
