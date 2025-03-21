@@ -16,7 +16,7 @@ module.exports = {
           expiresIn: process.env.TOKEN_EXPIRATION
         });
         resolve(token)
-        console.log(token,'token');
+        // console.log(token,'token');
         
       } else {
         reject('No Object Found')
