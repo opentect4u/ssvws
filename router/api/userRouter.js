@@ -295,21 +295,66 @@ try{
 }
 });
 
-userRouter.get("/verify_token", (req, res, next) => {
-  const token = req.headers['authorization']?.split(" ")[1];
-  console.log(token);
-  
-  if (!token){
-    return res.send({ suc: 0, error: 'Please provide a valid token.' });
+userRouter.post("/refresh", async (req, res) => {
+  // const token = req.headers['authorization']?.split(" ")[1];
+  const token = req.headers['authorization']
+  // console.log(req.headers['authorization']);
+  const {emp_id, session_id} = req.body;
+  var verified_token = false, refresh_token = '', res_dt = {};
+  try{
+    const verified = jwt.verify(token, process.env.SECRET_KEY);
+    verified_token = true;
+  }catch(err){
+    verified_token = false
   }
-
-  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-      if (err){
-       return res.send({ suc: 0, error: 'Token expired.' });
+  if(!verified_token){
+    var user_data = await db_Select('refresh_token, session_id', 'md_user', `emp_id=${emp_id}`, null);
+    if(user_data.suc > 0 && user_data.msg.length > 0){
+      if(user_data.msg[0].session_id == session_id){
+        var refresh_token_status = await verifyRefreshToken(user_data.msg[0].refresh_token, emp_id)
+        if(refresh_token_status.suc == 1){
+          refresh_token = await createToken(refresh_token_status.user_data);
+          res_dt = {suc: 1, msg: refresh_token}
+        }else{
+          res_dt = {suc: 0, msg: refresh_token_status.msg}
+        }
+      }else{
+        res_dt = {suc: 0, msg: 'Invalid session_id.'};
       }
-     req.user = decoded;
-     next();
-  });
+    }else{
+      res_dt = {suc: 0, msg: 'No user data found'};
+    }
+  }else{
+    res_dt = {suc: 1, msg: token}
+  }
+  res.send(res_dt)
+
+//  jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, (err, decoded) => {
+//   db_Select('SELECT * FROM md_user WHERE emp_id = ? and session_id =?',[decoded.emp_id, decoded.session_id], (err, user) => {
+//     if(err || !user){
+//       return res.sendStatus(403);
+//     }
+//     const accessToken = createToken(user);
+//     res.json({ accessToken });
+//   });
+//  });
 });
+
+// userRouter.get("/verify_token", (req, res, next) => {
+//   const token = req.headers['authorization']?.split(" ")[1];
+//   console.log(token);
+  
+//   if (!token){
+//     return res.send({ suc: 0, error: 'Please provide a valid token.' });
+//   }
+
+//   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+//       if (err){
+//        return res.send({ suc: 0, error: 'Token expired.' });
+//       }
+//      req.user = decoded;
+//      next();
+//   });
+// });
 
 module.exports = { userRouter }

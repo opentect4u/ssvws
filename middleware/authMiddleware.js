@@ -71,7 +71,7 @@ module.exports = {
       if(timeDiff < process.env.REFRESH_TOKEN_EXPIRATION){
         if(decryptedData.userdata){
           if(decryptedData.userdata.emp_id == userId){
-            return {suc: 1, msg: 'Accepted'}
+            return {suc: 1, msg: 'Accepted', user_data: decryptedData.userdata}
           }else{
             return {suc: 0, msg: 'Unauthorised'}
           }
@@ -94,25 +94,25 @@ module.exports = {
 },
 
 // Middleware to check JWT token
-verifyToken: (req, res, next) => {
-  const authHeader = req.headers["authorization"];
+// verifyToken: (req, res, next) => {
+//   const authHeader = req.headers["authorization"];
   
-  if (!authHeader) {
-      return res.json({ message: "No token provided" });
-  }
+//   if (!authHeader) {
+//       return res.json({ message: "No token provided" });
+//   }
 
-  const token = authHeader.split(" ")[1]; // Assuming "Bearer <token>"
+//   const token = authHeader.split(" ")[1]; // Assuming "Bearer <token>"
 
-  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-      if (err) {
-          if (err.name === "TokenExpiredError") {
-              return res.json({ message: "Token has expired" });
-          } else {
-              return res.json({ message: "Invalid token" });
-          }
-      }
-      req.user = decoded; // Store decoded token data in request
-      next();
-  });
-}
+//   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+//       if (err) {
+//           if (err.name === "TokenExpiredError") {
+//               return res.json({ message: "Token has expired" });
+//           } else {
+//               return res.json({ message: "Invalid token" });
+//           }
+//       }
+//       req.user = decoded; // Store decoded token data in request
+//       next();
+//   });
+// }
 }
