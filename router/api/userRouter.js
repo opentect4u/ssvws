@@ -300,13 +300,12 @@ userRouter.get("/verify_token", (req, res, next) => {
   console.log(token);
   
   if (!token){
-    res.send({ suc: 0, error: 'Please provide a valid token.' });
+    return res.send({ suc: 0, error: 'Please provide a valid token.' });
   }
 
   jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-  // jwt.verify(token, SECRET_KEY, (err, user) => {
       if (err){
-        res.send({ suc: 0, error: 'Token expired.' });
+       return res.send({ suc: 0, error: 'Token expired.' });
       }
      req.user = decoded;
      next();
