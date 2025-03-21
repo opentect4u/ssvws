@@ -25,7 +25,7 @@ module.exports = {
   },
  
   authCheckForLogin: (req, res, next) => {
-    const token = req.cookies?.auth_token;
+    const token = req.cookies.auth_token;
       if (token){
         try {
           const verified = jwt.verify(token, process.env.SECRET_KEY);
