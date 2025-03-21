@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require("bcrypt");
 const { app_login_data, bm_login_data, superadmin_login_data, app_login_data_web } = require('../../modules/api/userModule');
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
-const { createToken, generateRefreshToken, verifyRefreshToken } = require('../../middleware/authMiddleware');
+const { createToken, generateRefreshToken, verifyRefreshToken, verifyToken } = require('../../middleware/authMiddleware');
 
 userRouter.post("/fetch_emp_type", async (req, res) => {
   try {
@@ -295,92 +295,8 @@ try{
 }
 });
 
-// userRouter.post("/regenerate_access_token", async (req, res) => {
-// const { refreshToken } = req.body;
-//     if (!refreshToken) {
-//         return res.json({ message: 'Refresh token required' });
-//     }
-
-//     try {
-//         // Check if refresh token exists in the database
-//         const tokenData = await db_Select('SELECT * FROM md_user WHERE token = ?', [refreshToken]);
-//         console.log(tokenData,'tokendata');
-        
-//         if (!tokenData.length) {
-//             return res.json({ message: 'Invalid refresh token' });
-//         }
-
-//         // Verify token expiration
-//         const expiresAt = new Date(tokenData[0].expiresAt);
-//         if (expiresAt < new Date()) {
-//             return res.json({ message: 'Refresh token expired' });
-//         }
-
-//         // Verify token with secret key
-//         const decoded = jwt.verify(refreshToken, process.env.ref);
-
-//         // Check if user and session are valid
-//         const userSession = await db_Select('SELECT * FROM md_user WHERE id = ? AND session_id = ?', [
-//             decoded.userId,
-//             decoded.sessionId
-//         ]);
-//         if (!userSession.length) {
-//             return res.json({ message: 'Invalid session or user not found' });
-//         }
-
-//         // Generate a new access token
-//         const accessToken = jwt.sign(
-//             { userId: decoded.userId, sessionId: decoded.sessionId },
-//             process.env.ACCESS_TOKEN_SECRET,
-//             { expiresIn: '15m' }
-//         );
-
-//         res.json({ accessToken });
-//     } catch (error) {
-//         res.json({ message: 'Server error', error: error.message });
-//     }
-// });
-
-// Middleware for Authentication
-
-const authenticateToken = (req, res, next) => {
-  const authHeader = req.headers['authorization'];
-  console.log(authHeader);
-  
-
-  if (!authHeader) {
-      return res.status(401).json({ error: 'Authorization header is required' });
-  }
-
-  // const token = authHeader.split(' ')[1];
-  // if (!token) {
-  //     return res.status(403).json({ error: 'Token is missing' });
-  // }
-
-  jwt.verify(authHeader, process.env.SECRET_KEY, (err, user) => {
-      if (err) {
-          return res.status(403).json({ error: 'Invalid token' });
-      }
-
-      // Generate a new token with 2-minute expiry
-      const newToken = jwt.sign(
-          { id: user.id, username: user.username }, 
-          process.env.SECRET_KEY,
-          { expiresIn: '2m' } 
-      );
-
-      req.user = user;    // Store user data for later use
-      req.newToken = newToken; // Store the new token for the next handler
-      next();
-  });
-};
-
-userRouter.get('/refresh', authenticateToken, (req, res) => {
-  res.json({
-      message: 'Protected data accessed successfully',
-      user: req.user,
-      newToken: req.newToken  // Send new token here
-  });
-});
+userRouter.post("/verify_token", verifyToken, async (req, res) => {
+  return res.json({ message: "Token is valid", user: req.user });
+})
 
 module.exports = { userRouter }

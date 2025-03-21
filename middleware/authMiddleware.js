@@ -91,6 +91,28 @@ module.exports = {
       console.error('Invalid token:', error.message);
       return null;
   }
-}
+},
 
+// Middleware to check JWT token
+verifyToken: (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  
+  if (!authHeader) {
+      return res.json({ message: "No token provided" });
+  }
+
+  const token = authHeader.split(" ")[1]; // Assuming "Bearer <token>"
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+      if (err) {
+          if (err.name === "TokenExpiredError") {
+              return res.json({ message: "Token has expired" });
+          } else {
+              return res.json({ message: "Invalid token" });
+          }
+      }
+      req.user = decoded; // Store decoded token data in request
+      next();
+  });
+}
 }
