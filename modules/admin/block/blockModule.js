@@ -1,29 +1,29 @@
 const { db_Insert } = require("../../../model/mysqlModel");
-const { getDistCode } = require("../../api/masterModule");
+const { getBlockCode } = require("../../api/masterModule");
 
 module.exports = {
-    district_save: (data) => {
+    block_save: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
-                // console.log(data,'dadadaddada');
+                console.log(data,'dadadaddada');
                 
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-            let dist_code = await getDistCode()
-            // console.log(dist_code,'dist');
+            let block_code = await getBlockCode()
+            console.log(block_code,'block');
             
-            //save district details in md_district table
-            var table_name = "md_district",
-                fields = data.dist_id > 0 ? `state_id = '${data.state_id}', dist_name = '${data.dist_name}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'` : `(dist_id,state_id,dist_name,created_by,created_dt)`,
-                values = `('${dist_code}','${data.state_id}','${data.dist_name}','${data.created_by}','${datetime}')`,
-                whr =  data.dist_id > 0 ? `dist_id = '${data.dist_id}'` : null,
-                flag = data.dist_id > 0 ? 1 : 0;
-                var save_dist_dtls = await db_Insert(table_name,fields,values,whr,flag);
+            //save block details in md_block table
+            var table_name = "md_block",
+                fields = data.block_id > 0 ? `dist_id = '${data.dist_id}', block_name = '${data.block_name}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'` : `(block_id,dist_id,block_name,created_by,created_dt)`,
+                values = `('${block_code}','${data.dist_id}','${data.block_name}','${data.created_by}','${datetime}')`,
+                whr =  data.block_id > 0 ? `block_id = '${data.block_id}'` : null,
+                flag = data.block_id > 0 ? 1 : 0;
+                var save_block_dtls = await db_Insert(table_name,fields,values,whr,flag);
 
-            resolve(save_dist_dtls)
+            resolve(save_block_dtls)
             // console.log(save_dtls,'lo');
             
         }catch(error){
-            reject({"suc": 2, "msg": "Error occurred during saving district details", details: error });
+            reject({"suc": 2, "msg": "Error occurred during saving block details", details: error });
         } 
     });
     }

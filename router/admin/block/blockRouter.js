@@ -1,4 +1,5 @@
 const { db_Select } = require('../../../model/mysqlModel');
+const { block_save } = require('../../../modules/admin/block/blockModule');
 
 const express = require('express'),
 blockRouter = express.Router(),
@@ -51,5 +52,17 @@ blockRouter.post("/get_districts", async (req, res) => {
     var district_datas = await db_Select(select,table_name,whr,order);
     res.send(district_datas) 
    });
+
+//save block details
+blockRouter.post("/save_block", async (req, res) => {
+    var data = req.body,res_dt;
+    block_save(data).then(data => {
+        res_dt = data
+    }).catch(err => {
+        res_dt = err
+    }).finally (() => {
+        res.send(res_dt)
+    })
+});   
 
 module.exports = {blockRouter}

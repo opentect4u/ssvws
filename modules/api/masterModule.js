@@ -222,6 +222,21 @@ const getDistCode = () => {
   });
 };
 
+const getBlockCode = () => {
+  return new Promise(async (resolve, reject) => {
+
+      var select = "max(block_id) + 1 as block_code",
+          table_name = "md_block",
+          whr = null,
+          order = null;
+      var result = await db_Select(select, table_name, whr, order);
+
+      let newBlockCode = result.msg[0].block_code;
+
+      resolve(newBlockCode)
+  });
+};
+
 const getBankCode = () => {
   return new Promise(async (resolve, reject) => {
     var select = "max(bank_code) as max_bank_code",
@@ -970,5 +985,6 @@ module.exports = {
   get_prn_amt,
   get_intt_amt,
   fetch_date,
-  getDistCode
+  getDistCode,
+  getBlockCode
 };
