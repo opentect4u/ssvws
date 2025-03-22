@@ -1,4 +1,5 @@
 const { adminuserRouter } = require('./admin/adminuserRouter');
+const { blockRouter } = require('./admin/block/blockRouter');
 const { desigRouter } = require('./admin/designation/desigRouter');
 const { districtRouter } = require('./admin/district/districtrouter');
 const { fetchRouter } = require('./admin/fetchRouter');
@@ -18,6 +19,7 @@ const express = require('express'),
     adminRouter.use(desigRouter);
     adminRouter.use(monthEndRouter);
     adminRouter.use(districtRouter)
+    adminRouter.use(blockRouter);
 
 module.exports = {adminRouter}
     

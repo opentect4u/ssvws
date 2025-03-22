@@ -27,7 +27,7 @@ districtRouter.post("/fetch_district_data", async (req, res) => {
     var data = req.body;
     var select = "a.state_id,b.state,a.dist_name",
     table_name = "md_district a LEFT JOIN md_state b ON a.state_id = b.sl_no",
-    whr = `dist_id = '${data.dist_id}'`,
+    whr = `a.dist_id = '${data.dist_id}'`,
     order = null;
     var fetch_district_dtls = await db_Select(select,table_name,whr,order);
 
@@ -42,7 +42,7 @@ districtRouter.post("/fetch_district_data", async (req, res) => {
 });
 
 //get state
-districtRouter.get("/get_state", async (req, res) => {
+districtRouter.get("/get_states", async (req, res) => {
     var data = req.query;
        var select = "sl_no,state",
     table_name = "md_state",
