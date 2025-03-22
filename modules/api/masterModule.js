@@ -207,6 +207,21 @@ const getLoanCode = (branch_code) => {
 //   });
 // };
 
+const getDistCode = () => {
+  return new Promise(async (resolve, reject) => {
+
+      var select = "max(dist_id) + 1 as dist_code",
+          table_name = "md_district",
+          whr = null,
+          order = null;
+      var result = await db_Select(select, table_name, whr, order);
+
+      let newDistCode = result.msg[0].dist_code;
+
+      resolve(newDistCode)
+  });
+};
+
 const getBankCode = () => {
   return new Promise(async (resolve, reject) => {
     var select = "max(bank_code) as max_bank_code",
@@ -954,5 +969,6 @@ module.exports = {
   fetch_last_date,
   get_prn_amt,
   get_intt_amt,
-  fetch_date
+  fetch_date,
+  getDistCode
 };
