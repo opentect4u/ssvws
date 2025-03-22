@@ -10,7 +10,7 @@ districtRouter.get("/show_all_district", async (req, res) => {
   try{
     var data = req.query;
 
-    var select = "b.state,a.dist_id,a.dist_name",
+    var select = "b.sl_no state_id,b.state,a.dist_id,a.dist_name",
     table_name = "md_district a LEFT JOIN md_state b ON a.state_id = b.sl_no",
     whr = null,
     order = null;
