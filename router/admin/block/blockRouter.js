@@ -40,4 +40,16 @@ blockRouter.get("/show_all_block", async (req, res) => {
    }
   });
 
+// get district
+blockRouter.post("/get_districts", async (req, res) => {
+    var data = req.body;
+
+    var select = "dist_id,dist_name",
+    table_name = "md_district",
+    whr = `state_id = '${data.state_id}'`,
+    order = null;
+    var district_datas = await db_Select(select,table_name,whr,order);
+    res.send(district_datas) 
+   });
+
 module.exports = {blockRouter}
