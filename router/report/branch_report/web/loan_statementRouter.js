@@ -18,6 +18,7 @@ loan_statementRouter.post("/loan_statement_memb_dtls", async (req, res) => {
 });
 
 loan_statementRouter.post("/loan_statement_report", async (req, res) => {
+    try{
     var data = req.body;
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
@@ -29,6 +30,10 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
     order = `ORDER BY date(a.payment_date),a.payment_id`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
+    }catch(err){
+        console.log(err);
+        
+    }
 });
 
 loan_statementRouter.post("/loan_statement_group_dtls", async (req, res) => {
