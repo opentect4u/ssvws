@@ -5,11 +5,11 @@ module.exports = {
     block_save: (data) => {
         return new Promise(async (resolve, reject) => {
             try {
-                console.log(data,'dadadaddada');
+                // console.log(data,'dadadaddada');
                 
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let block_code = await getBlockCode()
-            console.log(block_code,'block');
+            // console.log(block_code,'block');
             
             //save block details in md_block table
             var table_name = "md_block",
