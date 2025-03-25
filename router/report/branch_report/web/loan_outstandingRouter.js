@@ -320,5 +320,43 @@ dateFormat = require('dateformat');
         }
     });
 
+    //fetch branch with outstanding and demand flag N
+
+    loan_outstandingRouter.post("/loan_outstanding_scheduler", async (req, res) => {
+        try {
+            var select = "branch_code",
+                table_name = "td_month_close",
+                whr = `outstanding_flag = 'N' AND demand_flag = 'N'`,
+                order = null;
+    
+            var data_branch = await db_Select(select, table_name, whr, order);
+    
+            if (data_branch.suc > 0 && data_branch.msg.length > 0) {
+                var branch_codes = data_branch.msg.map(item => item.branch_code);
+                let loanData = [];
+    
+                for (let branch_code of branch_codes) {
+                    let select = "branch_code,loan_id",
+                        table_name = "td_loan",
+                        whr = `branch_code = '${branch_code}' AND outstanding > 0`,
+                        order = null;
+    
+                    let data_loan = await db_Select(select, table_name, whr, order);
+                    
+                    if (data_loan.suc > 0 && data_loan.msg.length > 0) {
+                        loanData.push(...data_loan.msg);
+                    }
+                }
+    
+                return res.json({ success: true, data: loanData });
+            } else {
+                return res.json({ success: false, message: "No branches found" });
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            return res.status(500).json({ success: false, error: "Internal Server Error" });
+        }
+    });
+    
 
 module.exports = {loan_outstandingRouter}

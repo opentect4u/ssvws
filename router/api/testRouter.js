@@ -1,5 +1,5 @@
 const { emp_id } = require('../../modules/admin/employee/empModule');
-const { getMonthDiff, getLoanDmd, get_prn_amt, get_intt_amt, fetch_date } = require('../../modules/api/masterModule');
+const { getMonthDiff, getLoanDmd, get_prn_amt, get_intt_amt, fetch_date, getLoanBal } = require('../../modules/api/masterModule');
 
 const express = require('express'),
 testRouter = express.Router(),
@@ -8,7 +8,8 @@ dateFormat = require('dateformat');
 testRouter.get("/test", async (req, res) => {
     var data = req.query;
 
-    var get_data = await getLoanDmd(12035717,'2024-12-06')
+    // var get_data = await getLoanDmd(12035717,'2024-12-06')
+    var get_data = await getLoanBal(158486140,'2025-03-25')
     res.send(get_data);
     // console.log(get_data,'ok');
     
