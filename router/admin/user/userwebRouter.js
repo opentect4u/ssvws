@@ -144,11 +144,8 @@ userwebRouter.post("/fetch_user_details", async (req, res) => {
 
     //fetch user details
     var select = "a.emp_id,a.brn_code,a.user_type,a.user_status,a.deactive_remarks,b.emp_name,b.designation desig_code,c.branch_name,d.desig_type",
-    table_name = "md_user a, md_employee b, md_branch c, md_designation d",
-    whr = `a.brn_code = b.branch_id
-    AND a.brn_code = c.branch_code
-    AND a.emp_id = b.emp_id
-    AND b.designation = d.desig_code`,
+    table_name = "md_user a LEFT JOIN md_employee b ON a.brn_code = b.branch_id AND AND a.emp_id = b.emp_id LEFT JOIN md_branch c ON a.brn_code = c.branch_code LEFT JOIN md_designation d ON b.designation = d.desig_code",
+    whr = NULL,
     order = null;
     var fetch_user = await db_Select(select,table_name,whr,order);
 
