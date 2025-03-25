@@ -21,58 +21,112 @@ userwebRouter.get("/get_user_type", async (req, res) => {
     res.send(type_dt)
 });
 
-userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
-    var data = req.body;
+// userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
+//     var data = req.body;
 
-    //fetch employee details
-    try {
-        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type";
-        table_name = "md_user a, md_employee b, md_designation c";
-        whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND b.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
-        order = null;
-        var user_dt = await db_Select(select, table_name, whr, order);
+//     //fetch employee details
+//     try {
+//         var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type";
+//         table_name = "md_user a, md_employee b, md_designation c";
+//         whr = `a.brn_code = b.branch_id AND a.emp_id = b.emp_id AND b.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
+//         order = null;
+//         var user_dt = await db_Select(select, table_name, whr, order);
 
-        if (user_dt.suc > 0 && Array.isArray(user_dt.msg) && user_dt.msg.length > 0) {
-          // Employee ID already exists in 'md_user'
-          return res.send({
-              suc: 1,
-              msg: user_dt.msg,
-              details: "Employee already exists in md_user"
-          });
-      }
+//         if (user_dt.suc > 0 && Array.isArray(user_dt.msg) && user_dt.msg.length > 0) {
+//           // Employee ID already exists in 'md_user'
+//           return res.send({
+//               suc: 1,
+//               msg: user_dt.msg,
+//               details: "Employee already exists in md_user"
+//           });
+//       }
 
-            // var select = "a.branch_assign_id code,b.branch_name name",
-            // table_name = "td_assign_branch_user a, md_branch b",
-            // whr = `a.branch_assign_id = b.branch_code`,
-            // order = null;
-            // var user_dtls = await db_Select(select,table_name,whr,order);
+//             // var select = "a.branch_assign_id code,b.branch_name name",
+//             // table_name = "td_assign_branch_user a, md_branch b",
+//             // whr = `a.branch_assign_id = b.branch_code`,
+//             // order = null;
+//             // var user_dtls = await db_Select(select,table_name,whr,order);
         
 
-            var select = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
-            table_name = "md_employee a, md_branch b, md_designation c";
-            whr = `a.branch_id = b.branch_code AND a.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
-            order = null;
-            var fetch_emp_dt = await db_Select(select, table_name, whr, order);
-            if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
-                // If employee details found
-                return res.send({
-                    suc: 1,
-                    msg: fetch_emp_dt.msg,
-                    // user_dtls: user_dtls.msg
-                });
-            } else {
-                // If no details found in 'md_employee'
-                return res.send({
-                    suc: 0,
-                    msg: [],
-                    details: "Employee details not found"
-                });
-            }
-    } catch (error) {
-        // Handle errors gracefully
-        console.error("Error fetching employee details:", error);
-        return res.send({ suc: 0, msg: "Internal server error" });
+//             var select = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
+//             table_name = "md_employee a, md_branch b, md_designation c";
+//             whr = `a.branch_id = b.branch_code AND a.designation = c.desig_code AND a.emp_id = '${data.emp_id}'`,
+//             order = null;
+//             var fetch_emp_dt = await db_Select(select, table_name, whr, order);
+//             if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
+//                 // If employee details found
+//                 return res.send({
+//                     suc: 1,
+//                     msg: fetch_emp_dt.msg,
+//                     // user_dtls: user_dtls.msg
+//                 });
+//             } else {
+//                 // If no details found in 'md_employee'
+//                 return res.send({
+//                     suc: 0,
+//                     msg: [],
+//                     details: "Employee details not found"
+//                 });
+//             }
+//     } catch (error) {
+//         // Handle errors gracefully
+//         console.error("Error fetching employee details:", error);
+//         return res.send({ suc: 0, msg: "Internal server error" });
+//     }
+// });
+
+userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
+  var data = req.body;
+
+  //fetch employee details
+  try {
+      var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type";
+      table_name = "md_user a LEFT JOIN md_employee b ON a.brn_code = b.branch_id AND a.emp_id = b.emp_id LEFT JOIN md_designation c ON b.designation = c.desig_code";
+      whr = `a.emp_id = '${data.emp_id}'`,
+      order = null;
+      var user_dt = await db_Select(select, table_name, whr, order);
+
+      if (user_dt.suc > 0 && Array.isArray(user_dt.msg) && user_dt.msg.length > 0) {
+        // Employee ID already exists in 'md_user'
+        return res.send({
+            suc: 1,
+            msg: user_dt.msg,
+            details: "Employee already exists in md_user"
+        });
     }
+
+          // var select = "a.branch_assign_id code,b.branch_name name",
+          // table_name = "td_assign_branch_user a, md_branch b",
+          // whr = `a.branch_assign_id = b.branch_code`,
+          // order = null;
+          // var user_dtls = await db_Select(select,table_name,whr,order);
+      
+
+          var select = "a.branch_id, a.emp_name, b.branch_name,a.designation, c.desig_type";
+          table_name = "md_employee a LEFT JOIN md_branch b ON a.branch_id = b.branch_code LEFT JOIN md_designation c ON a.designation = c.desig_code";
+          whr = `a.emp_id = '${data.emp_id}'`,
+          order = null;
+          var fetch_emp_dt = await db_Select(select, table_name, whr, order);
+          if (fetch_emp_dt.suc > 0 && fetch_emp_dt.msg.length > 0) {
+              // If employee details found
+              return res.send({
+                  suc: 1,
+                  msg: fetch_emp_dt.msg,
+                  // user_dtls: user_dtls.msg
+              });
+          } else {
+              // If no details found in 'md_employee'
+              return res.send({
+                  suc: 0,
+                  msg: [],
+                  details: "Employee details not found"
+              });
+          }
+  } catch (error) {
+      // Handle errors gracefully
+      console.error("Error fetching employee details:", error);
+      return res.send({ suc: 0, msg: "Internal server error" });
+  }
 });
 
 
