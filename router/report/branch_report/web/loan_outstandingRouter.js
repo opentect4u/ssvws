@@ -1,5 +1,5 @@
-const { db_Select, db_RunProcedureAndFetchData } = require('../../../../model/mysqlModel');
-const { loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding, get_prn_amt, get_intt_amt } = require('../../../../modules/api/masterModule');
+const { db_Select, db_RunProcedureAndFetchData, db_Insert } = require('../../../../model/mysqlModel');
+const { loan_balance_outstanding, loan_od_balance_outstanding, loan_intt_balance_outstanding, get_prn_amt, get_intt_amt, getLoanBal } = require('../../../../modules/api/masterModule');
 
 const express = require('express'),
 loan_outstandingRouter = express.Router(),
@@ -324,6 +324,9 @@ dateFormat = require('dateformat');
 
     loan_outstandingRouter.post("/loan_outstanding_scheduler", async (req, res) => {
         try {
+            var data = req.body;
+            // console.log(data,'datas');
+
             var select = "branch_code",
                 table_name = "td_month_close",
                 whr = `outstanding_flag = 'N' AND demand_flag = 'N'`,
@@ -347,14 +350,48 @@ dateFormat = require('dateformat');
                         loanData.push(...data_loan.msg);
                     }
                 }
-    
-                return res.json({ success: true, data: loanData });
+
+                if (loanData.length === 0) {
+                    return res.json({ success: false, message: "No loans found with outstanding balance" });
+                }
+
+            // Fetch outstanding balance for each loan
+             let loanWithBalance = await Promise.all(
+                loanData.map(async (loan) => {
+                    let outstandingBalance = await getLoanBal(loan.loan_id, data.to_dt);
+                    return { ...loan, outstandingBalance };
+                })
+            );
+
+           // Insert data into td_loan_month_balance
+           for (let loan of loanWithBalance) {
+            // Fetch balance_date from td_loan_month_balance for this loan_id and branch_code
+            var select = "balance_date",
+                table_name = "td_loan_month_balance",
+                whr = `loan_id = '${loan.loan_id}' AND branch_code = '${loan.branch_code}'`,
+                order = null 
+                var balanceData = await db_Select(select, table_name, whr, order);
+
+              // Check if balanceData has valid records
+               if (balanceData.suc > 0 && balanceData.msg.length > 0) {      
+            // Insert data into td_loan_month_balance
+             var balance = loan.outstandingBalance.balance || 0; // Use 0 if balance is not found
+
+              var table_name = "td_loan_month_balance",
+              fields = "(balance_date,loan_id,branch_code,prn_amt,intt_amt,outstanding,remarks)",
+              values = `('${balanceData.msg[0].balance_date}','${loan.loan_id}','${loan.branch_code}','0','0','${balance}','To Closing')`,
+              whr = null,
+              flag = 0;
+              var loan_balance_data = await db_Insert(table_name,fields,values,whr,flag);
+        }
+           }
+                return res.json({ success: true, message: "Data inserted successfully", data: loanWithBalance });
             } else {
                 return res.json({ success: false, message: "No branches found" });
             }
         } catch (error) {
             console.error("Error:", error);
-            return res.status(500).json({ success: false, error: "Internal Server Error" });
+            return res.json({ success: false, error: "Internal Server Error" });
         }
     });
     

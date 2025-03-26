@@ -135,4 +135,23 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
     }
    });
 
+
+   // Transaction report branchwise 26.03.2025
+
+  loan_transRouter.post("/transaction_report_branchwise", async (req, res) => {
+    try{
+      var data = req.body;
+   
+      var select = `a.branch_id,c.branch_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'},(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
+      table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
+      whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
+      order = `ORDER BY payment_id desc, payment_date desc`;
+      var transaction_member_data = await db_Select(select,table_name,whr,order);
+      res.send({transaction_member_data})
+    }catch (error){
+     console.error("Error fetching transaction report memberwise:", error);
+     res.send({ suc: 0, msg: "An error occurred" });
+    }
+   });
+
 module.exports = {loan_transRouter}

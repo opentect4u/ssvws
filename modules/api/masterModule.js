@@ -656,6 +656,8 @@ const getLoanDmd = (loan_id, DATE) => {
 /**Function to get Loan Balance against a particular date */
 /**Function used in Loan demand report, */
 const getLoanBal = (loan_id, to_dt) => {
+  // console.log(loan_id,to_dt,'lolo');
+  
   return new Promise(async (resolve, reject) => {
     try {
       var res_dt = 0;
@@ -666,9 +668,11 @@ const getLoanBal = (loan_id, to_dt) => {
         order = null;
 
       var pay_data = await db_Select(select, table_name, whr, order);
-
+      // console.log(to_dt,'ppp');
+      
       if (pay_data.suc > 0 && pay_data.msg.length > 0) {
         var latestPaymentDate = pay_data.msg[0].payment_date;
+        // console.log(latestPaymentDate,"latestPaymentDate");
 
         var select = "max(payment_id) payment_id",
           table_name = "td_loan_transactions",
@@ -679,9 +683,14 @@ const getLoanBal = (loan_id, to_dt) => {
           order = null;
 
         var pay_id = await db_Select(select, table_name, whr, order);
-
+        // console.log(dateFormat(
+        //   latestPaymentDate,
+        //   "yyyy-mm-dd"),'lili');
+        
         if (pay_id.suc > 0 && pay_id.msg.length > 0) {
           var latestPaymentId = pay_id.msg[0].payment_id;
+          // console.log(latestPaymentId);
+          
 
           var select = "(balance + od_balance + intt_balance) balance",
             table_name = "td_loan_transactions",
