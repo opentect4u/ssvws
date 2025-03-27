@@ -21,11 +21,13 @@ dateFormat = require('dateformat');
 
         if (data_branch.suc > 0 && data_branch.msg.length > 0) {
             var branch_codes = data_branch.msg.map(item => item.branch_code);
-            var closed_uptos = data_branch.msg.map(item => item.closed_upto);
+            var closed_upto_data = data_branch.msg.map(item => item.closed_upto);
             let loanData = [];
+            // console.log(closed_uptos,'log');
+            
 
             for (let branch_code of branch_codes) {
-                let select = "branch_code,loan_id",
+                let select = "branch_code,loan_id,(prn_amt + od_prn_amt) prn_amt,intt_amt",
                     table_name = "td_loan",
                     whr = `branch_code = '${branch_code}' AND outstanding > 0`,
                     order = null;
@@ -42,6 +44,8 @@ dateFormat = require('dateformat');
             }
 
         // Fetch outstanding balance for each loan
+        var closed_uptos = `${dateFormat(closed_upto_data,"yyyy-mm-dd" )}`;
+
          let loanWithBalance = await Promise.all(
             loanData.map(async (loan) => {
                 let outstandingBalance = await getLoanBal(loan.loan_id, closed_uptos );
@@ -57,7 +61,7 @@ dateFormat = require('dateformat');
 
           var table_name = "td_loan_month_balance",
           fields = "(balance_date,loan_id,branch_code,prn_amt,intt_amt,outstanding,remarks)",
-          values = `('${dateFormat(closed_uptos,"yyyy-mm-dd")}','${loan.loan_id}','${loan.branch_code}','0','0','${balance}','To Closing')`,
+          values = `('${dateFormat(closed_uptos,"yyyy-mm-dd")}','${loan.loan_id}','${loan.branch_code}','${loan.prn_amt}','${loan.intt_amt}','${balance}','To Closing')`,
           whr = null,
           flag = 0;
           var loan_balance_data = await db_Insert(table_name,fields,values,whr,flag);
