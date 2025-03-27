@@ -689,6 +689,8 @@ const getLoanBal = (loan_id, to_dt,ret_pram) => {
         
         if (pay_id.suc > 0 && pay_id.msg.length > 0) {
           let latestPaymentId = pay_id.msg[0].payment_id;
+          // console.log(latestPaymentId,'lastpaymentid');
+          
           
           if (ret_pram === 'O') {
             select = "(balance + od_balance + intt_balance) balance";

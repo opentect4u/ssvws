@@ -96,7 +96,7 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
         if (data_branch.suc > 0 && data_branch.msg.length > 0) {
 
             for (let dt of data_branch.msg) {        //loop1
-                // console.log(dt,'dt');
+                console.log(dt,'dt');
                 
                 var query = `SELECT loan_id FROM td_loan_month_balance
                 where branch_code = '${dt.branch_code}'
@@ -107,6 +107,8 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
                 and disb_dt > '${dateFormat(dt.closed_upto_prev,"yyyy-mm-dd")}'
                 and disb_dt <= '${dateFormat(dt.closed_upto,"yyyy-mm-dd")}'`
                 var data_loan = await db_Select(null, null, null, null, true, query);
+                console.log(data_loan,'data_loan');
+                
 
                 if (data_loan.suc > 0 && data_loan.msg.length > 0) {
                     let closed_uptos = dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd");
@@ -121,6 +123,8 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
                 let balance = outstandingBalance.balance || 0;
                 let prnbalance = prnBalance.prn_amt || 0;
                 let inttbalance = inttBalance.intt_amt || 0;
+                // console.log(balance,prnbalance,inttbalance,'test');
+                
 
                 var table_name = "td_loan_month_balance",
                     fields = "(balance_date, loan_id, branch_code, prn_amt, intt_amt, outstanding, remarks)",
