@@ -97,6 +97,7 @@ const { transferMemRouter } = require("./router/admin/transfer_member/transferMe
 const { menu_permissionRouter } = require("./router/admin/menu/menu_permissionRouter");
 const { authCheckForLogin } = require("./middleware/authMiddleware");
 const { loan_outstanding_scheduler } = require("./router/report/branch_report/web/loan_outstanding_scheduler");
+const { loan_demand_scheduler } = require("./router/report/branch_report/web/loan_demand_scheduler");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -127,6 +128,7 @@ app.use(app_attendanceRouter)
 app.use(attendancewebRouter)
 app.use(loan_closeRouter)
 app.use(loan_outstanding_scheduler)
+app.use(loan_demand_scheduler)
 app.use('/admin', adminRouter)
 app.use('/adminreport', loan_transAdminRouter)
 app.use('/adminreport', loan_statementAdminRouter)
