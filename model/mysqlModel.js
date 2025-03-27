@@ -1,10 +1,10 @@
 const db = require("../db/db");
 // const dateFormat = require("dateformat");
 
-const db_Select = (select, table_name = null, whr = null, order = null) => {
+const db_Select = (select, table_name = null, whr = null, order = null, is_full_query = false, full_query = '') => {
   var tb_whr = whr ? `WHERE ${whr}` : "";
   var tb_order = order ? order : "";
-  let sql = `SELECT ${select} ${table_name ? `FROM ${table_name}` : ''} ${tb_whr} ${tb_order}`;
+  let sql = is_full_query ? full_query : `SELECT ${select} ${table_name ? `FROM ${table_name}` : ''} ${tb_whr} ${tb_order}`;
   // console.log(sql);
   return new Promise((resolve, reject) => {
     db.query(sql, (err, result) => {

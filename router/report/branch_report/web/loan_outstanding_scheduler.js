@@ -86,7 +86,7 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
     try {
         var data = req.query;
 
-        var select = "branch_code,closed_upto",
+        var select = "branch_code,LAST_DAY(closed_upto - interval 1 month)closed_upto_prev,closed_upto",
             table_name = "td_month_close",
             whr = `outstanding_flag = 'N'`,
             order = null;
@@ -94,55 +94,55 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
         var data_branch = await db_Select(select, table_name, whr, order);
 
         if (data_branch.suc > 0 && data_branch.msg.length > 0) {
-            let loanData = [];
 
-            for (let branch of data_branch.msg) {
-                let { branch_code, closed_upto } = branch;
-
-                if (!closed_upto || isNaN(new Date(closed_upto).getTime())) {
-                    console.error(`Invalid date for branch ${branch_code}:`, closed_upto);
-                    continue; // Skip this branch if the date is invalid
-                }
-
-                let select = "branch_code,loan_id,(prn_amt + od_prn_amt) prn_amt,intt_amt",
-                    table_name = "td_loan",
-                    whr = `branch_code = '${branch_code}' AND outstanding > 0`,
-                    order = null;
-
-                let data_loan = await db_Select(select, table_name, whr, order);
+            for (let dt of data_branch.msg) {        //loop1
+                // console.log(dt,'dt');
+                
+                var query = `SELECT loan_id FROM td_loan_month_balance
+                where branch_code = '${dt.branch_code}'
+                and balance_date = '${dateFormat(dt.closed_upto_prev,"yyyy-mm-dd")}'
+                UNION
+                SELECT loan_id FROM td_loan
+                where branch_code = '${dt.branch_code}'
+                and disb_dt > '${dateFormat(dt.closed_upto_prev,"yyyy-mm-dd")}'
+                and disb_dt <= '${dateFormat(dt.closed_upto,"yyyy-mm-dd")}'`
+                var data_loan = await db_Select(null, null, null, null, true, query);
 
                 if (data_loan.suc > 0 && data_loan.msg.length > 0) {
-                    for (let loan of data_loan.msg) {
-                        loanData.push({ ...loan, closed_upto });
-                    }
-                }
-            }
+                    let closed_uptos = dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd");
+            for (let loan of data_loan.msg) {     
+                              //loop2
+                try {              
+                let outstandingBalance = await getLoanBal(loan.loan_id, closed_uptos,'O');
+                let prnBalance = await getLoanBal(loan.loan_id, closed_uptos,'P');
+                let inttBalance = await getLoanBal(loan.loan_id, closed_uptos,'I');
 
-            if (loanData.length === 0) {
-                return res.json({ success: false, message: "No loans found with outstanding balance" });
-            }
-
-            let loanWithBalance = await Promise.all(
-                loanData.map(async (loan) => {
-                    let closed_uptos = dateFormat(new Date(loan.closed_upto), "yyyy-mm-dd");
-                    let outstandingBalance = await getLoanBal(loan.loan_id, closed_uptos);
-                    return { ...loan, closed_uptos, outstandingBalance };
-                })
-            );
-
-            for (let loan of loanWithBalance) {
-                var balance = loan.outstandingBalance.balance || 0;
+                let balance = outstandingBalance.balance || 0;
+                let prnbalance = prnBalance.prn_amt || 0;
+                let inttbalance = inttBalance.intt_amt || 0;
 
                 var table_name = "td_loan_month_balance",
-                    fields = "(balance_date,loan_id,branch_code,prn_amt,intt_amt,outstanding,remarks)",
-                    values = `('${loan.closed_uptos}','${loan.loan_id}','${loan.branch_code}','${loan.prn_amt}','${loan.intt_amt}','${balance}','To Closing')`,
+                    fields = "(balance_date, loan_id, branch_code, prn_amt, intt_amt, outstanding, remarks)",
+                    values = `('${closed_uptos}', '${loan.loan_id}', '${dt.branch_code}', '${prnbalance}', '${inttbalance}', '${balance}', 'To Closing')`,
                     whr = null,
                     flag = 0;
 
-                var loan_balance_data = await db_Insert(table_name, fields, values, whr, flag);
+                var loan_dt = await db_Insert(table_name, fields, values, whr, flag);
+            } catch (err) {
+                console.error(`Error processing loan ${loan.loan_id}:`, err);
             }
+            }   //end loop2
+            }
+            //update
+            var table_name = "td_month_close",
+            fields = `outstanding_flag = 'Y'`,
+            values = null,
+            whr = `branch_code = '${dt.branch_code}' AND closed_upto = '${dateFormat(dt.closed_upto,"yyyy-mm-dd")}'`,
+            flag = 1;
+            var update_outstanding_flag = await db_Insert(table_name, fields, values, whr, flag);
 
-            return res.json({ success: true, message: "Data inserted successfully", data: loanWithBalance });
+        }       //end loop1
+            return res.json({ success: true, message: "Data inserted successfully"});
         } else {
             return res.json({ success: false, message: "No branches found" });
         }

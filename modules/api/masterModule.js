@@ -541,7 +541,7 @@ const genDate = (period, mode, emiDate, selDay) => {
 // };
 
 const getLoanDmd = (loan_id, DATE) => {
-  console.log(loan_id,DATE,'DATE');
+  // console.log(loan_id,DATE,'DATE');
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -655,7 +655,7 @@ const getLoanDmd = (loan_id, DATE) => {
 
 /**Function to get Loan Balance against a particular date */
 /**Function used in Loan demand report, */
-const getLoanBal = (loan_id, to_dt) => {
+const getLoanBal = (loan_id, to_dt,ret_pram) => {
   // console.log(loan_id,to_dt,'lolo');
   
   return new Promise(async (resolve, reject) => {
@@ -688,25 +688,31 @@ const getLoanBal = (loan_id, to_dt) => {
         //   "yyyy-mm-dd"),'lili');
         
         if (pay_id.suc > 0 && pay_id.msg.length > 0) {
-          var latestPaymentId = pay_id.msg[0].payment_id;
-          // console.log(latestPaymentId);
+          let latestPaymentId = pay_id.msg[0].payment_id;
           
+          if (ret_pram === 'O') {
+            select = "(balance + od_balance + intt_balance) balance";
+          } else if (ret_pram === 'P') {
+            select = "(balance + od_balance) prn_amt"; 
+          } else {
+            select = "(intt_balance) intt_amt";
+          }
 
-          var select = "(balance + od_balance + intt_balance) balance",
-            table_name = "td_loan_transactions",
-            whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(
-              latestPaymentDate,
-              "yyyy-mm-dd"
-            )}' AND payment_id = '${latestPaymentId}'`,
-            order = null;
+          whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(
+            latestPaymentDate,
+            "yyyy-mm-dd"
+          )}' AND payment_id = '${latestPaymentId}'`,
+          order = null;
           var balance = await db_Select(select, table_name, whr, order);
-        }
 
         if (balance && balance.suc > 0 && balance.msg.length > 0) {
           resolve(balance.msg[0]);
         } else {
           resolve({ message: "Balance data not found" });
         }
+      } else {
+        resolve({ message: "Payment ID not found" });
+      }
       } else {
         resolve("balance not found", res_dt);
       }
