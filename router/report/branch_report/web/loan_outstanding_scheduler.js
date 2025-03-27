@@ -7,7 +7,7 @@ dateFormat = require('dateformat');
 
  //fetch branch with outstanding and demand flag N
 
- loan_outstanding_scheduler.post("/loan_outstanding_scheduler", async (req, res) => {
+ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) => {
     try {
         var data = req.body;
         // console.log(data,'datas');
