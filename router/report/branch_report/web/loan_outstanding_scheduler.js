@@ -12,15 +12,16 @@ dateFormat = require('dateformat');
         var data = req.body;
         // console.log(data,'datas');
 
-        var select = "branch_code",
+        var select = "branch_code,closed_upto",
             table_name = "td_month_close",
-            whr = `outstanding_flag = 'N' AND demand_flag = 'N'`,
+            whr = `outstanding_flag = 'N'`,
             order = null;
 
         var data_branch = await db_Select(select, table_name, whr, order);
 
         if (data_branch.suc > 0 && data_branch.msg.length > 0) {
             var branch_codes = data_branch.msg.map(item => item.branch_code);
+            var closed_uptos = data_branch.msg.map(item => item.closed_upto);
             let loanData = [];
 
             for (let branch_code of branch_codes) {
@@ -43,32 +44,24 @@ dateFormat = require('dateformat');
         // Fetch outstanding balance for each loan
          let loanWithBalance = await Promise.all(
             loanData.map(async (loan) => {
-                let outstandingBalance = await getLoanBal(loan.loan_id, data.to_dt);
+                let outstandingBalance = await getLoanBal(loan.loan_id, closed_uptos );
                 return { ...loan, outstandingBalance };
             })
         );
 
        // Insert data into td_loan_month_balance
        for (let loan of loanWithBalance) {
-        // Fetch balance_date from td_loan_month_balance for this loan_id and branch_code
-        var select = "balance_date",
-            table_name = "td_loan_month_balance",
-            whr = `loan_id = '${loan.loan_id}' AND branch_code = '${loan.branch_code}'`,
-            order = null 
-            var balanceData = await db_Select(select, table_name, whr, order);
 
-          // Check if balanceData has valid records
-           if (balanceData.suc > 0 && balanceData.msg.length > 0) {      
         // Insert data into td_loan_month_balance
          var balance = loan.outstandingBalance.balance || 0; // Use 0 if balance is not found
 
           var table_name = "td_loan_month_balance",
           fields = "(balance_date,loan_id,branch_code,prn_amt,intt_amt,outstanding,remarks)",
-          values = `('${dateFormat(balanceData.msg[0].balance_date,"yyyy-mm-dd")}','${loan.loan_id}','${loan.branch_code}','0','0','${balance}','To Closing')`,
+          values = `('${dateFormat(closed_uptos,"yyyy-mm-dd")}','${loan.loan_id}','${loan.branch_code}','0','0','${balance}','To Closing')`,
           whr = null,
           flag = 0;
           var loan_balance_data = await db_Insert(table_name,fields,values,whr,flag);
-    }
+    
        }
             return res.json({ success: true, message: "Data inserted successfully", data: loanWithBalance });
         } else {
