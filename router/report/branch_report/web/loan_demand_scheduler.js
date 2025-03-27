@@ -16,9 +16,9 @@ loan_demand_scheduler.post("/loan_demand_scheduler", async (req, res) => {
 
         if (data_branch_demand.suc > 0 && data_branch_demand.msg.length > 0) {
             var branch_codes = data_branch_demand.msg.map(item => item.branch_code);
-            var closed_uptos = data_branch_demand.msg.map(item => item.closed_upto);
+            var closed_uptos_demand = data_branch_demand.msg.map(item => item.closed_upto);
             let demandData = [];
-            console.log(branch_codes,closed_uptos,'demandData');
+            console.log(branch_codes,closed_uptos_demand,'demandData');
             
 
             for (let branch_code of branch_codes) {
