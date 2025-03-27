@@ -112,6 +112,7 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
                     let closed_uptos = dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd");
             for (let loan of data_loan.msg) {     
                               //loop2
+                
                 try {              
                 let outstandingBalance = await getLoanBal(loan.loan_id, closed_uptos,'O');
                 let prnBalance = await getLoanBal(loan.loan_id, closed_uptos,'P');
