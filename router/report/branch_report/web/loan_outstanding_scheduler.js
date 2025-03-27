@@ -131,7 +131,7 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
             );
 
             for (let loan of loanWithBalance) {
-                var balance = loan.outstandingBalance?.balance || 0;
+                var balance = loan.outstandingBalance.balance || 0;
 
                 var table_name = "td_loan_month_balance",
                     fields = "(balance_date,loan_id,branch_code,prn_amt,intt_amt,outstanding,remarks)",
