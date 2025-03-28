@@ -664,7 +664,7 @@ const getLoanBal = (loan_id, to_dt,ret_pram) => {
 
       var select = "max(payment_date) payment_date",
         table_name = "td_loan_transactions",
-        whr = `loan_id = '${loan_id}' AND date(payment_date) <= '${to_dt}'`,
+        whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND date(payment_date) <= '${to_dt}'`,
         order = null;
 
       var pay_data = await db_Select(select, table_name, whr, order);
@@ -676,7 +676,7 @@ const getLoanBal = (loan_id, to_dt,ret_pram) => {
 
         var select = "max(payment_id) payment_id",
           table_name = "td_loan_transactions",
-          whr = `loan_id = '${loan_id}' AND payment_date = '${dateFormat(
+          whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date = '${dateFormat(
             latestPaymentDate,
             "yyyy-mm-dd"
           )}'`,

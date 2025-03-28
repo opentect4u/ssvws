@@ -96,43 +96,48 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
         if (data_branch.suc > 0 && data_branch.msg.length > 0) {
 
             for (let dt of data_branch.msg) {        //loop1
-                console.log(dt,'dt');
-                
+                // console.log(dt,'dt');
+
+                let closed_upto_prev = dateFormat(dt.closed_upto_prev, "yyyy-mm-dd");
+                let closed_upto = dateFormat(dt.closed_upto, "yyyy-mm-dd");
+
                 var query = `SELECT loan_id FROM td_loan_month_balance
-                where branch_code = '${dt.branch_code}'
-                and balance_date = '${dateFormat(dt.closed_upto_prev,"yyyy-mm-dd")}'
+                WHERE branch_code = '${dt.branch_code}'
+                AND balance_date = '${closed_upto_prev}'
                 UNION
                 SELECT loan_id FROM td_loan
-                where branch_code = '${dt.branch_code}'
-                and disb_dt > '${dateFormat(dt.closed_upto_prev,"yyyy-mm-dd")}'
-                and disb_dt <= '${dateFormat(dt.closed_upto,"yyyy-mm-dd")}'`
+                WHERE branch_code = '${dt.branch_code}'
+                AND disb_dt > '${closed_upto_prev}'
+                AND disb_dt <= '${closed_upto}'`
                 var data_loan = await db_Select(null, null, null, null, true, query);
-                console.log(data_loan,'data_loan');
+                // console.log(data_loan,'data_loan');
                 
 
                 if (data_loan.suc > 0 && data_loan.msg.length > 0) {
-                    let closed_uptos = dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd");
-            for (let loan of data_loan.msg) {     
+                    // let closed_uptos = dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd");
+                 for (let loan of data_loan.msg) {     
                               //loop2
                 
                 try {              
-                let outstandingBalance = await getLoanBal(loan.loan_id, closed_uptos,'O');
-                let prnBalance = await getLoanBal(loan.loan_id, closed_uptos,'P');
-                let inttBalance = await getLoanBal(loan.loan_id, closed_uptos,'I');
+                let outstandingBalance = await getLoanBal(loan.loan_id, closed_upto,'O');
+                let prnBalance = await getLoanBal(loan.loan_id, closed_upto,'P');
+                let inttBalance = await getLoanBal(loan.loan_id, closed_upto,'I');
 
                 let balance = outstandingBalance.balance || 0;
                 let prnbalance = prnBalance.prn_amt || 0;
                 let inttbalance = inttBalance.intt_amt || 0;
-                // console.log(balance,prnbalance,inttbalance,'test');
+                // console.log(`Loan ID: ${loan.loan_id}, Balance: ${balance}, Principal: ${prnbalance}, Interest: ${inttbalance}`);
                 
 
+                if (balance > 0) {
                 var table_name = "td_loan_month_balance",
                     fields = "(balance_date, loan_id, branch_code, prn_amt, intt_amt, outstanding, remarks)",
-                    values = `('${closed_uptos}', '${loan.loan_id}', '${dt.branch_code}', '${prnbalance}', '${inttbalance}', '${balance}', 'To Closing')`,
+                    values = `('${closed_upto}', '${loan.loan_id}', '${dt.branch_code}', '${prnbalance}', '${inttbalance}', '${balance}', 'To Closing')`,
                     whr = null,
                     flag = 0;
 
                 var loan_dt = await db_Insert(table_name, fields, values, whr, flag);
+                }
             } catch (err) {
                 console.error(`Error processing loan ${loan.loan_id}:`, err);
             }
@@ -142,7 +147,7 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
             var table_name = "td_month_close",
             fields = `outstanding_flag = 'Y'`,
             values = null,
-            whr = `branch_code = '${dt.branch_code}' AND closed_upto = '${dateFormat(dt.closed_upto,"yyyy-mm-dd")}'`,
+            whr = `branch_code = '${dt.branch_code}' AND closed_upto = '${closed_upto}'`,
             flag = 1;
             var update_outstanding_flag = await db_Insert(table_name, fields, values, whr, flag);
 
