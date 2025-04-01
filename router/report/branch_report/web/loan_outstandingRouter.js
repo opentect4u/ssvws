@@ -211,7 +211,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
 
         var select = "DISTINCT a.co_id,ifnull(b.emp_name,'NA')emp_name",
         table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id",
-        whr = `a.branch_code = '${data.branch_code}'`,
+        whr = `a.branch_code IN (${data.branch_code})`,
         order = null;
         var branch_co = await db_Select(select,table_name,whr,order);
     
