@@ -118,10 +118,10 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 
                 // Choose table based on date
                 if (isCurrentDate) {
-                    var select = "a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
-                    table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id",
+                    var select = "a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
+                    table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
                     whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
-                    order = `GROUP BY a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
+                    order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     res.send({outstanding_data,  balance_date: currentDate.toISOString().split('T')[0]});
                 }else {
@@ -134,10 +134,10 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     if(res_dt.suc > 0 && res_dt.msg.length > 0){
                         var balance_date = dateFormat(res_dt.msg[0].balance_date, 'yyyy-mm-dd');
 
-                    var select = "b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
-                    table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
+                    var select = "b.branch_code,e.branch_name,b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
+                    table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
                     whr = `a.balance_date = '${balance_date}' AND a.branch_code IN (${data.branch_code})`,
-                    order = `GROUP BY b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,d.emp_name`;
+                    order = `GROUP BY b.branch_code,e.branch_name,b.group_code,c.group_name,c.co_id,c.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,d.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     // outstanding_data['balance_date'] = balance_date
                     res.send({outstanding_data,balance_date});
