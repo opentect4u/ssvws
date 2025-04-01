@@ -238,7 +238,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 if (isCurrentDate) {
                     var select = "a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
                     table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
-                    whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}' AND b.co_id = '${data.co_id}'`,
+                    whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}' AND b.co_id IN (${data.co_id})`,
                     order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,c.emp_name`;
                     var outstanding_co_data = await db_Select(select,table_name,whr,order);
                     res.send({outstanding_co_data,  balance_date: currentDate.toISOString().split('T')[0]});
@@ -254,7 +254,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
     
                         var select = "b.branch_code,e.branch_name,b.group_code,c.group_name,c.co_id,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,d.emp_name co_name",
                         table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
-                        whr = `a.balance_date = '${balance_date}' AND a.branch_code IN (${data.branch_code}) AND c.co_id = '${data.co_id}'`,
+                        whr = `a.balance_date = '${balance_date}' AND a.branch_code IN (${data.branch_code}) AND c.co_id IN (${data.co_id})`,
                         order = `GROUP BY b.branch_code,e.branch_name,b.group_code,c.group_name,c.co_id,d.emp_name`;
                     var outstanding_co_data = await db_Select(select,table_name,whr,order);
                     // outstanding_co_data['balance_date'] = balance_date
