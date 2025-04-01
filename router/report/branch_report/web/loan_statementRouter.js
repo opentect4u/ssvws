@@ -4,6 +4,32 @@ const express = require('express'),
 loan_statementRouter = express.Router(),
 dateFormat = require('dateformat');
 
+//fetch branch name based on user type
+loan_statementRouter.post("/fetch_brn_name_based_usertype", async (req, res) => {
+    try {
+      var data = req.body;
+    //   console.log(data, 'data');
+  
+      let select = "a.user_type, b.branch_assign_id, c.branch_name";
+      let table_name = "md_user a LEFT JOIN td_assign_branch_user b ON a.user_type = b.user_type LEFT JOIN md_branch c ON b.branch_assign_id = c.branch_code";
+      let whr = `a.emp_id = '${data.emp_id}' AND a.user_type = '${data.user_type}'`;
+      let order = null;
+  
+      // If user_type is 4, fetch all branches
+      if (data.user_type == 4) {
+        select = "branch_code AS branch_assign_id, branch_name";
+        table_name = "md_branch";
+        whr = `branch_code != '100'`; // This fetches all branches
+      }
+  
+      var branch_dtls_user = await db_Select(select, table_name, whr, order);
+      res.send(branch_dtls_user);
+    } catch (error) {
+      console.error("Error fetching branch name details based on user type:", error);
+      res.send({ suc: 0, msg: "An error occurred" });
+    }
+  });
+
 loan_statementRouter.post("/loan_statement_memb_dtls", async (req, res) => {
     var data = req.body;
     
@@ -26,7 +52,7 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
     // var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,(a.balance + a.od_balance)prn_bal,a.intt_balance intt_bal,(a.balance + a.intt_balance) total,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
     var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,(a.balance + a.od_balance)prn_bal,a.intt_balance intt_bal,(a.balance + a.od_balance + a.intt_balance) total_outstanding,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
     table_name = "td_loan_transactions a, td_loan b",
-    whr = `a.branch_id = '${data.branch_id}' AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
+    whr = `a.branch_id IN (${data.branch_id}) AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
     order = `ORDER BY date(a.payment_date),a.payment_id`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
@@ -57,7 +83,7 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
     table_name = `(
         select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,a.tr_type tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.od_balance +a.intt_balance) total,b.curr_roi,b.period,b.period_mode,b.tot_emi
         from td_loan_transactions a,td_loan b  
-        where a.branch_id = '${data.branch_code}' AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
+        where a.branch_id IN (${data.branch_code}) AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
         AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
         GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.curr_roi,b.period,b.period_mode,b.tot_emi
         ORDER BY a.payment_date,a.payment_id)a`,
