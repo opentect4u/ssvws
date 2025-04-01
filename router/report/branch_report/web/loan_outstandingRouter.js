@@ -78,7 +78,7 @@ dateFormat = require('dateformat');
 loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res) => {
     try {
       var data = req.body;
-      console.log(data, 'data');
+    //   console.log(data, 'data');
   
       let select = "a.user_type, b.branch_assign_id, c.branch_name";
       let table_name = "md_user a LEFT JOIN td_assign_branch_user b ON a.user_type = b.user_type LEFT JOIN md_branch c ON b.branch_assign_id = c.branch_code";
