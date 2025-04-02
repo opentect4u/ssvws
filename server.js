@@ -82,7 +82,7 @@ const { loan_outstandingAdminrouter } = require("./router/report/branch_report/a
 const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_summaryRouter");
 const { loan_summaryAdminRouter } = require("./router/report/branch_report/admin_web/loan_summaryAdminRouter");
 const { dmd_vs_collRouter } = require("./router/report/branch_report/web/dmd_vs_collRouter");
-const { getLoanBal } = require("./modules/api/masterModule");
+const { getLoanBal, getLoanDmd } = require("./modules/api/masterModule");
 const { dmd_vs_collAdminRouter } = require("./router/report/branch_report/admin_web/dmd_vs_collAdminRouter");
 const { loan_demandAdminRouter } = require("./router/report/branch_report/admin_web/loan_demandAdminRouter");
 const { attendanceRouter } = require("./router/api/emp_attandence/attendanceRouter");
@@ -154,12 +154,12 @@ app.get("/",async (req, res) => {
 // res.send(pass)
 });
 
-// app.get("/", async (req, res) => {
-//   var get_loan_bal = await getLoanBal('12020623','2024-12-20')
-//   console.log(get_loan_bal,'get');
+app.get("/", async (req, res) => {
+  var get_loan_bal = await getLoanDmd('67553','2025-01-31')
+  console.log(get_loan_bal,'get');
 
-//   res.send(get_loan_bal)
-// })
+  res.send(get_loan_bal)
+})
 
 app.get('/404', (req, res) => {
   res.render('pages/404')
