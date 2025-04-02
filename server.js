@@ -156,7 +156,7 @@ app.get("/",async (req, res) => {
 
 app.get("/", async (req, res) => {
   var get_loan_bal = await getLoanDmd('67553','2025-01-31')
-  console.log(get_loan_bal,'get');
+  // console.log(get_loan_bal,'get');
 
   res.send(get_loan_bal)
 })
