@@ -57,19 +57,46 @@ dateFormat = require('dateformat');
 //       }
 // });
 
+//fetch branch name based on user type
+
+loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => {
+    try {
+      var data = req.body;
+    //   console.log(data, 'data');
+  
+      let select = "a.user_type, b.branch_assign_id, c.branch_name";
+      let table_name = "md_user a LEFT JOIN td_assign_branch_user b ON a.user_type = b.user_type LEFT JOIN md_branch c ON b.branch_assign_id = c.branch_code";
+      let whr = `a.emp_id = '${data.emp_id}' AND a.user_type = '${data.user_type}'`;
+      let order = null;
+  
+      // If user_type is 4, fetch all branches
+      if (data.user_type == 4) {
+        select = "branch_code AS branch_assign_id, branch_name";
+        table_name = "md_branch";
+        whr = `branch_code != '100'`; // This fetches all branches
+      }
+  
+      var branch_dtls_user = await db_Select(select, table_name, whr, order);
+      res.send(branch_dtls_user);
+    } catch (error) {
+      console.error("Error fetching branch name details based on user type:", error);
+      res.send({ suc: 0, msg: "An error occurred" });
+    }
+  });
+
 // Transaction report groupwise 13.03.2025
 
 loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
   try{
     var data = req.body;
  
-    var select = `b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,
+    var select = `b.branch_code,e.branch_name,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,
       ${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'}`
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id",
-    whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+    whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND a.tr_type = '${data.tr_type}'`,
-    order = `GROUP BY b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
-             ORDER BY b.group_code,c.group_name desc`;
+    order = `GROUP BY b.branch_code,e.branch_name,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
+             ORDER BY b.branch_code,e.branch_name,b.group_code,c.group_name desc`;
     var transaction_group_data = await db_Select(select,table_name,whr,order);
     res.send({transaction_group_data})
   }catch (error){
