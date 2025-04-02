@@ -9,7 +9,7 @@ loan_demand_scheduler.get("/loan_demand_scheduler", async (req, res) => {
   try {
     var data = req.query;
 
-    var select = "branch_code,closed_upto",
+    var select = "branch_code,closed_upto,DATE_ADD(closed_upto, INTERVAL 1 MONTH) AS next_month",
       table_name = "td_month_close",
       whr = `demand_flag = 'N'`,
       order = null;
@@ -18,6 +18,7 @@ loan_demand_scheduler.get("/loan_demand_scheduler", async (req, res) => {
     if (data_branch_demand.suc > 0 && data_branch_demand.msg.length > 0) {
       for (let dt of data_branch_demand.msg) {
         let closed_upto = dateFormat(dt.closed_upto, "yyyy-mm-dd");
+        let closed_upto_next = dateFormat(dt.next_month, "yyyy-mm-dd");
 
         let select = "loan_id",
           table_name = "td_loan",
@@ -33,12 +34,12 @@ loan_demand_scheduler.get("/loan_demand_scheduler", async (req, res) => {
         if (loan_id_data_demand.suc > 0 && loan_id_data_demand.msg.length > 0) {
           for (let loan of loan_id_data_demand.msg) {
             try {
-              let demandBalance = await getLoanDmd(loan.loan_id, closed_upto);
+              let demandBalance = await getLoanDmd(loan.loan_id, closed_upto_next);
               let demand = demandBalance.demand.ld_demand || 0;
 
               table_name = "td_loan_month_demand",
                 fields = "(demand_date,loan_id,branch_code,dmd_amt,remarks)",
-                values = `('${closed_upto}','${loan.loan_id}','${dt.branch_code}','${demand}','Demand of ${closed_upto}')`,
+                values = `('${closed_upto_next}','${loan.loan_id}','${dt.branch_code}','${demand}','Demand of ${closed_upto_next}')`,
                 whr = null,
                 flag = 0;
               var loan_demand_data = await db_Insert(
