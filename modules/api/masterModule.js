@@ -541,7 +541,7 @@ const genDate = (period, mode, emiDate, selDay) => {
 // };
 
 const getLoanDmd = (loan_id, DATE) => {
-  console.log(loan_id,DATE,'DATE');
+  // console.log(loan_id,DATE,'DATE');
 
   return new Promise(async (resolve, reject) => {
     try {
@@ -551,13 +551,13 @@ const getLoanDmd = (loan_id, DATE) => {
         order = null;
 
       var get_data = await db_Select(select, table_name, whr, order);
-       console.log(get_data,'ok');
+      //  console.log(get_data,'ok');
 
       if (get_data.suc > 0 && get_data.msg.length > 0) {
         var instl_st_dt = get_data.msg[0].instl_start_dt;
         var instl_end_dt = get_data.msg[0].instl_end_dt;
         end_dt = `${dateFormat(instl_end_dt, "yyyy-mm-dd")}`;
-        console.log(instl_end_dt,end_dt,'instl_end_dt');
+        // console.log(instl_end_dt,end_dt,'instl_end_dt');
 
         var tot_emi = get_data.msg[0].tot_emi;
         var outstanding = get_data.msg[0].outstanding;
@@ -568,7 +568,7 @@ const getLoanDmd = (loan_id, DATE) => {
           ld_demand = 0;
         } else {
           if (DATE > end_dt) {
-            console.log(DATE > instl_end_dt,'test');
+            // console.log(DATE > instl_end_dt,'test');
 
             ld_demand = outstanding;
 
@@ -592,7 +592,7 @@ const getLoanDmd = (loan_id, DATE) => {
 
             var create_date = DATE;
 
-             console.log("Created date:", create_date);
+            //  console.log("Created date:", create_date);
 
             if (get_data.msg[0].period_mode === "Monthly") {
               var date_diff = `CEIL(DATEDIFF('${dateFormat(
@@ -613,10 +613,10 @@ const getLoanDmd = (loan_id, DATE) => {
             }
 
             var date_diffs = await db_Select(date_diff);
-             console.log(date_diffs);
+            //  console.log(date_diffs);
 
             var ld_actual_amt = date_diffs.msg[0].date_diff * tot_emi;
-             console.log(ld_actual_amt);
+            //  console.log(ld_actual_amt);
 
             var select = "SUM(credit) credit",
               table_name = "td_loan_transactions",
@@ -626,12 +626,12 @@ const getLoanDmd = (loan_id, DATE) => {
               )}'`,
               order = null;
             var ld_paid_amt = await db_Select(select, table_name, whr, order);
-             console.log(ld_paid_amt);
+            //  console.log(ld_paid_amt);
 
             ld_demand =
               parseFloat(ld_actual_amt) - parseFloat(ld_paid_amt.msg[0].credit);
             ld_demand = Math.max(0, ld_demand);
-             console.log(ld_demand,'ld');
+            //  console.log(ld_demand,'ld');
           }
         }
         // console.log(ld_demand,'dd');

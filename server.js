@@ -154,12 +154,12 @@ app.get("/",async (req, res) => {
 // res.send(pass)
 });
 
-app.get("/", async (req, res) => {
-  var get_loan_bal = await getLoanDmd('67553','2025-01-31')
-  // console.log(get_loan_bal,'get');
+// app.get("/", async (req, res) => {
+//   var get_loan_bal = await getLoanDmd('67553','2025-01-31')
+//   // console.log(get_loan_bal,'get');
 
-  res.send(get_loan_bal)
-})
+//   res.send(get_loan_bal)
+// })
 
 app.get('/404', (req, res) => {
   res.render('pages/404')
