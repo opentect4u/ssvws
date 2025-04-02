@@ -150,10 +150,10 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
     try{
       var data = req.body;
    
-      var select = `b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,b.loan_id,b.member_code,e.client_name,b.scheme_id,f.scheme_name,a.payment_id transaction_id,a.payment_date transaction_date,a.particulars,${data.tr_type === 'D' ? 'a.debit AS debit' : 'a.credit AS credit'},(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance,a.created_by created_code,a.created_at,g.emp_name created_by,a.approved_at,a.approved_by approved_code,h.emp_name approved_by`,
-      table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id LEFT JOIN md_employee g ON a.created_by = g.emp_id LEFT JOIN md_employee h ON a.approved_by = h.emp_id",
-      whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
-      order = `ORDER BY payment_id desc, payment_date desc`;
+      var select = `b.branch_code,i.branch_name,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,b.loan_id,b.member_code,e.client_name,b.scheme_id,f.scheme_name,a.payment_id transaction_id,a.payment_date transaction_date,a.particulars,${data.tr_type === 'D' ? 'a.debit AS debit' : 'a.credit AS credit'},(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance,a.created_by created_code,a.created_at,g.emp_name created_by,a.approved_at,a.approved_by approved_code,h.emp_name approved_by`,
+      table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id LEFT JOIN md_employee g ON a.created_by = g.emp_id LEFT JOIN md_employee h ON a.approved_by = h.emp_id LEFT JOIN md_branch i ON b.branch_code = i.branch_code",
+      whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
+      order = `ORDER BY b.branch_code,i.branch_name,a.payment_id desc, a.payment_date desc`;
       var transaction_member_data = await db_Select(select,table_name,whr,order);
       res.send({transaction_member_data})
     }catch (error){
@@ -171,7 +171,7 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
    
       var select = `a.branch_id,c.branch_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'},SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
       table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
-      whr = `a.branch_id = '${data.branch_code}' AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
+      whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
       order = `GROUP BY a.branch_id,c.branch_name`;
       var transaction_branch_data = await db_Select(select,table_name,whr,order);
       res.send({transaction_branch_data})
