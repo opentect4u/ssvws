@@ -189,4 +189,47 @@ loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
     }
 });
 
+
+// loan demand report groupwise 02.04.2025
+
+// loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
+//     try {
+//         var data = req.body;
+//         console.log(data,'data');
+
+//         const currentDate = new Date();
+//         const create_Date = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+
+//         // Identify supply date type
+//         const isCurrentDate = create_Date === currentDate.toDateString();
+//         console.log(isCurrentDate,'iscurrent');
+
+//         res.send(create_Date)
+        
+//     }catch(error){
+//         console.error("Error fetching demand report groupwise:", error);
+//         res.send({ suc: 0, msg: "An error occurred" });
+//     }
+// });
+
+loan_demandRouter.post("/loan_demand_report_groupwise1", async (req, res) => {
+    try {
+        var data = req.body;
+        console.log(data,'data');
+
+        const currentDate = new Date();
+        const create_Date = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+
+        // Identify supply date type
+        const isCurrentDate = create_Date[0].month_last_date === currentDate.toDateString();
+        console.log(create_Date.month_last_date,isCurrentDate,'iscurrent');
+
+        res.send(create_Date)
+        
+    }catch(error){
+        console.error("Error fetching demand report groupwise:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }
+});
+
 module.exports = {loan_demandRouter}
