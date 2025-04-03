@@ -238,7 +238,7 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
     }
 });
 
- loan_demandRouter.post("/fetch_brn_co", async (req, res) => {
+ loan_demandRouter.post("/fetch_brn_co_demand", async (req, res) => {
         var data = req.body;
     
          //FETCH BRANCHWISE CO NAME
