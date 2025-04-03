@@ -238,6 +238,25 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
     }
 });
 
+ loan_demandRouter.post("/fetch_brn_co", async (req, res) => {
+        var data = req.body;
+    
+         //FETCH BRANCHWISE CO NAME
+        // var select = "a.emp_id,a.emp_name,b.user_type",
+        // table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
+        // whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
+        // order = null;
+        // var branch_co = await db_Select(select,table_name,whr,order);
+
+        var select = "DISTINCT a.co_id,ifnull(b.emp_name,'NA')emp_name",
+        table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id",
+        whr = `a.branch_code IN (${data.branch_code})`,
+        order = null;
+        var branch_co = await db_Select(select,table_name,whr,order);
+    
+        res.send(branch_co)
+    });
+
 // loan demand report cowise 03.04.2025
 
 loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
