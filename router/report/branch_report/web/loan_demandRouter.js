@@ -106,128 +106,198 @@ dateFormat = require('dateformat');
 
 
 //MEMBERWISE DEMAND REPORT
-loan_demandRouter.post("/loan_demand_report_membwise", async (req, res) => {
-    try {
-                var data = req.body;
+// loan_demandRouter.post("/loan_demand_report_membwise", async (req, res) => {
+//     try {
+//                 var data = req.body;
 
-                 // Fetch loan details from recovery day
-                 const pro_name = 'p_loan_demand',
-                 pro_params = `?,?,?`,
-                 pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
-                 sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
-                 sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,a.curr_dmd_amt demand,a.current_principal,b.co_name`,
-                 sel_whr_fields = `a.loan_id = b.loan_id AND (a.curr_dmd_amt + a.current_principal) > 0`,
-                 sel_whr_arr = [],
-                 sel_order = `ORDER BY  a.loan_id`;
-                 var loan_dt_membwise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
+//                  // Fetch loan details from recovery day
+//                  const pro_name = 'p_loan_demand',
+//                  pro_params = `?,?,?`,
+//                  pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
+//                  sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
+//                  sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,a.curr_dmd_amt demand,a.current_principal,b.co_name`,
+//                  sel_whr_fields = `a.loan_id = b.loan_id AND (a.curr_dmd_amt + a.current_principal) > 0`,
+//                  sel_whr_arr = [],
+//                  sel_order = `ORDER BY  a.loan_id`;
+//                  var loan_dt_membwise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
 
-                 res.send(loan_dt_membwise)
+//                  res.send(loan_dt_membwise)
 
-              //  if (loan_dt.suc > 0 && loan_dt.msg.length > 0) {
-              //    var demandResults = [];
+//               //  if (loan_dt.suc > 0 && loan_dt.msg.length > 0) {
+//               //    var demandResults = [];
 
-              //     for (let dt of loan_dt.msg) {
-              //       var get_balance = await getLoanBal(dt.loan_id, data.to_dt);
-              //       var demandData = await getLoanDmd(dt.loan_id, data.to_dt);
-              //       dt['demand'] = demandData.demand.ld_demand
-              //       dt['balance_dt'] = get_balance.balance
-              //     }
-              //    res.send(loan_dt)
-              //   } else {
-              //    res.send({ suc: 0, msg: [] });
-              //   }
+//               //     for (let dt of loan_dt.msg) {
+//               //       var get_balance = await getLoanBal(dt.loan_id, data.to_dt);
+//               //       var demandData = await getLoanDmd(dt.loan_id, data.to_dt);
+//               //       dt['demand'] = demandData.demand.ld_demand
+//               //       dt['balance_dt'] = get_balance.balance
+//               //     }
+//               //    res.send(loan_dt)
+//               //   } else {
+//               //    res.send({ suc: 0, msg: [] });
+//               //   }
 
-            } catch (error) {
-              console.error("Error fetching demand report memberwise:", error);
-              res.send({ suc: 0, msg: "An error occurred" });
-          }
-});
+//             } catch (error) {
+//               console.error("Error fetching demand report memberwise:", error);
+//               res.send({ suc: 0, msg: "An error occurred" });
+//           }
+// });
 
 
 //GROUPWISE DEMAND REPORT
-loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
-  try {
-              var data = req.body;
+// loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
+//   try {
+//               var data = req.body;
 
-               const pro_name = 'p_loan_demand',
-               pro_params = `?,?,?`,
-               pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
-               sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
-               sel_fields = `a.group_code,b.group_name,a.disbursed_date,sum(a.disbursed_amount)disbursed_amount,a.current_roi,a.period,a.period_mode,a.installment_end_date,sum(a.total_emi)total_emi,sum(a.curr_dmd_amt) demand,sum(a.current_principal)outstanding,b.co_name`,
-               sel_whr_fields = `a.loan_id = b.loan_id AND (a.curr_dmd_amt + a.current_principal) > 0`,
-               sel_whr_arr = [],
-               sel_order = `GROUP BY a.group_code,b.group_name,a.disbursed_date,a.current_roi,a.period,a.period_mode,a.installment_end_date,b.co_name`;
-               var loan_dt_groupwise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
+//                const pro_name = 'p_loan_demand',
+//                pro_params = `?,?,?`,
+//                pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
+//                sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
+//                sel_fields = `a.group_code,b.group_name,a.disbursed_date,sum(a.disbursed_amount)disbursed_amount,a.current_roi,a.period,a.period_mode,a.installment_end_date,sum(a.total_emi)total_emi,sum(a.curr_dmd_amt) demand,sum(a.current_principal)outstanding,b.co_name`,
+//                sel_whr_fields = `a.loan_id = b.loan_id AND (a.curr_dmd_amt + a.current_principal) > 0`,
+//                sel_whr_arr = [],
+//                sel_order = `GROUP BY a.group_code,b.group_name,a.disbursed_date,a.current_roi,a.period,a.period_mode,a.installment_end_date,b.co_name`;
+//                var loan_dt_groupwise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
 
-               res.send(loan_dt_groupwise)
+//                res.send(loan_dt_groupwise)
 
-          } catch (error) {
-            console.error("Error fetching demand report groupwise:", error);
-            res.send({ suc: 0, msg: "An error occurred" });
-        }
-});
+//           } catch (error) {
+//             console.error("Error fetching demand report groupwise:", error);
+//             res.send({ suc: 0, msg: "An error occurred" });
+//         }
+// });
 
 //COWISE DEMAND REPORT
-loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
+// loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
+//     try {
+//         var data = req.body;
+//         const pro_name = 'p_loan_demand',
+//         pro_params = `?,?,?`,
+//         pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
+//         sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
+//         sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,a.curr_dmd_amt demand,a.current_principal,b.co_name,b.collec_code`,
+//         sel_whr_fields = `a.loan_id = b.loan_id AND b.collec_code = '${data.co_id}' AND (a.curr_dmd_amt + a.current_principal) > 0`,
+//         sel_whr_arr = [],
+//         sel_order = `ORDER BY  a.loan_id`;
+//         var repo_data_cowise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
+
+//         res.send(repo_data_cowise)
+
+//     } catch (error) {
+//         console.error("Error fetching demand vs collection report cowise:", error);
+//         res.send({ suc: 0, msg: "An error occurred" });
+//     }
+// });
+
+
+
+// loan demand report groupwise 02.04.2025
+
+loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
     try {
         var data = req.body;
-        const pro_name = 'p_loan_demand',
-        pro_params = `?,?,?`,
-        pro_params_val = [data.from_dt, data.to_dt, data.branch_code],
-        sel_table_name = `tt_loan_demand a,vw_loan_demand_report b`,
-        sel_fields = `a.loan_id,a.member_code,b.client_name,a.group_code,b.group_name,a.disbursed_date,a.disbursed_amount,a.current_roi,a.period,a.period_mode,a.recov_day,a.installment_end_date,a.total_emi,a.curr_dmd_amt demand,a.current_principal,b.co_name,b.collec_code`,
-        sel_whr_fields = `a.loan_id = b.loan_id AND b.collec_code = '${data.co_id}' AND (a.curr_dmd_amt + a.current_principal) > 0`,
-        sel_whr_arr = [],
-        sel_order = `ORDER BY  a.loan_id`;
-        var repo_data_cowise = await db_RunProcedureAndFetchData(pro_name, pro_params, pro_params_val, sel_fields, sel_table_name, sel_whr_fields, sel_whr_arr, sel_order);
+        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
-        res.send(repo_data_cowise)
+        var dateResult = await db_Select(date_query);
+        // console.log(dateResult, 'dmy');
+        var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
+        // console.log("Created date:", create_date);
 
-    } catch (error) {
-        console.error("Error fetching demand vs collection report cowise:", error);
+        var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,SUM(b.tot_emi)tot_emi,SUM(a.dmd_amt)demand_amt,SUM(b.outstanding)curr_outstanding",
+        table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
+        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}'`,
+        order = `GROUP BY a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.disb_dt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt`;
+        var groupwise_demand_data = await db_Select(select,table_name,whr,order)
+        res.send({groupwise_demand_data,create_date})
+    }catch(error){
+        console.error("Error fetching demand report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
     }
 });
 
 
-// loan demand report groupwise 02.04.2025
+// loan demand report fundwise 03.04.2025
 
-// loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
-//     try {
-//         var data = req.body;
-//         console.log(data,'data');
-
-//         const currentDate = new Date();
-//         const create_Date = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
-
-//         // Identify supply date type
-//         const isCurrentDate = create_Date === currentDate.toDateString();
-//         console.log(isCurrentDate,'iscurrent');
-
-//         res.send(create_Date)
-        
-//     }catch(error){
-//         console.error("Error fetching demand report groupwise:", error);
-//         res.send({ suc: 0, msg: "An error occurred" });
-//     }
-// });
-
-loan_demandRouter.post("/loan_demand_report_groupwise1", async (req, res) => {
+loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'data');
+        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
-        const currentDate = new Date();
-        const create_Date = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+        var dateResult = await db_Select(date_query);
+        var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
 
-        // Identify supply date type
-        const isCurrentDate = create_Date[0].month_last_date === currentDate.toDateString();
-        console.log(create_Date.month_last_date,isCurrentDate,'iscurrent');
-
-        res.send(create_Date)
-        
+        var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,SUM(a.dmd_amt)demand_amt,SUM(b.outstanding)curr_outstanding",
+        table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
+        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}' AND b.fund_id = '${data.fund_id}'`,
+        order = "GROUP BY a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name";
+        var fundwise_demand_data = await db_Select(select,table_name,whr,order);
+        res.send({fundwise_demand_data,create_date})
     }catch(error){
-        console.error("Error fetching demand report groupwise:", error);
+        console.error("Error fetching demand report fundwise:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }
+});
+
+// loan demand report cowise 03.04.2025
+
+loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
+    try {
+        var data = req.body;
+        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+
+        var dateResult = await db_Select(date_query);
+        var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
+
+        var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,SUM(a.dmd_amt) demand_amt,SUM(b.outstanding) curr_outstanding",
+        table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
+        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}' AND d.co_id IN (${data.co_id})`,
+        order = "GROUP BY a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name";
+        var cowise_demand_data = await db_Select(select,table_name,whr,order);
+        res.send({cowise_demand_data,create_date})
+    }catch(error){
+        console.error("Error fetching demand report cowise:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }
+});
+
+// loan demand report memberwise 03.04.2025
+loan_demandRouter.post("/loan_demand_report_memberwise", async (req, res) => {
+    try{
+        var data = req.body;
+        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+
+        var dateResult = await db_Select(date_query);
+        var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
+
+        var select = "a.branch_code,c.branch_name,b.loan_id,b.member_code,f.client_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,b.tot_emi,a.dmd_amt demand_amt,b.outstanding curr_outstanding",
+        table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_member f ON b.member_code = f.member_code",
+        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}'`,
+        order = "ORDER BY a.branch_code,c.branch_name,b.loan_id desc";
+        var memberwise_demand_data = await db_Select(select,table_name,whr,order);
+        res.send({memberwise_demand_data,create_date})
+    }catch(error){
+        console.error("Error fetching demand report memberwise:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }
+});
+
+// loan demand report branchwise 03.04.2025
+loan_demandRouter.post("/loan_demand_report_branchwise", async (req, res) => {
+    try {
+        var data = req.body;
+        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+
+        var dateResult = await db_Select(date_query);
+        var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
+
+        var select = "a.branch_code,c.branch_name,SUM(a.dmd_amt) demand_amt,SUM(b.outstanding) curr_outstanding",
+        table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
+        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}'`,
+        order = "GROUP BY a.branch_code,c.branch_name"; 
+        var branchwise_demand_data = await db_Select(select,table_name,whr,order);
+        res.send({branchwise_demand_data,create_date})
+    }catch(error){
+        console.error("Error fetching demand report branchwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
     }
 });
