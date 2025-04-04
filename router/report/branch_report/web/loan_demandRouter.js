@@ -210,8 +210,8 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
         var groupwise_demand_data = await db_Select(select,table_name,whr,order);
 
          // Separate demand_date fetch
-         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", whr);
-         var demand_date = demand_date_result.msg[0].demand_date;
+         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
+         var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
         res.send({groupwise_demand_data,demand_date})
     }catch(error){
         console.error("Error fetching demand report groupwise:", error);
