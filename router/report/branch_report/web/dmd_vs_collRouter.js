@@ -90,7 +90,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
    var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
    var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
 
-   var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,MAX(b.disb_dt)disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,SUM(b.tot_emi)tot_emi,SUM(a.dmd_amt)demand_amt,SUM(f.credit)collection_amt,(SUM(a.dmd_amt) - SUM(f.credit)) dmd - collec amt,SUM(b.outstanding)curr_outstanding",
+   var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,MAX(b.disb_dt)disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,SUM(b.tot_emi)tot_emi,SUM(a.dmd_amt)demand_amt,SUM(f.credit)collection_amt,(SUM(a.dmd_amt) - SUM(f.credit)) dmd-collec_amt,SUM(b.outstanding)curr_outstanding",
    table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id",
    whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}'
           AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
@@ -121,7 +121,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
     var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
 
-    var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,SUM(b.tot_emi)total_emi,SUM(a.dmd_amt)demand_amt,SUM(g.credit)collection_amt,(SUM(a.dmd_amt) - SUM(g.credit)) dmd - collec amt,SUM(b.outstanding)curr_outstanding",
+    var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,SUM(b.tot_emi)total_emi,SUM(a.dmd_amt)demand_amt,SUM(g.credit)collection_amt,(SUM(a.dmd_amt) - SUM(g.credit)) dmd-collec_amt,SUM(b.outstanding)curr_outstanding",
     table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id",
     whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}' AND b.fund_id = '${data.fund_id}' AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
     order = `GROUP BY a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name`;
@@ -163,7 +163,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
     var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
 
-    var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,SUM(b.tot_emi) total_emi,SUM(a.dmd_amt) demand_amt,SUM(f.credit)collection_amt,(SUM(a.dmd_amt) - SUM(f.credit)) dmd - collec amt,SUM(b.outstanding) curr_outstanding",
+    var select = "a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,SUM(b.tot_emi) total_emi,SUM(a.dmd_amt) demand_amt,SUM(f.credit)collection_amt,(SUM(a.dmd_amt) - SUM(f.credit)) dmd-collec_amt,SUM(b.outstanding) curr_outstanding",
     table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id",
     whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}' AND d.co_id IN (${data.co_id}) AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
     order = `GROUP BY a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name`;
@@ -192,7 +192,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
     var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
 
-    var select = "a.branch_code,c.branch_name,b.loan_id,b.member_code,f.client_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,b.tot_emi,a.dmd_amt demand_amt,g.credit collection_amt,(a.dmd_amt - g.credit) dmd - collec amt,b.outstanding curr_outstanding",
+    var select = "a.branch_code,c.branch_name,b.loan_id,b.member_code,f.client_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,b.tot_emi,a.dmd_amt demand_amt,g.credit collection_amt,(a.dmd_amt - g.credit) dmd-collec_amt,b.outstanding curr_outstanding",
     table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_member f ON b.member_code = f.member_code LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id",
     whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}' AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
     order = `ORDER BY a.branch_code,c.branch_name,b.loan_id desc`;
@@ -221,7 +221,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_branchwise", async (req, res) => {
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
         var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
 
-        var select = "a.branch_code,c.branch_name,SUM(b.tot_emi) total_ami,SUM(a.dmd_amt) demand_amt,SUM(d.credit) collection_amt,(SUM(a.dmd_amt) - SUM(d.credit)) dmd - collec amt,SUM(b.outstanding) curr_outstanding",
+        var select = "a.branch_code,c.branch_name,SUM(b.tot_emi) total_ami,SUM(a.dmd_amt) demand_amt,SUM(d.credit) collection_amt,(SUM(a.dmd_amt) - SUM(d.credit)) dmd-collec_amt,SUM(b.outstanding) curr_outstanding",
         table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN td_loan_transactions d ON a.loan_id = b.loan_id",
         whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date <= '${create_date}' AND d.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
         order = `GROUP BY a.branch_code,c.branch_name`;
