@@ -98,6 +98,7 @@ const { menu_permissionRouter } = require("./router/admin/menu/menu_permissionRo
 const { authCheckForLogin } = require("./middleware/authMiddleware");
 const { loan_outstanding_scheduler } = require("./router/report/branch_report/web/loan_outstanding_scheduler");
 const { loan_demand_scheduler } = require("./router/report/branch_report/web/loan_demand_scheduler");
+const { loan_demandDayRouter } = require("./router/report/branch_report/web/loan_demandDayRouter");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -113,6 +114,7 @@ app.use(testRouter)
 app.use(loan_statementRouter)
 app.use(loan_transRouter)
 app.use(loan_demandRouter)
+app.use(loan_demandDayRouter)
 app.use(loan_outstandingRouter)
 app.use(loan_recov_approveRouter)
 app.use(loan_disb_approveRouter)
