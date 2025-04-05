@@ -226,9 +226,10 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
         var groupwise_demand_data = await db_Select(select,table_name,whr,order);
 
          // Separate demand_date fetch
-         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
-         var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        res.send({groupwise_demand_data,create_date,demand_date})
+        //  var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
+        //  var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
+        // res.send({groupwise_demand_data,create_date,demand_date})
+        res.send({groupwise_demand_data,create_date})
     }catch(error){
         console.error("Error fetching demand report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -271,7 +272,7 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
         // Separate demand_date fetch
         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        res.send({fundwise_demand_data,create_date,demand_date})
+        res.send({fundwise_demand_data,create_date})
     }catch(error){
         console.error("Error fetching demand report fundwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -332,7 +333,7 @@ loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
         // Separate demand_date fetch
         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        res.send({cowise_demand_data,create_date,demand_date})
+        res.send({cowise_demand_data,create_date})
     }catch(error){
         console.error("Error fetching demand report cowise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -372,7 +373,7 @@ loan_demandRouter.post("/loan_demand_report_memberwise", async (req, res) => {
         // Separate demand_date fetch
         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        res.send({memberwise_demand_data,create_date,demand_date})
+        res.send({memberwise_demand_data,create_date})
     }catch(error){
         console.error("Error fetching demand report memberwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -397,7 +398,7 @@ loan_demandRouter.post("/loan_demand_report_branchwise", async (req, res) => {
         // Separate demand_date fetch
         var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        res.send({branchwise_demand_data,demand_date})
+        res.send({branchwise_demand_data,create_date})
     }catch(error){
         console.error("Error fetching demand report branchwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
