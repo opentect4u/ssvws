@@ -196,7 +196,7 @@ dateFormat = require('dateformat');
 loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
     try {
         var data = req.body;
-        var date_query = `SELECT LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
+        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
