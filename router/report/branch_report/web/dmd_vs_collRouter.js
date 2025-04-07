@@ -94,10 +94,10 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
        co_id, emp_name,
        disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,
        instl_start_dt, instl_end_dt,
-       SUM(tot_emi)tot_emi, SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt, SUM(curr_outstanding)curr_outstanding
+       SUM(tot_emi)tot_emi,SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt, SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
-         a.demand_date,a.branch_code, c.branch_name,
+         a.demand_date,a.branch_code,c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
          b.disb_dt, SUM(b.prn_disb_amt) AS disb_amt,
          b.curr_roi, b.period AS loan_period, b.period_mode,
@@ -134,7 +134,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
          AND a.demand_date = '${create_date}'
          AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
-         b.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt
+         b.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
          b.curr_roi, b.period, b.period_mode,b.instl_start_dt,b.instl_end_dt
      ) a
         GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,disb_dt,curr_roi,loan_period,period_mode,instl_start_dt,instl_end_dt
