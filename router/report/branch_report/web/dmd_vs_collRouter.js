@@ -323,46 +323,86 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
 
 // DEMAND VS COLLECTION REPORT MEMBERWISE
 dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
- try{
-    var data = req.body;
-    //last date of month
-    var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
-    
-    //first date of month
-    var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month;
- `
-    var dateResult = await db_Select(date_query);
-    var first_dateResult = await db_Select(first_date_query);
+   try {
+     var data = req.body;
  
-   //create first date and last date
-    var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-    var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
-
-    var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS collec_upto,a.branch_code,c.branch_name,b.loan_id,b.member_code,f.client_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode,CASE 
-        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
-        WHEN b.period_mode = 'Weekly' THEN 
-        CASE b.recovery_day
-        WHEN 1 THEN 'Sunday'
-        WHEN 2 THEN 'Monday'
-        WHEN 3 THEN 'Tuesday'
-        WHEN 4 THEN 'Wednesday'
-        WHEN 5 THEN 'Thursday'
-        WHEN 6 THEN 'Friday'
-        WHEN 7 THEN 'Saturday'
-        ELSE 'Unknown'
-        END
-        ELSE 'N/A'
-        END AS recovery_day,b.instl_start_dt,b.instl_end_dt,b.tot_emi,a.dmd_amt demand_amt,g.credit collection_amt,(a.dmd_amt - g.credit),b.outstanding curr_outstanding`,
-    table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_member f ON b.member_code = f.member_code LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id",
-    whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date = '${create_date}' AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
-    order = `ORDER BY a.demand_date,a.branch_code,c.branch_name,b.loan_id desc`;
-    var member_demand_collec_data = await db_Select(select,table_name,whr,order);
-    res.send({member_demand_collec_data, dateRange:`BETWEEN '${first_create_date}' AND '${create_date}'`});
- }catch(error){
-    console.error("Error fetching demand vs collection report memberwise:", error);
-    res.send({ suc: 0, msg: "An error occurred" });
-} 
-});
+     // Get last and first dates of the selected month
+     var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
+     var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
+ 
+     var dateResult = await db_Select(date_query);
+     var first_dateResult = await db_Select(first_date_query);
+ 
+     var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
+     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
+     
+     var select = ` 
+        DATE_FORMAT(demand_date, '%M %Y') AS demand_date,
+  CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS "collec between",
+  branch_code, branch_name,loan_id,member_code,client_name,
+  group_code, group_name,
+  co_id, emp_name,
+  disb_dt,disb_amt, curr_roi, loan_period, period_mode,
+  instl_start_dt, instl_end_dt,
+  tot_emi,coll_amt,demand_amt AS demand_after_collection,curr_outstanding
+FROM (
+  SELECT 
+    a.demand_date,a.branch_code,c.branch_name,
+    b.loan_id,b.member_code,f.client_name,
+    b.group_code, d.group_name, d.co_id, e.emp_name,
+    b.disb_dt,b.prn_disb_amt AS disb_amt,
+    b.curr_roi, b.period AS loan_period, b.period_mode,
+    b.instl_start_dt,b.instl_end_dt,
+    b.tot_emi AS tot_emi, a.dmd_amt AS demand_amt,
+    0 AS coll_amt,b.outstanding AS curr_outstanding
+  FROM td_loan_month_demand a 
+  LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
+  LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+  LEFT JOIN md_group d ON b.group_code = d.group_code 
+  LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+  LEFT JOIN md_member f ON b.member_code = f.member_code
+  WHERE a.branch_code IN (${data.branch_code})
+    AND a.demand_date = '${create_date}'
+    
+  UNION
+  
+  SELECT 
+    a.demand_date,a.branch_code, c.branch_name,
+    b.loan_id,b.member_code,f.client_name,
+    b.group_code, d.group_name, d.co_id, e.emp_name,
+    b.disb_dt, 0 AS disb_amt,
+    b.curr_roi, b.period AS loan_period, b.period_mode,
+    b.instl_start_dt,b.instl_end_dt,
+    0 AS tot_emi, 0 AS demand_amt,
+    IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
+  FROM td_loan_month_demand a 
+  LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
+  LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+  LEFT JOIN md_group d ON b.group_code = d.group_code 
+  LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+  LEFT JOIN md_member f ON b.member_code = f.member_code
+  LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
+  WHERE a.branch_code IN (${data.branch_code})
+    AND a.demand_date = '${create_date}'
+    AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+  GROUP BY a.demand_date, a.branch_code, c.branch_name,
+           b.loan_id,b.member_code,f.client_name,
+           b.group_code, d.group_name, d.co_id, e.emp_name,
+           b.disb_dt,b.curr_roi, b.period, b.period_mode,
+           b.instl_start_dt, b.instl_end_dt
+) AS a
+ORDER BY group_code;`
+ 
+     var member_demand_collec_data = await db_Select(select,null,null,null);
+     res.send({
+       member_demand_collec_data,
+       dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
+     });
+   } catch (error) {
+     console.error("Error fetching demand vs collection report memberwise:", error);
+     res.send({ suc: 0, msg: "An error occurred" });
+   }
+ });
 
 // DEMAND VS COLLECTION REPORT BRANCHWISE
 dmd_vs_collRouter.post("/dmd_vs_collec_report_branchwise", async (req, res) => {
