@@ -290,7 +290,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
          b.period_mode, 0 AS demand_amt,
-         IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
+         IFNULL(SUM(f.credit), 0) AS coll_amt, 0 AS curr_outstanding
        FROM td_loan_month_demand a 
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
        AND a.loan_id = b.loan_id 
