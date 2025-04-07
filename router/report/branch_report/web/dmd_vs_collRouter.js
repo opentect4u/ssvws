@@ -190,8 +190,9 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        LEFT JOIN md_employee e ON d.co_id = e.emp_id
        WHERE a.branch_code IN (${data.branch_code})
          AND a.demand_date = '${create_date}'
-       GROUP BY a.demand_date, a.branch_code, c.branch_name,
-         b.group_code, d.group_name, d.co_id, e.emp_name,
+         AND b.fund_id = '${data.fund_id}'
+       GROUP BY BY a.demand_date, a.branch_code, c.branch_name,
+         b.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
          b.curr_roi, b.period, b.period_mode
          
        UNION
@@ -199,34 +200,34 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         MAX(b.disb_dt) AS disb_dt, SUM(b.prn_disb_amt) AS disb_amt,
-         b.curr_roi, b.period AS loan_period, b.period_mode,
-         MAX(b.instl_start_dt) AS instl_start_dt, MAX(b.instl_end_dt) AS instl_end_dt,
-         SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
-         IFNULL(SUM(f.credit), 0) AS coll_amt, SUM(b.outstanding) AS curr_outstanding
-       FROM td_loan_month_demand a
-       LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
-       LEFT JOIN md_branch c ON a.branch_code = c.branch_code
-       LEFT JOIN md_group d ON b.group_code = d.group_code
-       LEFT JOIN md_employee e ON d.co_id = e.emp_id
-       LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id
+         b.fund_id,f.fund_name,b.period_mode, SUM(a.dmd_amt) AS demand_amt,
+         IFNULL(SUM(g.credit), 0) AS coll_amt, SUM(b.outstanding) AS curr_outstanding
+       FROM td_loan_month_demand a 
+       LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
+       AND a.loan_id = b.loan_id 
+       LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+       LEFT JOIN md_group d ON b.group_code = d.group_code 
+       LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+       LEFT JOIN md_fund f ON b.fund_id = f.fund_id
+       LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
        WHERE a.branch_code IN (${data.branch_code})
          AND a.demand_date = '${create_date}'
          AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+         AND b.fund_id = '${data.fund_id}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.curr_roi, b.period, b.period_mode
+         b.fund_id,f.fund_name, b.period_mode
      ) a
      ORDER BY group_code
    `;
  
-     var groupwise_demand_collec_data = await db_Select(select,null,null,null);
+     var fund_demand_collec_data = await db_Select(select,null,null,null);
      res.send({
-       groupwise_demand_collec_data,
+       fund_demand_collec_data,
        dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
      });
    } catch (error) {
-     console.error("Error fetching demand vs collection report groupwise:", error);
+     console.error("Error fetching demand vs collection report fundwise:", error);
      res.send({ suc: 0, msg: "An error occurred" });
    }
  });
