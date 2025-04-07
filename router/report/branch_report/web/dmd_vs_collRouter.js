@@ -90,7 +90,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
    var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
    var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
 
-   var select = `a.demand_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,MAX(b.disb_dt)disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode, 
+   var select = `a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,MAX(b.disb_dt)disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode = 'Weekly' THEN 
@@ -108,8 +108,8 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
         END AS recovery_day,b.instl_start_dt,b.instl_end_dt,SUM(b.tot_emi)tot_emi,SUM(a.dmd_amt)demand_amt,SUM(f.credit)collection_amt,SUM(a.dmd_amt) - SUM(f.credit),SUM(b.outstanding)curr_outstanding`,
    table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id",
    whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date = '${create_date}'
-          AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}' AND f.tr_type = 'R'`,
-   order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt`;
+          AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
+   order = `GROUP BY a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt`;
    var groupwise_demand_collec_data = await db_Select(select,table_name,whr,order)
    res.send({groupwise_demand_collec_data, dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`});
   }catch(error){
