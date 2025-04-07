@@ -174,26 +174,25 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       fund_id,fund_name, period_mode,
-       tot_emi, demand_amt, coll_amt, curr_outstanding
+       fund_id,fund_name, period_mode,demand_amt, coll_amt, curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.fund_id,f.fund_name,b.period_mode,
-         SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
+         b.fund_id,f.fund_name,b.period_mode,SUM(a.dmd_amt) AS demand_amt,
          0 AS coll_amt, SUM(b.outstanding) AS curr_outstanding
        FROM td_loan_month_demand a
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
        LEFT JOIN md_branch c ON a.branch_code = c.branch_code
        LEFT JOIN md_group d ON b.group_code = d.group_code
        LEFT JOIN md_employee e ON d.co_id = e.emp_id
+       LEFT JOIN md_fund f ON b.fund_id = f.fund_id
        WHERE a.branch_code IN (${data.branch_code})
          AND a.demand_date = '${create_date}'
          AND b.fund_id = '${data.fund_id}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
-         b.curr_roi, b.period, b.period_mode
+         b.period_mode
          
        UNION
        
