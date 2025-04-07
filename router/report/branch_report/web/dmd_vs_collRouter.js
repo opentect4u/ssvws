@@ -92,16 +92,16 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       disb_dt, disb_amt, curr_roi, loan_period, period_mode,
+       disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,
        instl_start_dt, instl_end_dt,
-       tot_emi, demand_amt, coll_amt, curr_outstanding
+       SUM(tot_emi)tot_emi, SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt, SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         MAX(b.disb_dt) AS disb_dt, SUM(b.prn_disb_amt) AS disb_amt,
+         b.disb_dt, SUM(b.prn_disb_amt) AS disb_amt,
          b.curr_roi, b.period AS loan_period, b.period_mode,
-         MAX(b.instl_start_dt) AS instl_start_dt, MAX(b.instl_end_dt) AS instl_end_dt,
+         b.instl_start_dt,b.instl_end_dt,
          SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
          0 AS coll_amt, SUM(b.outstanding) AS curr_outstanding
        FROM td_loan_month_demand a
@@ -112,17 +112,16 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
        WHERE a.branch_code IN (${data.branch_code})
          AND a.demand_date = '${create_date}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
-         b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.curr_roi, b.period, b.period_mode
+         b.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
+         b.curr_roi, b.period, b.period_mode,b.instl_start_dt,b.instl_end_dt
          
        UNION
        
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         MAX(b.disb_dt) AS disb_dt, SUM(b.prn_disb_amt) AS disb_amt,
-         b.curr_roi, b.period AS loan_period, b.period_mode,
-         MAX(b.instl_start_dt) AS instl_start_dt, MAX(b.instl_end_dt) AS instl_end_dt,
+         b.disb_dt, SUM(b.prn_disb_amt) AS disb_amt,
+         b.curr_roi, b.period AS loan_period, b.period_mode,b.instl_start_dt,b.instl_end_dt,
          SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
          IFNULL(SUM(f.credit), 0) AS coll_amt, SUM(b.outstanding) AS curr_outstanding
        FROM td_loan_month_demand a
@@ -135,10 +134,11 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
          AND a.demand_date = '${create_date}'
          AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
-         b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.curr_roi, b.period, b.period_mode
+         b.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt
+         b.curr_roi, b.period, b.period_mode,b.instl_start_dt,b.instl_end_dt
      ) a
-     ORDER BY group_code
+        GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,disb_dt,curr_roi,loan_period,period_mode,instl_start_dt,instl_end_dt
+      ORDER BY group_code
    `;
  
      var groupwise_demand_collec_data = await db_Select(select,null,null,null);
@@ -174,7 +174,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       fund_id,fund_name, period_mode,demand_amt, coll_amt, curr_outstanding
+       fund_id,fund_name,period_mode,SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt, SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
@@ -217,7 +217,8 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
          b.group_code, d.group_name, d.co_id, e.emp_name,
          b.fund_id,f.fund_name, b.period_mode
      ) a
-     ORDER BY group_code
+      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,period_mode
+      ORDER BY group_code
    `;
  
      var fund_demand_collec_data = await db_Select(select,null,null,null);
