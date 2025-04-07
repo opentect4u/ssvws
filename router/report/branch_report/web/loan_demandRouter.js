@@ -203,7 +203,7 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
         // console.log("Created date:", create_date);
 
-        var select = `DATE_FORMAT(a.demand_date, '%M%Y') AS demand_date,,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,MAX(b.disb_dt)disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode, 
+        var select = `DATE_FORMAT(a.demand_date, '%M%Y') AS demand_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name co_name,MAX(b.disb_dt)disb_dt,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode = 'Weekly' THEN 
