@@ -94,7 +94,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
        co_id, emp_name,
        disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,
        instl_start_dt, instl_end_dt,
-       SUM(tot_emi)tot_emi,SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt,SUM(demand_amt)- SUM(coll_amt),SUM(curr_outstanding)curr_outstanding
+       SUM(tot_emi)tot_emi,SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt,SUM(demand_amt)- SUM(coll_amt) "demand-collection",SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code,c.branch_name,
@@ -174,7 +174,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       fund_id,fund_name,period_mode,SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt, SUM(curr_outstanding)curr_outstanding
+       fund_id,fund_name,period_mode,SUM(demand_amt)demand_amt, SUM(coll_amt)coll_amt,SUM(demand_amt)- SUM(coll_amt) "demand-collection", SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
@@ -199,8 +199,8 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.fund_id,f.fund_name,b.period_mode, SUM(a.dmd_amt) AS demand_amt,
-         IFNULL(SUM(g.credit), 0) AS coll_amt, SUM(b.outstanding) AS curr_outstanding
+         b.fund_id,f.fund_name,b.period_mode, 0 AS demand_amt,
+         IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
        FROM td_loan_month_demand a 
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
        AND a.loan_id = b.loan_id 
@@ -217,7 +217,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
          b.group_code, d.group_name, d.co_id, e.emp_name,
          b.fund_id,f.fund_name, b.period_mode
      ) a
-      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,period_mode
+      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,fund_id,fund_name,period_mode
       ORDER BY group_code
    `;
  
