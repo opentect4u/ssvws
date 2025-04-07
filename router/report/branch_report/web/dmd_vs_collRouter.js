@@ -191,7 +191,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        WHERE a.branch_code IN (${data.branch_code})
          AND a.demand_date = '${create_date}'
          AND b.fund_id = '${data.fund_id}'
-       GROUP BY BY a.demand_date, a.branch_code, c.branch_name,
+       GROUP BY a.demand_date, a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
          b.curr_roi, b.period, b.period_mode
          
