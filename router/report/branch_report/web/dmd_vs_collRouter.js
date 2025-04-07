@@ -174,7 +174,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       fund_id,f.fund_name, period_mode,
+       fund_id,fund_name, period_mode,
        tot_emi, demand_amt, coll_amt, curr_outstanding
      FROM (
        SELECT 
@@ -212,7 +212,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
        WHERE a.branch_code IN (${data.branch_code})
          AND a.demand_date = '${create_date}'
-         AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+         AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
          AND b.fund_id = '${data.fund_id}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
