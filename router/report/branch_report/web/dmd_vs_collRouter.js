@@ -265,12 +265,12 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       period_mode,SUM(b.tot_emi) total_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
+       period_mode,SUM(tot_emi) tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode,SUM(b.tot_emi) total_emi,SUM(a.dmd_amt) AS demand_amt,
+         b.period_mode,SUM(b.tot_emi) tot_emi,SUM(a.dmd_amt) AS demand_amt,
          0 AS coll_amt, SUM(b.outstanding) AS curr_outstanding
        FROM td_loan_month_demand a
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
@@ -289,7 +289,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          b.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode, 0 AS demand_amt,
+         b.period_mode, 0 AS tot_emi, 0 AS demand_amt,
          IFNULL(SUM(f.credit), 0) AS coll_amt, 0 AS curr_outstanding
        FROM td_loan_month_demand a 
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
