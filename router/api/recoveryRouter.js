@@ -102,7 +102,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     if (search_grp.suc > 0 && search_grp.msg.length > 0) {
         for (let dt of search_grp.msg) {
 
-            var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,a.outstanding,b.client_name,c.months,c.weeks,c.factor",
+            var select = "a.loan_id,a.member_code,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.od_prn_amt,a.intt_amt,a.od_intt_amt,a.prn_emi,a.intt_emi,a.tot_emi,a.period,a.period_mode,a.instl_paid,a.instl_end_dt,a.last_trn_dt,a.outstanding,b.client_name,c.months,c.weeks,c.factor",
                 table_name = "td_loan a, md_member b, md_multiplication_factor c",
                 whr = `a.branch_code = b.branch_code 
                 AND a.member_code = b.member_code 
