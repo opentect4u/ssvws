@@ -7,7 +7,7 @@ const express = require("express"),
 monthEndRouter.post("/fetch_monthend_branch_details", async (req, res) => {
   try {
     var select =
-        "a.branch_code, a.branch_name, b.closed_upto,LAST_DAY(DATE_ADD(b.closed_upto, INTERVAL 1 MONTH)) AS closed_date,b.outstanding_flag outstanding_process,b.demand_flag demand_process",
+        "a.branch_code, a.branch_name,LAST_DAY(DATE_ADD(b.closed_upto, INTERVAL 1 MONTH)) AS closed_upto,b.outstanding_flag outstanding_process,b.demand_flag demand_process",
       table_name =
         "md_branch a LEFT JOIN td_month_close b ON a.branch_code = b.branch_code",
       whr = `a.branch_code <> 100`,
