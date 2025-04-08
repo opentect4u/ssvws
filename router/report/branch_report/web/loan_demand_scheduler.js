@@ -9,7 +9,7 @@ loan_demand_scheduler.get("/loan_demand_scheduler", async (req, res) => {
   try {
     var data = req.query;
 
-    var select = "branch_code,closed_upto,DATE_ADD(closed_upto, INTERVAL 1 MONTH) AS next_month",
+    var select = "branch_code,closed_upto,Last_day(DATE_ADD(closed_upto, INTERVAL 1 MONTH)) AS next_month",
       table_name = "td_month_close",
       whr = `demand_flag = 'N'`,
       order = null;
