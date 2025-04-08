@@ -86,7 +86,7 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
     try {
         var data = req.query;
 
-        var select = "branch_code,LAST_DAY(closed_upto - interval 1 month)closed_upto_prev,closed_upto",
+        var select = "branch_code,closed_upto",
             table_name = "td_month_close",
             whr = `outstanding_flag = 'N'`,
             order = null;
@@ -96,53 +96,16 @@ loan_outstanding_scheduler.get("/loan_outstanding_scheduler", async (req, res) =
         if (data_branch.suc > 0 && data_branch.msg.length > 0) {
 
             for (let dt of data_branch.msg) {        //loop1
-                // console.log(dt,'dt');
-
-                let closed_upto_prev = dateFormat(dt.closed_upto_prev, "yyyy-mm-dd");
                 let closed_upto = dateFormat(dt.closed_upto, "yyyy-mm-dd");
 
-                var query = `SELECT loan_id FROM td_loan_month_balance
-                WHERE branch_code = '${dt.branch_code}'
-                AND balance_date = '${closed_upto_prev}'
-                UNION
-                SELECT loan_id FROM td_loan
-                WHERE branch_code = '${dt.branch_code}'
-                AND disb_dt > '${closed_upto_prev}'
-                AND disb_dt <= '${closed_upto}'`
-                var data_loan = await db_Select(null, null, null, null, true, query);
-                // console.log(data_loan,'data_loan');
-                
+                try{
+                    //  Call the stored procedure here
+                    const outstanding_calculate = await db_Select(null,null,null,null,true,`CALL p_pop_outstanding('${dt.branch_code}', '${closed_upto}')`);
 
-                if (data_loan.suc > 0 && data_loan.msg.length > 0) {
-                    // let closed_uptos = dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd");
-                 for (let loan of data_loan.msg) {     
-                              //loop2
-                
-                try {              
-                let outstandingBalance = await getLoanBal(loan.loan_id, closed_upto,'O');
-                let prnBalance = await getLoanBal(loan.loan_id, closed_upto,'P');
-                let inttBalance = await getLoanBal(loan.loan_id, closed_upto,'I');
-
-                let balance = outstandingBalance.balance || 0;
-                let prnbalance = prnBalance.prn_amt || 0;
-                let inttbalance = inttBalance.intt_amt || 0;
-                // console.log(`Loan ID: ${loan.loan_id}, Balance: ${balance}, Principal: ${prnbalance}, Interest: ${inttbalance}`);
-                
-
-                if (balance > 0) {
-                var table_name = "td_loan_month_balance",
-                    fields = "(balance_date, loan_id, branch_code, prn_amt, intt_amt, outstanding, remarks)",
-                    values = `('${closed_upto}', '${loan.loan_id}', '${dt.branch_code}', '${prnbalance}', '${inttbalance}', '${balance}', 'To Closing')`,
-                    whr = null,
-                    flag = 0;
-
-                var loan_dt = await db_Insert(table_name, fields, values, whr, flag);
-                }
             } catch (err) {
                 console.error(`Error processing loan ${loan.loan_id}:`, err);
             }
-            }   //end loop2
-            }
+            
             //update
             var table_name = "td_month_close",
             fields = `outstanding_flag = 'Y'`,
