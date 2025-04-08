@@ -39,7 +39,7 @@ monthEndRouter.post("/update_month_end_data", async (req, res) => {
         // console.log(brn_code_arr, "brn_code");
 
         var table_name = "td_month_close",
-          fields = `closed_upto = '${dt.closed_upto}', outstanding_flag = 'N',closed_by = '${data.closed_by}', closed_at = '${datetime}'`,
+          fields = `closed_upto = '${dt.closed_upto}', outstanding_flag = 'N',demand_flag = 'N',closed_by = '${data.closed_by}', closed_at = '${datetime}'`,
           values = null,
           whr = `branch_code IN (${brn_code_arr.join(",")})`,
           flag = 1;
