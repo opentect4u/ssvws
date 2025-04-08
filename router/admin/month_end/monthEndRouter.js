@@ -73,10 +73,11 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) =>
         for (let dt of data.month_end_dtls) {
           // console.log(dt,'lolo');
           
-          var select = "branch_id, count(*) AS tot_unapprove",
+          var select = "count(*) AS tot_unapprove",
             table_name = "td_loan_transactions",
             whr = `branch_id = '${dt.branch_code}'
               AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}'
+              AND tr_type != 'I'
               AND status = 'U'`;
 
           var res_dt = await db_Select(select, table_name, whr, null);
