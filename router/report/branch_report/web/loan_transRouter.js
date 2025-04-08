@@ -170,10 +170,10 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
     try{
       var data = req.body;
    
-      var select = `a.branch_id,c.branch_name,a.payment_date,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'},SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
+      var select = `a.branch_id,c.branch_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'},SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
       table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
       whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
-      order = `GROUP BY a.branch_id,c.branch_name,a.payment_date`;
+      order = `GROUP BY a.branch_id,c.branch_name`;
       var transaction_branch_data = await db_Select(select,table_name,whr,order);
       res.send({transaction_branch_data})
     }catch (error){
