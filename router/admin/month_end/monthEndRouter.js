@@ -117,9 +117,9 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend", async (req, res) =
   try {
     if (data.month_end_dtls && data.month_end_dtls.length > 0) {
       let unapprovedDetails = [];
+      let allApproved = true;
 
       for (let dt of data.month_end_dtls) {
-        // Modified SELECT to get count of unapproved transactions
         var select = "branch_id, COUNT(*) as tot_unapprove",
           table_name = "td_loan_transactions",
           whr = `branch_id = '${dt.branch_code}'
@@ -131,13 +131,14 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend", async (req, res) =
 
         if (res_dt.suc > 0 && res_dt.msg.length > 0) {
           let record = res_dt.msg[0];
-          if (record.tot_unapprove > 0) {
+          if (parseInt(record.tot_unapprove) > 0) {
+            allApproved = false;
             unapprovedDetails.push({
               branch_id: record.branch_id,
               unapproved_count: record.tot_unapprove
             });
           }else {
-          unapprovedDetails.push(record);
+            allApproved = true;
           }
         }
       }
@@ -146,6 +147,7 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend", async (req, res) =
         suc: 1,
         msg: "Data fetched successfully",
         details: unapprovedDetails
+        // can_month_end: allApproved
       });
 
     } else {
@@ -156,6 +158,7 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend", async (req, res) =
     res.send({ suc: 0, msg: "Error occurred", details: error });
   }
 });
+
 
 
 module.exports = { monthEndRouter };
