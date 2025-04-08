@@ -406,31 +406,63 @@ ORDER BY group_code;`
 
 // DEMAND VS COLLECTION REPORT BRANCHWISE
 dmd_vs_collRouter.post("/dmd_vs_collec_report_branchwise", async (req, res) => {
-    try{
-        var data = req.body;
-        //last date of month
-        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
-    
-        //first date of month
-        var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month;
-     `
-        var dateResult = await db_Select(date_query);
-        var first_dateResult = await db_Select(first_date_query);
-     
-       //create first date and last date
-        var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month,'yyyy-mm-dd');
+  try {
+    var data = req.body;
 
-        var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS collec_upto,a.branch_code,c.branch_name,SUM(b.tot_emi) total_emi,SUM(a.dmd_amt) demand_amt,SUM(d.credit) collection_amt,SUM(b.outstanding) curr_outstanding`,
-        table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN td_loan_transactions d ON a.loan_id = b.loan_id",
-        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date = '${create_date}' AND d.payment_date BETWEEN '${first_create_date}' AND '${create_date}'`,
-        order = `GROUP BY a.demand_date,a.branch_code,c.branch_name`;
-        var branch_demand_collec_data = await db_Select(select,table_name,whr,order);
-    res.send({branch_demand_collec_data, dateRange:`BETWEEN '${first_create_date}' AND '${create_date}'`});
-    }catch(error){
-        console.error("Error fetching demand vs collection report beanchwise:", error);
-        res.send({ suc: 0, msg: "An error occurred" });
-    } 
+    // Get last and first dates of the selected month
+    var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
+    var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
+
+    var dateResult = await db_Select(date_query);
+    var first_dateResult = await db_Select(first_date_query);
+
+    var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
+    var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
+    
+    var select = ` 
+      DATE_FORMAT(demand_date, '%M %Y') AS demand_date,CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS "collec between",
+      branch_code, branch_name,
+      SUM(tot_emi)tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
+    FROM (
+      SELECT 
+        a.demand_date,a.branch_code,c.branch_name,
+        SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
+        0 AS coll_amt, SUM(b.outstanding) AS curr_outstanding
+        FROM td_loan_month_demand a
+        LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
+        LEFT JOIN md_branch c ON a.branch_code = c.branch_code
+        WHERE a.branch_code IN (${data.branch_code})
+        AND a.demand_date = '${create_date}'
+        GROUP BY a.demand_date, a.branch_code, c.branch_name
+        
+      UNION
+      
+      SELECT 
+        a.demand_date,a.branch_code,c.branch_name,
+        0 AS tot_emi, 0 AS demand_amt,
+        IFNULL(SUM(d.credit), 0) AS coll_amt, 0 AS curr_outstanding
+        FROM td_loan_month_demand a
+        LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
+        LEFT JOIN md_branch c ON a.branch_code = c.branch_code
+        LEFT JOIN td_loan_transactions d ON a.loan_id = d.loan_id
+        WHERE a.branch_code IN (${data.branch_code})
+        AND a.demand_date = '${create_date}'
+        AND d.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+        GROUP BY a.demand_date, a.branch_code, c.branch_name
+    ) a
+       GROUP BY demand_date,branch_code,branch_name
+     ORDER BY branch_code
+  `;
+
+    var branch_demand_collec_data = await db_Select(select,null,null,null);
+    res.send({
+      branch_demand_collec_data,
+      dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
+    });
+  } catch (error) {
+    console.error("Error fetching demand vs collection report branchwise:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
 });
 
 module.exports = {dmd_vs_collRouter}
