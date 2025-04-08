@@ -62,53 +62,98 @@ monthEndRouter.post("/update_month_end_data", async (req, res) => {
   }
 });
 
-monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) => {
-    var data = req.body;
-    // console.log(data,'ll');
+// monthEndRouter.post("/fetch_unapproved_dtls_before_monthend",async (req, res) => {
+//     var data = req.body;
+//     // console.log(data,'ll');
     
-    try {
-      if (data.month_end_dtls && data.month_end_dtls.length > 0) {
-        let unapprovedDetails = [];
+//     try {
+//       if (data.month_end_dtls && data.month_end_dtls.length > 0) {
+//         let unapprovedDetails = [];
 
-        for (let dt of data.month_end_dtls) {
-          // console.log(dt,'lolo');
+//         for (let dt of data.month_end_dtls) {
+//           // console.log(dt,'lolo');
 
-          // var select = "branch_id,count(*) AS tot_unapprove",
-          // table_name = "td_loan_transactions",
-          // whr = `branch_id = '${dt.branch_code}'
-          //   AND tr_type != 'I'
-          //   AND status = 'U'
-          //   order = `Group BY;
+//           // var select = "branch_id,count(*) AS tot_unapprove",
+//           // table_name = "td_loan_transactions",
+//           // whr = `branch_id = '${dt.branch_code}'
+//           //   AND tr_type != 'I'
+//           //   AND status = 'U'
+//           //   order = `Group BY;
           
-          var select = "*",
-            table_name = "td_loan_transactions",
-            whr = `branch_id = '${dt.branch_code}'
-              AND tr_type != 'I'
-              AND status = 'U'`;
+//           var select = "*",
+//             table_name = "td_loan_transactions",
+//             whr = `branch_id = '${dt.branch_code}'
+//               AND tr_type != 'I'
+//               AND status = 'U'`;
 
-          var res_dt = await db_Select(select, table_name, whr, null);
+//           var res_dt = await db_Select(select, table_name, whr, null);
 
-          // if (res_dt.suc > 0 && res_dt.msg.length > 0) {
-          //   unapprovedDetails.push(res_dt.msg[0].branch_id || '');
-          // // console.log(unapprovedDetails,'unapp');
-          // }
+//           // if (res_dt.suc > 0 && res_dt.msg.length > 0) {
+//           //   unapprovedDetails.push(res_dt.msg[0].branch_id || '');
+//           // // console.log(unapprovedDetails,'unapp');
+//           // }
 
-           // Push branch_id or null (if no data found)
-           unapprovedDetails.push(res_dt.suc > 0 && res_dt.msg.length > 0 
-           ? res_dt.msg[0].branch_id : null);
-        }
+//            // Push branch_id or null (if no data found)
+//            unapprovedDetails.push(res_dt.suc > 0 && res_dt.msg.length > 0 
+//            ? res_dt.msg[0].branch_id : null);
+//         }
 
-        res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails.filter(item => item !== null) });
-        // console.log(unapprovedDetails,'deta');
+//         res.send({ suc: 1, msg: "Data fetched successfully", details: unapprovedDetails.filter(item => item !== null) });
+//         // console.log(unapprovedDetails,'deta');
         
-      } else {
-        res.send({ suc: 0, msg: "No details provided" });
+//       } else {
+//         res.send({ suc: 0, msg: "No details provided" });
+//       }
+//     } catch (error) {
+//       console.error(error);
+//       res.send({ suc: 0, msg: "Error occurred", details: error });
+//     }
+//   }
+// );
+
+monthEndRouter.post("/fetch_unapproved_dtls_before_monthend", async (req, res) => {
+  var data = req.body;
+
+  try {
+    if (data.month_end_dtls && data.month_end_dtls.length > 0) {
+      let unapprovedDetails = [];
+
+      for (let dt of data.month_end_dtls) {
+        // Modified SELECT to get count of unapproved transactions
+        var select = "branch_id, COUNT(*) as tot_unapprove",
+          table_name = "td_loan_transactions",
+          whr = `branch_id = '${dt.branch_code}'
+                 AND tr_type != 'I'
+                 AND status = 'U'`,
+          order = "GROUP BY branch_id";
+
+        var res_dt = await db_Select(select, table_name, whr, order);
+
+        if (res_dt.suc > 0 && res_dt.msg.length > 0) {
+          let record = res_dt.msg[0];
+          if (record.tot_unapprove > 0) {
+            unapprovedDetails.push({
+              branch_id: record.branch_id,
+              unapproved_count: record.tot_unapprove
+            });
+          }
+        }
       }
-    } catch (error) {
-      console.error(error);
-      res.send({ suc: 0, msg: "Error occurred", details: error });
+
+      res.send({
+        suc: 1,
+        msg: "Data fetched successfully",
+        details: unapprovedDetails
+      });
+
+    } else {
+      res.send({ suc: 0, msg: "No details provided" });
     }
+  } catch (error) {
+    console.error(error);
+    res.send({ suc: 0, msg: "Error occurred", details: error });
   }
-);
+});
+
 
 module.exports = { monthEndRouter };
