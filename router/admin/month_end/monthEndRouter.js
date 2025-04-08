@@ -136,6 +136,8 @@ monthEndRouter.post("/fetch_unapproved_dtls_before_monthend", async (req, res) =
               branch_id: record.branch_id,
               unapproved_count: record.tot_unapprove
             });
+          }else {
+          unapprovedDetails.push(record);
           }
         }
       }
