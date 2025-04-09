@@ -156,6 +156,33 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
     }
 });
 
+recoveryRouter.post("/checking_date_before_transaction", async (req, res) => {
+    try {
+      const data = req.body;
+      let tr_flag = 'D'; 
+  
+      for (let dt of data.checkdatedtls) {
+        var select = "payment_date";
+        table_name = "td_loan_transactions";
+        whr = `loan_id = '${dt.loan_id}' AND payment_date > '${dt.last_trn_dt}'`;
+        order = null;
+  
+        var checking_date = await db_Select(select, table_name, whr, order);
+  
+        if (checking_date.suc > 0 && checking_date.msg.length > 0) {
+          tr_flag = 'F';
+        }else {
+            tr_flag = 'D'
+        }
+      }
+      res.json({ tr_flag });
+    } catch (err) {
+      console.log(err);
+      res.json({ error: "Server error" });
+    }
+  });
+  
+
 recoveryRouter.post("/recovery_transaction", async (req, res) => {
     var data = req.body,res_dt;
     // console.log(data,'dt');
