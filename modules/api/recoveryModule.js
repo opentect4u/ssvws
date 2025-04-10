@@ -352,11 +352,7 @@ module.exports = {
                       : data.tr_mode == "C"
                       ? "By Cash [Installment Payment]"
                       : ""
-                  }','${dt.credit}','0','${prnEmi > 0 ? prnEmi : 0}','${
-                    inttEMI > 0 ? inttEMI : 0
-                  }','${prn_recov > 0 ? prn_recov : 0}','0','${
-                    intt_recovs > 0 ? intt_recovs : 0
-                  }','${datetime}','R','${data.tr_mode}','${data.bank_name}','${
+                  }','${dt.credit}','0','${prnEmi}','${inttEMI}','${prn_recov}','0','${intt_recovs}','${datetime}','R','${data.tr_mode}','${data.bank_name}','${
                     data.cheque_id == "" ? 0 : data.cheque_id
                   }', '${data.chq_dt == "" ? null : data.chq_dt}','U','${
                     data.created_by
