@@ -182,7 +182,7 @@ userRouter.post('/login_app', async (req, res) => {
       // Fetch app version if flag is 'A'
       if (data.flag === 'A' && session_id) {
           let app_data = await db_Select("version", "md_app_version", null, null);
-          // console.log(app_data,'poii');
+          console.log(app_data,'poii');
           
           if (app_data.suc > 0 && app_data.msg.length > 0) {
             requiredVersion = app_data.msg[0].version; // Extract version
@@ -190,7 +190,7 @@ userRouter.post('/login_app', async (req, res) => {
             return res.send({ suc: 0, msg: "App version information not found.", requiredVersion });
         }
     
-        // console.log("Required Version:", requiredVersion, "User App Version:", data.app_version);
+        console.log("Required Version:", requiredVersion, "User App Version:", data.app_version);
     
         // Check app version
         if (!data.app_version || data.app_version != requiredVersion) {
