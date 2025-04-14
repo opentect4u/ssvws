@@ -381,7 +381,7 @@ module.exports = {
                   let outstanding =
                     parseFloat(prn_recov) + parseFloat(intt_update);
 
-                  console.log(prn_recov,intt_recov,outstanding,'calculate');
+                  console.log(prn_recov,intt_update,outstanding,'calculate');
 
                   var table_name = "td_loan",
                     fields = `prn_amt = '${prn_update}', intt_amt = '${intt_update}', outstanding = '${outs_update}', instl_paid = '${dt.instl_paid}', last_trn_dt = '${dt.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
