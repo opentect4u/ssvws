@@ -181,7 +181,7 @@ module.exports = {
                                 }','${data.group_code == "" ? 0 : data.group_code}','${dts.member_code == "" ? 0 : dts.member_code
                                 }','${dts.grt_form_no == "" ? 0 : dts.grt_form_no}','${data.purpose
                                 }','0','${dts.applied_amt == "" ? 0 : dts.applied_amt
-                                }','${datetime}','${data.scheme_id}','${data.fund_id}','${data.period == "" ? 0 : data.period
+                                }','${data.trans_date}','${data.scheme_id}','${data.fund_id}','${data.period == "" ? 0 : data.period
                                 }','${data.curr_roi == "" ? 0 : data.curr_roi}','${data.od_roi == "" ? 0 : data.od_roi
                                 }','${data.trans_date}','${dts.prn_disb_amt == "" ? 0 : dts.prn_disb_amt
                                 }','${intt_cal_amt}','${dts.prn_disb_amt == "" ? 0 : dts.prn_disb_amt
@@ -211,7 +211,7 @@ module.exports = {
 
                             var table_name = "td_loan_transactions",
                                 fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,bank_charge,proc_charge,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,bank_name,cheque_id,status,created_by,created_at)`,
-                                values = `('${datetime}', '${payment_id}', '${data.branch_code == "" ? 0 : data.branch_code
+                                values = `('${data.trans_date}', '${payment_id}', '${data.branch_code == "" ? 0 : data.branch_code
                                     }', '${loan_code}', '${data.particulars
                                         .split("'")
                                         .join("\\'")}', '0', '${dts.prn_disb_amt > 0 ? dts.prn_disb_amt : 0
