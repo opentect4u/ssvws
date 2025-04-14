@@ -99,6 +99,7 @@ const { authCheckForLogin } = require("./middleware/authMiddleware");
 const { loan_outstanding_scheduler } = require("./router/report/branch_report/web/loan_outstanding_scheduler");
 const { loan_demand_scheduler } = require("./router/report/branch_report/web/loan_demand_scheduler");
 const { recovery_scheduler } = require("./router/api/recovery_schedulerRouter");
+const { loanBalanceRecRouter } = require("./router/functions/loanBalanceRecRouter");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -141,6 +142,7 @@ app.use('/adminreport', attenAdminRouter)
 app.use('/user_menu', userMenuRouter)
 app.use('/menu', menu_permissionRouter)
 app.use(recovery_scheduler)
+app.use('/func', loanBalanceRecRouter)
 
 app.get("/",async (req, res) => {
   // const bcrypt = require("bcrypt");
