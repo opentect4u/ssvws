@@ -44,7 +44,7 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
                     var latestpay_id = payment_id_dtls.msg[0].payment_id;
 
                     var select = "a.payment_date transaction_date,a.payment_id transaction_id,a.loan_id,a.debit,a.credit,a.created_by created_code,b.emp_name created_by",
-                    table_name = "td_loan_transactions a LEFT JOIN md_employee b ON a.created_by = b.emp_code",
+                    table_name = "td_loan_transactions a LEFT JOIN md_employee b ON a.created_by = b.emp_id",
                     whr = `payment_date = '${dateFormat(latestPayDate,"yyyy-mm-dd")}' AND payment_id = '${latestpay_id}'`,
                     order = null;
                     var loan_rejection_dtls = await db_Select(select,table_name,whr,order);
