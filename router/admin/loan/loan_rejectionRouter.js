@@ -11,7 +11,7 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
         //fetch loan id from td_loan table
         var select = "loan_id",
         table_name = "td_loan",
-        whr = `branch_code = '${data.branch_code}' AND group_code = '%${data.group_code}%'`,
+        whr = `branch_code = '${data.branch_code}' AND group_code = '${data.group_code}'`,
         order = null;
         var loan_details = await db_Select(select,table_name,whr,order);
         res.send(loan_details)
