@@ -8,7 +8,7 @@ dateFormat = require('dateformat');
  outstanding_procCallRouter.post("/call_outstanding_proc", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data);
+        console.log(data,'juju');
         
 
         if (!data.branches || !Array.isArray(data.branches) || data.branches.length === 0) {
