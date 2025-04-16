@@ -6,6 +6,7 @@ dateFormat = require('dateformat');
 
 loan_balance_missmatchRouter.get("/fetch_loan_missmatch_balance", async (req, res) => {
     try {
+        var data = req.query;
         // const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
         const currentDate = dateFormat(new Date(), "yyyy-mm-dd");
         // console.log(currentDate,'curre');
