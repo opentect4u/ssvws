@@ -144,7 +144,7 @@ app.use('/user_menu', userMenuRouter)
 app.use('/menu', menu_permissionRouter)
 app.use(recovery_scheduler)
 app.use('/func', loanBalanceRecRouter)
-//loan balance missmatch router
+//loan balance missmatch
 app.use(loan_balance_missmatchRouter)
 
 app.get("/",async (req, res) => {
