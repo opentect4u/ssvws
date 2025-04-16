@@ -43,7 +43,7 @@ loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, re
                 if(payment_id_dtls.suc > 0 && payment_id_dtls.msg.length > 0){
                     var latestpay_id = payment_id_dtls.msg[0].payment_id;
 
-                    var select = "a.payment_date transaction_date,a.payment_id transaction_id,a.loan_id,a.debit,a.credit,a.created_by created_code,b.emp_name created_by",
+                    var select = "a.payment_date transaction_date,a.payment_id transaction_id,a.loan_id,a.tr_type,a.debit,a.credit,a.created_by created_code,b.emp_name created_by",
                     table_name = "td_loan_transactions a LEFT JOIN md_employee b ON a.created_by = b.emp_id",
                     whr = `payment_date = '${dateFormat(latestPayDate,"yyyy-mm-dd")}' AND payment_id = '${latestpay_id}'`,
                     order = null;
@@ -75,4 +75,13 @@ loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, re
     }    
 });
 
+loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
+ try{
+   var data = req.body;
+
+ }catch(error){
+    console.error("Error fetching loan:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+ }
+});
 module.exports = {loan_rejectionRouter}
