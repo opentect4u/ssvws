@@ -117,14 +117,14 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 // console.log(isCurrentDate,'iscurrent');
                 
                 // Choose table based on date
-                if (isCurrentDate) {
-                    var select = "a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
-                    table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
-                    whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
-                    order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
-                    var outstanding_data = await db_Select(select,table_name,whr,order);
-                    res.send({outstanding_data,  balance_date: currentDate.toISOString().split('T')[0]});
-                }else {
+                // if (isCurrentDate) {
+                //     var select = "a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
+                //     table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+                //     whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
+                //     order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
+                //     var outstanding_data = await db_Select(select,table_name,whr,order);
+                //     res.send({outstanding_data,  balance_date: currentDate.toISOString().split('T')[0]});
+                // }else {
                     var select = "MAX(balance_date) balance_date",
                     table_name = "tt_loan_outstanding",
                     whr = `branch_code IN (${data.branch_code}) AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
@@ -142,7 +142,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     // outstanding_data['balance_date'] = balance_date
                     res.send({outstanding_data,balance_date});
                 }
-              }
+            //   }
             } catch (error) {
                 console.error("Error fetching loan outstanding report:", error);
                 res.send({ suc: 0, msg: "An error occurred" });
@@ -165,14 +165,14 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
             
     
             // Choose table based on date
-            if (isCurrentDate) {
-                var select = "a.branch_code,d.branch_name,a.group_code,c.group_name,a.fund_id,b.fund_name,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
-                table_name = "td_loan a LEFT JOIN md_fund b ON a.fund_id = b.fund_id LEFT JOIN md_group c ON a.group_code = c.group_code LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
-                whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}' AND a.fund_id = '${data.fund_id}'`,
-                order = `GROUP BY a.branch_code,d.branch_name,a.group_code,c.group_name,a.fund_id,b.fund_name`;
-                var outstanding_fund_data = await db_Select(select,table_name,whr,order);
-                res.send({outstanding_fund_data,  balance_date: currentDate.toISOString().split('T')[0]});
-            }else {
+            // if (isCurrentDate) {
+            //     var select = "a.branch_code,d.branch_name,a.group_code,c.group_name,a.fund_id,b.fund_name,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
+            //     table_name = "td_loan a LEFT JOIN md_fund b ON a.fund_id = b.fund_id LEFT JOIN md_group c ON a.group_code = c.group_code LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+            //     whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}' AND a.fund_id = '${data.fund_id}'`,
+            //     order = `GROUP BY a.branch_code,d.branch_name,a.group_code,c.group_name,a.fund_id,b.fund_name`;
+            //     var outstanding_fund_data = await db_Select(select,table_name,whr,order);
+            //     res.send({outstanding_fund_data,  balance_date: currentDate.toISOString().split('T')[0]});
+            // }else {
                 var select = "MAX(balance_date) balance_date",
                 table_name = "tt_loan_outstanding",
                 whr = `branch_code IN (${data.branch_code}) AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
@@ -190,7 +190,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 // outstanding_fund_data['balance_date'] = balance_date
                 res.send({outstanding_fund_data,balance_date});
             }
-          }
+        //   }
         } catch (error) {
             console.error("Error fetching loan outstanding report:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -235,14 +235,14 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 
         
                 // Choose table based on date
-                if (isCurrentDate) {
-                    var select = "a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
-                    table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
-                    whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}' AND b.co_id IN (${data.co_id})`,
-                    order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,c.emp_name`;
-                    var outstanding_co_data = await db_Select(select,table_name,whr,order);
-                    res.send({outstanding_co_data,  balance_date: currentDate.toISOString().split('T')[0]});
-                }else {
+                // if (isCurrentDate) {
+                //     var select = "a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding,c.emp_name co_name",
+                //     table_name = "td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON b.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+                //     whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}' AND b.co_id IN (${data.co_id})`,
+                //     order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,c.emp_name`;
+                //     var outstanding_co_data = await db_Select(select,table_name,whr,order);
+                //     res.send({outstanding_co_data,  balance_date: currentDate.toISOString().split('T')[0]});
+                // }else {
                     var select = "MAX(balance_date) balance_date",
                     table_name = "tt_loan_outstanding",
                     whr = `branch_code IN (${data.branch_code}) AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
@@ -260,7 +260,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     // outstanding_co_data['balance_date'] = balance_date
                     res.send({outstanding_co_data,balance_date});
                 }
-              }
+            //   }
             } catch (error) {
                 console.error("Error fetching loan outstanding report:", error);
                 res.send({ suc: 0, msg: "An error occurred" });
@@ -284,14 +284,14 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 
         
                 // Choose table based on date
-                if (isCurrentDate) {
-                    var select = "a.branch_code,b.branch_name,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
-                    table_name = "td_loan a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
-                    whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
-                    order = `GROUP BY a.branch_code,b.branch_name`;
-                    var outstanding_branch_data = await db_Select(select,table_name,whr,order);
-                    res.send({outstanding_branch_data,  balance_date: currentDate.toISOString().split('T')[0]});
-                }else {
+                // if (isCurrentDate) {
+                //     var select = "a.branch_code,b.branch_name,SUM(a.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt + a.od_prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.outstanding) outstanding",
+                //     table_name = "td_loan a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
+                //     whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
+                //     order = `GROUP BY a.branch_code,b.branch_name`;
+                //     var outstanding_branch_data = await db_Select(select,table_name,whr,order);
+                //     res.send({outstanding_branch_data,  balance_date: currentDate.toISOString().split('T')[0]});
+                // }else {
                     var select = "MAX(balance_date) balance_date",
                     table_name = "tt_loan_outstanding",
                     whr = `branch_code IN (${data.branch_code}) AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
@@ -309,7 +309,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     // outstanding_branch_data['balance_date'] = balance_date
                     res.send({outstanding_branch_data,balance_date});
                 }
-              }
+            //   }
             } catch (error) {
                 console.error("Error fetching loan outstanding report:", error);
                 res.send({ suc: 0, msg: "An error occurred" });
@@ -333,14 +333,14 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
             
     
             // Choose table based on date
-            if (isCurrentDate) {
-                var select = "a.branch_code,i.branch_name,a.loan_id,c.form_no,a.member_code,b.client_name,b.client_mobile,TIMESTAMPDIFF(YEAR, b.dob, CURDATE()) AS age,b.dob,b.gurd_name,b.husband_name,b.client_addr,b.voter_id,b.pan_no,b.aadhar_no,b.nominee_name,d.group_code,d.group_name,d.co_id,d.bank_name,d.acc_no1,d.acc_no2,e.emp_name co_name,a.fund_id,f.fund_name,a.scheme_id,g.scheme_name,a.purpose,h.purpose_id,a.applied_dt,a.applied_amt,a.disb_dt loan_date,a.prn_disb_amt loan_amount,a.curr_roi,a.recovery_day,(a.prn_amt + a.od_prn_amt) prn_outstanding,a.intt_amt intt_outstanding,a.outstanding outstanding",
-                table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_grt_basic c ON b.member_code = c.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_purpose h ON a.purpose = h.purp_id LEFT JOIN md_branch i ON a.branch_code = i.branch_code",
-                whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
-                order = `ORDER BY a.branch_code,i.branch_name,a.member_code desc`;
-                var outstanding_member_data = await db_Select(select,table_name,whr,order);
-                res.send({outstanding_member_data,  balance_date: currentDate.toISOString().split('T')[0]});
-            }else {
+            // if (isCurrentDate) {
+            //     var select = "a.branch_code,i.branch_name,a.loan_id,c.form_no,a.member_code,b.client_name,b.client_mobile,TIMESTAMPDIFF(YEAR, b.dob, CURDATE()) AS age,b.dob,b.gurd_name,b.husband_name,b.client_addr,b.voter_id,b.pan_no,b.aadhar_no,b.nominee_name,d.group_code,d.group_name,d.co_id,d.bank_name,d.acc_no1,d.acc_no2,e.emp_name co_name,a.fund_id,f.fund_name,a.scheme_id,g.scheme_name,a.purpose,h.purpose_id,a.applied_dt,a.applied_amt,a.disb_dt loan_date,a.prn_disb_amt loan_amount,a.curr_roi,a.recovery_day,(a.prn_amt + a.od_prn_amt) prn_outstanding,a.intt_amt intt_outstanding,a.outstanding outstanding",
+            //     table_name = "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_grt_basic c ON b.member_code = c.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_purpose h ON a.purpose = h.purp_id LEFT JOIN md_branch i ON a.branch_code = i.branch_code",
+            //     whr = `a.branch_code IN (${data.branch_code}) AND a.disb_dt <= '${data.supply_date}'`,
+            //     order = `ORDER BY a.branch_code,i.branch_name,a.member_code desc`;
+            //     var outstanding_member_data = await db_Select(select,table_name,whr,order);
+            //     res.send({outstanding_member_data,  balance_date: currentDate.toISOString().split('T')[0]});
+            // }else {
                 var select = "MAX(balance_date) balance_date",
                 table_name = "tt_loan_outstanding",
                 whr = `branch_code IN (${data.branch_code}) AND balance_date <= '${dateFormat(data.supply_date,'yyyy-mm-dd')}'`,
@@ -358,7 +358,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 // outstanding_member_data['balance_date'] = balance_date
                 res.send({outstanding_member_data,balance_date});
             }
-          }
+        //   }
         } catch (error) {
             console.error("Error fetching loan outstanding report:", error);
             res.send({ suc: 0, msg: "An error occurred" });
