@@ -137,180 +137,180 @@ loan_disb_approveRouter.post("/approve_member_disb", async (req, res) => {
     res.send(approve_dt_memb)
 });
 
-loan_disb_approveRouter.post("/reject_disb_transaction", async (req, res) => {
-    try {
-    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    var data = req.body, del_loans_disb = {};
-    // console.log(data,'juju');
+// loan_disb_approveRouter.post("/reject_disb_transaction", async (req, res) => {
+//     try {
+//     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var data = req.body, del_loans_disb = {};
+//     // console.log(data,'juju');
     
-    //REJECT DISBURSE TRANSACTION MEMBERWISE
-    if (data.reject_membdt_disb.length > 0) {   
-        var payment_date_arr = data.reject_membdt_disb.map(pdt => `'${dateFormat(pdt.payment_date, 'yyyy-mm-dd')}'`)
-        var loan_id_arr = data.reject_membdt_disb.map(pdt => `'${pdt.loan_id}'`)
-        var branch_code_arr = data.reject_membdt_disb.map(pdt => `'${pdt.branch_code}'`)
+//     //REJECT DISBURSE TRANSACTION MEMBERWISE
+//     if (data.reject_membdt_disb.length > 0) {   
+//         var payment_date_arr = data.reject_membdt_disb.map(pdt => `'${dateFormat(pdt.payment_date, 'yyyy-mm-dd')}'`)
+//         var loan_id_arr = data.reject_membdt_disb.map(pdt => `'${pdt.loan_id}'`)
+//         var branch_code_arr = data.reject_membdt_disb.map(pdt => `'${pdt.branch_code}'`)
 
-        // console.log(payment_date_arr,loan_id_arr,branch_code_arr,'array');
+//         // console.log(payment_date_arr,loan_id_arr,branch_code_arr,'array');
         
     
-        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by",
-            table_name = "td_loan a, td_loan_transactions b",
-            whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code IN (${branch_code_arr.join(',')}) AND b.payment_date IN (${payment_date_arr.join(',')}) AND a.loan_id IN (${loan_id_arr.join(',')}) AND b.tr_type IN ('D')`,
-            order = null;
-            var fetch_loans_disb = await db_Select(select,table_name,whr,order);
+//         var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by",
+//             table_name = "td_loan a, td_loan_transactions b",
+//             whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code IN (${branch_code_arr.join(',')}) AND b.payment_date IN (${payment_date_arr.join(',')}) AND a.loan_id IN (${loan_id_arr.join(',')}) AND b.tr_type IN ('D')`,
+//             order = null;
+//             var fetch_loans_disb = await db_Select(select,table_name,whr,order);
 
-            // console.log(fetch_loans,'fetch_loans');
+//             // console.log(fetch_loans,'fetch_loans');
             
 
-        if(fetch_loans_disb.suc > 0 && fetch_loans_disb.msg.length > 0){
+//         if(fetch_loans_disb.suc > 0 && fetch_loans_disb.msg.length > 0){
             
-            for (let dt of fetch_loans_disb.msg) {
+//             for (let dt of fetch_loans_disb.msg) {
     
-                    var table_name = "td_reject_transactions",
-                    fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by)`,
-                    values = `('${dateFormat(dt.payment_date, 'yyyy-mm-dd')}','${dt.payment_id}','${dt.branch_id}','${dt.loan_id}','${dt.particulars}','${dt.credit}','${dt.debit}','${dt.prn_recov}','${dt.intt_recov}','${dt.balance}','${dt.od_balance}','${dt.intt_balance}','${dt.tr_type}','${dt.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dt.created_by}')`,
-                    whr = null,
-                    flag = 0;
-                    var reject_dt_disb = await db_Insert(table_name,fields,values,whr,flag);
+//                     var table_name = "td_reject_transactions",
+//                     fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by)`,
+//                     values = `('${dateFormat(dt.payment_date, 'yyyy-mm-dd')}','${dt.payment_id}','${dt.branch_id}','${dt.loan_id}','${dt.particulars}','${dt.credit}','${dt.debit}','${dt.prn_recov}','${dt.intt_recov}','${dt.balance}','${dt.od_balance}','${dt.intt_balance}','${dt.tr_type}','${dt.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dt.created_by}')`,
+//                     whr = null,
+//                     flag = 0;
+//                     var reject_dt_disb = await db_Insert(table_name,fields,values,whr,flag);
                
-                    // console.log(reject_dt,'reject_dt');
+//                     // console.log(reject_dt,'reject_dt');
                     
     
-                if(reject_dt_disb.suc > 0 && reject_dt_disb.msg.length > 0){
-                    var table_name = "td_loan_transactions",
-                    whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}' AND loan_id = '${dt.loan_id}' AND tr_type = '${dt.tr_type}'`
-                    del_loans_disb = await db_Delete(table_name,whr);
-                }
+//                 if(reject_dt_disb.suc > 0 && reject_dt_disb.msg.length > 0){
+//                     var table_name = "td_loan_transactions",
+//                     whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}' AND loan_id = '${dt.loan_id}' AND tr_type = '${dt.tr_type}'`
+//                     del_loans_disb = await db_Delete(table_name,whr);
+//                 }
 
-                // console.log(del_loans,'del');
+//                 // console.log(del_loans,'del');
 
-                if(del_loans_disb.suc > 0 && del_loans_disb.msg.length > 0){
-                    var select = "loan_id,balance,od_balance,intt_balance,tr_type",
-                    table_name = "td_loan_transactions",
-                    whr = `loan_id = '${dt.loan_id}'`,
-                    order = `ORDER BY payment_id DESC
-                    LIMIT 1`;
-                    var last_row = await db_Select(select,table_name,whr,order)
-                }
+//                 if(del_loans_disb.suc > 0 && del_loans_disb.msg.length > 0){
+//                     var select = "loan_id,balance,od_balance,intt_balance,tr_type",
+//                     table_name = "td_loan_transactions",
+//                     whr = `loan_id = '${dt.loan_id}'`,
+//                     order = `ORDER BY payment_id DESC
+//                     LIMIT 1`;
+//                     var last_row = await db_Select(select,table_name,whr,order)
+//                 }
 
-                // console.log(last_row,'last_row');
+//                 // console.log(last_row,'last_row');
 
-                if(last_row.suc > 0 && last_row.msg.length > 0){
-                    // console.log(last_row,'lass');
+//                 if(last_row.suc > 0 && last_row.msg.length > 0){
+//                     // console.log(last_row,'lass');
                     
-                    var prn_amt = last_row.msg[0].balance
-                    var od_prn_amt = last_row.msg[0].od_balance
-                    var intt_amt = last_row.msg[0].intt_balance
-                    var outstanding = parseFloat(prn_amt) + parseFloat(od_prn_amt) + parseFloat(intt_amt)
+//                     var prn_amt = last_row.msg[0].balance
+//                     var od_prn_amt = last_row.msg[0].od_balance
+//                     var intt_amt = last_row.msg[0].intt_balance
+//                     var outstanding = parseFloat(prn_amt) + parseFloat(od_prn_amt) + parseFloat(intt_amt)
 
-                    var table_name = "td_loan",
-                    fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}', modified_by = '${data.rejected_by}', modified_dt = '${datetime}'`,
-                    values = null,
-                    whr = `loan_id = '${dt.loan_id}'`,
-                    flag = 1;
-                    var update_dt = await db_Insert(table_name,fields,values,whr,flag);
-                }
+//                     var table_name = "td_loan",
+//                     fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}', modified_by = '${data.rejected_by}', modified_dt = '${datetime}'`,
+//                     values = null,
+//                     whr = `loan_id = '${dt.loan_id}'`,
+//                     flag = 1;
+//                     var update_dt = await db_Insert(table_name,fields,values,whr,flag);
+//                 }
 
-                // console.log(update_dt,'reject');
+//                 // console.log(update_dt,'reject');
                 
-            }
-        }    
+//             }
+//         }    
         
-    }
+//     }
 
-    res.send(del_loans_disb)
-} catch (error) {
-    console.error("Error occurred:", error.message);
-    res.send({ success: false, error: error.message });
-}
-});
+//     res.send(del_loans_disb)
+// } catch (error) {
+//     console.error("Error occurred:", error.message);
+//     res.send({ success: false, error: error.message });
+// }
+// });
 
-loan_disb_approveRouter.post("/reject_grp_co_wise_disb", async (req, res) => {
-    try {
-    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-    var data = req.body, del_loan_disburse = {};
-    // console.log(data,'data');
+// loan_disb_approveRouter.post("/reject_grp_co_wise_disb", async (req, res) => {
+//     try {
+//     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var data = req.body, del_loan_disburse = {};
+//     // console.log(data,'data');
 
-    //REJECT GROUPWISE / COWISE DISBURSE
-    if (data.reject_dt_disb.length > 0) {        
-        for (let dt of data.reject_dt_disb) {
-        var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by"
-        table_name = "td_loan a, td_loan_transactions b",
-        whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code = '${dt.branch_code}' AND a.group_code = '${dt.group_code}' AND b.payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND b.tr_type IN ('D')`,
-        order = null;
-        var fetch_loan_disb = await db_Select(select,table_name,whr,order);
-        // console.log(fetch_loan,'fetchhh');
+//     //REJECT GROUPWISE / COWISE DISBURSE
+//     if (data.reject_dt_disb.length > 0) {        
+//         for (let dt of data.reject_dt_disb) {
+//         var select = "a.loan_id,b.payment_date,b.payment_id,b.branch_id,b.particulars,b.credit,b.debit,b.prn_recov,b.intt_recov,b.balance,b.od_balance,b.intt_balance,b.tr_type,b.tr_mode,b.created_by"
+//         table_name = "td_loan a, td_loan_transactions b",
+//         whr = `a.branch_code = b.branch_id AND a.loan_id = b.loan_id AND a.branch_code = '${dt.branch_code}' AND a.group_code = '${dt.group_code}' AND b.payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND b.tr_type IN ('D')`,
+//         order = null;
+//         var fetch_loan_disb = await db_Select(select,table_name,whr,order);
+//         // console.log(fetch_loan,'fetchhh');
         
 
-            if(fetch_loan_disb.suc > 0 && fetch_loan_disb.msg.length > 0){
-                for (let dts of fetch_loan_disb.msg) {
+//             if(fetch_loan_disb.suc > 0 && fetch_loan_disb.msg.length > 0){
+//                 for (let dts of fetch_loan_disb.msg) {
 
-                        var table_name = "td_reject_transactions",
-                        fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by)`,
-                        values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_id}','${dts.loan_id}','${dts.particulars}','${dts.credit}','${dts.debit}','${dts.prn_recov}','${dts.intt_recov}','${dts.balance}','${dts.od_balance}','${dts.intt_balance}','${dts.tr_type}','${dts.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dts.created_by}')`,
-                        whr = null,
-                        flag = 0;
-                        var reject_dt_disb = await db_Insert(table_name,fields,values,whr,flag);
-                        // console.log(reject_dt,'reject_dtt');
+//                         var table_name = "td_reject_transactions",
+//                         fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,tr_type,tr_mode,status,reject_remarks,rejected_by,rejected_at,created_by)`,
+//                         values = `('${dateFormat(dts.payment_date, 'yyyy-mm-dd')}','${dts.payment_id}','${dts.branch_id}','${dts.loan_id}','${dts.particulars}','${dts.credit}','${dts.debit}','${dts.prn_recov}','${dts.intt_recov}','${dts.balance}','${dts.od_balance}','${dts.intt_balance}','${dts.tr_type}','${dts.tr_mode}','R','${data.reject_remarks.split("'").join("\\'")}','${data.rejected_by}','${datetime}','${dts.created_by}')`,
+//                         whr = null,
+//                         flag = 0;
+//                         var reject_dt_disb = await db_Insert(table_name,fields,values,whr,flag);
+//                         // console.log(reject_dt,'reject_dtt');
                         
     
-                        if(reject_dt_disb.suc > 0 && reject_dt_disb.msg.length > 0){
-                            var table_name = "td_loan_transactions",
-                            whr = `payment_date = '${dateFormat(dts.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dts.payment_id}' AND loan_id = '${dts.loan_id}' AND tr_type = '${dts.tr_type}'`
-                            del_loan_disburse = await db_Delete(table_name,whr);
-                        }
-                        // console.log(del_loan,'loans');
+//                         if(reject_dt_disb.suc > 0 && reject_dt_disb.msg.length > 0){
+//                             var table_name = "td_loan_transactions",
+//                             whr = `payment_date = '${dateFormat(dts.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dts.payment_id}' AND loan_id = '${dts.loan_id}' AND tr_type = '${dts.tr_type}'`
+//                             del_loan_disburse = await db_Delete(table_name,whr);
+//                         }
+//                         // console.log(del_loan,'loans');
 
-                        if(del_loan_disburse.suc > 0 && del_loan_disburse.msg.length > 0){
-                            var select = "loan_id,balance,od_balance,intt_balance,tr_type",
-                            table_name = "td_loan_transactions",
-                            whr = `loan_id = '${dts.loan_id}'`,
-                            order = `ORDER BY payment_id DESC
-                            LIMIT 1`;
-                            var last_rows = await db_Select(select,table_name,whr,order)
-                        }
+//                         if(del_loan_disburse.suc > 0 && del_loan_disburse.msg.length > 0){
+//                             var select = "loan_id,balance,od_balance,intt_balance,tr_type",
+//                             table_name = "td_loan_transactions",
+//                             whr = `loan_id = '${dts.loan_id}'`,
+//                             order = `ORDER BY payment_id DESC
+//                             LIMIT 1`;
+//                             var last_rows = await db_Select(select,table_name,whr,order)
+//                         }
         
-                        // console.log(last_rows,'last_row');
+//                         // console.log(last_rows,'last_row');
         
-                        if(last_rows.suc > 0 && last_rows.msg.length > 0){
-                            // console.log(last_rows,'lasst');
+//                         if(last_rows.suc > 0 && last_rows.msg.length > 0){
+//                             // console.log(last_rows,'lasst');
                             
-                            var prn_amt = last_rows.msg[0].balance
-                            var od_prn_amt = last_rows.msg[0].od_balance
-                            var intt_amt = last_rows.msg[0].intt_balance
-                            var outstanding = parseFloat(prn_amt) + parseFloat(od_prn_amt) + parseFloat(intt_amt)
+//                             var prn_amt = last_rows.msg[0].balance
+//                             var od_prn_amt = last_rows.msg[0].od_balance
+//                             var intt_amt = last_rows.msg[0].intt_balance
+//                             var outstanding = parseFloat(prn_amt) + parseFloat(od_prn_amt) + parseFloat(intt_amt)
         
-                            var table_name = "td_loan",
-                            fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}', modified_by = '${data.rejected_by}', modified_dt = '${datetime}'`,
-                            values = null,
-                            whr = `loan_id = '${dts.loan_id}'`,
-                            flag = 1;
-                            var update_dts = await db_Insert(table_name,fields,values,whr,flag);
-                        }
+//                             var table_name = "td_loan",
+//                             fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}', modified_by = '${data.rejected_by}', modified_dt = '${datetime}'`,
+//                             values = null,
+//                             whr = `loan_id = '${dts.loan_id}'`,
+//                             flag = 1;
+//                             var update_dts = await db_Insert(table_name,fields,values,whr,flag);
+//                         }
         
-                        // console.log(update_dts,'update');
+//                         // console.log(update_dts,'update');
                         
-                }
-             }
-        }
-    }
+//                 }
+//              }
+//         }
+//     }
 
-    res.send(del_loan_disburse)
-} catch (error) {
-    console.error("Error occurred:", error.message);
-    res.send({ success: false, error: error.message });
-}
-});
+//     res.send(del_loan_disburse)
+// } catch (error) {
+//     console.error("Error occurred:", error.message);
+//     res.send({ success: false, error: error.message });
+// }
+// });
 
-loan_disb_approveRouter.post("/reject_list", async (req, res) => {
-    var data = req.body;
+// loan_disb_approveRouter.post("/reject_list", async (req, res) => {
+//     var data = req.body;
 
-    var select = "payment_date,payment_id,branch_id,loan_id,credit,tr_type,status,reject_remarks",
-    table_name = "td_reject_transactions",
-    whr = `status = 'R'`,
-    order = null;
-    var reject_list_dt = await db_Select(select,table_name,whr,order);
+//     var select = "payment_date,payment_id,branch_id,loan_id,credit,tr_type,status,reject_remarks",
+//     table_name = "td_reject_transactions",
+//     whr = `status = 'R'`,
+//     order = null;
+//     var reject_list_dt = await db_Select(select,table_name,whr,order);
 
-    res.send(reject_list_dt)
-});
+//     res.send(reject_list_dt)
+// });
 
 module.exports = {loan_disb_approveRouter}
