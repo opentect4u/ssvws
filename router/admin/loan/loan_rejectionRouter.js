@@ -4,7 +4,7 @@ const express = require('express'),
 loan_rejectionRouter = express.Router(),
 dateFormat = require('dateformat');
 
-loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
+loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, res) => {
     try {
         var data = req.body;
 
