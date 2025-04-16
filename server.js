@@ -100,6 +100,7 @@ const { loan_outstanding_scheduler } = require("./router/report/branch_report/we
 const { loan_demand_scheduler } = require("./router/report/branch_report/web/loan_demand_scheduler");
 const { recovery_scheduler } = require("./router/api/recovery_schedulerRouter");
 const { loanBalanceRecRouter } = require("./router/functions/loanBalanceRecRouter");
+const { loan_balance_missmatchRouter } = require("./router/api/loan_balance_missmatchRouter");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -143,8 +144,12 @@ app.use('/user_menu', userMenuRouter)
 app.use('/menu', menu_permissionRouter)
 app.use(recovery_scheduler)
 app.use('/func', loanBalanceRecRouter)
+app.use(loan_balance_missmatchRouter)
 
 app.get("/",async (req, res) => {
+  // var currentDate = `${dateFormat(new Date(), "yyyy-mm-dd")}`;
+  // console.log(currentDate);
+  
   // const bcrypt = require("bcrypt");
   // var pass = bcrypt.hashSync('SSVWS@2025',10)
   // console.log(pass);
@@ -153,9 +158,9 @@ app.get("/",async (req, res) => {
 //   if (!user) {
 //     res.redirect("/login");
 //   } else {
-    res.redirect("/login");
+    // res.redirect("/login");
 //   }
-// res.send(pass)
+// res.send(currentDate)
 });
 
 // app.get("/", async (req, res) => {
