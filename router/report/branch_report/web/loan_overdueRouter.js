@@ -59,7 +59,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 console.log(`No data found for branch ${dt.branch_code}`);
             }
         }
-        res.send({ suc: 1, msg: finalData });
+        // res.send({ suc: 1, msg: finalData });
     }catch(error){
         console.error("Error fetching loan overdue report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
