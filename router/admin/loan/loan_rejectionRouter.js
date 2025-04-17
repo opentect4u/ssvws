@@ -122,8 +122,8 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
                     del_loan = await db_Delete(table_name,whr);
 
                     // if tr_type 'D' then also delete from td_loan
+                    console.log(dt.tr_type);
                     if (dt.tr_type === 'D') {
-                      console.log(dt.tr_type);
                       
                         var table_name = "td_loan",
                         whr = `loan_id = '${dt.loan_id}'`
