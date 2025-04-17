@@ -61,6 +61,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
     loan_overdueRouter.post("/loan_overdue_report_fundwise", async (req, res) => {
         try {
             var data = req.body;
+            let finalData = [];
             // console.log(data,'data');
             
             if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
@@ -89,6 +90,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
       loan_overdueRouter.post("/loan_overdue_report_cowise", async (req, res) => {
         try {
             var data = req.body;
+            let finalData = [];
             // console.log(data,'data');
             
             if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
@@ -116,6 +118,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
       loan_overdueRouter.post("/loan_overdue_report_memberwise", async (req, res) => {
         try {
             var data = req.body;
+            let finalData = [];
             // console.log(data,'data');
             
             if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
@@ -143,6 +146,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
        loan_overdueRouter.post("/loan_overdue_report_branchwise", async (req, res) => {
         try {
             var data = req.body;
+            let finalData = [];
             // console.log(data,'data');
             
             if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
