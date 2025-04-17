@@ -154,12 +154,12 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               }
 
               for(let dt of data.search_brn_id){
-           var select = "a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,SUM(a.disb_amt) disb_amt,SUM(a.od_amt) od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
+           var select = "a.branch_code,c.branch_name,SUM(a.disb_amt) disb_amt,SUM(a.od_amt) od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
           table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
           whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                            WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${data.send_date}')`,
-          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name`;
+          order = `GROUP BY a.branch_code,c.branch_name`;
           var loan_overdue_dtls_branchwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_branchwise.msg)
         }
