@@ -91,6 +91,8 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
 
   // loop 1 through each transaction to be rejected
   for(let dt of data.reject_trans){
+    console.log(dt);
+    
     //extract values from dt object
     var payment_date_arr = [`'${dateFormat(dt.payment_date, 'yyyy-mm-dd')}'`];
     var loan_id_arr = [`'${dt.loan_id}'`];
@@ -121,6 +123,8 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
 
                     // if tr_type 'D' then also delete from td_loan
                     if (dt.tr_type === 'D') {
+                      console.log(dt.tr_type);
+                      
                         var table_name = "td_loan",
                         whr = `loan_id = '${dt.loan_id}'`
                         del_loans = await db_Delete(table_name,whr);
