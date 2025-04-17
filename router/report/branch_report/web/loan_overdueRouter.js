@@ -48,7 +48,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
             table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
             whr = `a.branch_code IN (${branchCode}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                        WHERE branch_code IN (${branchCode})
-                                                                       AND trf_date <= '${dt.send_date}')`,
+                                                                       AND trf_date <= '${data.send_date}')`,
             order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt`;
             var loan_overdue_dtls = await db_Select(select, table_name, whr, order);
 
@@ -59,7 +59,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 console.log(`No data found for branch ${dt.branch_code}`);
             }
         }
-        // res.send({ suc: 1, msg: finalData });
+        res.send({ suc: 1, msg: finalData });
     }catch(error){
         console.error("Error fetching loan overdue report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
