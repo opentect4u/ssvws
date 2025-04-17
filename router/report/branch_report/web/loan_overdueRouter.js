@@ -50,7 +50,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
 
             finalData.push(...loan_overdue_dtls.msg)
         }
-        res.send(finalData);
+        res.send({suc : 1, msg: finalData});
     }catch(error){
         console.error("Error fetching loan overdue report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -78,7 +78,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           var loan_overdue_dtls_fundwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_fundwise.msg)
         }
-        res.send(finalData);
+        res.send({suc : 1, msg: finalData});
         }catch(error){
             console.error("Error fetching loan overdue report fundwisewise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -107,7 +107,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           var loan_overdue_dtls_cowise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_cowise.msg)
         }
-        res.send(finalData);
+        res.send({suc : 1, msg: finalData});
         }catch(error){
             console.error("Error fetching loan overdue report cowise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -135,7 +135,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           var loan_overdue_dtls_memberwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_memberwise.msg)
         }
-        res.send(finalData);
+        res.send({suc : 1, msg: finalData});
         }catch(error){
             console.error("Error fetching loan overdue report memberwise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -163,7 +163,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           var loan_overdue_dtls_branchwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_branchwise.msg)
         }
-        res.send(finalData);
+        res.send({suc : 1, msg: finalData});
         }catch(error){
             console.error("Error fetching loan overdue report branchwise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
