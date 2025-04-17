@@ -53,6 +53,8 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
 
             if (loan_overdue_dtls && loan_overdue_dtls.length > 0) {
                 finalData.push(...loan_overdue_dtls); // Use spread operator to merge arrays
+                console.log(finalData);
+                
               }
         }
         res.send({ suc: 1, msg: finalData });
@@ -84,9 +86,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 var loan_overdue_dtls = await db_Select(select, table_name, whr, order);
     
                 if (loan_overdue_dtls && loan_overdue_dtls.length > 0) {
-                    finalData.push(...loan_overdue_dtls); // Use spread operator to merge arrays
-                    console.log(finalData);
-                    
+                    finalData.push(...loan_overdue_dtls); // Use spread operator to merge array                    
                   }
             }
             res.send({ suc: 1, msg: finalData });
