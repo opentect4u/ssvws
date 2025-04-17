@@ -9,7 +9,7 @@ loan_rejectionRouter.post("/fetch_group_name", async (req, res) => {
   try {
     var data = req.body;
 
-    var select = "group_code",
+    var select = "group_name,group_code",
     table_name = "md_group",
     whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.grps}%' OR group_code like '%${data.grps}%')`,
     order = null;
