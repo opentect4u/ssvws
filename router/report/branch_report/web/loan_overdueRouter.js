@@ -34,21 +34,23 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
   loan_overdueRouter.post("/loan_overdue_report_groupwise", async (req, res) => {
     try {
         var data = req.body;
+        let finalData = [];
         // console.log(data,'data');
         
         if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
             return res.send({ suc: 0, msg: "No data found" });
           }
 
-        const branchCodes = []
-        data.search_brn_id.map(dt => branchCodes.push(`'${dt.branch_code}'`))
-            
+            for(let dt of search_brn_id){
             var select = "a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_id,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
             table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
-            whr = `a.branch_code IN (${branchCodes.join(',')}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan WHERE branch_code IN (${branchCodes.join(',')}) AND trf_date <= '${data.send_date}')`,
+            whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan WHERE branch_code IN (${dt.branch_code}) AND trf_date <= '${data.send_date}')`,
             order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt`;
             var loan_overdue_dtls = await db_Select(select, table_name, whr, order);
-        res.send(loan_overdue_dtls);
+
+            finalData.push(...loan_overdue_dtls.msg)
+        }
+        res.send(finalData);
     }catch(error){
         console.error("Error fetching loan overdue report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -65,17 +67,17 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 return res.send({ suc: 0, msg: "No data found" });
               }
 
-            const branchCodes = []
-            data.search_brn_id.map(dt => branchCodes.push(`'${dt.branch_code}'`))  
-            
+            for(let dt of search_brn_id){
            var select = "a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_id,b.fund_id,f.fund_name,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
           table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
-          whr = `a.branch_code IN (${branchCodes.join(',')}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
-                                                                           WHERE branch_code IN (${branchCodes.join(',')})
+          whr = `a.branch_code IN (${dt.branch_code}}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
+                                                                           WHERE branch_code IN (${dt.branch_code}})
                                                                            AND trf_date <= '${dt.send_date}') AND b.fund_id = '${data.fund_id}'`,
           order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt`;
           var loan_overdue_dtls_fundwise = await db_Select(select, table_name, whr, order);
-            res.send(loan_overdue_dtls_fundwise);
+          finalData.push(...loan_overdue_dtls_fundwise.msg)
+        }
+        res.send(finalData);
         }catch(error){
             console.error("Error fetching loan overdue report fundwisewise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -93,20 +95,17 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 return res.send({ suc: 0, msg: "No data found" });
               }
 
-            const branchCodes = []
-            data.search_brn_id.map(dt => branchCodes.push(`'${dt.branch_code}'`)) 
-            
-            const coCodes = []
-            data.search_brn_id.map(dt => coCodes.push(`'${dt.co_id}'`)) 
-            
+              for(let dt of search_brn_id){
            var select = "a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_id,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
           table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
-          whr = `a.branch_code IN (${branchCodes.join(',')}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
-                                                                           WHERE branch_code IN (${branchCodes.join(',')})
-                                                                           AND trf_date <= '${dt.send_date}') AND d.co_id IN (${coCodes.join(',')})`,
+          whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
+                                                                           WHERE branch_code IN (${dt.branch_code})
+                                                                           AND trf_date <= '${dt.send_date}') AND d.co_id IN (${dt.co_id})`,
           order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt`;
           var loan_overdue_dtls_cowise = await db_Select(select, table_name, whr, order);
-            res.send(loan_overdue_dtls_cowise);
+          finalData.push(...loan_overdue_dtls_cowise.msg)
+        }
+        res.send(finalData);
         }catch(error){
             console.error("Error fetching loan overdue report cowise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -123,17 +122,17 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 return res.send({ suc: 0, msg: "No data found" });
               }
 
-            const branchCodes = []
-            data.search_brn_id.map(dt => branchCodes.push(`'${dt.branch_code}'`)) 
-            
+            for(let dt of search_brn_id){
            var select = "a.trf_date,a.od_date first_od_date,a.loan_id,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_id,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt,(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
           table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
-          whr = `a.branch_code IN (${branchCodes.join(',')}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
-                                                                           WHERE branch_code IN (${branchCodes.join(',')})
+          whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
+                                                                           WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${dt.send_date}')`,
           order = `ORDER BY a.branch_code`;
           var loan_overdue_dtls_memberwise = await db_Select(select, table_name, whr, order);
-            res.send(loan_overdue_dtls_memberwise);
+          finalData.push(...loan_overdue_dtls_memberwise.msg)
+        }
+        res.send(finalData);
         }catch(error){
             console.error("Error fetching loan overdue report memberwise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
@@ -150,17 +149,17 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 return res.send({ suc: 0, msg: "No data found" });
               }
 
-            const branchCodes = []
-            data.search_brn_id.map(dt => branchCodes.push(`'${dt.branch_code}'`)) 
-            
+              for(let dt of search_brn_id){
            var select = "a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,SUM(a.disb_amt) disb_amt,SUM(a.od_amt) od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
           table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-          whr = `a.branch_code IN (${branchCodes.join(',')}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
-                                                                           WHERE branch_code IN (${branchCodes.join(',')})
+          whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
+                                                                           WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${dt.send_date}')`,
           order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name`;
           var loan_overdue_dtls_branchwise = await db_Select(select, table_name, whr, order);
-            res.send(loan_overdue_dtls_branchwise);
+          finalData.push(...loan_overdue_dtls_branchwise.msg)
+        }
+        res.send(finalData);
         }catch(error){
             console.error("Error fetching loan overdue report branchwise:", error);
             res.send({ suc: 0, msg: "An error occurred" });
