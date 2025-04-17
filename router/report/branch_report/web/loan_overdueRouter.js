@@ -82,4 +82,35 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
         }
       });
 
+
+      //loan overdue report COwise 17.04.2025
+      loan_overdueRouter.post("/loan_overdue_report_cowise", async (req, res) => {
+        try {
+            var data = req.body;
+            // console.log(data,'data');
+            
+            if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
+                return res.send({ suc: 0, msg: "No data found" });
+              }
+
+            const branchCodes = []
+            data.search_brn_id.map(dt => branchCodes.push(`'${dt.branch_code}'`)) 
+            
+            const coCodes = []
+            data.search_brn_id.map(dt => coCodes.push(`'${dt.co_id}'`)) 
+            
+           var select = "a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_id,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt) outstanding",
+          table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
+          whr = `a.branch_code IN (${branchCodes.join(',')}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
+                                                                           WHERE branch_code IN (${branchCodes.join(',')})
+                                                                           AND trf_date <= '${dt.send_date}') AND d.co_id IN (${coCodes.join(',')})`,
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.disb_dt,a.disb_amt,b.instl_end_dt,b.period,b.period_mode,a.od_amt`;
+          var loan_overdue_dtls_cowise = await db_Select(select, table_name, whr, order);
+            res.send(loan_overdue_dtls_cowise);
+        }catch(error){
+            console.error("Error fetching loan overdue report cowise:", error);
+            res.send({ suc: 0, msg: "An error occurred" });
+        }
+      });   
+
 module.exports = {loan_overdueRouter}
