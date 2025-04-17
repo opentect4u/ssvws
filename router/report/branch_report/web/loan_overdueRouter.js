@@ -75,7 +75,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                            WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${data.send_date}') AND b.fund_id = '${data.fund_id}'`,
-          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.disb_dt,b.instl_end_dt,b.period,b.period_mode,
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
           ORDER BY b.group_code`;
           var loan_overdue_dtls_fundwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_fundwise.msg)
