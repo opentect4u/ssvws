@@ -4,6 +4,23 @@ const express = require('express'),
 loan_rejectionRouter = express.Router(),
 dateFormat = require('dateformat');
 
+//fetch group details
+loan_rejectionRouter.post("/fetch_group_name", async (req, res) => {
+  try {
+    var data = req.body;
+
+    var select = "group_code",
+    table_name = "md_group",
+    whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.grps}%' OR group_code like '%${data.grps}%')`,
+    order = null;
+    var group_name = await db_Select(select,table_name,whr,order);
+    res.send(group_name)
+  }catch (error){
+    console.error("Error fetching loan:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+  }  
+});
+
 //fetch all loan rejection data
 loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, res) => {
     try {
