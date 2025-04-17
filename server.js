@@ -103,6 +103,7 @@ const { loanBalanceRecRouter } = require("./router/functions/loanBalanceRecRoute
 const { loan_balance_missmatchRouter } = require("./router/api/loan_balance_missmatchRouter");
 const { outstanding_procCallRouter } = require("./router/report/branch_report/web/loan_outstanding_procCallRouter");
 const { loan_rejectionRouter } = require("./router/admin/loan/loan_rejectionRouter");
+const { loan_overdueRouter } = require("./router/report/branch_report/web/loan_overdueRouter");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -150,6 +151,7 @@ app.use('/func', loanBalanceRecRouter)
 app.use(loan_balance_missmatchRouter)
 app.use(outstanding_procCallRouter)
 app.use(loan_rejectionRouter)
+app.use(loan_overdueRouter)
 
 app.get("/",async (req, res) => {
   // var currentDate = `${dateFormat(new Date(), "yyyy-mm-dd")}`;
