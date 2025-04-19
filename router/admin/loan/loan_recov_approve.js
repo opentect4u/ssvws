@@ -125,7 +125,7 @@ loan_recov_approveRouter.post("/checking_before_approve_grp_co", async (req, res
                     whr = `loan_id = '${dt.loan_id}'`,
                     order = null;
 
-                var maxResult = await db_Select(select_max, table_name, where_max, order);
+                var maxResult = await db_Select(select, table_name, whr, order);
 
                 if (maxResult.suc > 0 && maxResult.msg.length > 0) {
                     let max_payment_id = maxResult.msg[0].max_payment_id;
@@ -135,7 +135,7 @@ loan_recov_approveRouter.post("/checking_before_approve_grp_co", async (req, res
                     table_name = "td_loan_transactions",
                     whr = `loan_id = '${dt.loan_id}' AND payment_id < '${max_payment_id}' AND status = 'U'`;
 
-                    let check_dt = await db_Select(select_check, table_name, where_check, order);
+                    let check_dt = await db_Select(select, table_name, whr, order);
 
                     if (check_dt.suc > 0 && check_dt.msg.length > 0) {
                         if (check_dt.msg[0].tot_row > 0) {
