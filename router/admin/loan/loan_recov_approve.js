@@ -86,6 +86,32 @@ loan_recov_approveRouter.post("/fetch_cowise_recov_member_dtls", async (req, res
 
 });
 
+loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
+  try{
+     var data = req.body;
+
+     if (data.chkdt.length > 0) {  
+        for (let dt of data.chkdt) { 
+            var select = "*",
+            table_name = "td_loan_transactions",
+            whr = `loan_id = '${dt.loan_id}' AND payment_id  < '${dt.payment_id}' AND status = 'U'`
+            order = null;
+            var check_dt = await db_Select(select,table_name,whr,order);
+
+            if (check_dt.length > 0) {
+                res.send({ suc: 0, msg: "One or more unapprove transactions found before this transactions" });
+              }
+        }
+      res.send({ suc: 1, msg: "No unapproved details found" });
+    }   else {
+        res.send({ suc: 0, msg: "No data provided to check" });
+      }
+  }catch (error) {
+    console.error("Error fetching loan:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+}
+});
+
 loan_recov_approveRouter.post("/approve_grpwise_recov", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
