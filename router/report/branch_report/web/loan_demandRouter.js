@@ -250,7 +250,7 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
 
          var select = "MAX(demand_date) demand_date",
          table_name = "tt_loan_demand",
-         whr = `branch_code IN (${data.branch_code}) AND demand_date <= '${dateFormat(data.create_date,'yyyy-mm-dd')}'`,
+         whr = `branch_code IN (${data.branch_code})`,
          order = null;
          var res_dt = await db_Select(select,table_name,whr,order);
 
