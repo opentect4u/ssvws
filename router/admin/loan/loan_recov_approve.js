@@ -113,48 +113,48 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 }
 });
 
-loan_recov_approveRouter.post("/checking_before_approve_grp_co", async (req, res) => {
-    try {
-        var data = req.body;
+// loan_recov_approveRouter.post("/checking_before_approve_grp_co", async (req, res) => {
+//     try {
+//         var data = req.body;
 
-        if (data.chkdt.length > 0) {
-            for (let dt of data.chkdt) {
-                // Step 1: Get the max payment_id for this loan_id
-                var select = "MAX(payment_id) payment_id",
-                    table_name = "td_loan_transactions",
-                    whr = `loan_id = '${dt.loan_id}'`,
-                    order = null;
+//         if (data.chkdt.length > 0) {
+//             for (let dt of data.chkdt) {
+//                 // Step 1: Get the max payment_id for this loan_id
+//                 var select = "MAX(payment_id) payment_id",
+//                     table_name = "td_loan_transactions",
+//                     whr = `loan_id = '${dt.loan_id}'`,
+//                     order = null;
 
-                var maxResult = await db_Select(select, table_name, whr, order);
+//                 var maxResult = await db_Select(select, table_name, whr, order);
 
-                if (maxResult.suc > 0 && maxResult.msg.length > 0) {
-                    let max_payment_id = maxResult.msg[0].max_payment_id;
+//                 if (maxResult.suc > 0 && maxResult.msg.length > 0) {
+//                     let max_payment_id = maxResult.msg[0].max_payment_id;
 
-                    // Step 2: Check if there are unapproved transactions before the max payment_id
-                    var select = "COUNT(*) AS tot_row",
-                    table_name = "td_loan_transactions",
-                    whr = `loan_id = '${dt.loan_id}' AND payment_id < '${max_payment_id}' AND status = 'U'`;
+//                     // Step 2: Check if there are unapproved transactions before the max payment_id
+//                     var select = "COUNT(*) AS tot_row",
+//                     table_name = "td_loan_transactions",
+//                     whr = `loan_id = '${dt.loan_id}' AND payment_id < '${max_payment_id}' AND status = 'U'`;
 
-                    let check_dt = await db_Select(select, table_name, whr, order);
+//                     let check_dt = await db_Select(select, table_name, whr, order);
 
-                    if (check_dt.suc > 0 && check_dt.msg.length > 0) {
-                        if (check_dt.msg[0].tot_row > 0) {
-                            return res.send({ suc: 0, msg: "One or more unapproved transactions found before the latest transaction." });
-                        }
-                    }
-                } else {
-                    return res.send({ suc: 0, msg: "Failed to fetch maximum payment_id." });
-                }
-            }
-            return res.send({ suc: 1, msg: "No unapproved transactions found before the latest payment_id." });
-        } else {
-            return res.send({ suc: 0, msg: "No data provided to check." });
-        }
-    } catch (error) {
-        console.error("Error checking unapproved transactions:", error);
-        return res.send({ suc: 0, msg: "An error occurred during the check." });
-    }
-});
+//                     if (check_dt.suc > 0 && check_dt.msg.length > 0) {
+//                         if (check_dt.msg[0].tot_row > 0) {
+//                             return res.send({ suc: 0, msg: "One or more unapproved transactions found before the latest transaction." });
+//                         }
+//                     }
+//                 } else {
+//                     return res.send({ suc: 0, msg: "Failed to fetch maximum payment_id." });
+//                 }
+//             }
+//             return res.send({ suc: 1, msg: "No unapproved transactions found before the latest payment_id." });
+//         } else {
+//             return res.send({ suc: 0, msg: "No data provided to check." });
+//         }
+//     } catch (error) {
+//         console.error("Error checking unapproved transactions:", error);
+//         return res.send({ suc: 0, msg: "An error occurred during the check." });
+//     }
+// });
 
 
 loan_recov_approveRouter.post("/approve_grpwise_recov", async (req, res) => {
