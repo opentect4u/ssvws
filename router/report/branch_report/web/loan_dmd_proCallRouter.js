@@ -26,7 +26,7 @@ dateFormat = require('dateformat');
 
         //Delete existing data against branch_code
         // const branchCodes = data.branches.map(b => `'${b.branch_code}'`).join(",");
-        var delete_demand_data = await db_Delete('tt_loan_deamnd',null);
+        var delete_demand_data = await db_Delete('tt_loan_demand',null);
 
         //Call procedure in a loop for each branch_code
         for (let dt of data.branches) {
