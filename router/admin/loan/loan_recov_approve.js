@@ -8,7 +8,7 @@ loan_recov_approveRouter.post("/fetch_groupwise_recovery_admin", async (req, res
     var data = req.body;
 
     //FETCH GROUPWISE RECOVERY DATA
-    var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
+    var select = "a.payment_date transaction_date,a.payment_id,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id",
     whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R'`,
     order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,c.group_name,d.emp_name,a.tr_mode`;
