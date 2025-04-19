@@ -98,12 +98,12 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
             order = null;
             var check_dt = await db_Select(select,table_name,whr,order);
 
-            if (check_dt.length > 0) {
+            if (check_dt[0] && check_dt[0].length > 0) {
                return res.send({ suc: 0, msg: "One or more unapprove transactions found before this transactions" });
               }
         }
-    //    return res.send({ suc: 1, msg: "No unapproved details found" });
-    }   else {
+       return res.send({ suc: 1, msg: "No unapproved details found" });
+    } else {
        return res.send({ suc: 0, msg: "No data provided to check" });
       }
   }catch (error) {
