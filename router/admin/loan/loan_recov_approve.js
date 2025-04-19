@@ -92,15 +92,17 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 
      if (data.chkdt.length > 0) {  
         for (let dt of data.chkdt) { 
-            var select = "*",
+            var select = "COUNT(*) tot_row",
             table_name = "td_loan_transactions",
             whr = `loan_id = '${dt.loan_id}' AND payment_id  < '${dt.payment_id}' AND status = 'U'`
             order = null;
             var check_dt = await db_Select(select,table_name,whr,order);
 
-            if (check_dt.suc > 0) {
-               return res.send({ suc: 0, msg: "One or more unapprove transactions found before this transactions" });
-              }
+            if (check_dt.suc > 0 && check_dt.msg.length > 0) {
+                if(check_dt.msg[0].tot_row > 0){
+                    return res.send({ suc: 0, msg: "One or more unapprove transactions found before this transactions" });
+                }
+            }
         }
        return res.send({ suc: 1, msg: "No unapproved details found" });
     } else {
