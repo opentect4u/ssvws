@@ -40,9 +40,9 @@ loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, re
             for (let dt of loan_details.msg) {
 
                 //fetch maximum payment date
-                var select = "MAX(a.payment_date) payment_date",
-                table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-                whr = `b.group_code = '${data.group_code}'`,
+                var select = "MAX(payment_date) payment_date",
+                table_name = "td_loan_transactions",
+                whr = `loan_id = '${data.loan_id}'`,
                 order = null;
                 var payment_date_dtls = await db_Select(select,table_name,whr,order);
 
