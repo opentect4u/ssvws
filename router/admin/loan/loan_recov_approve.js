@@ -102,7 +102,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
                return res.send({ suc: 0, msg: "One or more unapprove transactions found before this transactions" });
               }
         }
-       return res.send({ suc: 1, msg: "No unapproved details found" });
+    //    return res.send({ suc: 1, msg: "No unapproved details found" });
     }   else {
        return res.send({ suc: 0, msg: "No data provided to check" });
       }
