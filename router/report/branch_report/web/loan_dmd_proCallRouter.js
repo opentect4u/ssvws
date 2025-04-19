@@ -8,7 +8,7 @@ dateFormat = require('dateformat');
  dmd_proCallRouter.post("/call_demand_proc", async (req, res) => {
     try {
         var data = req.body;
-        // console.log(data,'juju');
+        console.log(data,'juju');
        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
        var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
         
