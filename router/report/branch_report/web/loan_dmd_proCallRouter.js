@@ -8,7 +8,7 @@ dateFormat = require('dateformat');
  dmd_proCallRouter.post("/call_demand_proc", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'juju');
+        // console.log(data,'juju');
        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
        var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
         
@@ -17,7 +17,7 @@ dateFormat = require('dateformat');
 
        var from_dt = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
        var to_dt = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
-       console.log(from_dt,to_dt,'dt');
+    //    console.log(from_dt,to_dt,'dt');
        
 
         if (!data.branches || !Array.isArray(data.branches) || data.branches.length === 0) {
