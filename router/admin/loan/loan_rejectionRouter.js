@@ -152,7 +152,7 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
                     }else {
                         // if tr_type 'R' then select last row data from td_loan_transactions
                         if(del_loan.suc > 0){
-                          var select = "loan_id,balance,od_balance,intt_balance,tr_type",
+                          var select = "payment_date,loan_id,balance,od_balance,intt_balance,tr_type",
                           table_name = "td_loan_transactions",
                           whr = `loan_id = '${dt.loan_id}'`,
                           order = `ORDER BY payment_id DESC
@@ -162,13 +162,14 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
                           // if last row fetching is sucessful then update prn_amt,intt_amt,od_prn_amt and outstanding balance in td_loan table
                           if(last_row.suc > 0 && last_row.msg.length > 0){
                             console.log(last_row,'lass');                 
+                            var payment_date = last_row.msg[0].payment_date
                             var prn_amt = last_row.msg[0].balance
                             var od_prn_amt = last_row.msg[0].od_balance
                             var intt_amt = last_row.msg[0].intt_balance
                             var outstanding = parseFloat(prn_amt) + parseFloat(od_prn_amt) + parseFloat(intt_amt)
         
                             var table_name = "td_loan",
-                            fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}', modified_by = '${data.rejected_by}', modified_dt = '${datetime}'`,
+                            fields = `prn_amt = '${prn_amt}', od_prn_amt = '${od_prn_amt}', intt_amt = '${intt_amt}', outstanding = '${outstanding}', last_trn_dt = '${payment_date}', modified_by = '${data.rejected_by}', modified_dt = '${datetime}'`,
                             values = null,
                             whr = `loan_id = '${dt.loan_id}'`,
                             flag = 1;
