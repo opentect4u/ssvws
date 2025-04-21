@@ -241,24 +241,6 @@ dateFormat = require('dateformat');
 loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
     try {
         var data = req.body;
-         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
-         var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
-          
-         var dateResult = await db_Select(date_query);
-         var first_dateResult = await db_Select(first_date_query);
- 
-         var from_dt = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
-         var to_dt = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
-
-         var select = "MAX(demand_date) demand_date",
-         table_name = "tt_loan_demand",
-        //  whr = `branch_code IN (${data.branch_code}) AND demand_date <= '${create_date}'`,
-         whr = `branch_code IN (${data.branch_code}) AND demand_date between '${from_dt}' AND '${to_dt}'`,
-         order = null;
-         var res_dt = await db_Select(select,table_name,whr,order);
-
-        if(res_dt.suc > 0 && res_dt.msg.length > 0){
-            var demand_date = dateFormat(res_dt.msg[0].demand_date, 'yyyy-mm-dd');
 
         var select = `a.demand_date,a.branch_code,e.branch_name,a.group_code,c.group_name,c.co_id,SUM(b.prn_disb_amt)prn_disb_amt,b.curr_roi,b.period,b.period_mode,
             CASE 
@@ -275,13 +257,13 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,b.instl_start_dt,b.instl_end_dt,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.prn_amt + a.intt_amt) outstanding,d.emp_name co_name`,
+        END AS recovery_day,b.instl_start_dt,b.instl_end_dt,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt + a.intt_amt) outstanding,d.emp_name co_name`,
             table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON a.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON a.branch_code = e.branch_code",
-            whr = `a.demand_date = '${demand_date}' AND a.branch_code IN (${data.branch_code})`,
-            order = `GROUP BY a.demand_date,a.branch_code,e.branch_name,a.group_code,c.group_name,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,c.co_id,d.emp_name`;
+            whr = `a.branch_code IN (${data.branch_code})`,
+            order = `GROUP BY a.demand_date,a.branch_code,e.branch_name,a.group_code,c.group_name,b.curr_roi,b.period,b.period_mode,b.instl_start_dt,b.instl_end_dt,c.co_id,d.emp_name
+            ORDER BY a.branch_code,a.group_code`;
             var groupwise_demand_data = await db_Select(select,table_name,whr,order);
-            res.send({groupwise_demand_data,demand_date})
-        }
+            res.send({groupwise_demand_data})
     }catch(error){
         console.error("Error fetching demand report groupwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -333,23 +315,6 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
 loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
     try {
         var data = req.body;
-        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
-         var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
-          
-         var dateResult = await db_Select(date_query);
-         var first_dateResult = await db_Select(first_date_query);
- 
-         var from_dt = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
-         var to_dt = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
-
-         var select = "MAX(demand_date) demand_date",
-         table_name = "tt_loan_demand",
-         whr = `branch_code IN (${data.branch_code}) AND demand_date between '${from_dt}' AND '${to_dt}'`,
-         order = null;
-         var res_dt = await db_Select(select,table_name,whr,order);
-
-        if(res_dt.suc > 0 && res_dt.msg.length > 0){
-         var demand_date = dateFormat(res_dt.msg[0].demand_date, 'yyyy-mm-dd');
 
         var select = `a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,b.period_mode, 
         CASE 
@@ -366,17 +331,16 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.prn_amt + a.intt_amt) curr_outstanding`,
+        END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt + a.intt_amt) curr_outstanding`,
         table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
-        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date = '${demand_date}' AND b.fund_id = '${data.fund_id}'`,
+        whr = `a.branch_code IN (${data.branch_code}) AND b.fund_id = '${data.fund_id}'`,
         order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name
-        ORDER BY a.branch_code,a.group_code,b.recovery_day`;
+        ORDER BY a.branch_code,a.group_code`;
         var fundwise_demand_data = await db_Select(select,table_name,whr,order);
-        res.send({fundwise_demand_data,demand_date})
+        res.send({fundwise_demand_data})
         // Separate demand_date fetch
         // var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         // var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        }
     }catch(error){
         console.error("Error fetching demand report fundwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -447,23 +411,6 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
 loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
     try {
         var data = req.body;
-        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
-         var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
-          
-         var dateResult = await db_Select(date_query);
-         var first_dateResult = await db_Select(first_date_query);
- 
-         var from_dt = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
-         var to_dt = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
-
-         var select = "MAX(demand_date) demand_date",
-         table_name = "tt_loan_demand",
-         whr = `branch_code IN (${data.branch_code}) AND demand_date between '${from_dt}' AND '${to_dt}'`,
-         order = null;
-         var res_dt = await db_Select(select,table_name,whr,order);
-
-        if(res_dt.suc > 0 && res_dt.msg.length > 0){
-         var demand_date = dateFormat(res_dt.msg[0].demand_date, 'yyyy-mm-dd');
 
         var select = `a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name co_name,b.period_mode, 
         CASE 
@@ -480,17 +427,16 @@ loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.prn_amt + a.intt_amt) curr_outstanding`,
+        END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt + a.intt_amt) curr_outstanding`,
         table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
-        whr = `a.branch_code IN (${data.branch_code})AND a.demand_date = '${demand_date}' AND d.co_id IN (${data.co_id})`,
+        whr = `a.branch_code IN (${data.branch_code}) AND d.co_id IN (${data.co_id})`,
         order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name
-        ORDER BY a.branch_code,a.group_code,b.recovery_day`;
+        ORDER BY a.branch_code,a.group_code`;
         var cowise_demand_data = await db_Select(select,table_name,whr,order);
-        res.send({cowise_demand_data,demand_date})
+        res.send({cowise_demand_data})
         // Separate demand_date fetch
         // var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         // var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-        }
     }catch(error){
         console.error("Error fetching demand report cowise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -501,23 +447,6 @@ loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
 loan_demandRouter.post("/loan_demand_report_memberwise", async (req, res) => {
     try{
         var data = req.body;
-        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
-        var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
-         
-        var dateResult = await db_Select(date_query);
-        var first_dateResult = await db_Select(first_date_query);
-
-        var from_dt = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
-        var to_dt = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
-
-        var select = "MAX(demand_date) demand_date",
-        table_name = "tt_loan_demand",
-        whr = `branch_code IN (${data.branch_code}) AND demand_date between '${from_dt}' AND '${to_dt}'`,
-        order = null;
-        var res_dt = await db_Select(select,table_name,whr,order);
-
-       if(res_dt.suc > 0 && res_dt.msg.length > 0){
-        var demand_date = dateFormat(res_dt.msg[0].demand_date, 'yyyy-mm-dd');
 
         var select = `a.demand_date,a.branch_code,c.branch_name,a.loan_id,a.member_code,f.client_name,a.group_code,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode, 
         CASE 
@@ -534,16 +463,15 @@ loan_demandRouter.post("/loan_demand_report_memberwise", async (req, res) => {
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,b.instl_start_dt,b.instl_end_dt,b.tot_emi,a.dmd_amt demand_amt,a.prn_amt prn_outstanding,a.intt_amt intt_outstanding,(a.prn_amt + a.intt_amt) curr_outstanding`,
+        END AS recovery_day,b.instl_start_dt,b.instl_end_dt,b.tot_emi,a.dmd_amt demand_amt,(a.prn_amt + a.intt_amt) curr_outstanding`,
         table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_member f ON b.member_code = f.member_code",
-        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date = '${demand_date}'`,
-        order = "ORDER BY a.branch_code,a.group_code,b.recovery_day";
+        whr = `a.branch_code IN (${data.branch_code})`,
+        order = "ORDER BY a.branch_code,a.group_code";
         var memberwise_demand_data = await db_Select(select,table_name,whr,order);
-        res.send({memberwise_demand_data,demand_date})
+        res.send({memberwise_demand_data})
         // Separate demand_date fetch
         // var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         // var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-       }
     }catch(error){
         console.error("Error fetching demand report memberwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
@@ -554,35 +482,17 @@ loan_demandRouter.post("/loan_demand_report_memberwise", async (req, res) => {
 loan_demandRouter.post("/loan_demand_report_branchwise", async (req, res) => {
     try {
         var data = req.body;
-        var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
-        var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
-         
-        var dateResult = await db_Select(date_query);
-        var first_dateResult = await db_Select(first_date_query);
 
-        var from_dt = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
-        var to_dt = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
-
-        var select = "MAX(demand_date) demand_date",
-        table_name = "tt_loan_demand",
-        whr = `branch_code IN (${data.branch_code}) AND demand_date between '${from_dt}' AND '${to_dt}'`,
-        order = null;
-        var res_dt = await db_Select(select,table_name,whr,order);
-
-       if(res_dt.suc > 0 && res_dt.msg.length > 0){
-        var demand_date = dateFormat(res_dt.msg[0].demand_date, 'yyyy-mm-dd');
-
-        var select = "a.demand_date,a.branch_code,c.branch_name,SUM(a.dmd_amt) demand_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.prn_amt + a.intt_amt) curr_outstanding",
+        var select = "a.demand_date,a.branch_code,c.branch_name,SUM(a.dmd_amt) demand_amt,SUM(a.prn_amt + a.intt_amt) curr_outstanding",
         table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-        whr = `a.branch_code IN (${data.branch_code}) AND a.demand_date = '${demand_date}'`,
+        whr = `a.branch_code IN (${data.branch_code})`,
         order = "GROUP BY a.branch_code,c.branch_name"; 
         var branchwise_demand_data = await db_Select(select,table_name,whr,order);
-        res.send({branchwise_demand_data,demand_date})
+        res.send({branchwise_demand_data})
 
         // Separate demand_date fetch
         // var demand_date_result = await db_Select("MAX(demand_date) AS demand_date", "td_loan_month_demand", `branch_code IN (${data.branch_code})`);
         // var demand_date = dateFormat(demand_date_result.msg[0].demand_date,'yyyy-mm-dd');
-    }
     }catch(error){
         console.error("Error fetching demand report branchwise:", error);
         res.send({ suc: 0, msg: "An error occurred" });
