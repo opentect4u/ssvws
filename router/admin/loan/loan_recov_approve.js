@@ -91,7 +91,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 
      if (data.chkdt.length > 0) {  
         for (let dt of data.chkdt) { 
-            if(dt.flag == 'M'){
+            if(data.flag == 'M'){
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
                 whr = `loan_id = '${dt.loan_id}' AND payment_date <= '${dt.payment_date}' AND payment_id  < '${dt.payment_id}' AND status = 'U'`
