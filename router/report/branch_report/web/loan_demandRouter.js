@@ -316,7 +316,7 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
     try {
         var data = req.body;
 
-        var select = `a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,b.period_mode, 
+        var select = `a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,b.period_mode,
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode = 'Weekly' THEN 
