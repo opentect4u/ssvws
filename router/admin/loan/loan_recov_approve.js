@@ -97,7 +97,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
             if(data.flag == 'M'){
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
-                whr = `loan_id = '${dt.loan_id}' AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND payment_id  < '${dt.payment_id}' AND status = 'U'`
+                whr = `loan_id = '${dt.loan_id}' AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND payment_id  < '${dt.payment_id}' AND status = 'U' AND tr_type = '${data.tr_type}'`
                 order = null;
                 var check_dt = await db_Select(select,table_name,whr,order);
             }else {
@@ -113,7 +113,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
-                whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND status = 'U'`
+                whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND status = 'U' AND tr_type = '${data.tr_type}'`
                 order = null;
                 var check_dt = await db_Select(select,table_name,whr,order);
             }
