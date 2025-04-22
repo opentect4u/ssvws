@@ -98,9 +98,16 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
                 order = null;
                 var check_dt = await db_Select(select,table_name,whr,order);
             }else {
+                var select = "loan_id",
+                table_name = "td_loan",
+                whr = `group_code = '${data.group_code}'`,
+                order = null;
+                var loan_id_dt = await db_Select(select,table_name,whr,order);
+
+                var loan_ids = loan_id_dt.msg.map(dts => dts.loan_id).join(",");
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
-                whr = `loan_id = '${dt.loan_id}' AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND status = 'U'`
+                whr = `loan_id = '${loan_ids}' AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND status = 'U'`
                 order = null;
                 var check_dt = await db_Select(select,table_name,whr,order);
             }
