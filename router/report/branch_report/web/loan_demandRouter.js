@@ -316,7 +316,7 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
     try {
         var data = req.body;
 
-        var select = `a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,b.period_mode, 
+        var select = `a.demand_date,a.branch_code,e.branch_name,a.group_code,c.group_name,c.co_id,d.emp_name co_name,b.fund_id,f.fund_name,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode = 'Weekly' THEN 
@@ -332,9 +332,9 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
         END
         ELSE 'N/A'
         END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt + a.intt_amt) curr_outstanding`,
-        table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
-        whr = `a.branch_code IN (${data.branch_code}) AND b.fund_id = '${data.fund_id}'`,
-        order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name
+        table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON a.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON a.branch_code = e.branch_code LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
+        whr = `a.branch_code IN (${data.branch_code}) AND b.fund_id IN (${data.fund_id})`,
+        order = `GROUP BY a.demand_date,a.branch_code,e.branch_name,a.group_code,c.group_name,c.co_id,d.emp_name,b.fund_id,f.fund_name,b.period_mode,b.recovery_day
         ORDER BY a.branch_code,a.group_code`;
         var fundwise_demand_data = await db_Select(select,table_name,whr,order);
         res.send({fundwise_demand_data})
