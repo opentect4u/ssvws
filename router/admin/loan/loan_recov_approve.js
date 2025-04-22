@@ -108,6 +108,8 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
                 var loan_id_dt = await db_Select(select,table_name,whr,order);
 
                 var loan_ids = loan_id_dt.msg.map(dts => `'${dts.loan_id}'`).join(",");
+                console.log(loan_ids,'loan');
+                
 
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
