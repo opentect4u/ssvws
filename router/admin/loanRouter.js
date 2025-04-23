@@ -690,6 +690,8 @@ loanRouter.post("/change_recovery_day", async (req, res) => {
    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
   for (let dt of data.recov_day_dtls){
+    console.log(dt,'dtttt');
+    
     var table_name = "td_loan",
     fields = `recovery_day = '${data.recovery_day}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
     values = null,
