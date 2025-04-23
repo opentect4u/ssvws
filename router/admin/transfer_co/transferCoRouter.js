@@ -94,7 +94,7 @@ transferCoRouter.post("/transfer_co", async (req, res) => {
     try {
         var table_name = "td_co_transfer",
                 fields = `(trf_date,group_code,from_co,from_brn,to_co,to_brn,remarks,created_by,created_at)`,
-                values = `('${datetime}','${data.group_code}','${data.from_co}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.remarks.split("'").join("\\'")}','${data.created_by}','${datetime}')`,
+                values = `('${datetime}','${data.group_code}','${data.from_co ? data.from_co : 0}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.remarks.split("'").join("\\'")}','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var save_trans_co_dtls = await db_Insert(table_name,fields,values,whr,flag);  
