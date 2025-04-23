@@ -13,10 +13,10 @@ transferCoRouter.post("/fetch_group_name_brnwise", async (req, res) => {
 
     try {
     //get group details
-    var select = "group_code,branch_code,group_name,group_type,co_id,phone1",
-    table_name = "md_group",
-    whr = `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A' AND (group_code like '%${data.grp}%' OR group_name like '%${data.grp}%')`,
-    order = `ORDER BY group_name`;
+    var select = "a.group_code,a.branch_code,a.group_name,a.group_type,a.co_id,a.phone1,b.branch_name",
+    table_name = "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
+    whr = `a.branch_code = '${data.branch_code}' AND a.open_close_flag = 'O' AND a.approval_status = 'A' AND (a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%')`,
+    order = `ORDER BY a.group_name`;
     var group_dt = await db_Select(select,table_name,whr,order);
 
     if(group_dt.suc > 0 && group_dt.msg.length > 0){
