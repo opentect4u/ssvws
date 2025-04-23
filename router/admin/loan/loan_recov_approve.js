@@ -110,7 +110,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
                 var loan_ids = loan_id_dt.msg.map(dts => `'${dts.loan_id}'`).join(",");
                 // console.log(loan_ids,'loan');
                 
-                var select = "payment_id",
+                var select = "MAX(payment_id) payment_id",
                 table_name = "td_loan_transactions",
                 whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND status = 'U'`,
                 order = null;
