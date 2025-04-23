@@ -3,6 +3,7 @@ const {
   loan_trans,
   save_loan_dtls,
   loan_trans_date,
+  update_recovery_day,
 } = require("../../modules/admin/loanModule");
 const { getLoanDmd } = require("../../modules/api/masterModule");
 
@@ -679,6 +680,26 @@ loanRouter.post("/change_loan_trans_date", async (req, res) => {
     .finally(() => {
       res.send(res_data);
     });
+});
+
+loanRouter.post("/change_recovery_day", async (req, res) => {
+  try{
+  var data = req.body;
+   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+  for (let dt of data.recov_day_dtls){
+    var table_name = "td_loan",
+    fields = `recovery_day = '${data.recovery_day}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+    values = null,
+    whr = `loan_id = '${dt.loan_id}'`,
+    flag = 1;
+    var update_recov_day = await db_Insert(table_name, fields, values, whr, flag);
+  }
+  res.send({ suc : 1, msg: "Recovery day updated successfully"});
+  }catch(error){
+    console.error("Error updating loan recovery day:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
 });
 
 module.exports = { loanRouter };
