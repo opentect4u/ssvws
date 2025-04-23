@@ -685,6 +685,8 @@ loanRouter.post("/change_loan_trans_date", async (req, res) => {
 loanRouter.post("/change_recovery_day", async (req, res) => {
   try{
   var data = req.body;
+  console.log(data,'dtdt');
+  
    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
   for (let dt of data.recov_day_dtls){
