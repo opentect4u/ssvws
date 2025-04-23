@@ -373,7 +373,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
        LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id
        WHERE a.branch_code IN (${data.branch_code})
        AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-      AND d.co_id = '${data.co_id}'
+      AND d.co_id IN (${data.co_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
          b.period_mode
