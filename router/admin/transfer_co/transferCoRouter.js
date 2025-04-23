@@ -35,9 +35,9 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
 
     //FETCH GROUP CO DETAILS FOR TRANSFER
     try {
-            var select = "a.group_code,a.branch_code grp_brn,a.group_name,a.co_id,b.emp_name co_name,b.branch_id co_brn_id,c.branch_name co_brn_name";
-            table_name = "md_group a, md_employee b, md_branch c";
-            whr = `a.co_id = b.emp_id AND b.branch_id = c.branch_code AND a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
+            var select = "a.group_code,a.branch_code grp_brn,d.branch_name grp_brn_name,a.group_name,a.co_id,b.emp_name co_name,b.branch_id co_brn_id,c.branch_name co_brn_name";
+            table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id md_branch c ON b.branch_id = c.branch_code LEFT JOIN md_branch d ON a.branch_code = d.branch_code";
+            whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
             order = null;
             var fetch_grp_co_dt = await db_Select(select, table_name, whr, order);
             if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
@@ -46,14 +46,14 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
                     suc: 1,
                     msg: fetch_grp_co_dt.msg
                 });
-            } else {
-                // If no details found in 'md_employee'
-                return res.send({
-                    suc: 0,
-                    msg: [],
-                    details: "CO details not found"
-                });
-            }
+            } 
+            // else {
+            //     return res.send({
+            //         suc: 0,
+            //         msg: [],
+            //         details: "CO details not found"
+            //     });
+            // }
     } catch (error) {
         // Handle errors gracefully
         console.error("Error fetching group co details:", error);
