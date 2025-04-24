@@ -542,6 +542,26 @@ loanRouter.post("/search_grp_view", async (req, res) => {
   res.send(search_grp_view);
 });
 
+loanRouter.post("/search_grp_view1", async (req, res) => {
+  var data = req.body;
+
+  //search group for view
+  if(data.branch_code == '100'){
+    var select = "branch_code,group_code,group_name,group_type",
+    table_name = "md_group",
+    whr = `group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%'`,
+    order = null;
+    var search_grp_view = await db_Select(select, table_name, whr, order);
+  }else {
+    var select = "group_code,group_name,group_type",
+    table_name = "md_group",
+    whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%')`,
+    order = null;
+  var search_grp_view = await db_Select(select, table_name, whr, order);
+  }
+  res.send(search_grp_view);
+});
+
 loanRouter.post("/fetch_search_grp_view", async (req, res) => {
   var data = req.body;
 

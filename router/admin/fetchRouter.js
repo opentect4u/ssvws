@@ -502,12 +502,19 @@ fetchRouter.post("/search_member_web", async (req, res) => {
     var data = req.body;
 
     //search member in web
-    var select = "member_code,client_name",
-    table_name = "md_member",
-    whr = `branch_code = '${data.branch_code}' AND client_name like '%${data.client_name}%'`,
-    order = null;
-    var search_member_web = await db_Select(select,table_name,whr,order);
-
+    if(data.branch_code == '100'){
+        var select = "branch_code,member_code,client_name",
+        table_name = "md_member",
+        whr = `client_name like '%${data.client_name}%'`,
+        order = null;
+        var search_member_web = await db_Select(select,table_name,whr,order);
+    }else {
+        var select = "member_code,client_name",
+        table_name = "md_member",
+        whr = `branch_code = '${data.branch_code}' AND client_name like '%${data.client_name}%'`,
+        order = null;
+        var search_member_web = await db_Select(select,table_name,whr,order);
+    }
     res.send(search_member_web)
 });
 
