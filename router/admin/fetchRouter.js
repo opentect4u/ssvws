@@ -462,7 +462,7 @@ fetchRouter.post("/search_group_web", async (req, res) => {
     if(data.branch_code == '100'){
         var select = "a.branch_code,a.group_code,a.group_name,a.group_type,b.branch_name",
         table_name = "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
-        whr = `a.group_name like '%${data.group_name}%' OR a.group_code like '%${data.group_name}%')`,
+        whr = `a.group_name like '%${data.group_name}%' OR a.group_code like '%${data.group_name}%'`,
         order = null;
         var search_group_web = await db_Select(select,table_name,whr,order);
     }else {
