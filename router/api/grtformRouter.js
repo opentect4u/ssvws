@@ -68,30 +68,48 @@ grtformRouter.post("/fetch_basic_dtls", async (req, res) => {
 grtformRouter.post("/fetch_co_brnwise", async (req, res) => {
     var data = req.body;
 
-    var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
-    table_name = "md_user a, md_employee b",
-    whr = `a.brn_code = '${data.brn_code}' AND a.emp_id = b.emp_id AND a.user_type = '1'`,
-    order = null;
-
-    var fetch_co_data = await db_Select(select,table_name,whr,order);
-
+    if(data.brn_code == '100'){
+        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
+        table_name = "md_user a, md_employee b",
+        whr = `a.emp_id = b.emp_id AND a.user_type = '1'`,
+        order = null;
+        var fetch_co_data = await db_Select(select,table_name,whr,order);
+    }else {
+        var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
+        table_name = "md_user a, md_employee b",
+        whr = `a.brn_code = '${data.brn_code}' AND a.emp_id = b.emp_id AND a.user_type = '1'`,
+        order = null; 
+        var fetch_co_data = await db_Select(select,table_name,whr,order);
+    }
     res.send(fetch_co_data);
 });
 
 grtformRouter.post("/fetch_member_dtls_cowise", async (req, res) => {
     var data = req.body;
+    let fetch_mem_co;
 
-    var select = "a.form_no,a.member_code,b.client_name",
-    table_name = "td_grt_basic a, md_member b",
-    whr = `a.member_code = b.member_code 
-    AND a.created_by = b.created_by
-    AND a.prov_grp_code = '0'
-    AND a.approval_status IN ('U','S')
-    AND a.branch_code = '${data.branch_code}' 
-    AND a.created_by = '${data.co_id}'`,
-    order = null;
-    var fetch_mem_co = await db_Select(select,table_name,whr,order);
-
+    if(data.branch_code == '100'){
+        var select = "a.form_no,a.member_code,b.client_name",
+        table_name = "td_grt_basic a, md_member b",
+        whr = `a.member_code = b.member_code 
+        AND a.created_by = b.created_by
+        AND a.prov_grp_code = '0'
+        AND a.approval_status IN ('U','S') 
+        AND a.created_by = '${data.co_id}'`,
+        order = null;
+        fetch_mem_co = await db_Select(select,table_name,whr,order);
+    }else {
+        var select = "a.form_no,a.member_code,b.client_name",
+        table_name = "td_grt_basic a, md_member b",
+        whr = `a.member_code = b.member_code 
+        AND a.created_by = b.created_by
+        AND a.prov_grp_code = '0'
+        AND a.approval_status IN ('U','S')
+        AND a.branch_code = '${data.branch_code}' 
+        AND a.created_by = '${data.co_id}'`,
+        order = null;
+        fetch_mem_co = await db_Select(select,table_name,whr,order);
+    }
     res.send(fetch_mem_co)
 });
 
