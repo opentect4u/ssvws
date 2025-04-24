@@ -546,12 +546,19 @@ fetchRouter.get("/branch_name_mis", async (req, res) => {
     var data = req.query;
 
     //in MIS fetch branch name details
-    var select = "branch_code,dist_code,branch_name",
-    table_name = "md_branch",
-    whr = `branch_code IN (${data.branch_code})`,
-    order = null;
-    var branch_dt = await db_Select(select,table_name,whr,order);
-
+    if(data.branch_code == '100'){
+        var select = "branch_code,dist_code,branch_name",
+        table_name = "md_branch",
+        whr = null,
+        order = null;
+        var branch_dt = await db_Select(select,table_name,whr,order);
+    }else {
+        var select = "branch_code,dist_code,branch_name",
+        table_name = "md_branch",
+        whr = `branch_code IN (${data.branch_code})`,
+        order = null;
+        var branch_dt = await db_Select(select,table_name,whr,order);
+    }
     res.send(branch_dt)
 });
 
