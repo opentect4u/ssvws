@@ -82,7 +82,7 @@ attendancewebRouter.post("/attendance_report_brnwise", async (req, res) => {
 
             var select = "a.entry_dt,b.branch_id,a.emp_id,b.emp_name,a.in_date_time,a.out_date_time,a.clock_status,a.late_in,a.in_addr,a.out_addr,a.attan_status,a.attn_reject_remarks",
             table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
-            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''} AND attan_status != 'R'`,
+            whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''} AND a.attan_status != 'R'`,
             order = `ORDER BY a.entry_dt`;
             var atten_report = await db_Select(select,table_name,whr,order);
 
@@ -114,6 +114,26 @@ attendancewebRouter.post("/reject_atten_emp",async (req, res) => {
     console.error("Error deleting reject report:", error);
     res.send({ suc: 0, msg: "An error occurred" });
 }
+});
+
+attendancewebRouter.post("/fetch_abset_list", async (req, res) => {
+    try{
+        var data = req.body;
+        console.log(data);
+
+        var select = "a.emp_id,b.emp_name,b.branch_id,c.branch_name",
+        table_name = "md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code",
+        whr = `a.user_status = 'A' 
+               AND a.emp_id NOT IN (SELECT emp_id 
+                                  FROM td_emp_attendance 
+                                  WHERE entry_dt = '${data.entry_dt}')`,
+        order = null;
+        var absent_data = await db_Select(select,table_name,whr,order);
+        res.send(absent_data)
+    } catch (error) {
+        console.error("Error fetching absent report:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }    
 });
 
 module.exports = {attendancewebRouter}
