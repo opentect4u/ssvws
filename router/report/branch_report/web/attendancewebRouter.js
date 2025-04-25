@@ -127,7 +127,7 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
                AND a.emp_id NOT IN (
                                   SELECT emp_id 
                                   FROM td_emp_attendance 
-                                  WHERE DATE(entry_dt) BETWEEN '${data.from_date}' AND '${data.to_date}')`,
+                                  WHERE DATE(entry_dt) = '${data.to_date}')`,
         order = null;
         var absent_data = await db_Select(select,table_name,whr,order);
         res.send(absent_data)
