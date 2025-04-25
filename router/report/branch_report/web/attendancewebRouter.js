@@ -116,7 +116,7 @@ attendancewebRouter.post("/reject_atten_emp",async (req, res) => {
 }
 });
 
-attendancewebRouter.post("/fetch_abset_list", async (req, res) => {
+attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
     try{
         var data = req.body;
         console.log(data);
