@@ -125,9 +125,10 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
         table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
         whr = `a.user_status = 'A' 
                AND a.emp_id NOT IN (
-                                  SELECT emp_id 
+                                  SELECT * 
                                   FROM td_emp_attendance 
-                                  WHERE DATE(entry_dt) = '${data.to_date}')`,
+                                  WHERE DATE(entry_dt) = '${data.to_date}') 
+               AND ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''}`,
         order = null;
         var absent_data = await db_Select(select,table_name,whr,order);
         res.send(absent_data)
