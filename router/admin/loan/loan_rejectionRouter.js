@@ -209,7 +209,7 @@ loan_rejectionRouter.post("/search_reject_loan_trans", async (req, res) => {
    var data = req.body;
    console.log(data,'data_loan');
    
-   var select = `a.payment_date,a.payment_id,c.branch_name,b.group_code,d.group_name,a.loan_id,b. member_code,e.client_name,a.particulars,a.credit,a.debit,a.tr_type,a.tr_mode,a.reject_remarks,a.created_by created_code,f.emp_name created_by,a.created_at,a.rejected_by rejected_code,g.emp_name rejected_by,a.rejected_at`,
+   var select = `a.payment_date,a.payment_id,c.branch_name,b.group_code,d.group_name,a.loan_id,b. member_code,e.client_name,a.credit,a.debit,a.reject_remarks,a.created_by created_code,f.emp_name created_by,a.created_at,a.rejected_by rejected_code,g.emp_name rejected_by,a.rejected_at`,
    table_name = `td_reject_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_member e ON b.member_code = e.member_code LEFT JOIN md_employee f ON a.created_by = f.emp_id LEFT JOIN md_employee g ON a.rejected_by = g.emp_id`,
    whr = `a.branch_id IN (${data.branch_code.join(",")}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'   AND a.tr_type != 'I'`,
    order = `ORDER BY payment_date desc`;
