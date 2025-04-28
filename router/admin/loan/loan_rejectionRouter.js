@@ -202,4 +202,27 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
  }
 });
 
+// search reject loan transactions 28.04.2025
+
+loan_rejectionRouter.post("/search_reject_loan_trans", async (req, res) => {
+ try{
+   var data = req.body;
+   console.log(data,'data_loan');
+   
+   var select = `a.payment_date,a.payment_id,b.branch_code,c.branch_name,b.group_code,d.group_name,a.loan_id,b. member_code,e.client_name,a.particulars,a.credit,a.debit,a.balance,a.od_balance,a.intt_balance,
+   CASE 
+   WHEN a.tr_type = 'D' THEN 'Disbursement'
+   WHEN a.tr_type = 'R' THEN 'Recovery'
+   ELSE '',a.tr_mode,a.reject_remarks,a.created_by created_code,f.emp_name created_by,a.created_at,a.modified_by   modified_code,g.emp_name modified_by,a.modified_at,a.approved_by approved_code,h.emp_name approved_by,a.approved_at,a.rejected_by rejected_code,i.emp_name rejected_by,a.rejected_at`,
+   table_name = `td_reject_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON b.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_member e ON b.member_code = e.member_code LEFT JOIN md_employee f ON a.created_by = f.emp_id LEFT JOIN md_employee g ON a.modified_by = g.emp_id LEFT JOIN md_employee h ON a.approved_by = h.emp_id LEFT JOIN md_employee i ON a.rejected_by = i.emp_id`,
+   whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'   AND a.tr_type != 'I'`,
+   order = `ORDER BY payment_date,payment_id desc`;
+   var search_reject_data = await db_Select(select,table_name,whr,order);
+   res.send({ search_reject_data})
+ }catch(error){
+  console.error("Error fetching search loan transaction:", error);
+  res.send({ suc: 0, msg: "An error occurred" });;
+ }
+});
+
 module.exports = {loan_rejectionRouter}
