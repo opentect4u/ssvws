@@ -158,7 +158,6 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
 
             while (currentDate <= endDate) {
                 // result.push(dateFormat(currentDate, "DDD"));
-                currentDate.setDate(currentDate.getDate() + 1);
                 if(!['Sun'].includes(currentDate)){
                     var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
                         table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
@@ -183,6 +182,7 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
                         }
                     }
                 }
+                currentDate.setDate(currentDate.getDate() + 1);
             }
         }
 
