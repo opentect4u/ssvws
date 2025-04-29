@@ -141,6 +141,36 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 }
 });
 
+loan_recov_approveRouter.post("/checking_credit_amt", async (req, res) => {
+ try{
+  var data = req.body;
+ let credit_amt, prn_recov_amt, intt_recov_amt;
+
+  var select = "credit,prn_recov,intt_recov",
+  table_name = "td_loan_transactions",
+  whr = `payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${data.payment_id}'`,
+  order = null;
+  var fetch_credit_amount_data = await db_Select(select,table_name,whr,order);
+
+  if(fetch_credit_amount_data.suc > 0 && fetch_credit_amount_data.msg.length > 0){
+    credit_amt = parseFloat(fetch_credit_amount_data.msg[0].credit);
+    prn_recov_amt = parseFloat(fetch_credit_amount_data.msg[0].prn_recov);
+    intt_recov_amt = parseFloat(fetch_credit_amount_data.msg[0].intt_recov);
+  
+    if(credit_amt !== (prn_recov_amt + intt_recov_amt)){
+       return res.send({ suc: 0, msg: "credit amount balance not matched with prn_recov balance and intt_balance"})
+    }else {
+      return res.send({ suc: 1, msg: "credit amount balance matched with prn_recov balance and intt_balance" });
+    }
+  }else {
+    return res.send({ suc: 0, msg: "No data found for provided payment details" });
+  }
+ }catch (error) {
+    console.error("Error checking amount match:", error);
+   return res.send({ suc: 0, msg: "An error occurred" });
+ }
+});
+
 // loan_recov_approveRouter.post("/checking_before_approve_grp_co", async (req, res) => {
 //     try {
 //         var data = req.body;
