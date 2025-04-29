@@ -138,7 +138,7 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
             absent: absent_data
         });
         }
-        res.send({ suc: 1, data: result });
+        res.send({ result });
     } catch (error) {
         console.error("Error fetching absent report:", error);
         res.send({ suc: 0, msg: "An error occurred" });
