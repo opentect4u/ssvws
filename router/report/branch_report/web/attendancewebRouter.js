@@ -134,9 +134,9 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
                ${data.branch_id != 'A' ? `AND b.branch_id = '${dt.branch_id}'` : ''}`, 
         order = null;
         var absent_data = await db_Select(select,table_name,whr,order);
-        result.push({...absent_data.msg});
+        result.push(...absent_data.msg);
         }
-        res.send({suc : 1, msg: result});
+        res.send({ suc : 1, msg: result });
     } catch (error) {
         console.error("Error fetching absent report:", error);
         res.send({ suc: 0, msg: "An error occurred" });
