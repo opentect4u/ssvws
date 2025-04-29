@@ -123,7 +123,7 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
         // console.log(data);
 
         for(let dt of data.absent_data){
-            var select = `DATE(d.entry_dt)entry_dt,a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
+            var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
             table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code LEFT JOIN td_emp_attendance d ON a.emp_id = d.emp_id AND DATE(d.entry_dt) BETWEEN '${dt.from_date}' AND '${dt.to_date}'`,
         whr = `a.user_status = 'A' 
                AND a.emp_id <> 9999
