@@ -119,19 +119,25 @@ attendancewebRouter.post("/reject_atten_emp",async (req, res) => {
 attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
     try{
         var data = req.body;
+        const result = [];
         // console.log(data);
 
-        var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
-        table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
+        for(let dt of data.absent_data){
+            var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
+            table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
         whr = `a.user_status = 'A' 
                AND a.emp_id <> 9999
                AND a.emp_id NOT IN (
                                   SELECT emp_id
                                   FROM td_emp_attendance 
                                   WHERE DATE(entry_dt) = '${data.to_date}')
-               ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''}`,
+               ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''}`, 
         order = null;
         var absent_data = await db_Select(select,table_name,whr,order);
+        result.push({
+            absent: absent_data
+        });
+        }
         res.send(absent_data)
     } catch (error) {
         console.error("Error fetching absent report:", error);
