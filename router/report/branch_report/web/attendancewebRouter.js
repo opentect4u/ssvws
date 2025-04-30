@@ -10,16 +10,16 @@ attendancewebRouter.post("/fetch_employee_fr_branch", async (req, res) => {
         var data = req.body;
         //fetch employee name through branch_id
         if(data.branch_id == 'A'){
-            var select = "emp_id,branch_id,emp_name",
-            table_name = "md_employee",
-            whr = null,
+            var select = "a.emp_id,a.branch_id,a.emp_name",
+            table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
+            whr = `b.user_status = 'A'`,
             order = null;
             var emp_dtls_web = await db_Select(select,table_name,whr,order);
             res.send(emp_dtls_web)
         }else {
-            var select = "emp_id,branch_id,emp_name",
-            table_name = "md_employee",
-            whr = `branch_id = '${data.branch_id}'`,
+            var select = "a.emp_id,a.branch_id,a.emp_name",
+            table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
+            whr = `branch_id = '${data.branch_id}' AND b.user_status = 'A'`,
             order = null;
             var emp_dtls_web = await db_Select(select,table_name,whr,order);
             res.send(emp_dtls_web)
