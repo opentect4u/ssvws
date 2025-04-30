@@ -116,36 +116,7 @@ attendancewebRouter.post("/reject_atten_emp",async (req, res) => {
 }
 });
 
-// attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
-//     try{
-//         var data = req.body;
-//         let result = [];
-//         // console.log(data);
-
-//         for(let dt of data.absent_data){
-//             var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
-//             table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
-//         whr = `a.user_status = 'A' 
-//                AND a.emp_id <> 9999
-//                ${data.branch_id != 'A' ? `AND b.branch_id = '${dt.branch_id}'` : ''}
-//                AND a.emp_id NOT IN (
-//                                   SELECT emp_id
-//                                   FROM td_emp_attendance 
-//                                   WHERE entry_dt BETWEEN '${dt.from_date}')`, 
-//         order = null;
-//         var absent_data = await db_Select(select,table_name,whr,order);
-//         console.log(absent_data);
-        
-//         result.push(...absent_data.msg);
-//         }
-//         res.send({ suc : 1, msg: result });
-//     } catch (error) {
-//         console.error("Error fetching absent report:", error);
-//         res.send({ suc: 0, msg: "An error occurred" });
-//     }    
-// });
-
-
+//absent list
 attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
     try {
         var data = req.body;
@@ -158,7 +129,8 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
 
             while (currentDate <= endDate) {
                 // result.push(dateFormat(currentDate, "DDD"));
-                if(!['Sun'].includes(currentDate)){
+                // if(!['Sun'].includes(currentDate)){
+                if (!['Sun'].includes(dateFormat(currentDate, 'ddd'))) {
                     var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
                         table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
                         whr = `a.user_status = 'A' 
@@ -171,13 +143,14 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
                             var abs_dt = await db_Select('count(*) tot_row', 'td_emp_attendance', `entry_dt = '${dateFormat(currentDate, "yyyy-mm-dd")}' AND emp_id = ${edt.emp_id}`);
                             console.log(abs_dt, '----------');
                             
-                            if(abs_dt.suc > 0){
-                                if(abs_dt.msg.length > 0){
-                                    if(abs_dt.msg[0].tot_row > 0){
-                                        edt['abs_dt'] = currentDate
+                            // if(abs_dt.suc > 0){
+                            if(abs_dt.suc > 0 && abs_dt.msg.length > 0 && abs_dt.msg[0].tot_row > 0){
+                                // if(abs_dt.msg.length > 0){
+                                    // if(abs_dt.msg[0].tot_row > 0){
+                                        edt['abs_dt'] =  dateFormat(currentDate, "yyyy-mm-dd");
                                         result.push(edt)
-                                    }
-                                }
+                                    // }
+                                // }
                             }
                         }
                     }
