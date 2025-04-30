@@ -117,9 +117,58 @@ attendancewebRouter.post("/reject_atten_emp",async (req, res) => {
 });
 
 //absent list
+// attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
+//     try {
+//         var data = req.body;
+//         let result = [];
+//         const dateFormat = require("dateformat");
+
+//         for (let dt of data.absent_data) {
+//             let currentDate = new Date(dt.from_date);
+//             let endDate = new Date(dt.to_date);
+
+//             while (currentDate <= endDate) {
+//                 // result.push(dateFormat(currentDate, "DDD"));
+//                 // if(!['Sun'].includes(currentDate)){
+//                 if (!['Sun'].includes(dateFormat(currentDate, 'ddd'))) {
+//                     var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
+//                         table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
+//                         whr = `a.user_status = 'A' 
+//                         AND a.emp_id <> 9999
+//                         ${dt.branch_id != 'A' ? `AND b.branch_id = '${dt.branch_id}'` : ''}`, 
+//                     order = null;
+//                     var emp_data = await db_Select(select,table_name,whr,order);
+//                     if(emp_data.suc > 0 && emp_data.msg.length > 0){
+//                         for(let edt of emp_data.msg){
+//                             var abs_dt = await db_Select('count(*) tot_row', 'td_emp_attendance', `entry_dt = '${dateFormat(currentDate, "yyyy-mm-dd")}' AND emp_id = ${edt.emp_id}`);
+//                             console.log(abs_dt, '----------');
+                            
+//                             // if(abs_dt.suc > 0){
+//                             if(abs_dt.suc > 0 && abs_dt.msg.length > 0 && abs_dt.msg[0].tot_row == 0){
+//                                 // if(abs_dt.msg.length > 0){
+//                                     // if(abs_dt.msg[0].tot_row > 0){
+//                                         edt['abs_dt'] =  dateFormat(currentDate, "yyyy-mm-dd");
+//                                         result.push(edt)
+//                                     // }
+//                                 // }
+//                             }
+//                         }
+//                     }
+//                 }
+//                 currentDate.setDate(currentDate.getDate() + 1);
+//             }
+//         }
+
+//         res.send({ suc: 1, msg: result });
+//     } catch (error) {
+//         console.error("Error fetching absent report:", error);
+//         res.send({ suc: 0, msg: "An error occurred" });
+//     }
+// });
+
 attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
     try {
-        var data = req.body;
+        const data = req.body;
         let result = [];
         const dateFormat = require("dateformat");
 
@@ -128,29 +177,28 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
             let endDate = new Date(dt.to_date);
 
             while (currentDate <= endDate) {
-                // result.push(dateFormat(currentDate, "DDD"));
-                // if(!['Sun'].includes(currentDate)){
-                if (!['Sun'].includes(dateFormat(currentDate, 'ddd'))) {
-                    var select = `a.emp_id,b.emp_name,b.branch_id,c.branch_name`,
-                        table_name = `md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code`,
-                        whr = `a.user_status = 'A' 
+                if (dateFormat(currentDate, 'ddd') !== 'Sun') {
+                    const select = `a.emp_id, b.emp_name, b.branch_id, c.branch_name`;
+                    const table_name = `md_user a 
+                        LEFT JOIN md_employee b ON a.emp_id = b.emp_id 
+                        LEFT JOIN md_branch c ON b.branch_id = c.branch_code`;
+                    const whr = `a.user_status = 'A' 
                         AND a.emp_id <> 9999
-                        ${dt.branch_id != 'A' ? `AND b.branch_id = '${dt.branch_id}'` : ''}`, 
-                    order = null;
-                    var emp_data = await db_Select(select,table_name,whr,order);
-                    if(emp_data.suc > 0 && emp_data.msg.length > 0){
-                        for(let edt of emp_data.msg){
-                            var abs_dt = await db_Select('count(*) tot_row', 'td_emp_attendance', `entry_dt = '${dateFormat(currentDate, "yyyy-mm-dd")}' AND emp_id = ${edt.emp_id}`);
-                            console.log(abs_dt, '----------');
-                            
-                            // if(abs_dt.suc > 0){
-                            if(abs_dt.suc > 0 && abs_dt.msg.length > 0 && abs_dt.msg[0].tot_row > 0){
-                                // if(abs_dt.msg.length > 0){
-                                    // if(abs_dt.msg[0].tot_row > 0){
-                                        edt['abs_dt'] =  dateFormat(currentDate, "yyyy-mm-dd");
-                                        result.push(edt)
-                                    // }
-                                // }
+                        ${dt.branch_id !== 'A' ? `AND b.branch_id = '${dt.branch_id}'` : ''}`;
+                    const emp_data = await db_Select(select, table_name, whr, null);
+
+                    if (emp_data.suc > 0 && emp_data.msg.length > 0) {
+                        for (let edt of emp_data.msg) {
+                            const dateStr = dateFormat(currentDate, "yyyy-mm-dd");
+                            const abs_dt = await db_Select(
+                                'count(*) tot_row',
+                                'td_emp_attendance',
+                                `entry_dt = '${dateStr}' AND emp_id = ${edt.emp_id}`
+                            );
+
+                            if (abs_dt.suc > 0 && abs_dt.msg[0].tot_row == 0) {
+                                edt['abs_dt'] = dateStr;
+                                result.push(edt);
                             }
                         }
                     }
@@ -165,6 +213,5 @@ attendancewebRouter.post("/fetch_absent_list", async (req, res) => {
         res.send({ suc: 0, msg: "An error occurred" });
     }
 });
-
 
 module.exports = {attendancewebRouter}
