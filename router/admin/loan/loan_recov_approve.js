@@ -144,43 +144,171 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 loan_recov_approveRouter.post("/checking_credit_amt", async (req, res) => {
  try{
   var data = req.body;
+  let not_matched_loan_id = []
 
- for(let dt of data.checklist){
-  var select = "credit,prn_recov,intt_recov",
-  table_name = "td_loan_transactions",
-  whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}'`,
-  order = null;
-  var fetch_credit_amount_data = await db_Select(select,table_name,whr,order);
+   if (data.checklist.length > 0) {
+    for(let dt of data.checklist){
+        
+   var select = "credit,prn_recov,intt_recov,payment_id",
+   table_name = "td_loan_transactions",
+   whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}'`,
+   order = null;
+   var fetch_credit_amount_data = await db_Select(select,table_name,whr,order);
  
-  if (fetch_credit_amount_data.suc > 0 && fetch_credit_amount_data.msg.length > 0) {
-    const credit_amt = parseFloat(fetch_credit_amount_data.msg[0].credit);
-    const prn_recov_amt = parseFloat(fetch_credit_amount_data.msg[0].prn_recov);
-    const intt_recov_amt = parseFloat(fetch_credit_amount_data.msg[0].intt_recov);
-
-    if (credit_amt !== (prn_recov_amt + intt_recov_amt)) {
-      return res.send({
-        suc: 0,
-        msg: `Mismatch for payment_id ${dt.payment_id}: credit != prn_recov + intt_recov`
-      });
+   if (fetch_credit_amount_data.suc > 0 && fetch_credit_amount_data.msg.length > 0) {
+    for(let payDts of fetch_credit_amount_data.msg){
+        let curr_credit = parseFloat(payDts.prn_recov) + parseFloat(payDts.intt_recov)
+        if(payDts.credit != curr_credit){
+            not_matched_loan_id.push(payDts.payment_id)
+        }
     }
-  } else {
+    // const credit_amt = parseFloat(fetch_credit_amount_data.msg[0].credit);
+    // const prn_recov_amt = parseFloat(fetch_credit_amount_data.msg[0].prn_recov);
+    // const intt_recov_amt = parseFloat(fetch_credit_amount_data.msg[0].intt_recov);
+
+    //     if (credit_amt !== (prn_recov_amt + intt_recov_amt)) {
+    //     return res.send({
+    //         suc: 0,
+    //         msg: `Mismatch for payment_id ${dt.payment_id}: credit != prn_recov + intt_recov`
+    //     });
+    //     }
+    // } else {
+    //     return res.send({
+    //     suc: 0,
+    //     msg: `No data found for payment_id ${dt.payment_id} on date ${dt.payment_date}`
+    //     });
+    // }
+}
+}
+// res.send({suc: 1, msg: `Mismatch for payment_id ${dt.payment_id}: credit != prn_recov + intt_recov`})
+// If all passed
+// return res.send({
+//   suc: 1,
+//   msg: "All credit amounts match with prn_recov and intt_recov"
+// });
+if (not_matched_loan_id.length > 0) {
     return res.send({
       suc: 0,
-      msg: `No data found for payment_id ${dt.payment_id} on date ${dt.payment_date}`
+      msg: "Mismatch found in credit amounts",
+      payment_ids: not_matched_loan_id
+    });
+  } else {
+    return res.send({
+      suc: 1,
+      msg: "All credit amounts match with prn_recov and intt_recov"
     });
   }
+} else {
+    return res.send({ suc: 0, msg: "No data provided to check" });
 }
-
-// If all passed
-return res.send({
-  suc: 1,
-  msg: "All credit amounts match with prn_recov and intt_recov"
-});
- }catch (error) {
+}catch (error) {
     console.error("Error checking amount match:", error);
    return res.send({ suc: 0, msg: "An error occurred" });
- }
+}
 });
+
+loan_recov_approveRouter.post("/checking_credit_amount_grp_cowise", async (req, res) => {
+    try {
+      const data = req.body;
+      let not_matched_loan_id = []
+  
+      if (data.checklist.length > 0) {
+        for (let dt of data.checklist) {
+          var loanDetails = await db_Select(
+            "loan_id",
+            "td_loan",
+            `group_code IN (${dt.group_code})`,
+            null
+          );
+  
+          if (loanDetails.suc > 0 && loanDetails.msg.length > 0) {
+            const loan_ids_data = loanDetails.msg.map(dts => `'${dts.loan_id}'`).join(",");
+  
+            var paymentIdDetails = await db_Select(
+              "payment_date,loan_id,credit,prn_recov,intt_recov",
+              "td_loan_transactions",
+              `loan_id IN (${loan_ids_data}) AND payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND status = 'U'`,
+              null
+            );
+  
+            if (paymentIdDetails.suc > 0 && paymentIdDetails.msg.length > 0) {
+                for(let payDt of paymentIdDetails.msg){
+                    let curr_credit = parseFloat(payDt.prn_recov) + parseFloat(payDt.intt_recov)
+                    if(payDt.credit != curr_credit){
+                        not_matched_loan_id.push(payDt)
+                    }
+                }
+                // return res.send({suc: 1, msg: not_matched_loan_id})
+            // //   var pay_id = paymentIdDetails.msg[0].payment_id;
+            //   const pay_id = paymentIdDetails.msg.map(pdt => `'${pdt.payment_id}'`).join(",");
+  
+            //   var fetchCreditAmountData = await db_Select(
+            //     "credit,prn_recov,intt_recov",
+            //     "td_loan_transactions",
+            //     `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id IN (${pay_id})`,
+            //     null
+            //   );
+  
+            //   if (fetchCreditAmountData.suc > 0 && fetchCreditAmountData.msg.length > 0) {
+            //     const { credit, prn_recov, intt_recov } = fetchCreditAmountData.msg[0];
+            //     const credit_amt = parseFloat(credit);
+            //     const prn_recov_amt = parseFloat(prn_recov);
+            //     const intt_recov_amt = parseFloat(intt_recov);
+  
+            //     if (credit_amt !== (prn_recov_amt + intt_recov_amt)) {
+            //         return res.send({
+            //             suc: 0,
+            //             msg: `Mismatch for payment_id (${pay_id}): credit != prn_recov + intt_recov`
+            //         });
+            //         }
+            //     } else {
+            //         return res.send({
+            //         suc: 0,
+            //         msg: `No data found for payment_id ${pay_id} on date ${dt.payment_date}`
+            //         });
+            //     }
+            } 
+            else {
+              return res.send({
+                suc: 0,
+                msg: "No payment_id found for given group_code and date"
+              });
+            }
+          } 
+          else {
+            return res.send({
+              suc: 0,
+              msg: "No loan found for given group_code"
+            });
+          }
+        }
+        // res.send({suc: 1, msg: not_matched_loan_id})
+        if (not_matched_loan_id.length > 0) {
+            return res.send({
+              suc: 0,
+              msg: `Mismatch found in credit amounts`,
+              payment_ids: not_matched_loan_id
+            });
+          } else {
+            return res.send({
+              suc: 1,
+              msg: "All credit amounts match with prn_recov and intt_recov"
+            });
+          }
+  // If all passed
+// return res.send({
+//     suc: 1,
+//     msg: "All credit amounts match with prn_recov and intt_recov"
+//   });
+  } else {
+      return res.send({ suc: 0, msg: "No data provided to check" });
+  }
+    } catch (error) {
+      console.error("Error checking amount match in grp_co_wise:", error);
+      return res.send({ suc: 0, msg: "An error occurred" });
+    }
+  });
+  
 
 // loan_recov_approveRouter.post("/checking_before_approve_grp_co", async (req, res) => {
 //     try {
