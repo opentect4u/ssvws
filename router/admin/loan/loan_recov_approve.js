@@ -190,7 +190,7 @@ if (not_matched_loan_id.length > 0) {
     return res.send({
         suc: 0,
         // payment_ids: not_matched_loan_id,
-        msg: `Credit amount not matched with principal and interest amount for payment Id : ${not_matched_loan_id.join(", ")}`
+        msg: `Credit amount not matched with principal and interest amount for payment Id : ${payDts.payment_id.join(", ")}`
 
       });
   } else {
