@@ -120,7 +120,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
-                whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND payment_id < '${pay_ids}' AND status = 'U'`
+                whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND payment_id < ${pay_ids} AND status = 'U'`
                 order = null;
                 var check_dt = await db_Select(select,table_name,whr,order);
             }
