@@ -287,8 +287,8 @@ loan_recov_approveRouter.post("/checking_credit_amount_grp_cowise", async (req, 
         if (not_matched_loan_id.length > 0) {
             return res.send({
               suc: 0,
-              msg: `Mismatch found in credit amounts`,
-              payment_ids: not_matched_loan_id
+              msg: `Credit amount not matched with principal and interest amount for payment Id : ${not_matched_loan_id.join(", ")}`,
+            //   payment_ids: not_matched_loan_id
             });
           } else {
             return res.send({
