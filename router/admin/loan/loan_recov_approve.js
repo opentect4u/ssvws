@@ -120,7 +120,7 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
 
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
-                whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND payment_id < ${pay_ids} AND status = 'U'`
+                whr = `loan_id IN (${loan_ids}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}' AND payment_id < '${pay_ids}' AND status = 'U'`
                 order = null;
                 var check_dt = await db_Select(select,table_name,whr,order);
             }
@@ -190,7 +190,7 @@ if (not_matched_loan_id.length > 0) {
     return res.send({
         suc: 0,
         // payment_ids: not_matched_loan_id,
-        msg: `Credit amount not matched with principal and interest amount for payment Id : ${payDts.payment_id.join(", ")}`
+        msg: `Credit amount not matched with principal and interest amount for payment Id : ${not_matched_loan_id.join(", ")}`
 
       });
   } else {
@@ -226,7 +226,7 @@ loan_recov_approveRouter.post("/checking_credit_amount_grp_cowise", async (req, 
             const loan_ids_data = loanDetails.msg.map(dts => `'${dts.loan_id}'`).join(",");
   
             var paymentIdDetails = await db_Select(
-              "payment_date,loan_id,credit,prn_recov,intt_recov",
+              "payment_id,payment_date,loan_id,credit,prn_recov,intt_recov",
               "td_loan_transactions",
               `loan_id IN (${loan_ids_data}) AND payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND status = 'U'`,
               null
@@ -236,38 +236,9 @@ loan_recov_approveRouter.post("/checking_credit_amount_grp_cowise", async (req, 
                 for(let payDt of paymentIdDetails.msg){
                     let curr_credit = parseFloat(payDt.prn_recov) + parseFloat(payDt.intt_recov)
                     if(payDt.credit != curr_credit){
-                        not_matched_loan_id.push(payDt)
+                        not_matched_loan_id.push(payDt.payment_id)
                     }
                 }
-                // return res.send({suc: 1, msg: not_matched_loan_id})
-            // //   var pay_id = paymentIdDetails.msg[0].payment_id;
-            //   const pay_id = paymentIdDetails.msg.map(pdt => `'${pdt.payment_id}'`).join(",");
-  
-            //   var fetchCreditAmountData = await db_Select(
-            //     "credit,prn_recov,intt_recov",
-            //     "td_loan_transactions",
-            //     `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id IN (${pay_id})`,
-            //     null
-            //   );
-  
-            //   if (fetchCreditAmountData.suc > 0 && fetchCreditAmountData.msg.length > 0) {
-            //     const { credit, prn_recov, intt_recov } = fetchCreditAmountData.msg[0];
-            //     const credit_amt = parseFloat(credit);
-            //     const prn_recov_amt = parseFloat(prn_recov);
-            //     const intt_recov_amt = parseFloat(intt_recov);
-  
-            //     if (credit_amt !== (prn_recov_amt + intt_recov_amt)) {
-            //         return res.send({
-            //             suc: 0,
-            //             msg: `Mismatch for payment_id (${pay_id}): credit != prn_recov + intt_recov`
-            //         });
-            //         }
-            //     } else {
-            //         return res.send({
-            //         suc: 0,
-            //         msg: `No data found for payment_id ${pay_id} on date ${dt.payment_date}`
-            //         });
-            //     }
             } 
             else {
               return res.send({
