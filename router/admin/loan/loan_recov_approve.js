@@ -189,8 +189,8 @@ loan_recov_approveRouter.post("/checking_credit_amt", async (req, res) => {
 if (not_matched_loan_id.length > 0) {
     return res.send({
       suc: 0,
-      msg: "Mismatch found in credit amounts",
-      payment_ids: not_matched_loan_id
+      payment_ids: not_matched_loan_id,
+      msg: `Mismatch found in credit amounts - ${payment_ids}`
     });
   } else {
     return res.send({
