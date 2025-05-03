@@ -107,7 +107,8 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
                 order = null;
                 var loan_id_dt = await db_Select(select,table_name,whr,order);
 
-                var loan_ids = loan_id_dt.msg.map(dts => `'${dts.loan_id}'`).join(",");
+                // var loan_ids = loan_id_dt.msg.map(dts => `'${dts.loan_id}'`).join(",");
+                var loan_ids = loan_id_dt.msg[0].loan_id
                 // console.log(loan_ids,'loan');
                 
                 var select = "MAX(payment_id) payment_id",
@@ -116,7 +117,9 @@ loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
                 order = null;
                 var pay_id_dt = await db_Select(select,table_name,whr,order);
 
-                var pay_ids = pay_id_dt.msg.map(pdt => `'${pdt.payment_id}'`).join(",");
+                // var pay_ids = pay_id_dt.msg.map(pdt => `'${pdt.payment_id}'`).join(",");
+                var pay_ids = pay_id_dt.msg[0].payment_id
+
 
                 var select = "COUNT(*) tot_row",
                 table_name = "td_loan_transactions",
