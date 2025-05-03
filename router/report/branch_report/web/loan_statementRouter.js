@@ -48,15 +48,16 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
     var data = req.body;
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
-    var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,(a.balance + a.od_balance)prn_bal,a.intt_balance intt_bal,(a.balance + a.od_balance + a.intt_balance) total_outstanding,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
-    table_name = "td_loan_transactions a, td_loan b",
-    whr = `a.branch_id = '${data.branch_id}' AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
-    order = `ORDER BY date(a.payment_date),a.payment_id`;
 
-    // var select = `payment_date trans_date,payment_id trans_no,IF(tr_type = 'D', 'Disbursement', 'Recovery') tr_type,debit,credit,(balance + od_balance)prn_bal,intt_balance intt_bal,(balance + od_balance + intt_balance)total_outstanding,tr_mode,particulars,status`,
-    // table_name = "td_loan_transactions",
-    // whr = `branch_id = '${data.branch_id}' AND date(payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND loan_id = '${data.loan_id}' AND tr_type != 'O' AND tr_type != 'I'`,
-    // order = `ORDER BY payment_id desc,payment_date desc`;
+    // var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,(a.balance + a.od_balance)prn_bal,a.intt_balance intt_bal,(a.balance + a.od_balance + a.intt_balance) total_outstanding,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
+    // table_name = "td_loan_transactions a, td_loan b",
+    // whr = `a.branch_id = '${data.branch_id}' AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
+    // order = `ORDER BY date(a.payment_date),a.payment_id`;
+
+    var select = `payment_date trans_date,payment_id trans_no,IF(tr_type = 'D', 'Disbursement', 'Recovery') tr_type,debit,credit,(balance + od_balance)prn_bal,intt_balance intt_bal,(balance + od_balance + intt_balance)total_outstanding,tr_mode,particulars,status`,
+    table_name = "td_loan_transactions",
+    whr = `branch_id = '${data.branch_id}' AND date(payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND loan_id = '${data.loan_id}' AND tr_type != 'O' AND tr_type != 'I'`,
+    order = `ORDER BY payment_id desc,payment_date desc`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
     }catch(err){
@@ -81,26 +82,27 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
     var data = req.body;
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR GROUP CODE
-    var select = "trans_date,particulars,tr_type,sum(debit)debit,sum(credit)credit,sum(bank_charge)bank_charge,sum(proc_charge)proc_charge,sum(total)balance,curr_roi,period,period_mode,tot_emi",
-    table_name = `(
-        select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,a.tr_type tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.od_balance +a.intt_balance) total,b.curr_roi,b.period,b.period_mode,b.tot_emi
-        from td_loan_transactions a,td_loan b  
-        where a.branch_id = '${data.branch_code}' AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
-        AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-        GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.curr_roi,b.period,b.period_mode,b.tot_emi
-        ORDER BY a.payment_date,a.payment_id)a`,
-    whr = null,
-    order = `GROUP BY trans_date,particulars,tr_type,curr_roi,period,period_mode,tot_emi`;
 
-    // var select = "trans_date,tr_type,sum(debit)debit,sum(credit)credit,sum(total)total_outstanding,particulars,period,period_mode",
+    // var select = "trans_date,particulars,tr_type,sum(debit)debit,sum(credit)credit,sum(bank_charge)bank_charge,sum(proc_charge)proc_charge,sum(total)balance,curr_roi,period,period_mode,tot_emi",
     // table_name = `(
-    //     select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,IF(a.tr_type = 'D', 'Disbursement', 'Recovery') tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.balance + a.od_balance +a.intt_balance) total,b.period,b.period_mode
+    //     select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,a.tr_type tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.od_balance +a.intt_balance) total,b.curr_roi,b.period,b.period_mode,b.tot_emi
     //     from td_loan_transactions a,td_loan b  
-    //      where a.branch_id = '${data.branch_code}' AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-    //      GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.period,b.period_mode
-    //      ORDER BY a.payment_date,a.payment_id)a`,
+    //     where a.branch_id = '${data.branch_code}' AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
+    //     AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+    //     GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.curr_roi,b.period,b.period_mode,b.tot_emi
+    //     ORDER BY a.payment_date,a.payment_id)a`,
     // whr = null,
-    // order = `GROUP BY trans_date,tr_type,particulars,period,period_mode`
+    // order = `GROUP BY trans_date,particulars,tr_type,curr_roi,period,period_mode,tot_emi`;
+
+    var select = "trans_date,tr_type,sum(debit)debit,sum(credit)credit,sum(total)total_outstanding,particulars,period,period_mode",
+    table_name = `(
+        select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,IF(a.tr_type = 'D', 'Disbursement', 'Recovery') tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.balance + a.od_balance +a.intt_balance) total,b.period,b.period_mode
+        from td_loan_transactions a,td_loan b  
+         where a.branch_id = '${data.branch_code}' AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+         GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.period,b.period_mode
+         ORDER BY a.payment_date,a.payment_id)a`,
+    whr = null,
+    order = `GROUP BY trans_date,tr_type,particulars,period,period_mode`
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
 });
