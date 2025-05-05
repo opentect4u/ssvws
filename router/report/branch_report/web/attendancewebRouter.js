@@ -37,7 +37,7 @@ attendancewebRouter.post("/show_per_emp_detls_per_brn", async (req, res) => {
 
   var select = "COUNT(in_date_time)tot_present",
   table_name = "td_emp_attendance",
-  whr = `emp_id = '${data.emp_id}' AND attan_status != 'R'`,
+  whr = `emp_id = '${data.emp_id}' AND entry_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND attan_status != 'R'`,
   order = null;
   var emp_details = await db_Select(select,table_name,whr,order);
 
