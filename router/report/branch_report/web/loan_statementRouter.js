@@ -102,7 +102,8 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
          GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.period,b.period_mode
          ORDER BY a.payment_date,a.payment_id)a`,
     whr = null,
-    order = `GROUP BY trans_date,tr_type,particulars,period,period_mode`
+    order = `GROUP BY trans_date,tr_type,particulars,period,period_mode
+             ORDER BY trans_date desc`
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
 });
