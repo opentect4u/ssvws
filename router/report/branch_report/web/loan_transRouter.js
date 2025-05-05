@@ -111,7 +111,7 @@ loan_transRouter.post("/transaction_report_fundwise", async (req, res) => {
   try{
     var data = req.body;
  
-    var select = `b.branch_code,f.branch_name,a.payment_date,b.group_code,c.group_name,b.fund_id,e.fund_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'}`,
+    var select = `b.branch_code,f.branch_name,a.payment_date,b.group_code,c.group_name,b.fund_id,e.fund_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'},SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_fund e ON b.fund_id = e.fund_id LEFT JOIN md_branch f ON b.branch_code = f.branch_code",
     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND b.fund_id IN (${data.fund_id}) AND a.tr_type = '${data.tr_type}'`,
@@ -131,7 +131,7 @@ loan_transRouter.post("/transaction_report_cowise", async (req, res) => {
   try{
     var data = req.body;
  
-    var select = `b.branch_code,f.branch_name,a.payment_date,c.co_id,d.emp_name co_name,COUNT(DISTINCT c.group_code) AS total_group,COUNT(b.member_code) AS total_member,b.fund_id,e.fund_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'}`,
+    var select = `b.branch_code,f.branch_name,a.payment_date,c.co_id,d.emp_name co_name,COUNT(DISTINCT c.group_code) AS total_group,COUNT(b.member_code) AS total_member,b.fund_id,e.fund_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'},SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_fund e ON b.fund_id = e.fund_id LEFT JOIN md_branch f ON b.branch_code = f.branch_code",
     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND c.co_id IN (${data.co_id}) AND a.tr_type = '${data.tr_type}'`,
