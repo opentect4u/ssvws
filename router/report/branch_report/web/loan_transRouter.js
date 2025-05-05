@@ -110,16 +110,11 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
 loan_transRouter.post("/transaction_report_fundwise", async (req, res) => {
   try{
     var data = req.body;
-
-    // Ensure branch_code and fund_id are arrays or formatted correctly
-    let branches = Array.isArray(data.branch_code) ? data.branch_code.join(",") : data.branch_code;
-    let funds = Array.isArray(data.fund_id) ? data.fund_id.join(",") : data.fund_id;
-
  
     var select = `b.branch_code,f.branch_name,a.payment_date,b.group_code,c.group_name,b.fund_id,e.fund_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name co_name,${data.tr_type === 'D' ? 'SUM(a.debit) AS debit' : 'SUM(a.credit) AS credit'}`,
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_fund e ON b.fund_id = e.fund_id LEFT JOIN md_branch f ON b.branch_code = f.branch_code",
-    whr = `a.branch_id IN (${branches}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-           AND b.fund_id IN (${funds}) AND a.tr_type = '${data.tr_type}'`,
+    whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+           AND b.fund_id IN (${data.fund_id}) AND a.tr_type = '${data.tr_type}'`,
     order = `GROUP BY b.branch_code,f.branch_name,a.payment_date,b.group_code,c.group_name,b.fund_id,e.fund_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
              ORDER BY a.payment_date`;
     var transaction_fund_data = await db_Select(select,table_name,whr,order);
