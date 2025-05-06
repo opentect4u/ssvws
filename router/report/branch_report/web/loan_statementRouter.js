@@ -8,7 +8,6 @@ dateFormat = require('dateformat');
 loan_statementRouter.post("/fetch_brn_name_based_usertype", async (req, res) => {
     try {
       var data = req.body;
-    //   console.log(data, 'data');
   
       let select = "a.user_type, b.branch_assign_id, c.branch_name";
       let table_name = "md_user a LEFT JOIN td_assign_branch_user b ON a.user_type = b.user_type LEFT JOIN md_branch c ON b.branch_assign_id = c.branch_code";
@@ -49,15 +48,10 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
 
-    // var select = `a.payment_date trans_date, a.payment_id trans_no,a.particulars,a.credit,a.debit,a.bank_charge,a.proc_charge,a.prn_recov,a.intt_recov,(a.balance + a.od_balance)prn_bal,a.intt_balance intt_bal,(a.balance + a.od_balance + a.intt_balance) total_outstanding,a.tr_type,a.tr_mode,b.curr_roi,b.period,b.period_mode,b.tot_emi`,
-    // table_name = "td_loan_transactions a, td_loan b",
-    // whr = `a.branch_id = '${data.branch_id}' AND a.loan_id = b.loan_id AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.loan_id = '${data.loan_id}' AND a.tr_type != 'O' AND a.tr_type != 'I'`,
-    // order = `ORDER BY date(a.payment_date),a.payment_id`;
-
-    var select = `payment_date trans_date,payment_id trans_no,IF(tr_type = 'D', 'Disbursement', 'Recovery') tr_type,debit,credit,(balance + od_balance)prn_bal,intt_balance intt_bal,(balance + od_balance + intt_balance)total_outstanding,tr_mode,particulars,IF(status = 'A', 'Approved', 'Unapproved')status`,
+    var select = `payment_date trans_date,payment_id trans_no,debit,credit,(balance + od_balance + intt_balance)total_outstanding,IF(tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,particulars,IF(status = 'A', 'Approved', 'Unapproved')status`,
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_id}' AND date(payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND loan_id = '${data.loan_id}' AND tr_type != 'O' AND tr_type != 'I'`,
-    order = `ORDER BY payment_id desc,payment_date desc`;
+    order = `ORDER BY payment_date,tr_type`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
     }catch(err){
