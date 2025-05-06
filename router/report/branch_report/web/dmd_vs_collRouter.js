@@ -264,7 +264,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        LEFT JOIN md_employee e ON d.co_id = e.emp_id
        LEFT JOIN md_fund f ON b.fund_id = f.fund_id
        WHERE a.branch_code IN (${data.branch_code})
-       AND b.fund_id = '${data.fund_id}'
+       AND b.fund_id IN (${data.fund_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
          b.period_mode
@@ -286,7 +286,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
        WHERE a.branch_code IN (${data.branch_code})
        AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-       AND b.fund_id = '${data.fund_id}'
+       AND b.fund_id IN (${data.fund_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
          b.fund_id,f.fund_name, b.period_mode
