@@ -77,26 +77,15 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR GROUP CODE
 
-    // var select = "trans_date,particulars,tr_type,sum(debit)debit,sum(credit)credit,sum(bank_charge)bank_charge,sum(proc_charge)proc_charge,sum(total)balance,curr_roi,period,period_mode,tot_emi",
-    // table_name = `(
-    //     select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,a.tr_type tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.bank_charge) bank_charge,SUM(a.proc_charge) proc_charge,SUM(a.balance + a.od_balance +a.intt_balance) total,b.curr_roi,b.period,b.period_mode,b.tot_emi
-    //     from td_loan_transactions a,td_loan b  
-    //     where a.branch_id = '${data.branch_code}' AND a.branch_id = b.branch_code AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}'
-    //     AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-    //     GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.curr_roi,b.period,b.period_mode,b.tot_emi
-    //     ORDER BY a.payment_date,a.payment_id)a`,
-    // whr = null,
-    // order = `GROUP BY trans_date,particulars,tr_type,curr_roi,period,period_mode,tot_emi`;
-
-    var select = "trans_date,tr_type,sum(debit)debit,sum(credit)credit,sum(total)total_outstanding,particulars,period,period_mode,IF(status = 'A', 'Approved', 'Unapproved')status",
+    var select = "trans_date,sum(debit)debit,sum(credit)credit,sum(total)total_outstanding,IF(tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,particulars,IF(status = 'A', 'Approved', 'Unapproved')status",
     table_name = `(
-        select a.payment_date trans_date,a.payment_id trans_id,a.particulars particulars,IF(a.tr_type = 'D', 'Disbursement', 'Recovery') tr_type,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.balance + a.od_balance +a.intt_balance) total,b.period,b.period_mode,a.status
+        select a.payment_date trans_date,a.payment_id trans_id,a.tr_mode,a.particulars particulars,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.balance + a.od_balance +a.intt_balance) total,a.status
         from td_loan_transactions a,td_loan b  
-         where a.branch_id = '${data.branch_code}' AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}'
-         GROUP BY a.payment_date,a.particulars,a.payment_id,a.tr_type,b.period,b.period_mode)a`,
+         where a.branch_id = '${data.branch_code}' AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND tr_type != 'O' AND tr_type != 'I'
+         GROUP BY a.payment_date,a.payment_id,a.particulars,a.status)a`,
     whr = null,
-    order = `GROUP BY trans_date,tr_type,particulars,period,period_mode
-             ORDER BY trans_date desc`
+    order = `GROUP BY trans_date,tr_mode,particulars,status
+             ORDER BY trans_date,tr_type`
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
 });
