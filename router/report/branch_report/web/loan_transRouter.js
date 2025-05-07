@@ -105,6 +105,45 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
   }
  });
 
+//  loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
+//   try{
+//     var data = req.body;
+   
+//     if(data.tr_type == 'D'){
+//       // get tr_type 'D' then get data about disbursement
+//       var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,a.tr_type,SUM(a.debit) debit,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
+//     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+//     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type NOT IN ('I','R')`,
+//     order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,a.tr_type
+//     ORDER BY a.payment_date`;
+//     var transaction_group_data = await db_Select(select,table_name,whr,order);
+//     }else if (data.tr_type == 'R'){
+//       // get tr_type 'R' then get data about disbursement
+//       var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,a.tr_type,SUM(a.credit) credit,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
+//     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+//     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+//     AND a.tr_type NOT IN ('I','D')`,
+//     order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,a.tr_type
+//              ORDER BY a.payment_date`;
+//     var transaction_group_data = await db_Select(select,table_name,whr,order);
+//     }else {
+//       // get tr_type 'B' means both then get data about disbursement and recovery
+//       var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,a.tr_type,SUM(a.debit) AS debit,SUM(a.credit) AS credit,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
+//     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+//     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+//     AND a.tr_type NOT IN ('I')`,
+//     order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name,a.tr_type
+//              ORDER BY a.tr_type`;
+//     var transaction_group_data = await db_Select(select,table_name,whr,order);
+//     }
+   
+//     res.send({transaction_group_data})
+//   }catch (error){
+//    console.error("Error fetching transaction report groupwise:", error);
+//    res.send({ suc: 0, msg: "An error occurred" });
+//   }
+//  });
+
 // Transaction report fundwise 17.03.2025
 
 loan_transRouter.post("/transaction_report_fundwise", async (req, res) => {
