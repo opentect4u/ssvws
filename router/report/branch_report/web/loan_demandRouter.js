@@ -522,7 +522,7 @@ loan_demandRouter.post("/filter_dayawise_dmd_report_groupwise", async (req, res)
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,b.instl_end_dt,SUM(a.dmd_amt)demand_amt,SUM(a.prn_amt + a.intt_amt) curr_outstanding,e.emp_name co_name`,
+        END AS recovery_day,b.instl_end_dt,SUM(a.dmd_amt)dmd_amt,SUM(a.prn_amt + a.intt_amt) outstanding,e.emp_name co_name`,
         table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
         whr = `b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
         order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_code,d.group_name,d.co_id,e.emp_name,b.curr_roi,b.period,b.period_mode,b.instl_end_dt
