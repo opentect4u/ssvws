@@ -184,7 +184,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
 
                 var select = "a.branch_code,e.branch_name,b.group_code,d.group_name,b.fund_id,c.fund_name,SUM(b.prn_disb_amt) prn_disb_amt,SUM(a.prn_amt) prn_outstanding,SUM(a.intt_amt) intt_outstanding,SUM(a.prn_amt + a.intt_amt) outstanding",
                 table_name = "tt_loan_outstanding a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_fund c ON b.fund_id = c.fund_id LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_branch e ON a.branch_code = e.branch_code",
-                whr = `a.balance_date = '${balance_date}' AND a.branch_code IN (${data.branch_code}) AND b.fund_id = '${data.fund_id}'`,
+                whr = `a.balance_date = '${balance_date}' AND a.branch_code IN (${data.branch_code}) AND b.fund_id IN (${data.fund_id})`,
                 order = `GROUP BY a.branch_code,e.branch_name,b.group_code,d.group_name,b.fund_id,c.fund_name`;
                 var outstanding_fund_data = await db_Select(select,table_name,whr,order);
                 // outstanding_fund_data['balance_date'] = balance_date
