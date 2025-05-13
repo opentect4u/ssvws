@@ -4,6 +4,28 @@ const express = require('express'),
 dashboard_dataRouter = express.Router(),
 dateFormat = require('dateformat');
 
+//date of operation
+dashboard_dataRouter.post("/date_of_operation", async (req, res) => {
+  try {
+    var data = req.body;
+
+    var select = "DATE_FORMAT(LAST_DAY(DATE_ADD(closed_upto, INTERVAL 1 MONTH)), '%M %Y') AS date_of_operation",
+    table_name = "td_month_close",
+    whr = `branch_code = '${data.branch_code}'`,
+    order = null;
+    var operation_date = await db_Select(select,table_name,whr,order);
+    res.send({
+      suc : 1,
+      data : {
+        date_of_operation : operation_date.msg[0].date_of_operation
+      }
+    })
+  }catch(error){
+    console.error("Error fetching Date of operation:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
 // Dashboard total grt details today and this month (unapproved,approved,send to mis,rejected)
 dashboard_dataRouter.post("/dashboard_tot_grt_details", async (req, res) => {
  try{
