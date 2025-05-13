@@ -8,6 +8,7 @@ dateFormat = require('dateformat');
 dashboard_dataRouter.post("/date_of_operation", async (req, res) => {
   try {
     var data = req.body;
+    
 
     var select = "DATE_FORMAT(LAST_DAY(DATE_ADD(closed_upto, INTERVAL 1 MONTH)), '%M %Y') AS date_of_operation",
     table_name = "td_month_close",
