@@ -64,13 +64,16 @@ dashboard_dataRouter.post("/dashboard_active_group", async (req, res) => {
    var data = req.body;
   //  console.log(data,'grp');
    
-   let tot_group;
+   let tot_group,total_group;
 
     tot_group = await db_Select("COUNT(*)tot_active_grp","md_group",`branch_code IN (${data.branch_code}) AND open_close_flag = 'O' AND approval_status = 'A'`,null);
+
+    total_group = await db_Select("COUNT(*)toal_grp","md_group",`branch_code IN (${data.branch_code})`,null);
      res.send({
       suc: 1,
       data: {
         tot_active_grp: tot_group.msg[0].tot_active_grp || 0,
+        tot_group: total_group.msg[0].toal_grp || 0,
       }
     });
  }catch(error){
@@ -233,28 +236,28 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
     //total loan unapprove details today
     var select = "SUM(debit + credit)tot_unapprove_loan",
     table_name = "td_loan_transactions",
-    whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U'`,
+    whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R')`,
     order = null;
     tot_loan_unapprove = await db_Select(select,table_name,whr,order);
 
     //total group loan unapprove details today
     var select = "COUNT(a.group_code)tot_unapprove_grp",
     table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
-    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.payment_date = '${current_date}'`,
+    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.payment_date = '${current_date}' AND b.tr_type IN('D','R')`,
     order = null;
     tot_grp_unapprove = await db_Select(select,table_name,whr,order);
   }else {
     //total loan unapprove details this month
     var select = "SUM(debit + credit)tot_unapprove_loan",
     table_name = "td_loan_transactions",
-    whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U'`,
+    whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R')`,
     order = null;
     tot_loan_unapprove = await db_Select(select,table_name,whr,order);
 
     //total group loan unapprove details this month
     var select = "COUNT(a.group_code)tot_unapprove_grp",
     table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
-    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}'`,
+    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND tr_type IN('D','R')`,
     order = null;
     tot_grp_unapprove = await db_Select(select,table_name,whr,order);
   }
