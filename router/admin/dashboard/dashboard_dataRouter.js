@@ -233,7 +233,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
     //total loan unapprove details today
     var select = "SUM(debit + credit)tot_unapprove_loan",
     table_name = "td_loan_transactions",
-    whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN ('D','R')`,
+    whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U'`,
     order = null;
     tot_loan_unapprove = await db_Select(select,table_name,whr,order);
 
@@ -247,7 +247,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
     //total loan unapprove details this month
     var select = "SUM(debit + credit)tot_unapprove_loan",
     table_name = "td_loan_transactions",
-    whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U'  AND tr_type IN ('D','R')`,
+    whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U'`,
     order = null;
     tot_loan_unapprove = await db_Select(select,table_name,whr,order);
 
