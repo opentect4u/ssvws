@@ -249,40 +249,22 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
     var data = req.body;
     // console.log(data,'data_un_loan');
 
-    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
-    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
-
     let tot_loan_unapprove,tot_grp_unapprove;
 
-    if(data.flag == 'Today'){
     //total loan unapprove details today
     var select = "SUM(debit + credit)tot_unapprove_loan",
     table_name = "td_loan_transactions",
-    whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R')`,
+    whr = `branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R')`,
     order = null;
     tot_loan_unapprove = await db_Select(select,table_name,whr,order);
 
     //total group loan unapprove details today
     var select = "COUNT(a.group_code)tot_unapprove_grp",
     table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
-    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.payment_date = '${current_date}' AND b.tr_type IN('D','R')`,
+    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.tr_type IN('D','R')`,
     order = null;
     tot_grp_unapprove = await db_Select(select,table_name,whr,order);
-  }else {
-    //total loan unapprove details this month
-    var select = "SUM(debit + credit)tot_unapprove_loan",
-    table_name = "td_loan_transactions",
-    whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R')`,
-    order = null;
-    tot_loan_unapprove = await db_Select(select,table_name,whr,order);
-
-    //total group loan unapprove details this month
-    var select = "COUNT(a.group_code)tot_unapprove_grp",
-    table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
-    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND tr_type IN('D','R')`,
-    order = null;
-    tot_grp_unapprove = await db_Select(select,table_name,whr,order);
-  }
+  
   res.send({
     suc: 1,
     data : {
