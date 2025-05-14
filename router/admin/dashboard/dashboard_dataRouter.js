@@ -90,7 +90,7 @@ dashboard_dataRouter.post("/dashboard_active_group", async (req, res) => {
 
     tot_group = await db_Select("COUNT(DISTINCT group_code)tot_active_grp","td_loan",`branch_code IN (${data.branch_code}) AND outstanding > 0`,null);
 
-    total_group = await db_Select("COUNT(*)toal_grp","md_group",`branch_code IN (${data.branch_code})`,null);
+    total_group = await db_Select("COUNT(*)toal_grp","md_group",`branch_code IN (${data.branch_code}) AND open_close_flag = 'O' AND approval_status = 'A'`,null);
      res.send({
       suc: 1,
       data: {
