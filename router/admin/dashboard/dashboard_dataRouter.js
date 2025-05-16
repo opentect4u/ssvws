@@ -156,7 +156,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_disbursed_dtls", async (req, res)
   tot_loan_disbursed = await db_Select(select,table_name,whr,order);
 
   //total group loan disbursed details today
-  var select = "COUNT(a.group_code)tot_grp_disb",
+  var select = "COUNT(DISTINCT a.group_code)tot_grp_disb",
   table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
   whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'D' AND b.payment_date = '${current_date}'`,
   order = null;
@@ -170,7 +170,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_disbursed_dtls", async (req, res)
    tot_loan_disbursed = await db_Select(select,table_name,whr,order);
 
   //total group loan disbursed details this month
-  var select = "COUNT(a.group_code)tot_grp_disb",
+  var select = "COUNT(DISTINCT a.group_code)tot_grp_disb",
   table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
   whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'D' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}'`,
   order = null;
@@ -210,7 +210,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_recov_dtls", async (req, res) => 
   tot_loan_recovery = await db_Select(select,table_name,whr,order);
 
   //total group loan disbursed details today
-  var select = "COUNT(a.group_code)tot_grp_recov",
+  var select = "COUNT(DISTINCT a.group_code)tot_grp_recov",
   table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
   whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'R' AND b.payment_date = '${current_date}'`,
   order = null;
@@ -224,7 +224,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_recov_dtls", async (req, res) => 
    tot_loan_recovery = await db_Select(select,table_name,whr,order);
 
   //total group loan disbursed details this month
-  var select = "COUNT(a.group_code)tot_grp_recov",
+  var select = "COUNT(DISTINCT a.group_code)tot_grp_recov",
   table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
   whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'R' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}'`,
   order = null;
@@ -259,7 +259,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
     tot_loan_unapprove = await db_Select(select,table_name,whr,order);
 
     //total group loan unapprove details today
-    var select = "COUNT(a.group_code)tot_unapprove_grp",
+    var select = "COUNT(DISTINCT a.group_code)tot_unapprove_grp",
     table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
     whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.tr_type IN('D','R')`,
     order = null;
