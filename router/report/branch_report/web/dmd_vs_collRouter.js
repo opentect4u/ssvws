@@ -171,7 +171,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
       branch_code, branch_name,
       group_code, group_name,
       co_id, emp_name,
-      disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,recovery_day_calc AS recovery_day
+      disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,recovery_day_calc AS recovery_day,
       instl_start_dt, instl_end_dt,
       SUM(tot_emi)tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
     FROM (
