@@ -706,7 +706,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_groupwise", async (req, res
       LEFT JOIN md_branch c ON a.branch_code = c.branch_code
       LEFT JOIN md_group d ON a.group_code = d.group_code
       LEFT JOIN md_employee e ON d.co_id = e.emp_id
-      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
       GROUP BY a.demand_date, a.branch_code, c.branch_name,
         a.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
         b.curr_roi, b.period, b.period_mode,b.recovery_day, b.instl_start_dt,b.instl_end_dt
@@ -742,7 +742,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_groupwise", async (req, res
       LEFT JOIN md_group d ON a.group_code = d.group_code
       LEFT JOIN md_employee e ON d.co_id = e.emp_id
       LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id
-      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
       GROUP BY a.demand_date, a.branch_code, c.branch_name,
         a.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
         b.curr_roi, b.period, b.period_mode,b.recovery_day,b.instl_start_dt,b.instl_end_dt
@@ -811,7 +811,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_fundwise", async (req, res)
        LEFT JOIN md_group d ON a.group_code = d.group_code
        LEFT JOIN md_employee e ON d.co_id = e.emp_id
        LEFT JOIN md_fund f ON b.fund_id = f.fund_id
-       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
          b.period_mode,b.recovery_day
@@ -846,7 +846,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_fundwise", async (req, res)
        LEFT JOIN md_employee e ON d.co_id = e.emp_id 
        LEFT JOIN md_fund f ON b.fund_id = f.fund_id
        LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
-       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
          b.fund_id,f.fund_name, b.period_mode,b.recovery_day
@@ -915,7 +915,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_cowise", async (req, res) =
        LEFT JOIN md_branch c ON a.branch_code = c.branch_code
        LEFT JOIN md_group d ON a.group_code = d.group_code
        LEFT JOIN md_employee e ON d.co_id = e.emp_id
-       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
          b.period_mode,b.recovery_day
@@ -949,7 +949,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_cowise", async (req, res) =
        LEFT JOIN md_group d ON a.group_code = d.group_code 
        LEFT JOIN md_employee e ON d.co_id = e.emp_id
        LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id
-       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
          b.period_mode,b.recovery_day
@@ -1026,7 +1026,7 @@ FROM (
   LEFT JOIN md_group d ON a.group_code = d.group_code 
   LEFT JOIN md_employee e ON d.co_id = e.emp_id 
   LEFT JOIN md_member f ON a.member_code = f.member_code
-  WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+  WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
     
   UNION
   
@@ -1061,7 +1061,7 @@ FROM (
   LEFT JOIN md_employee e ON d.co_id = e.emp_id 
   LEFT JOIN md_member f ON a.member_code = f.member_code
   LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
-  WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+  WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
   GROUP BY a.demand_date, a.branch_code, c.branch_name,
            a.loan_id,a.member_code,f.client_name,
            a.group_code, d.group_name, d.co_id, e.emp_name,
