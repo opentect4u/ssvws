@@ -244,7 +244,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
         a.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
         b.curr_roi, b.period, b.period_mode,b.recovery_day,b.instl_start_dt,b.instl_end_dt
     ) a
-       GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,disb_dt,curr_roi,loan_period,period_mode,recovery_day,instl_start_dt,instl_end_dt
+       GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,disb_dt,curr_roi,loan_period,period_mode,recovery_day_calc AS recovery_day,instl_start_dt,instl_end_dt
      ORDER BY group_code
   `;
 
