@@ -280,12 +280,27 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       fund_id,fund_name,period_mode,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
+       fund_id,fund_name,period_mode,recovery_day,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.fund_id,f.fund_name,b.period_mode,SUM(a.dmd_amt) AS demand_amt,
+         b.fund_id,f.fund_name,b.period_mode,
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,SUM(a.dmd_amt) AS demand_amt,
          0 AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding
        FROM tt_loan_demand a
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
@@ -297,14 +312,29 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        AND b.fund_id IN (${data.fund_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
-         b.period_mode
+         b.period_mode,b.recovery_day
          
        UNION
        
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.fund_id,f.fund_name,b.period_mode, 0 AS demand_amt,
+         b.fund_id,f.fund_name,b.period_mode, 
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,0 AS demand_amt,
          IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
        FROM tt_loan_demand a 
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
@@ -319,9 +349,9 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
        AND b.fund_id IN (${data.fund_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.fund_id,f.fund_name, b.period_mode
+         b.fund_id,f.fund_name, b.period_mode,b.recovery_day
      ) a
-      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,fund_id,fund_name,period_mode
+      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,fund_id,fund_name,period_mode,recovery_day
       ORDER BY group_code
    `;
  
@@ -369,12 +399,27 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
        branch_code, branch_name,
        group_code, group_name,
        co_id, emp_name,
-       period_mode,SUM(tot_emi) tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
+       period_mode,recovery_day,SUM(tot_emi) tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
      FROM (
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode,SUM(b.tot_emi) tot_emi,SUM(a.dmd_amt) AS demand_amt,
+         b.period_mode,
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,SUM(b.tot_emi) tot_emi,SUM(a.dmd_amt) AS demand_amt,
          0 AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding
        FROM tt_loan_demand a
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
@@ -385,14 +430,29 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
        AND d.co_id IN (${data.co_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode
+         b.period_mode,b.recovery_day
          
        UNION
        
        SELECT 
          a.demand_date,a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode, 0 AS tot_emi, 0 AS demand_amt,
+         b.period_mode, 
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,0 AS tot_emi, 0 AS demand_amt,
          IFNULL(SUM(f.credit), 0) AS coll_amt, 0 AS curr_outstanding
        FROM tt_loan_demand a 
        LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
@@ -406,9 +466,9 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
       AND d.co_id IN (${data.co_id})
        GROUP BY a.demand_date, a.branch_code, c.branch_name,
          a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode
+         b.period_mode,b.recovery_day
      ) a
-      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,period_mode
+      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,period_mode,recovery_day
       ORDER BY group_code
    `;
  
@@ -444,7 +504,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
   branch_code, branch_name,loan_id,member_code,client_name,
   group_code, group_name,
   co_id, emp_name,
-  disb_dt,disb_amt, curr_roi, loan_period, period_mode,
+  disb_dt,disb_amt, curr_roi, loan_period, period_mode,recovery_day,
   instl_start_dt, instl_end_dt,
   tot_emi,coll_amt,demand_amt AS demand_after_collection,curr_outstanding
 FROM (
@@ -454,6 +514,21 @@ FROM (
     a.group_code, d.group_name, d.co_id, e.emp_name,
     b.disb_dt,b.prn_disb_amt AS disb_amt,
     b.curr_roi, b.period AS loan_period, b.period_mode,
+     CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,
     b.instl_start_dt,b.instl_end_dt,
     b.tot_emi AS tot_emi, a.dmd_amt AS demand_amt,
     0 AS coll_amt,(a.prn_amt + a.intt_amt) AS curr_outstanding
@@ -473,6 +548,21 @@ FROM (
     a.group_code, d.group_name, d.co_id, e.emp_name,
     b.disb_dt, 0 AS disb_amt,
     b.curr_roi, b.period AS loan_period, b.period_mode,
+     CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,
     b.instl_start_dt,b.instl_end_dt,
     0 AS tot_emi, 0 AS demand_amt,
     IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
@@ -488,7 +578,7 @@ FROM (
   GROUP BY a.demand_date, a.branch_code, c.branch_name,
            a.loan_id,a.member_code,f.client_name,
            a.group_code, d.group_name, d.co_id, e.emp_name,
-           b.disb_dt,b.curr_roi, b.period, b.period_mode,
+           b.disb_dt,b.curr_roi, b.period, b.period_mode,b.recovery_day,
            b.instl_start_dt, b.instl_end_dt
 ) AS a
 ORDER BY group_code;`
@@ -616,7 +706,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_groupwise", async (req, res
       LEFT JOIN md_branch c ON a.branch_code = c.branch_code
       LEFT JOIN md_group d ON a.group_code = d.group_code
       LEFT JOIN md_employee e ON d.co_id = e.emp_id
-      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
+      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
       GROUP BY a.demand_date, a.branch_code, c.branch_name,
         a.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
         b.curr_roi, b.period, b.period_mode,b.recovery_day, b.instl_start_dt,b.instl_end_dt
@@ -652,7 +742,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_groupwise", async (req, res
       LEFT JOIN md_group d ON a.group_code = d.group_code
       LEFT JOIN md_employee e ON d.co_id = e.emp_id
       LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id
-      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
+      WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
       GROUP BY a.demand_date, a.branch_code, c.branch_name,
         a.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,
         b.curr_roi, b.period, b.period_mode,b.recovery_day,b.instl_start_dt,b.instl_end_dt
@@ -669,6 +759,326 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_groupwise", async (req, res
     console.error("Error fetching demand vs collection report groupwise:", error);
     res.send({ suc: 0, msg: "An error occurred" });
   }
+});
+
+
+//loan demand vs collection report fundwise via day 21.05.2025
+
+dmd_vs_collRouter.post("/filter_dayawise_coll_report_fundwise", async (req, res) => {
+    try {
+     var data = req.body;
+ 
+     // Get last and first dates of the selected month
+     var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
+     var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
+ 
+     var dateResult = await db_Select(date_query);
+     var first_dateResult = await db_Select(first_date_query);
+ 
+     var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
+     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
+     
+     var select = ` 
+       DATE_FORMAT(demand_date, '%M %Y') AS demand_date,CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS collec_upto,
+       branch_code, branch_name,
+       group_code, group_name,
+       co_id, emp_name,
+       fund_id,fund_name,period_mode,recovery_day,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
+     FROM (
+       SELECT 
+         a.demand_date,a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.fund_id,f.fund_name,b.period_mode,
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,SUM(a.dmd_amt) AS demand_amt,
+         0 AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding
+       FROM tt_loan_demand a
+       LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
+       LEFT JOIN md_branch c ON a.branch_code = c.branch_code
+       LEFT JOIN md_group d ON a.group_code = d.group_code
+       LEFT JOIN md_employee e ON d.co_id = e.emp_id
+       LEFT JOIN md_fund f ON b.fund_id = f.fund_id
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       GROUP BY a.demand_date, a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,
+         b.period_mode,b.recovery_day
+         
+       UNION
+       
+       SELECT 
+         a.demand_date,a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.fund_id,f.fund_name,b.period_mode, 
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,0 AS demand_amt,
+         IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
+       FROM tt_loan_demand a 
+       LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
+       AND a.loan_id = b.loan_id 
+       LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+       LEFT JOIN md_group d ON a.group_code = d.group_code 
+       LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+       LEFT JOIN md_fund f ON b.fund_id = f.fund_id
+       LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       GROUP BY a.demand_date, a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.fund_id,f.fund_name, b.period_mode,b.recovery_day
+     ) a
+      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,fund_id,fund_name,period_mode,recovery_day
+      ORDER BY group_code
+   `;
+ 
+     var fund_demand_collec_data_day = await db_Select(select,null,null,null);
+     res.send({
+       fund_demand_collec_data_day,
+       dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
+     });
+   } catch (error) {
+     console.error("Error fetching demand vs collection report fundwise:", error);
+     res.send({ suc: 0, msg: "An error occurred" });
+   }
+});
+
+
+//loan demand vs collection report cowise via day 21.05.2025
+
+dmd_vs_collRouter.post("/filter_dayawise_coll_report_cowise", async (req, res) => {
+    try {
+     var data = req.body;
+ 
+     // Get last and first dates of the selected month
+     var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
+     var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
+ 
+     var dateResult = await db_Select(date_query);
+     var first_dateResult = await db_Select(first_date_query);
+ 
+     var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
+     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
+     
+     var select = ` 
+       DATE_FORMAT(demand_date, '%M %Y') AS demand_date,CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS collec_upto,
+       branch_code, branch_name,
+       group_code, group_name,
+       co_id, emp_name,
+       period_mode,recovery_day,SUM(tot_emi) tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
+     FROM (
+       SELECT 
+         a.demand_date,a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.period_mode,
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,SUM(b.tot_emi) tot_emi,SUM(a.dmd_amt) AS demand_amt,
+         0 AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding
+       FROM tt_loan_demand a
+       LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id
+       LEFT JOIN md_branch c ON a.branch_code = c.branch_code
+       LEFT JOIN md_group d ON a.group_code = d.group_code
+       LEFT JOIN md_employee e ON d.co_id = e.emp_id
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       GROUP BY a.demand_date, a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.period_mode,b.recovery_day
+         
+       UNION
+       
+       SELECT 
+         a.demand_date,a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.period_mode, 
+         CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,0 AS tot_emi, 0 AS demand_amt,
+         IFNULL(SUM(f.credit), 0) AS coll_amt, 0 AS curr_outstanding
+       FROM tt_loan_demand a 
+       LEFT JOIN td_loan b ON a.branch_code = b.branch_code 
+       AND a.loan_id = b.loan_id 
+       LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+       LEFT JOIN md_group d ON a.group_code = d.group_code 
+       LEFT JOIN md_employee e ON d.co_id = e.emp_id
+       LEFT JOIN td_loan_transactions f ON a.loan_id = f.loan_id
+       WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+       GROUP BY a.demand_date, a.branch_code, c.branch_name,
+         a.group_code, d.group_name, d.co_id, e.emp_name,
+         b.period_mode,b.recovery_day
+     ) a
+      GROUP BY demand_date,branch_code,branch_name,group_code,group_name,co_id,emp_name,period_mode,recovery_day
+      ORDER BY group_code
+   `;
+ 
+     var co_demand_collec_data_day = await db_Select(select,null,null,null);
+     res.send({
+       co_demand_collec_data_day,
+       dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
+     });
+   } catch (error) {
+     console.error("Error fetching demand vs collection report cowise:", error);
+     res.send({ suc: 0, msg: "An error occurred" });
+   }
+});
+
+
+//loan demand vs collection report memberwise via day 21.05.2025
+
+dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res) => {
+    try {
+     var data = req.body;
+ 
+     // Get last and first dates of the selected month
+     var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`;
+     var first_date_query = `STR_TO_DATE(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01'), '%Y-%m-%d') AS first_day_of_month`;
+ 
+     var dateResult = await db_Select(date_query);
+     var first_dateResult = await db_Select(first_date_query);
+ 
+     var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
+     var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
+     
+     var select = ` 
+        DATE_FORMAT(demand_date, '%M %Y') AS demand_date,
+  CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS "collec between",
+  branch_code, branch_name,loan_id,member_code,client_name,
+  group_code, group_name,
+  co_id, emp_name,
+  disb_dt,disb_amt, curr_roi, loan_period, period_mode,recovery_day,
+  instl_start_dt, instl_end_dt,
+  tot_emi,coll_amt,demand_amt AS demand_after_collection,curr_outstanding
+FROM (
+  SELECT 
+    a.demand_date,a.branch_code,c.branch_name,
+    a.loan_id,a.member_code,f.client_name,
+    a.group_code, d.group_name, d.co_id, e.emp_name,
+    b.disb_dt,b.prn_disb_amt AS disb_amt,
+    b.curr_roi, b.period AS loan_period, b.period_mode,
+     CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,
+    b.instl_start_dt,b.instl_end_dt,
+    b.tot_emi AS tot_emi, a.dmd_amt AS demand_amt,
+    0 AS coll_amt,(a.prn_amt + a.intt_amt) AS curr_outstanding
+  FROM tt_loan_demand a 
+  LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
+  LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+  LEFT JOIN md_group d ON a.group_code = d.group_code 
+  LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+  LEFT JOIN md_member f ON a.member_code = f.member_code
+  WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+    
+  UNION
+  
+  SELECT 
+    a.demand_date,a.branch_code, c.branch_name,
+    a.loan_id,a.member_code,f.client_name,
+    a.group_code, d.group_name, d.co_id, e.emp_name,
+    b.disb_dt, 0 AS disb_amt,
+    b.curr_roi, b.period AS loan_period, b.period_mode,
+     CASE 
+        WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+        WHEN b.period_mode = 'Weekly' THEN 
+        CASE b.recovery_day
+        WHEN 1 THEN 'Sunday'
+        WHEN 2 THEN 'Monday'
+        WHEN 3 THEN 'Tuesday'
+        WHEN 4 THEN 'Wednesday'
+        WHEN 5 THEN 'Thursday'
+        WHEN 6 THEN 'Friday'
+        WHEN 7 THEN 'Saturday'
+        ELSE 'Unknown'
+        END
+        ELSE 'N/A'
+        END AS recovery_day,
+    b.instl_start_dt,b.instl_end_dt,
+    0 AS tot_emi, 0 AS demand_amt,
+    IFNULL(SUM(g.credit), 0) AS coll_amt, 0 AS curr_outstanding
+  FROM tt_loan_demand a 
+  LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
+  LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+  LEFT JOIN md_group d ON a.group_code = d.group_code 
+  LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+  LEFT JOIN md_member f ON a.member_code = f.member_code
+  LEFT JOIN td_loan_transactions g ON a.loan_id = g.loan_id
+  WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}',
+  GROUP BY a.demand_date, a.branch_code, c.branch_name,
+           a.loan_id,a.member_code,f.client_name,
+           a.group_code, d.group_name, d.co_id, e.emp_name,
+           b.disb_dt,b.curr_roi, b.period, b.period_mode,b.recovery_day,
+           b.instl_start_dt, b.instl_end_dt
+) AS a
+ORDER BY group_code;`
+ 
+     var member_demand_collec_data_day = await db_Select(select,null,null,null);
+     res.send({
+       member_demand_collec_data_day,
+       dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
+     });
+   } catch (error) {
+     console.error("Error fetching demand vs collection report memberwise:", error);
+     res.send({ suc: 0, msg: "An error occurred" });
+   }
 });
 
 module.exports = {dmd_vs_collRouter}
