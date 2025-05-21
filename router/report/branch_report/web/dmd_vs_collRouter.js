@@ -171,7 +171,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
       branch_code, branch_name,
       group_code, group_name,
       co_id, emp_name,
-      disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,recovery_day
+      disb_dt, SUM(disb_amt)disb_amt, curr_roi, loan_period, period_mode,recovery_day_calc AS recovery_day
       instl_start_dt, instl_end_dt,
       SUM(tot_emi)tot_emi,SUM(coll_amt)coll_amt,SUM(demand_amt)demand_after_collection,SUM(curr_outstanding)curr_outstanding
     FROM (
@@ -194,7 +194,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,
+        END AS recovery_day_calc,
         b.instl_start_dt,b.instl_end_dt,
         SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
         0 AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding
@@ -229,7 +229,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
         ELSE 'Unknown'
         END
         ELSE 'N/A'
-        END AS recovery_day,b.instl_start_dt,b.instl_end_dt,
+        END AS recovery_day_calc,b.instl_start_dt,b.instl_end_dt,
         0 AS tot_emi, 0 AS demand_amt,
         IFNULL(SUM(f.credit), 0) AS coll_amt, 0 AS curr_outstanding
       FROM tt_loan_demand a
