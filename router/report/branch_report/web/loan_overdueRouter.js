@@ -38,6 +38,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
         let finalData = [];
         // console.log(data,'data');
         
+        
         if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
             return res.send({ suc: 0, msg: "No data found" });
           }
@@ -235,5 +236,179 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
             res.send({ suc: 0, msg: "An error occurred" });
         }
       });  
+
+      //loan overdue report groupwise via day
+      
+      loan_overdueRouter.post("/filter_daywise_overdue_report_groupwise", async (req, res) => {
+           try {
+        var data = req.body;
+        let finalData = [];
+        console.log(data,'gt');
+
+        // console.log(data,'data');
+        
+        if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
+            return res.send({ suc: 0, msg: [] });
+          }
+
+            for(let dt of data.search_brn_id){
+            var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name bank_addr,b.period,b.period_mode,
+            CASE 
+           WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+           WHEN b.period_mode = 'Weekly' THEN 
+           CASE b.recovery_day
+           WHEN 1 THEN 'Sunday'
+           WHEN 2 THEN 'Monday'
+           WHEN 3 THEN 'Tuesday'
+           WHEN 4 THEN 'Wednesday'
+           WHEN 5 THEN 'Thursday'
+           WHEN 6 THEN 'Friday'
+           WHEN 7 THEN 'Saturday'
+           ELSE 'Unknown'
+           END
+           ELSE 'N/A'
+           END AS recovery_day,d.co_id code,e.emp_name co_name,SUM(a.disb_amt)loan_amt,b.instl_end_dt,SUM(b.prn_amt)outstanding_principal,SUM(b.intt_amt)outstanding_interest,SUM(a.outstanding) total_outstanding,SUM(a.od_amt) overdue`,
+            table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
+            whr = `b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
+            order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name,d.co_id,e.emp_name,b.recovery_day,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
+            ORDER BY b.group_code`;
+            var loan_overdue_dtls_group = await db_Select(select, table_name, whr, order);
+
+            finalData.push(...loan_overdue_dtls_group.msg)
+        }
+        res.send({suc : 1, msg: finalData});
+    }catch(error){
+        console.error("Error fetching loan overdue report groupwise day:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }
+      });
+
+
+      //loan demand report fundwise via day
+      
+      loan_overdueRouter.post("/filter_daywise_overdue_report_fundwise", async (req, res) => {
+          try {
+            var data = req.body;
+            let finalData = [];
+            // console.log(data,'data');
+            
+            if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
+                return res.send({ suc: 0, msg: [] });
+              }
+
+            for(let dt of data.search_brn_id){
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.fund_id,f.fund_name,b.period,b.period_mode,
+           CASE 
+           WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+           WHEN b.period_mode = 'Weekly' THEN 
+           CASE b.recovery_day
+           WHEN 1 THEN 'Sunday'
+           WHEN 2 THEN 'Monday'
+           WHEN 3 THEN 'Tuesday'
+           WHEN 4 THEN 'Wednesday'
+           WHEN 5 THEN 'Thursday'
+           WHEN 6 THEN 'Friday'
+           WHEN 7 THEN 'Saturday'
+           ELSE 'Unknown'
+           END
+           ELSE 'N/A'
+           END AS recovery_day,SUM(a.disb_amt)loan_amt,b.instl_end_dt,SUM(b.prn_amt) outstanding_principal,SUM(b.intt_amt) outstanding_interest,SUM(a.outstanding) total_outstanding,SUM(a.od_amt)overdue`,
+          table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
+          whr = `b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
+          ORDER BY b.group_code`;
+          var loan_overdue_dtls_fundwise_day = await db_Select(select, table_name, whr, order);
+          finalData.push(...loan_overdue_dtls_fundwise_day.msg)
+        }
+        res.send({suc : 1, msg: finalData});
+        }catch(error){
+            console.error("Error fetching loan overdue report fundwisewise day:", error);
+            res.send({ suc: 0, msg: "An error occurred" });
+        }
+      });
+      
+      // loan demand report cowise via day
+      
+      loan_overdueRouter.post("/filter_dayawise_overdue_report_cowise", async (req, res) => {
+         try {
+            var data = req.body;
+            let finalData = [];
+            // console.log(data,'data');
+            
+            if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
+                return res.send({ suc: 0, msg: [] });
+              }
+
+              for(let dt of data.search_brn_id){
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.period,b.period_mode, 
+           CASE 
+           WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+           WHEN b.period_mode = 'Weekly' THEN 
+           CASE b.recovery_day
+           WHEN 1 THEN 'Sunday'
+           WHEN 2 THEN 'Monday'
+           WHEN 3 THEN 'Tuesday'
+           WHEN 4 THEN 'Wednesday'
+           WHEN 5 THEN 'Thursday'
+           WHEN 6 THEN 'Friday'
+           WHEN 7 THEN 'Saturday'
+           ELSE 'Unknown'
+           END
+           ELSE 'N/A'
+           END AS recovery_day,SUM(a.disb_amt)loan_amt,b.instl_end_dt,SUM(b.prn_amt) outstanding_principal,SUM(b.intt_amt)outstanding_interest,SUM(a.outstanding) total_outstanding,SUM(a.od_amt) overdue`,
+          table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
+          whr = `b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.instl_end_dt,b.period,b.period_mode
+          ORDER BY b.group_code`;
+          var loan_overdue_dtls_cowise_day = await db_Select(select, table_name, whr, order);
+          finalData.push(...loan_overdue_dtls_cowise_day.msg)
+        }
+        res.send({suc : 1, msg: finalData});
+        }catch(error){
+            console.error("Error fetching loan overdue report cowise:", error);
+            res.send({ suc: 0, msg: "An error occurred" });
+        }
+      });
+      
+      // loan demand report memberwise via day
+      loan_overdueRouter.post("/filter_dayawise_overdue_report_membwise", async (req, res) => {
+         try {
+            var data = req.body;
+            let finalData = [];
+            // console.log(data,'data');
+            
+            if (!data.search_brn_id ||  data.search_brn_id.length === 0) {
+                return res.send({ suc: 0, msg: [] });
+              }
+
+            for(let dt of data.search_brn_id){
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name bank_address,b.period,b.period_mode,
+           CASE 
+           WHEN b.period_mode = 'Monthly' THEN b.recovery_day
+           WHEN b.period_mode = 'Weekly' THEN 
+           CASE b.recovery_day
+           WHEN 1 THEN 'Sunday'
+           WHEN 2 THEN 'Monday'
+           WHEN 3 THEN 'Tuesday'
+           WHEN 4 THEN 'Wednesday'
+           WHEN 5 THEN 'Thursday'
+           WHEN 6 THEN 'Friday'
+           WHEN 7 THEN 'Saturday'
+           ELSE 'Unknown'
+           END
+           ELSE 'N/A'
+           END AS recovery_day,b.member_code,f.client_name,f.client_mobile,f.gurd_name,d.co_id code,e.emp_name co_name,g.scheme_name,a.loan_id,b.disb_dt loan_date,a.disb_amt loan_amt,b.instl_end_dt,b.prn_amt outstanding_principal,b.intt_amt outstanding_interest,a.outstanding total_outstanding,a.od_amt overdue,b.last_trn_dt last_payment,DATEDIFF(CURDATE(), a.od_date) AS od_days`,
+          table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_member f ON b.member_code = f.member_code LEFT JOIN md_scheme g ON b.scheme_id = g.scheme_id",
+           whr = `b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
+          order = `ORDER BY a.loan_id`;
+          var loan_overdue_dtls_memberwise_day = await db_Select(select, table_name, whr, order);
+          finalData.push(...loan_overdue_dtls_memberwise_day.msg)
+        }
+        res.send({suc : 1, msg: finalData});
+        }catch(error){
+            console.error("Error fetching loan overdue report memberwise:", error);
+            res.send({ suc: 0, msg: "An error occurred" });
+        }
+      });
 
 module.exports = {loan_overdueRouter}
