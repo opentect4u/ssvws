@@ -281,39 +281,53 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
  //dashboard details of particular co
 dashboard_dataRouter.post("/co_dashboard_dtls", async (req, res) => {
   try{
-     var data = req.body;
-    //  console.log(data);
+   var data = req.body;
+  //  console.log(data,'dashboard');
 
     // Get today date
     const current_date = dateFormat(new Date(), "yyyy-mm-dd");
 
     const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+    
+    let tot_pending_co, tot_send_mis_co, tot_approved_co, tot_rejected_co;
+ 
+    if(data.flag == 'Today'){
+    // Get data how many unapproved today
+    tot_pending_co = await db_Select("COUNT(*)tot_pending_co","td_grt_basic",`grt_date = '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'U' AND created_by = '${data.emp_id}'`,null);
+    // Get data how many send to mis today
+    tot_send_mis_co = await db_Select("COUNT(*)tot_send_mis_co","td_grt_basic",`modified_at = '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'S'`,null);
+    // Get data how many approved today
+    tot_approved_co = await db_Select("COUNT(*)tot_approved_co","td_grt_basic",`approved_at = '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'A'`,null);
+    // Get data how many rejected today
+    tot_rejected_co = await db_Select("COUNT(*)tot_rejected_co","td_grt_basic",`rejected_at = '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'R'`,null);
+    }else {
 
-    let dashboard_dt;
+    // Get data how many unapproved this month
+    tot_pending_co = await db_Select("COUNT(*)tot_pending_co","td_grt_basic",`grt_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'U' AND created_by = '${data.emp_id}'`,null);
+    // console.log(tot_pending,'tot_pending');
+    
+    // Get data how many send to mis this month
+    tot_send_mis_co = await db_Select("COUNT(*)tot_send_mis_co","td_grt_basic",`modified_at BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'S'`,null);
+    // console.log(tot_send_mis,'tot_send_mis');
 
-     if(data.flag == 'Today'){
-      var select = "COUNT(form_no) no_of_grt",
-      table_name = "td_grt_basic",
-      whr = `branch_code = '${data.branch_code}' AND created_by = '${data.emp_id}' AND date(grt_date) = '${current_date}'`,
-      order = null;
-      dashboard_dt = await db_Select(select,table_name,whr,order);
-     }else {
-      var select = "COUNT(form_no) no_of_grt",
-      table_name = "td_grt_basic",
-      whr = `branch_code = '${data.branch_code}' AND created_by = '${data.emp_id}' AND date(grt_date) BETWEEN '${startOfMonth}' AND '${current_date}'`,
-      order = null;
-      dashboard_dt = await db_Select(select,table_name,whr,order);
-     }
-     res.send({
+    // Get data how many approved this month
+    tot_approved_co = await db_Select("COUNT(*)tot_approved_co","td_grt_basic",`approved_at BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'A'`,null);
+    // Get data how many rejected this month
+    tot_rejected_co = await db_Select("COUNT(*)tot_rejected_co","td_grt_basic",`rejected_at BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_code IN (${data.branch_code}) AND approval_status = 'R'`,null);
+    }
+    res.send({
       suc: 1,
       data: {
-        dashboard_dt: dashboard_dt.msg[0].no_of_grt || 0
+        tot_pending_co: tot_pending_co.msg[0].tot_pending_co || 0,
+        tot_send_mis_co: tot_send_mis_co.msg[0].tot_send_mis_co || 0,
+        tot_approved_co: tot_approved_co.msg[0].tot_approved_co || 0,
+        tot_rejected_co: tot_rejected_co.msg[0].tot_rejected_co || 0
       }
     });
-  }catch(error){
-    console.error("Error fetching co dashboard details:", error);
+ }catch(error){
+    console.error("Error fetching co dashboard_details:", error);
     res.send({ suc: 0, msg: "An error occurred" });
-  }
+ }
 });
 
 dashboard_dataRouter.post("/co_dashboard_dtls_cash_recov", async (req, res) => {
