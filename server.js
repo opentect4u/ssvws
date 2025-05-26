@@ -105,6 +105,7 @@ const { outstanding_procCallRouter } = require("./router/report/branch_report/we
 const { loan_rejectionRouter } = require("./router/admin/loan/loan_rejectionRouter");
 const { loan_overdueRouter } = require("./router/report/branch_report/web/loan_overdueRouter");
 const { dmd_proCallRouter } = require("./router/report/branch_report/web/loan_dmd_proCallRouter");
+const { duplicate_printRouter } = require("./router/api/duplicate_printRouter");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -154,6 +155,7 @@ app.use(outstanding_procCallRouter)
 app.use(loan_rejectionRouter)
 app.use(loan_overdueRouter)
 app.use(dmd_proCallRouter)
+app.use(duplicate_printRouter)
 
 app.get("/",async (req, res) => {
   // var currentDate = `${dateFormat(new Date(), "yyyy-mm-dd")}`;

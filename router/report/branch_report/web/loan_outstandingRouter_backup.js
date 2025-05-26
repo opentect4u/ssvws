@@ -11,7 +11,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_memberwise", async (req, r
 
         // Fetch outstanding details member-wise
         var select =
-                "a.branch_code,a.group_code, d.group_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, e.purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi, a.period, a.period_mode, a.instl_end_dt, a.tot_emi",
+                "a.branch_code,a.group_code, d.group_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, CONCAT(e.sub_purpose,'-',e.purpose_id)purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi, a.period, a.period_mode, a.instl_end_dt, a.tot_emi",
             table_name =
                 "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_purpose e ON a.purpose = e.purp_id LEFT JOIN md_sub_purpose f ON a.sub_purpose = f.sub_purp_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_fund h ON a.fund_id = h.fund_id",
             whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.os_dt}'`,
@@ -80,7 +80,7 @@ loan_outstandingRouter.post("/loan_outstanding_report_groupwise", async (req, re
 
         // Fetch outstanding details group-wise
         var select =
-                "a.branch_code,a.group_code, d.group_name, d.created_by co_code, i.emp_name co_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no, e.purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi,a.period, a.period_mode, a.instl_start_dt,a.instl_end_dt, a.tot_emi",
+                "a.branch_code,a.group_code, d.group_name, d.created_by co_code, i.emp_name co_name, a.member_code, b.client_name, a.loan_id, b.client_mobile, b.gurd_name, b.client_addr, b.aadhar_no, b.pan_no, b.acc_no,CONCAT(e.sub_purpose,'-',e.purpose_id)purpose_id, f.sub_purp_name, g.scheme_name, h.fund_name, a.applied_dt, a.applied_amt, a.disb_dt, a.prn_disb_amt, a.curr_roi,a.period, a.period_mode, a.instl_start_dt,a.instl_end_dt, a.tot_emi",
             table_name =
                 "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_purpose e ON a.purpose = e.purp_id LEFT JOIN md_sub_purpose f ON a.sub_purpose = f.sub_purp_id LEFT JOIN md_scheme g ON a.scheme_id = g.scheme_id LEFT JOIN md_fund h ON a.fund_id = h.fund_id LEFT JOIN md_employee i ON d.created_by = i.emp_id",
             whr = `a.branch_code = '${data.branch_code}' AND a.disb_dt <= '${data.os_dt}'`,

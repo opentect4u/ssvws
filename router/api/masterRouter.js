@@ -300,7 +300,7 @@ masterRouter.get("/get_purpose", async (req, res) => {
     var data = req.query;
    
     //get purpose from master table
-    var select = "*",
+    var select = "purp_id,CONCAT(sub_purpose,'-',purpose_id)purpose_id",
     table_name = "md_purpose",
     whr = null,
     order = null;

@@ -278,4 +278,132 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
  }
 });
 
+ //dashboard details of particular co
+dashboard_dataRouter.post("/co_dashboard_dtls", async (req, res) => {
+  try{
+     var data = req.body;
+    //  console.log(data);
+
+    // Get today date
+    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+
+    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+    let dashboard_dt;
+
+     if(data.flag == 'Today'){
+      var select = "COUNT(form_no) no_of_grt",
+      table_name = "td_grt_basic",
+      whr = `branch_code = '${data.branch_code}' AND created_by = '${data.emp_id}' AND date(grt_date) = '${current_date}'`,
+      order = null;
+      dashboard_dt = await db_Select(select,table_name,whr,order);
+     }else {
+      var select = "COUNT(form_no) no_of_grt",
+      table_name = "td_grt_basic",
+      whr = `branch_code = '${data.branch_code}' AND created_by = '${data.emp_id}' AND date(grt_date) BETWEEN '${startOfMonth}' AND '${current_date}'`,
+      order = null;
+      dashboard_dt = await db_Select(select,table_name,whr,order);
+     }
+     res.send({
+      suc: 1,
+      data: {
+        dashboard_dt: dashboard_dt.msg[0].no_of_grt || 0
+      }
+    });
+  }catch(error){
+    console.error("Error fetching co dashboard details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
+dashboard_dataRouter.post("/co_dashboard_dtls_cash_recov", async (req, res) => {
+ try{
+     var data = req.body;
+    //  console.log(data);
+
+    // Get today date
+    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+
+    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+    let co_dashboard_dt_cash;
+
+     if(data.flag == 'Today'){
+      var select = "SUM(credit) tot_recovery_cash",
+      table_name = "td_loan_transactions",
+      whr = `branch_id = '${data.branch_code}'
+      AND tr_type = 'R'
+      AND tr_mode = '${data.tr_mode}'
+      AND date(payment_date) = '${current_date}'
+      AND created_by = '${data.emp_id}'`,
+      order = null;
+      co_dashboard_dt_cash = await db_Select(select,table_name,whr,order);
+     }else {
+      var select = "SUM(credit) tot_recovery_cash",
+      table_name = "td_loan_transactions",
+      whr = `branch_id = '${data.branch_code}'
+      AND tr_type = 'R'
+      AND tr_mode = '${data.tr_mode}'
+      AND date(payment_date) BETWEEN '${startOfMonth}' AND '${current_date}'
+      AND created_by = '${data.emp_id}'`,
+      order = null;
+      co_dashboard_dt_cash = await db_Select(select,table_name,whr,order);
+     }
+     res.send({
+      suc: 1,
+      data: {
+        co_dashboard_dt_cash: co_dashboard_dt_cash.msg[0].tot_recovery_cash || 0
+      }
+    });
+  }catch(error){
+    console.error("Error fetching co dashboard cash recovery details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
+dashboard_dataRouter.post("/co_dashboard_dtls_bank_recov", async (req, res) => {
+ try{
+     var data = req.body;
+     console.log(data);
+
+    // Get today date
+    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+
+    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+    let co_dashboard_dt_bank;
+
+     if(data.flag == 'Today'){
+      var select = "SUM(credit) tot_recovery_bank",
+      table_name = "td_loan_transactions",
+      whr = `branch_id = '${data.branch_code}'
+      AND tr_type = 'R'
+      AND tr_mode = '${data.tr_mode}'
+      AND date(payment_date) = '${current_date}'
+      AND created_by = '${data.emp_id}'`,
+      order = null;
+      co_dashboard_dt_bank = await db_Select(select,table_name,whr,order);
+     }else {
+      var select = "SUM(credit) tot_recovery_bank",
+      table_name = "td_loan_transactions",
+      whr = `branch_id = '${data.branch_code}'
+      AND tr_type = 'R'
+      AND tr_mode = '${data.tr_mode}'
+      AND date(payment_date) BETWEEN '${startOfMonth}' AND '${current_date}'
+      AND created_by = '${data.emp_id}'`,
+      order = null;
+      co_dashboard_dt_bank = await db_Select(select,table_name,whr,order);
+     }
+     res.send({
+      suc: 1,
+      data: {
+        co_dashboard_dt_bank: co_dashboard_dt_bank.msg[0].tot_recovery_bank || 0
+      }
+    });
+  }catch(error){
+    console.error("Error fetching co dashboard bank recovery details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
 module.exports = {dashboard_dataRouter}

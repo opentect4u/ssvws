@@ -269,7 +269,7 @@ module.exports = {
   // }
 
   //05.03.2025 (problem create like interest row inserted recovery row not)
-
+  // use upload on as time field for duplicate print 23.05.2025
   recovery_trans: (data) => {
     console.log(data,'data');
     
@@ -340,7 +340,7 @@ module.exports = {
                 //console.log(payment_id,'id_recov');
 
                 var table_name = "td_loan_transactions",
-                  fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
+                  fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,upload_on,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
                   values = `('${dateFormat(
                     dt.last_trn_dt,
                     "yyyy-mm-dd"
@@ -354,7 +354,7 @@ module.exports = {
                       : ""
                   }','${dt.credit}','0','${prnEmi}','${inttEMI}','${prn_recov}','0','${intt_recovs}','${datetime}','R','${data.tr_mode}','${data.bank_name}','${
                     data.cheque_id == "" ? 0 : data.cheque_id
-                  }', '${data.chq_dt == "" ? null : data.chq_dt}','U','${
+                  }', '${data.chq_dt == "" ? null : data.chq_dt}','${dt.upload_on}','U','${
                     data.created_by
                   }','${datetime}','${data.trn_lat}','${
                     data.trn_long
@@ -398,7 +398,7 @@ module.exports = {
                   //console.log(rec_dt);
 
                   if (rec_dt.suc > 0 && rec_dt.msg.length > 0) {
-                    var select = `a.loan_id,a.member_code,a.branch_code,a.group_code,b.payment_date tnx_date,b.tr_mode,b.cheque_id,b.credit,b.created_by collec_code,c.group_name,d.branch_name,e.emp_name collec_name,f.client_name,(
+                    var select = `a.loan_id,a.member_code,a.branch_code,a.group_code,b.payment_date tnx_date,b.tr_mode,b.cheque_id,b.credit,b.created_by collec_code,b.upload_on,c.group_name,d.branch_name,e.emp_name collec_name,f.client_name,(
                                     SELECT SUM(i.outstanding)
                                     FROM td_loan i
                                     WHERE i.group_code = '${data.group_code}' AND b.tr_type = 'R'
