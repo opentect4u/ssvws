@@ -252,7 +252,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
     let tot_loan_unapprove,tot_grp_unapprove;
 
     //total loan unapprove details today
-    var select = "SUM(debit + credit)tot_unapprove_loan",
+    var select = "SUM(debit) + SUM(credit)tot_unapprove_loan",
     table_name = "td_loan_transactions",
     whr = `branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R')`,
     order = null;
@@ -330,94 +330,294 @@ dashboard_dataRouter.post("/co_dashboard_dtls", async (req, res) => {
  }
 });
 
-dashboard_dataRouter.post("/co_dashboard_dtls_cash_recov", async (req, res) => {
+// dashboard_dataRouter.post("/co_dashboard_dtls_cash_recov", async (req, res) => {
+//  try{
+//      var data = req.body;
+//     //  console.log(data);
+
+//     // Get today date
+//     const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+
+//     const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+//     let co_dashboard_dt_cash;
+
+//      if(data.flag == 'Today'){
+//       var select = "SUM(credit) tot_recovery_cash",
+//       table_name = "td_loan_transactions",
+//       whr = `branch_id = '${data.branch_code}'
+//       AND tr_type = 'R'
+//       AND tr_mode = '${data.tr_mode}'
+//       AND date(payment_date) = '${current_date}'
+//       AND created_by = '${data.emp_id}'`,
+//       order = null;
+//       co_dashboard_dt_cash = await db_Select(select,table_name,whr,order);
+//      }else {
+//       var select = "SUM(credit) tot_recovery_cash",
+//       table_name = "td_loan_transactions",
+//       whr = `branch_id = '${data.branch_code}'
+//       AND tr_type = 'R'
+//       AND tr_mode = '${data.tr_mode}'
+//       AND date(payment_date) BETWEEN '${startOfMonth}' AND '${current_date}'
+//       AND created_by = '${data.emp_id}'`,
+//       order = null;
+//       co_dashboard_dt_cash = await db_Select(select,table_name,whr,order);
+//      }
+//      res.send({
+//       suc: 1,
+//       data: {
+//         co_dashboard_dt_cash: co_dashboard_dt_cash.msg[0].tot_recovery_cash || 0
+//       }
+//     });
+//   }catch(error){
+//     console.error("Error fetching co dashboard cash recovery details:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// });
+
+// dashboard_dataRouter.post("/co_dashboard_dtls_bank_recov", async (req, res) => {
+//  try{
+//      var data = req.body;
+//      console.log(data);
+
+//     // Get today date
+//     const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+
+//     const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+//     let co_dashboard_dt_bank;
+
+//      if(data.flag == 'Today'){
+//       var select = "SUM(credit) tot_recovery_bank",
+//       table_name = "td_loan_transactions",
+//       whr = `branch_id = '${data.branch_code}'
+//       AND tr_type = 'R'
+//       AND tr_mode = '${data.tr_mode}'
+//       AND date(payment_date) = '${current_date}'
+//       AND created_by = '${data.emp_id}'`,
+//       order = null;
+//       co_dashboard_dt_bank = await db_Select(select,table_name,whr,order);
+//      }else {
+//       var select = "SUM(credit) tot_recovery_bank",
+//       table_name = "td_loan_transactions",
+//       whr = `branch_id = '${data.branch_code}'
+//       AND tr_type = 'R'
+//       AND tr_mode = '${data.tr_mode}'
+//       AND date(payment_date) BETWEEN '${startOfMonth}' AND '${current_date}'
+//       AND created_by = '${data.emp_id}'`,
+//       order = null;
+//       co_dashboard_dt_bank = await db_Select(select,table_name,whr,order);
+//      }
+//      res.send({
+//       suc: 1,
+//       data: {
+//         co_dashboard_dt_bank: co_dashboard_dt_bank.msg[0].tot_recovery_bank || 0
+//       }
+//     });
+//   }catch(error){
+//     console.error("Error fetching co dashboard bank recovery details:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// });
+
+//co active group
+dashboard_dataRouter.post("/co_dashboard_active_group", async (req, res) => {
  try{
-     var data = req.body;
-    //  console.log(data);
+   var data = req.body;
+  //  console.log(data,'grp');
+   
+   let co_tot_group,co_tot_grp_active,total_group;
 
-    // Get today date
-    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+   co_tot_group = await db_Select("COUNT(*) tot_group","md_group",`branch_code = '${data.branch_code}' AND co_id = '${data.co_id}'`,null);
 
-    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+    co_tot_grp_active = await db_Select("COUNT(DISTINCT a.group_code)tot_co_active_grp","td_loan a LEFT JOIN md_group b ON a.group_code = b.group_code",`a.branch_code IN (${data.branch_code}) AND b.co_id = '${data.co_id}' AND a.outstanding > 0`,null);
 
-    let co_dashboard_dt_cash;
-
-     if(data.flag == 'Today'){
-      var select = "SUM(credit) tot_recovery_cash",
-      table_name = "td_loan_transactions",
-      whr = `branch_id = '${data.branch_code}'
-      AND tr_type = 'R'
-      AND tr_mode = '${data.tr_mode}'
-      AND date(payment_date) = '${current_date}'
-      AND created_by = '${data.emp_id}'`,
-      order = null;
-      co_dashboard_dt_cash = await db_Select(select,table_name,whr,order);
-     }else {
-      var select = "SUM(credit) tot_recovery_cash",
-      table_name = "td_loan_transactions",
-      whr = `branch_id = '${data.branch_code}'
-      AND tr_type = 'R'
-      AND tr_mode = '${data.tr_mode}'
-      AND date(payment_date) BETWEEN '${startOfMonth}' AND '${current_date}'
-      AND created_by = '${data.emp_id}'`,
-      order = null;
-      co_dashboard_dt_cash = await db_Select(select,table_name,whr,order);
-     }
+    total_group = await db_Select("COUNT(*)total_group","md_group",`branch_code IN (${data.branch_code}) AND open_close_flag = 'O' AND approval_status = 'A'`,null);
      res.send({
       suc: 1,
       data: {
-        co_dashboard_dt_cash: co_dashboard_dt_cash.msg[0].tot_recovery_cash || 0
+        co_total_group: co_tot_group.msg[0].tot_group || 0,
+        tot_active_grp: co_tot_grp_active.msg[0].tot_co_active_grp || 0,
+        tot_group: total_group.msg[0].total_group || 0,
       }
     });
-  }catch(error){
-    console.error("Error fetching co dashboard cash recovery details:", error);
+ }catch(error){
+    console.error("Error fetching dashboard_active_group:", error);
     res.send({ suc: 0, msg: "An error occurred" });
-  }
+ }
 });
 
-dashboard_dataRouter.post("/co_dashboard_dtls_bank_recov", async (req, res) => {
+// Dashboard total loan disbursed and total group disbursed details today and this month
+dashboard_dataRouter.post("/co_dashboard_tot_loan_disbursed_dtls", async (req, res) => {
  try{
-     var data = req.body;
-     console.log(data);
+  var data = req.body;
+  // console.log(data,'data_d_loan');
 
-    // Get today date
-    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+  const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+  const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
 
-    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+  let co_tot_loan_disbursed,co_tot_grp_disbursed;
 
-    let co_dashboard_dt_bank;
+  if(data.flag == 'Today'){
+ //total loan disbursed by co details today
+   var select = "SUM(debit)co_tot_loan_disb",
+   table_name = "td_loan_transactions",
+   whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND tr_type = 'D' AND created_by = '${data.co_id}'`,
+   order = null;
+  co_tot_loan_disbursed = await db_Select(select,table_name,whr,order);
 
-     if(data.flag == 'Today'){
-      var select = "SUM(credit) tot_recovery_bank",
-      table_name = "td_loan_transactions",
-      whr = `branch_id = '${data.branch_code}'
-      AND tr_type = 'R'
-      AND tr_mode = '${data.tr_mode}'
-      AND date(payment_date) = '${current_date}'
-      AND created_by = '${data.emp_id}'`,
+  //total group loan disbursed details today
+  var select = "COUNT(DISTINCT a.group_code)co_tot_grp_disb",
+  table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
+  whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'D' AND b.payment_date = '${current_date}' AND b.created_by = '${data.co_id}'`,
+  order = null;
+  co_tot_grp_disbursed = await db_Select(select,table_name,whr,order);
+  }else {
+//total loan disbursed details this month
+   var select = "SUM(debit)co_tot_loan_disb",
+   table_name = "td_loan_transactions",
+   whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND tr_type = 'D' AND created_by = '${data.co_id}'`,
+   order = null;
+   co_tot_loan_disbursed = await db_Select(select,table_name,whr,order);
+
+  //total group loan disbursed details this month
+  var select = "COUNT(DISTINCT a.group_code)co_tot_grp_disb",
+  table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
+  whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'D' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND b.created_by = '${data.co_id}'`,
+  order = null;
+  co_tot_grp_disbursed = await db_Select(select,table_name,whr,order);
+  }
+   res.send({
+      suc: 1,
+      data: {
+        co_total_loan_disbursed: co_tot_loan_disbursed.msg[0].co_tot_loan_disb || 0,
+        co_total_grp_loan_disbursed: co_tot_grp_disbursed.msg[0].co_tot_grp_disb || 0,
+      }
+    });
+ }catch(error){
+    console.error("Error fetching co dshboard total loan disbursed details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+ }
+});
+
+// Dashboard co total loan recovery and co total group recovery details today and this month
+dashboard_dataRouter.post("/co_dashboard_tot_loan_recov_dtls", async (req, res) => {
+ try{
+   var data = req.body;
+  // console.log(data,'data_r_loan');
+
+  const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+  const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+  let co_tot_loan_recovery,co_tot_grp_recovery;
+
+  if(data.flag == 'Today'){
+ //total loan disbursed details today
+   var select = "SUM(credit)tot_loan_recov_co",
+   table_name = "td_loan_transactions",
+   whr = `payment_date = '${current_date}' AND branch_id IN (${data.branch_code}) AND tr_type = 'R' 
+          AND created_by = '${data.co_id}'`,
+   order = null;
+  co_tot_loan_recovery = await db_Select(select,table_name,whr,order);
+
+  //total group loan disbursed details today
+  var select = "COUNT(DISTINCT a.group_code)tot_grp_recov_co",
+  table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
+  whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'R' AND b.payment_date = '${current_date}' AND b.created_by = '${data.co_id}'`,
+  order = null;
+  co_tot_grp_recovery = await db_Select(select,table_name,whr,order);
+  }else {
+//total loan disbursed details this month
+   var select = "SUM(credit)tot_loan_recov_co",
+   table_name = "td_loan_transactions",
+   whr = `payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND branch_id IN (${data.branch_code}) AND tr_type = 'R' AND created_by = '${data.co_id}'`,
+   order = null;
+   co_tot_loan_recovery = await db_Select(select,table_name,whr,order);
+
+  //total group loan disbursed details this month
+  var select = "COUNT(DISTINCT a.group_code)tot_grp_recov_co",
+  table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
+  whr = `a.branch_code IN (${data.branch_code}) AND b.tr_type = 'R' AND b.payment_date BETWEEN '${startOfMonth}' AND '${current_date}' AND b.created_by = '${data.co_id}'`,
+  order = null;
+  co_tot_grp_recovery = await db_Select(select,table_name,whr,order);
+  }
+   res.send({
+      suc: 1,
+      data: {
+        co_total_loan_recovery: co_tot_loan_recovery.msg[0].tot_loan_recov_co || 0,
+        co_total_grp_loan_recovery: co_tot_grp_recovery.msg[0].tot_grp_recov_co || 0,
+      }
+    });
+ }catch(error){
+    console.error("Error fetching co dshboard total loan recovery details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+ }
+});
+
+// co Dashboard total loan unapprove and total group unapprove details today and this month
+dashboard_dataRouter.post("/co_dashboard_tot_loan_unapprove_dtls", async (req, res) => {
+ try{
+    var data = req.body;
+    // console.log(data,'data_un_loan');
+
+    let co_tot_loan_unapprove,co_tot_grp_unapprove;
+
+    //total loan unapprove details today
+    var select = "SUM(debit + credit)tot_unapprove_loan_co",
+    table_name = "td_loan_transactions",
+    whr = `branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R') AND created_by = '${data.co_id}'`,
+    order = null;
+    co_tot_loan_unapprove = await db_Select(select,table_name,whr,order);
+
+    //total group loan unapprove details today
+    var select = "COUNT(DISTINCT a.group_code)tot_unapprove_grp_co",
+    table_name = "td_loan a LEFT JOIN td_loan_transactions b ON a.loan_id = b.loan_id",
+    whr = `a.branch_code IN (${data.branch_code}) AND b.status = 'U' AND b.tr_type IN('D','R') AND b.created_by = ${data.co_id}`,
+    order = null;
+    co_tot_grp_unapprove = await db_Select(select,table_name,whr,order);
+  
+  res.send({
+    suc: 1,
+    data : {
+      co_total_loan_unapprove: co_tot_loan_unapprove.msg[0].tot_unapprove_loan_co || 0,
+      co_total_group_unapprove: co_tot_grp_unapprove.msg[0].tot_unapprove_grp_co || 0,
+    }
+  })
+ }catch(error){
+    console.error("Error fetching co dshboard total loan unapprove details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+ }
+});
+
+// co Dashboard total user_logged_in details today
+dashboard_dataRouter.post("/co_dashboard_user_logged_in_details", async (req, res) => {
+    try{
+      var data = req.body;
+      // console.log(data,'data_logged');
+
+      const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+
+      let co_tot_active_user, co_active_user_dtls;
+
+      co_tot_active_user = await db_Select("COUNT(*)co_tot_active_user","md_user",`brn_code IN (${data.branch_code}) AND user_status = 'A' AND date(created_at) = '${current_date}' AND refresh_token != '' AND session_id != '' AND created_by = '${data.co_id}'`,null);
+
+       var select = "a.emp_id,b.emp_name,a.user_status",
+       table_name = "md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
+      whr = `a.brn_code IN (${data.branch_code}) AND a.user_status = 'A' AND date(a.created_at) = '${current_date}' AND a.refresh_token != '' AND a.session_id != '' AND a.created_by = '${data.co_id}'`,
       order = null;
-      co_dashboard_dt_bank = await db_Select(select,table_name,whr,order);
-     }else {
-      var select = "SUM(credit) tot_recovery_bank",
-      table_name = "td_loan_transactions",
-      whr = `branch_id = '${data.branch_code}'
-      AND tr_type = 'R'
-      AND tr_mode = '${data.tr_mode}'
-      AND date(payment_date) BETWEEN '${startOfMonth}' AND '${current_date}'
-      AND created_by = '${data.emp_id}'`,
-      order = null;
-      co_dashboard_dt_bank = await db_Select(select,table_name,whr,order);
-     }
+      co_active_user_dtls = await db_Select(select,table_name,whr,order);
+
      res.send({
       suc: 1,
       data: {
-        co_dashboard_dt_bank: co_dashboard_dt_bank.msg[0].tot_recovery_bank || 0
+        co_tot_user_active: co_tot_active_user.msg[0].co_tot_active_user || 0,
+        co_active_user: co_active_user_dtls.msg || [],
       }
     });
-  }catch(error){
-    console.error("Error fetching co dashboard bank recovery details:", error);
+    }catch(error){
+    console.error("Error fetching dshboard_user_logged_in_details:", error);
     res.send({ suc: 0, msg: "An error occurred" });
-  }
+ }
 });
 
 module.exports = {dashboard_dataRouter}
