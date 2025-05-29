@@ -563,7 +563,7 @@ dashboard_dataRouter.post("/co_dashboard_tot_loan_unapprove_dtls", async (req, r
     let co_tot_loan_unapprove,co_tot_grp_unapprove;
 
     //total loan unapprove details today
-    var select = "SUM(debit + credit)tot_unapprove_loan_co",
+    var select = "SUM(debit) + SUM(credit)tot_unapprove_loan_co",
     table_name = "td_loan_transactions",
     whr = `branch_id IN (${data.branch_code}) AND status = 'U' AND tr_type IN('D','R') AND created_by = '${data.co_id}'`,
     order = null;
