@@ -599,11 +599,11 @@ dashboard_dataRouter.post("/co_dashboard_user_logged_in_details", async (req, re
 
       let co_tot_active_user, co_active_user_dtls;
 
-      co_tot_active_user = await db_Select("COUNT(*)co_tot_active_user","md_user",`brn_code IN (${data.branch_code}) AND user_status = 'A' AND date(created_at) = '${current_date}' AND refresh_token != '' AND session_id != '' AND created_by = '${data.co_id}'`,null);
+      co_tot_active_user = await db_Select("COUNT(*)co_tot_active_user","md_user",`brn_code IN (${data.branch_code}) AND user_status = 'A' AND date(created_at) = '${current_date}' AND refresh_token != '' AND session_id != '' AND emp_id = '${data.co_id}'`,null);
 
        var select = "a.emp_id,b.emp_name,a.user_status",
        table_name = "md_user a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
-      whr = `a.brn_code IN (${data.branch_code}) AND a.user_status = 'A' AND date(a.created_at) = '${current_date}' AND a.refresh_token != '' AND a.session_id != '' AND a.created_by = '${data.co_id}'`,
+      whr = `a.brn_code IN (${data.branch_code}) AND a.user_status = 'A' AND date(a.created_at) = '${current_date}' AND a.refresh_token != '' AND a.session_id != '' AND a.emp_id = '${data.co_id}'`,
       order = null;
       co_active_user_dtls = await db_Select(select,table_name,whr,order);
 
