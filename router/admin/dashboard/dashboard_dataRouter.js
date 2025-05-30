@@ -472,6 +472,9 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
   try{
    var data = req.body;
 
+   const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
         let totalLoanDmd = { msg: [{ tot_loan_Dmd: 0, tot_demand_grp: 0 }] };
         let weeklyLoanDmd = { msg: [{ weekly_Dmd: 0, weekly_demand_grp: 0 }] };
         let monthlyLoanDmd = { msg: [{ monthly_Dmd: 0, monthly_demand_grp: 0 }] };
