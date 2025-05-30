@@ -470,42 +470,30 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
       null,
       "GROUP BY branch_code ORDER BY branch_code"
     );
-
+    // console.log(fetch_max_trf_date);
+    
     const branchDateMap = {};
     for (let row of fetch_max_trf_date.msg) {
       branchDateMap[row.branch_code] = row.trf_date;
     }
 
-    console.log("Branch Date Map:", branchDateMap);
+    // console.log("Branch Date Map:", branchDateMap);
 
     for (let branchCode of data.branch_code) {
       let rawDate = branchDateMap[branchCode];
+      // console.log(rawDate,'hyt');
+      
 
 if (!rawDate) {
   console.warn(`No transfer date found for branch ${branchCode}`);
   continue;
 }
 
-// If rawDate is a Date object, convert to string
-if (rawDate instanceof Date) {
-  rawDate = dateFormat(rawDate, 'yyyy-MM-dd');
-} else if (typeof rawDate === 'object' && rawDate.hasOwnProperty('toISOString')) {
-  // Handle possible special object (e.g., from some DB clients)
-  rawDate = new Date(rawDate).toISOString().slice(0, 10); // 'YYYY-MM-DD'
-} else if (typeof rawDate !== 'string') {
-  // Convert any non-string to string
-  rawDate = String(rawDate);
-}
 
-// Now safely parse the date string
-const parsedDate = new Date(rawDate);
-if (isNaN(parsedDate.getTime())) {
-  console.warn(`Invalid date for branch ${branchCode}:`, rawDate);
-  continue;
-}
+const trf_date = dateFormat(rawDate, 'yyyy-mm-dd');
+// console.log(trf_date,'date');
 
-const trf_date = dateFormat(parsedDate, 'yyyy-MM-dd');
-console.log(`Processing Branch: ${branchCode}, Transfer Date: ${trf_date}, Flag: ${data.flag}`);
+// console.log(`Processing Branch: ${branchCode}, Transfer Date: ${trf_date}, Flag: ${data.flag}`);
 
 
 
@@ -518,7 +506,7 @@ console.log(`Processing Branch: ${branchCode}, Transfer Date: ${trf_date}, Flag:
           null
         );
 
-        console.log(`Monthly Result for Branch ${branchCode}:`, totalLoanOD.msg);
+        // console.log(`Monthly Result for Branch ${branchCode}:`, totalLoanOD.msg);
 
         result.total_loan_od += totalLoanOD.msg[0]?.tot_loan_od || 0;
         result.total_overdue_groups += totalLoanOD.msg[0]?.tot_overdue_grp || 0;
@@ -532,7 +520,7 @@ console.log(`Processing Branch: ${branchCode}, Transfer Date: ${trf_date}, Flag:
           null
         );
 
-        console.log(`Weekly Result for Branch ${branchCode}:`, weeklyLoanOD.msg);
+        // console.log(`Weekly Result for Branch ${branchCode}:`, weeklyLoanOD.msg);
 
         result.weekly_loan_od += weeklyLoanOD.msg[0]?.weekly_od || 0;
         result.weekly_overdue_groups += weeklyLoanOD.msg[0]?.weekly_grp || 0;
