@@ -502,7 +502,7 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
          `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}'  
-          AND a.branch_code IN (${branchCodes}) 
+          AND a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Monthly' 
           AND b.recovery_day = '${data.recov_day}'`,
         null
