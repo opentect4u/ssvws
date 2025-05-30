@@ -396,7 +396,10 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
       weeklyLoanOD = await db_Select(
         "IFNULL(SUM(a.od_amt), 0) AS weekly_od, COUNT(DISTINCT b.group_code) AS weekly_grp",
         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date <= '${trf_date}' 
+        `a.trf_date = (SELECT MAX(trf_date)
+                    FROM   td_od_loan
+                    WHERE  branch_code IN (${branchCodes})
+                    AND    trf_date <= '${trf_date}') 
           AND a.branch_code IN (${branchCodes}) 
           AND b.period_mode = 'Weekly' 
           AND b.recovery_day = '${data.recov_day}'`,
@@ -406,7 +409,7 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
       monthlyLoanOD = await db_Select(
         "IFNULL(SUM(a.od_amt), 0) AS monthly_od, COUNT(DISTINCT b.group_code) AS monthly_grp",
         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date <= '${trf_date}' 
+        `a.trf_date = '${trf_date}' 
           AND a.branch_code IN (${branchCodes}) 
           AND b.period_mode = 'Monthly' 
           AND b.recovery_day = '${data.recov_day}'`,
