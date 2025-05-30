@@ -278,7 +278,11 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
  }
 });
 
-// Dashboard  total overdue details today and this month
+/********************************************************************************
+ *                                Overdue
+ ********************************************************************************/
+
+// Dashboard  total overdue details today and this month for a particular branch
 dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
  try{
    var data = req.body;
@@ -291,10 +295,12 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
       null
     );
 
-    const prev_month = getMonthPrev.msg[0].closed_upto;
-    if (!prev_month) {
-      return res.send({ suc: 0, msg: "Previous month data not found" });
-    }
+    if (!getMonthPrev.msg.length || !getMonthPrev.msg[0].closed_upto) {
+    return res.send({ suc: 0, msg: "Previous month data not found" });
+}
+
+    const rawDate = new Date(getMonthPrev.msg[0].closed_upto);
+    const prev_month = rawDate.toISOString().split('T')[0]; 
 
     let totalLoanOD = { msg: [{ tot_loan_od: 0, tot_overdue_grp: 0 }] };
     let weeklyLoanOD = { msg: [{ weekly_od: 0, weekly_grp: 0 }] };
@@ -302,18 +308,18 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
 
      const branchCodes = data.branch_code;
 
-     if (data.flag === 'D') {
+     if (data.flag === 'M') {
       totalLoanOD = await db_Select(
         "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date = '${prev_month}' AND a.branch_code IN (${branchCodes})`,
+        `a.trf_date <= '${prev_month}' AND a.branch_code IN (${branchCodes})`,
         null
       );
     } else if (data.flag === 'W') {
       weeklyLoanOD = await db_Select(
         "IFNULL(SUM(a.od_amt), 0) AS weekly_od, COUNT(DISTINCT b.group_code) AS weekly_grp",
         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date = '${prev_month}' 
+        `a.trf_date <= '${prev_month}' 
           AND a.branch_code IN (${branchCodes}) 
           AND b.period_mode = 'Weekly' 
           AND b.recovery_day = '${data.recov_day}'`,
@@ -323,7 +329,7 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
       monthlyLoanOD = await db_Select(
         "IFNULL(SUM(a.od_amt), 0) AS monthly_od, COUNT(DISTINCT b.group_code) AS monthly_grp",
         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date = '${prev_month}' 
+        `a.trf_date <= '${prev_month}' 
           AND a.branch_code IN (${branchCodes}) 
           AND b.period_mode = 'Monthly' 
           AND b.recovery_day = '${data.recov_day}'`,
@@ -347,33 +353,147 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
  }
 });
 
+//Dashboard total branch overdue amount calculation (All branches)
+dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) => {
+  try {
+    var data = req.body;
+
+    // Initialize result object
+    const result = {
+      total_loan_od: 0,
+      total_overdue_groups: 0,
+      weekly_loan_od: 0,
+      weekly_overdue_groups: 0,
+      monthly_loan_od: 0,
+      monthly_overdue_groups: 0,
+    };
+
+    // Step 1: Fetch latest trf_date for each branch
+    const fetch_max_trf_date = await db_Select(
+      "MAX(trf_date) trf_date, branch_code",
+      "td_od_loan",
+      null,
+      "GROUP BY branch_code ORDER BY branch_code"
+    );
+
+    // Map: branch_code => trf_date
+    const branchDateMap = {};
+    for (let row of fetch_max_trf_date.msg) {
+      branchDateMap[row.branch_code] = row.trf_date;
+    }
+
+    // Step 2: Loop through each branch
+    // for (let branchCode of data.branch_code) {
+    //   const trf_date = dateFormat(branchDateMap[branchCode],'yyyy-MM-dd');
+    //   if (!trf_date) continue; // Skip if no date found for the branch
+
+      for (let branchCode of data.branch_code) {
+      const rawDate = branchDateMap[branchCode];
+      if (!rawDate) continue;
+
+      const parsedDate = new Date(rawDate);
+      if (isNaN(parsedDate.getTime())) {
+        console.warn(`Invalid date for branch ${branchCode}:`, rawDate);
+        continue; // skip invalid dates
+      }
+
+  const trf_date = dateFormat(parsedDate, 'yyyy-MM-dd');
+  // Use trf_date safely now
+
+      let totalLoanOD = { msg: [{ tot_loan_od: 0, tot_overdue_grp: 0 }] };
+      let weeklyLoanOD = { msg: [{ weekly_od: 0, weekly_grp: 0 }] };
+      let monthlyLoanOD = { msg: [{ monthly_od: 0, monthly_grp: 0 }] };
+
+      if (data.flag === 'M') {
+        // Fetch total OD for the branch
+        totalLoanOD = await db_Select(
+          "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
+          "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}'`,
+          null
+        );
+      } else if (data.flag === 'W') {
+        // Fetch weekly OD
+        weeklyLoanOD = await db_Select(
+          "IFNULL(SUM(a.od_amt), 0) AS weekly_od, COUNT(DISTINCT b.group_code) AS weekly_grp",
+          "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Weekly' AND b.recovery_day = '${data.recov_day}'`,
+          null
+        );
+      } else {
+        // Fetch monthly OD (day-wise)
+        monthlyLoanOD = await db_Select(
+          "IFNULL(SUM(a.od_amt), 0) AS monthly_od, COUNT(DISTINCT b.group_code) AS monthly_grp",
+          "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Monthly' AND b.recovery_day = '${data.recov_day}'`,
+          null
+        );
+      }
+
+      // Update result aggregation
+      result.total_loan_od += totalLoanOD.msg[0].tot_loan_od || 0;
+      result.total_overdue_groups += totalLoanOD.msg[0].tot_overdue_grp || 0;
+
+      result.weekly_loan_od += weeklyLoanOD.msg[0].weekly_od || 0;
+      result.weekly_overdue_groups += weeklyLoanOD.msg[0].weekly_grp || 0;
+
+      result.monthly_loan_od += monthlyLoanOD.msg[0].monthly_od || 0;
+      result.monthly_overdue_groups += monthlyLoanOD.msg[0].monthly_grp || 0;
+    }
+
+    // Final response
+    res.send({ suc: 1, data: result });
+
+  } catch (error) {
+    console.error("Error fetching dashboard all branch total loan overdue details:", error);
+    res.status(500).send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
+//
+dashboard_dataRouter.post("/dashboard_generate_dmd", async (req, res) => {
+  try {
+    var data = req.body;
+
+    const current_date = dateFormat(new Date(), "yyyy-mm-dd");
+    const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
+
+
+    let results = [];
+
+      const result = await db_Select(null, null, null, null, true, `CALL p_loan_demand('${startOfMonth}', '${current_date}', '${data.branch_code}')`);
+      results.push({result });
+
+    return res.json({ message: "Demand data generated successfully.", data: results });
+
+  } catch (error) {
+    console.error("Error in dashboard_generate_dmd:", error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+});
+
+
 //Dashboard  total overdue details today and this month
 dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
   try{
    var data = req.body;
-
-  const current_date = dateFormat(new Date(), "yyyy-mm-dd");
-  const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
-
-  //Call procedure in a loop for each branch_code
-     var fetch_demand_data = await db_Select(null,null,null,null,true,`CALL p_loan_demand('${startOfMonth}','${current_date}','${data.branch_code}')`);
 
         let totalLoanDmd = { msg: [{ tot_loan_Dmd: 0, tot_demand_grp: 0 }] };
         let weeklyLoanDmd = { msg: [{ weekly_Dmd: 0, weekly_demand_grp: 0 }] };
         let monthlyLoanDmd = { msg: [{ monthly_Dmd: 0, monthly_demand_grp: 0 }] };
 
 
-      if (data.flag === 'D') {
+      if (data.flag === 'M') {
       totalLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT b.group_code) AS tot_demand_grp",
-        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+        "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
         `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' AND a.branch_code IN (${data.branch_code})`,
         null
       );
     } else if (data.flag === 'W') {
       weeklyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
-        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+        "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
          `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' 
           AND a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Weekly' 
@@ -383,7 +503,7 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
     } else {
       monthlyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
-        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+        "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
          `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}'  
           AND a.branch_code IN (${branchCodes}) 
           AND b.period_mode = 'Monthly' 
