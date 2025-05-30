@@ -450,94 +450,94 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
 //   }
 // });
 
-dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) => {
-  try {
-    const data = req.body;
+// dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) => {
+//   try {
+//     const data = req.body;
 
-    const result = {
-      total_loan_od: 0,
-      total_overdue_groups: 0,
-      weekly_loan_od: 0,
-      weekly_overdue_groups: 0,
-      monthly_loan_od: 0,
-      monthly_overdue_groups: 0,
-    };
+//     const result = {
+//       total_loan_od: 0,
+//       total_overdue_groups: 0,
+//       weekly_loan_od: 0,
+//       weekly_overdue_groups: 0,
+//       monthly_loan_od: 0,
+//       monthly_overdue_groups: 0,
+//     };
 
-    // Step 1: Fetch latest transfer dates per branch
-    const fetch_max_trf_date = await db_Select(
-      "MAX(trf_date) trf_date, branch_code",
-      "td_od_loan",
-      null,
-      "GROUP BY branch_code ORDER BY branch_code"
-    );
-    // console.log(fetch_max_trf_date);
+//     // Step 1: Fetch latest transfer dates per branch
+//     const fetch_max_trf_date = await db_Select(
+//       "MAX(trf_date) trf_date, branch_code",
+//       "td_od_loan",
+//       null,
+//       "GROUP BY branch_code ORDER BY branch_code"
+//     );
+//     // console.log(fetch_max_trf_date);
     
-    const branchDateMap = {};
-    for (let row of fetch_max_trf_date.msg) {
-      branchDateMap[row.branch_code] = row.trf_date;
-    }
+//     const branchDateMap = {};
+//     for (let row of fetch_max_trf_date.msg) {
+//       branchDateMap[row.branch_code] = row.trf_date;
+//     }
 
-    // console.log("Branch Date Map:", branchDateMap);
+//     // console.log("Branch Date Map:", branchDateMap);
 
-    for (let branchCode of data.branch_code) {
-      let rawDate = branchDateMap[branchCode];
-      // console.log(rawDate,'hyt');
+//     for (let branchCode of data.branch_code) {
+//       let rawDate = branchDateMap[branchCode];
+//       // console.log(rawDate,'hyt');
       
 
-if (!rawDate) {
-  console.warn(`No transfer date found for branch ${branchCode}`);
-  continue;
-}
+// if (!rawDate) {
+//   console.warn(`No transfer date found for branch ${branchCode}`);
+//   continue;
+// }
 
 
-const trf_date = dateFormat(rawDate, 'yyyy-mm-dd');
-// console.log(trf_date,'date');
+// const trf_date = dateFormat(rawDate, 'yyyy-mm-dd');
+// // console.log(trf_date,'date');
 
-// console.log(`Processing Branch: ${branchCode}, Transfer Date: ${trf_date}, Flag: ${data.flag}`);
+// // console.log(`Processing Branch: ${branchCode}, Transfer Date: ${trf_date}, Flag: ${data.flag}`);
 
 
 
-      if (data.flag === 'M') {
-        // Monthly logic
-        const totalLoanOD = await db_Select(
-          "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
-          "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Monthly'`,
-          null
-        );
+//       if (data.flag === 'M') {
+//         // Monthly logic
+//         const totalLoanOD = await db_Select(
+//           "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
+//           "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//           `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Monthly'`,
+//           null
+//         );
 
-        // console.log(`Monthly Result for Branch ${branchCode}:`, totalLoanOD.msg);
+//         // console.log(`Monthly Result for Branch ${branchCode}:`, totalLoanOD.msg);
 
-        result.total_loan_od += totalLoanOD.msg[0]?.tot_loan_od || 0;
-        result.total_overdue_groups += totalLoanOD.msg[0]?.tot_overdue_grp || 0;
+//         result.total_loan_od += totalLoanOD.msg[0]?.tot_loan_od || 0;
+//         result.total_overdue_groups += totalLoanOD.msg[0]?.tot_overdue_grp || 0;
 
-      } else if (data.flag === 'W') {
-        // Weekly logic
-        const weeklyLoanOD = await db_Select(
-          "IFNULL(SUM(a.od_amt), 0) AS weekly_od, COUNT(DISTINCT b.group_code) AS weekly_grp",
-          "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Weekly' AND b.recovery_day = '${data.recov_day}'`,
-          null
-        );
+//       } else if (data.flag === 'W') {
+//         // Weekly logic
+//         const weeklyLoanOD = await db_Select(
+//           "IFNULL(SUM(a.od_amt), 0) AS weekly_od, COUNT(DISTINCT b.group_code) AS weekly_grp",
+//           "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//           `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Weekly' AND b.recovery_day = '${data.recov_day}'`,
+//           null
+//         );
 
-        // console.log(`Weekly Result for Branch ${branchCode}:`, weeklyLoanOD.msg);
+//         // console.log(`Weekly Result for Branch ${branchCode}:`, weeklyLoanOD.msg);
 
-        result.weekly_loan_od += weeklyLoanOD.msg[0]?.weekly_od || 0;
-        result.weekly_overdue_groups += weeklyLoanOD.msg[0]?.weekly_grp || 0;
+//         result.weekly_loan_od += weeklyLoanOD.msg[0]?.weekly_od || 0;
+//         result.weekly_overdue_groups += weeklyLoanOD.msg[0]?.weekly_grp || 0;
 
-      } else {
-        console.warn("Unrecognized flag value:", data.flag);
-      }
-    }
+//       } else {
+//         console.warn("Unrecognized flag value:", data.flag);
+//       }
+//     }
 
-    console.log("Final Aggregated Result:", result);
-    res.send({ suc: 1, data: result });
+//     console.log("Final Aggregated Result:", result);
+//     res.send({ suc: 1, data: result });
 
-  } catch (error) {
-    console.error("Error fetching dashboard overdue amounts:", error);
-    res.send({ suc: 0, msg: "An error occurred" });
-  }
-});
+//   } catch (error) {
+//     console.error("Error fetching dashboard overdue amounts:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// });
 
 
 
