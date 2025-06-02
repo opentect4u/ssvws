@@ -1,4 +1,4 @@
-const { db_Select } = require('../../../model/mysqlModel');
+const { db_Select, db_Delete } = require('../../../model/mysqlModel');
 
 const express = require('express'),
 dashboard_dataRouter = express.Router(),
@@ -532,14 +532,13 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
 dashboard_dataRouter.post("/dashboard_generate_dmd", async (req, res) => {
   try {
     var data = req.body;
+    const dateFormat = require("dateformat");
+    const now = new Date();
 
     // const current_date = dateFormat(new Date(), "yyyy-mm-dd");
     // const startOfMonth = dateFormat(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-mm-dd");
     //  console.log(current_date,startOfMonth,'ddd');
 
-    const dateFormat = require("dateformat"); // if using Node.js
-
-    const now = new Date();
 
     // First day of the current month
     const startOfMonth = dateFormat(new Date(now.getFullYear(), now.getMonth(), 1), "yyyy-mm-dd");
@@ -547,12 +546,14 @@ dashboard_dataRouter.post("/dashboard_generate_dmd", async (req, res) => {
     // Last day of the current month
     const endOfMonth = dateFormat(new Date(now.getFullYear(), now.getMonth() + 1, 0), "yyyy-mm-dd");
 
-    console.log("Start of Month:", startOfMonth);
-    console.log("End of Month:", endOfMonth);
+    // console.log("Start of Month:", startOfMonth);
+    // console.log("End of Month:", endOfMonth);
 
      
 
     let results = [];
+
+     var delete_demand_data = await db_Delete('tt_loan_demand',null);
 
       const result = await db_Select(null, null, null, null, true, `CALL p_loan_demand('${startOfMonth}', '${endOfMonth}', '${data.branch_code}')`);
       results.push({result });
