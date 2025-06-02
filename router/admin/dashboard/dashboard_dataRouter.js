@@ -583,25 +583,33 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
       totalLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT b.group_code) AS tot_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' AND a.branch_code IN (${data.branch_code})`,
+        `a.branch_code IN (${data.branch_code})`,
         null
       );
     } else if (data.flag === 'W') {
       weeklyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-         `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' 
-          AND a.branch_code IN (${data.branch_code})
+         `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Weekly' 
           AND b.recovery_day = '${data.recov_day}'`,
         null
       );
+      //  else if (data.flag === 'W') {
+      // weeklyLoanDmd = await db_Select(
+      //   "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
+      //   "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+      //    `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' 
+      //     AND a.branch_code IN (${data.branch_code})
+      //     AND b.period_mode = 'Weekly' 
+      //     AND b.recovery_day = '${data.recov_day}'`,
+      //   null
+      // );
     } else {
       monthlyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-         `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}'  
-          AND a.branch_code IN (${data.branch_code})
+         `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Monthly' 
           AND b.recovery_day = '${data.recov_day}'`,
         null
