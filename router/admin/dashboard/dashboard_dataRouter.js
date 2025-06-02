@@ -524,9 +524,11 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
   }
 });
 
+/********************************************************************************
+ *                                Demand
+ ********************************************************************************/
 
-
-//
+//generate demand on particular branch
 dashboard_dataRouter.post("/dashboard_generate_dmd", async (req, res) => {
   try {
     var data = req.body;
@@ -544,7 +546,7 @@ dashboard_dataRouter.post("/dashboard_generate_dmd", async (req, res) => {
 
   } catch (error) {
     console.error("Error in dashboard_generate_dmd:", error);
-    return res.status(500).json({ message: "Internal server error", error: error.message });
+    return res.json({ message: "Internal server error", error: error.message });
   }
 });
 
@@ -566,15 +568,24 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
       totalLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT b.group_code) AS tot_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' AND a.branch_code IN (${data.branch_code})`,
+        `a.branch_code IN (${data.branch_code})`,
         null
       );
-    } else if (data.flag === 'W') {
+    // } else if (data.flag === 'W') {
+    //   weeklyLoanDmd = await db_Select(
+    //     "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
+    //     "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+    //      `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' 
+    //       AND a.branch_code IN (${data.branch_code})
+    //       AND b.period_mode = 'Weekly' 
+    //       AND b.recovery_day = '${data.recov_day}'`,
+    //     null
+    //   );
+       } else if (data.flag === 'W') {
       weeklyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-         `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}' 
-          AND a.branch_code IN (${data.branch_code})
+         `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Weekly' 
           AND b.recovery_day = '${data.recov_day}'`,
         null
@@ -583,8 +594,7 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
       monthlyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
         "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-         `a.demand_date BETWEEN '${startOfMonth}' AND '${current_date}'  
-          AND a.branch_code IN (${data.branch_code})
+         `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Monthly' 
           AND b.recovery_day = '${data.recov_day}'`,
         null
