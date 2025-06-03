@@ -142,7 +142,8 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
 userwebRouter.post("/save_user_dt", async (req, res) => {
     var data = req.body;
-
+   console.log(data,'data');
+   
     try {
         var result = await save_user_dtls(data);
         console.log("Success:", result);

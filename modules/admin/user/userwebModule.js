@@ -61,13 +61,12 @@ save_user_dtls: (data) => {
             if (data.finance_toggle === 'Y') {
                 const payload = {
                     emp_id: data.emp_id,
-                    brn_code: data.brn_code,
+                    branch_id: data.brn_code,
                     user_type: data.user_type,
-                    password: '$2b$10$GKfgEjJu9WuKkOUWzg28VOMWS6E214C3K.VizYE2Z3UXGTe/UaCEC',
-                    user_status: 'A',
-                    created_by: data.created_by,
-                    created_at: datetime
+                    created_by: data.created_by
                 };
+                console.log(payload,'payload');
+                
 
                 try {
                     const response = await axios.post(
@@ -75,6 +74,8 @@ save_user_dtls: (data) => {
                         payload
                     );
                     externalResponse = response.data;
+                    console.log(externalResponse,'externalResponse');
+                    
                 } catch (err) {
                     reject({ suc: 2, msg: "Failed to push data to external system", details: err.message });
                     return;
