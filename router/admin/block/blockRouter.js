@@ -18,6 +18,7 @@ blockRouter.get("/show_all_block", async (req, res) => {
       res.send(block_data);
     }catch(err){
       console.log(err);
+      res.send({ message: "An error occurred while showing all district details", error: err.message });
     }
   });
 
@@ -47,7 +48,7 @@ blockRouter.post("/get_districts", async (req, res) => {
 
     var select = "dist_id,dist_name",
     table_name = "md_district",
-    whr = `state_id = '${data.state_id}'`,
+    whr = null,
     order = null;
     var district_datas = await db_Select(select,table_name,whr,order);
     res.send(district_datas) 

@@ -10,7 +10,7 @@ districtRouter.get("/show_all_district", async (req, res) => {
   try{
     var data = req.query;
 
-    var select = "b.sl_no state_id,b.state,a.dist_id,a.dist_name",
+    var select = "a.dist_id,a.dist_name,b.sl_no state_id,b.state",
     table_name = "md_district a LEFT JOIN md_state b ON a.state_id = b.sl_no",
     whr = null,
     order = null;
@@ -18,6 +18,7 @@ districtRouter.get("/show_all_district", async (req, res) => {
     res.send(district_data);
   }catch(err){
     console.log(err);
+    res.send({ message: "An error occurred while showing all district details", error: err.message });
   }
 });
 
@@ -25,7 +26,9 @@ districtRouter.get("/show_all_district", async (req, res) => {
 districtRouter.post("/fetch_district_data", async (req, res) => {
  try{
     var data = req.body;
-    var select = "a.state_id,b.state,a.dist_name",
+    // console.log(data);
+    
+    var select = "a.state_id,b.state,a.dist_id,a.dist_name",
     table_name = "md_district a LEFT JOIN md_state b ON a.state_id = b.sl_no",
     whr = `a.dist_id = '${data.dist_id}'`,
     order = null;
