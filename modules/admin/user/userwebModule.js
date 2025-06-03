@@ -57,16 +57,31 @@ save_user_dtls: (data) => {
         try {
             let externalResponse = null;
 
+            // Fetch emp_name based on emp_id
+            var empQuery = await db_Select(
+                "emp_name",
+                "md_employee",
+                `emp_id = '${data.emp_id}'`,
+                null
+            );
+
+            if (!empQuery.suc || empQuery.msg.length === 0) {
+                reject({ suc: 0, msg: "Employee not found" });
+                return;
+            }
+
+            var emp_name = empQuery.msg[0].emp_name;
+
             // If finance_toggle is 'Y', push to external API first
             if (data.finance_toggle === 'Y') {
                 const payload = {
                     emp_id: data.emp_id,
                     branch_id: data.brn_code,
                     user_type: data.user_type,
-                    created_by: data.created_by
+                    created_by: data.created_by,
+                    emp_name: emp_name
                 };
-                console.log(payload,'payload');
-                
+                // console.log(payload, 'payload');
 
                 try {
                     const response = await axios.post(
@@ -74,8 +89,8 @@ save_user_dtls: (data) => {
                         payload
                     );
                     externalResponse = response.data;
-                    console.log(externalResponse,'externalResponse');
-                    
+                    // console.log(externalResponse, 'externalResponse');
+
                 } catch (err) {
                     reject({ suc: 2, msg: "Failed to push data to external system", details: err.message });
                     return;
@@ -128,6 +143,7 @@ save_user_dtls: (data) => {
         }
     });
 },
+
 
 
 
