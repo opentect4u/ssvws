@@ -80,7 +80,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 
   //fetch employee details
   try {
-      var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name,b.designation desig_code,c.desig_type";
+      var select = "a.emp_id,a.brn_code,a.user_type,a.finance_toggle,b.emp_name,b.designation desig_code,c.desig_type";
       table_name = "md_user a LEFT JOIN md_employee b ON a.brn_code = b.branch_id AND a.emp_id = b.emp_id LEFT JOIN md_designation c ON b.designation = c.desig_code";
       whr = `a.emp_id = '${data.emp_id}'`,
       order = null;
@@ -130,20 +130,35 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
 });
 
 
+// userwebRouter.post("/save_user_dt", async (req, res) => {
+//     var data = req.body;
+
+//     save user details
+//     var save_dt = await save_user_dtls(data);
+    
+//     res.send(save_dt);
+
+// });
+
 userwebRouter.post("/save_user_dt", async (req, res) => {
     var data = req.body;
 
-    //save user details
-    var save_dt = await save_user_dtls(data);
-    
-    res.send(save_dt);
+    try {
+        var result = await save_user_dtls(data);
+        console.log("Success:", result);
+        res.send(result);
+    } catch (err) {
+        console.error("Error saving user:", err);
+        res.send({ error: true, message: "Failed to save user", details: err.message || err });
+    }
 });
+
 
 userwebRouter.post("/fetch_user_details", async (req, res) => {
     var data = req.body;
 
     //fetch user details
-    var select = "a.emp_id,a.brn_code,a.user_type,a.user_status,a.deactive_remarks,b.emp_name,b.designation desig_code,c.branch_name,d.desig_type",
+    var select = "a.emp_id,a.brn_code,a.user_type,a.user_status,a.finance_toggle,a.deactive_remarks,b.emp_name,b.designation desig_code,c.branch_name,d.desig_type",
     table_name = "md_user a LEFT JOIN md_employee b ON a.brn_code = b.branch_id AND a.emp_id = b.emp_id LEFT JOIN md_branch c ON a.brn_code = c.branch_code LEFT JOIN md_designation d ON b.designation = d.desig_code",
     whr = null,
     order = null;
