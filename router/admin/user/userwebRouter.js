@@ -1,11 +1,56 @@
 const { decrypt } = require('dotenv');
 const { db_Select, db_Insert } = require('../../../model/mysqlModel');
-const { save_user_dtls, edit_user_dt, change_pass_data } = require('../../../modules/admin/user/userwebModule');
+const { save_user_dtls, edit_user_dt, change_pass_data, finance_login_data } = require('../../../modules/admin/user/userwebModule');
 
 const express = require('express'),
 userwebRouter = express.Router(),
 dateFormat = require('dateformat');
 const bcrypt = require("bcrypt");
+const crypto  = require("crypto");
+
+const key = process.env.AES_KEY;
+const iv = process.env.AES_IV;
+
+function decryptAES(encryptedText) {
+    const decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(key), Buffer.from(iv));
+    let decrypted = decipher.update(encryptedText, 'base64', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+}
+
+userwebRouter.post("/finance_login_validate", async (req, res) => {
+  try {
+     var data = req.body;
+      // Decrypt emp_id and password
+        let decryptedEmpId, decryptedPassword;
+         try {
+            decryptedEmpId = decryptAES(data.emp_id);
+            decryptedPassword = decryptAES(data.password);
+            // console.log(decryptedEmpId,decryptedPassword,'kiki');
+            
+        } catch (decryptErr) {
+            return res.send({ suc: 0, msg: "Decryption failed. Possibly incorrect key/IV or corrupted data." });
+        }
+
+         // Fetch user details (you need to ensure this function uses decryptedEmpId)
+          const fin_log_dt = await finance_login_data({ emp_id: decryptedEmpId });
+
+      if (fin_log_dt.suc > 0 && fin_log_dt.msg.length > 0) {
+            const user = fin_log_dt.msg[0];
+            const passwordMatch = await bcrypt.compare(decryptedPassword, user.password);
+            if (passwordMatch) {
+                return res.send({ suc: 1, msg: `${user.user_type_name} Login successfully`, user_dtls: user });
+            } else {
+                return res.send({ suc: 0, msg: "Incorrect user ID or password" });
+            }
+        } else {
+            return res.send({ suc: 2, msg: "No user data found", dt: fin_log_dt });
+        }
+  } catch (error) {
+      console.error("Login Error:", error);
+      return res.send({ suc: 0, msg: "An unexpected error occurred while login please try again." });
+  }
+});
 
 
 userwebRouter.get("/get_user_type", async (req, res) => {
@@ -187,6 +232,105 @@ userwebRouter.post("/edit_user_dt", async (req, res) => {
     var edit_dt = await edit_user_dt(data);
 
     res.send(edit_dt);
+});
+
+userwebRouter.post("/get_emp_dtls_fr_finance", async (req, res) => {
+ try{
+   var data = req.body;
+    // console.log(data,'data');
+    
+   //Get finance_toggle
+   var fetching_fin_flag = await db_Select(
+                "finance_toggle",
+                "md_user",
+                `emp_id = '${data.emp_id}'`,
+                null
+            );
+            
+    var finance_toggle = fetching_fin_flag.msg[0].finance_toggle;
+    
+    // Get user_type
+    var fetch_user_type = await db_Select(
+                "user_type",
+                "md_user",
+                `emp_id = '${data.emp_id}'`,
+                null
+            );
+    
+    var user_type = fetch_user_type.msg[0].user_type;      
+    
+    // If finance_toggle is 'Y' AND user_type is 4, return all branches
+    if (finance_toggle === 'Y' && parseInt(user_type) === 4) {
+      let fetch_all_branches = await db_Select("branch_code branch_assign_id,branch_name branch_assign_name", "md_branch", null, null);
+      let all_branch_data = fetch_all_branches.msg || [];
+
+      return res.send({
+        suc: 1,
+        finance_toggle,
+        user_type,
+        branch_assign_data: all_branch_data
+      });
+    }
+
+    // If finance_toggle is 'Y' AND user_type is 1,2,5 return all branches
+    if (finance_toggle === 'Y' && parseInt(user_type) === 1 || parseInt(user_type) === 2 || parseInt(user_type) === 5) {
+      let fetch_all_branches_data = await db_Select("a.brn_code branch_assign_id,b.branch_name branch_assign_name", "md_user a LEFT JOIN md_branch b ON a.brn_code = b.branch_code", `a.emp_id = '${data.emp_id}'`, null);
+      let all_branchs_data = fetch_all_branches_data.msg || [];
+
+      return res.send({
+        suc: 1,
+        finance_toggle,
+        user_type,
+        branch_assign_data: all_branchs_data
+      });
+    }
+
+    // If finance_toggle is 'Y' for other user types
+    if (finance_toggle === 'Y' && parseInt(user_type) === 3 || parseInt(user_type) === 10 || parseInt(user_type) === 11) {  
+      // Fetch assigned branch details
+      var select = "a.user_type,a.branch_assign_id,b.branch_name branch_assign_name",
+      table_name = "td_assign_branch_user a LEFT JOIN md_branch b ON a.branch_assign_id = b.branch_code",
+      whr = `a.ho_user_id = '${data.emp_id}'`,
+      order = null;
+      var fetch_branch_data = await db_Select(select,table_name,whr,order);
+      const branch_assign_data_raw = fetch_branch_data.msg || [];
+
+      let user_type = null;
+      const branch_assign_data = branch_assign_data_raw.map((item, index) => {
+      if (index === 0) user_type = parseInt(item.user_type);
+      return {
+      branch_assign_id: item.branch_assign_id,
+      branch_assign_name: item.branch_assign_name
+      };
+      });
+
+    // Send response with all details
+    res.send({
+        suc: 1,
+        finance_toggle: finance_toggle,
+        user_type: user_type,
+        // user_data: user_data,
+        branch_assign_data : branch_assign_data
+      });      
+    } else {
+      // finance_toggle not 'Y'
+      res.send({
+        suc: 1,
+        finance_toggle: finance_toggle
+      });
+    }        
+ }catch (err) {
+        console.error("Error fetching user:", err);
+        res.send({ suc: 0, message: "Failed to fetch user" });
+    }
+});
+
+userwebRouter.post("/encrypted_data_validate", async (req, res) => {
+  try {
+    var data = req.body;
+  }catch(err){
+      console.error("Error in validation:", err);
+    }
 });
 
 userwebRouter.post("/reset_password", async (req, res) => {
