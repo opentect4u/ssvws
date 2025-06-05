@@ -35,11 +35,20 @@ portfolioRouter.post("/groupwise_portfolio_report", async (req, res) => {
         var data = req.body;
         console.log(data,'data_grp');
 
-        var select = `a.from_dt,a.to_dt,a.branch_cd,b.scheme_name,a.cust_type,a.group_cd,c.group_name,a.sb_ac_no,
-                      a.loan_ac_no,c.bank_name,a.applied_dt,SUM(a.applied_amt) AS applied_amt,a.disb_dt,
-                      SUM(a.disb_amt) AS disb_amt,SUM(a.proc_charge) AS proc_charge,SUM(a.service_charge) AS service_charge,a.intt_rt,SUM(a.tot_emi) AS tot_emi,e.fund_name,f.purpose_id,a.co_id,a.co_name,
-                      SUM(a.demand) AS demand,SUM(a.open_bal) AS open_bal,SUM(a.dr_amt) AS Disbursement in the period,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,SUM(a.prn_recov) + SUM(a.intt_recov) AS Recovery in the period,SUM(a.prn_amt) AS prn_amt,SUM(a.intt_amt) AS intt_amt,SUM(a.prn_amt) + SUM(a.intt_amt)) AS Outstanding,SUM(a.overdue_amt) AS overdue_amt,
-                      a.od_dt AS First overdue date,a.od_trf_dt AS Overdue transfer date,a.loan_end_dt AS Loan end date,a.last_trn_dt AS Last transaction date`;
+        var select = `a.from_dt, a.to_dt, a.branch_cd, b.scheme_name, a.cust_type, a.group_cd, c.group_name, a.sb_ac_no,a.loan_ac_no, c.bank_name, a.applied_dt, SUM(a.applied_amt) AS applied_amt, a.disb_dt,
+        SUM(a.disb_amt) AS disb_amt, SUM(a.proc_charge) AS proc_charge, SUM(a.service_charge) AS service_charge,
+        a.intt_rt, SUM(a.tot_emi) AS tot_emi, e.fund_name, f.purpose_id, a.co_id, a.co_name,
+        SUM(a.demand) AS demand, SUM(a.open_bal) AS open_bal,
+        SUM(a.dr_amt) AS \`Disbursement in the period\`,
+        SUM(a.prn_recov) AS prn_recov, SUM(a.intt_recov) AS intt_recov,
+        SUM(a.prn_recov) + SUM(a.intt_recov) AS \`Recovery in the period\`,
+        SUM(a.prn_amt) AS prn_amt, SUM(a.intt_amt) AS intt_amt,
+        SUM(a.prn_amt) + SUM(a.intt_amt) AS \`Outstanding\`,
+        SUM(a.overdue_amt) AS overdue_amt,
+        a.od_dt AS \`First overdue date\`,
+        a.od_trf_dt AS \`Overdue transfer date\`,
+        a.loan_end_dt AS \`Loan end date\`,
+        a.last_trn_dt AS \`Last transaction date\``;
         table_name = "tt_portfolio a LEFT JOIN md_scheme b ON a.scheme_id = b.scheme_id LEFT JOIN md_group c ON a.group_cd  = c.group_code LEFT JOIN md_fund e ON a.fund_id   = e.fund_id LEFT JOIN md_purpose f ON a.purpose   = f.purp_id",
         whr = `a.branch_cd IN (${data.branch_code})`,
         order =  `GROUP BY a.from_dt,a.branch_cd,b.scheme_name,a.cust_type,a.group_cd,c.group_name,a.sb_ac_no,a.loan_ac_no,c.bank_name,a.applied_dt,
