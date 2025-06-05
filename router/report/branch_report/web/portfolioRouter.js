@@ -119,4 +119,22 @@ portfolioRouter.post("/memberwise_portfolio_report", async (req, res) => {
         res.send({ suc: 0, msg: "An error occurred" });
     }    
 });
+
+//branchwise portfolio report 05.06.2025
+portfolioRouter.post("/branchwise_portfolio_report", async (req, res) => {
+    try{
+        var data = req.body;
+        console.log(data,'data_bran');
+
+        var select = "a.from_dt,a.to_dt,a.branch_cd,d.branch_name,a.cust_type,a.group_cd,c.group_name,SUM(a.disb_amt)disb_amt,SUM(a.demand)demand,SUM(a.demand)demand,SUM(a.open_bal)open_bal,SUM(a.dr_amt)Disbursement_within_the_period,SUM(a.prn_recov) + SUM(a.intt_recov) Recovery_within_the_period,SUM(a.prn_amt)prn_amt,SUM(a.intt_amt)intt_amt,SUM(a.prn_amt) + SUM(a.intt_amt) Outstanding,SUM(a.overdue_amt)overdue_amt",
+        table_name = "tt_portfolio a LEFT JOIN md_group c ON a.group_cd  = c.group_code LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+        whr = `a.branch_cd IN (${data.branch_code})`,
+        order = `GROUP BY a.branch_cd`;
+        var branch_portfolio_data = await db_Select(select,table_name,whr,order);
+        res.send({suc : 1, msg: branch_portfolio_data});
+    }catch (error) {
+        console.error("Error fetching on branchwise portfolio report:", error);
+        res.send({ suc: 0, msg: "An error occurred" });
+    }    
+})
 module.exports = {portfolioRouter}
