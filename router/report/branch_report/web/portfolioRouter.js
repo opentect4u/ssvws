@@ -7,7 +7,7 @@ dateFormat = require('dateformat');
 portfolioRouter.post("/call_proc_portfolio", async (req, res) => {
     try {
          var data = req.body;
-        //  console.log(data,'juju');
+         console.log(data,'juju');
 
         if (!data.branches || !Array.isArray(data.branches) || data.branches.length === 0) {
             return res.send({ suc: 0, msg: "Invalid input data" });
@@ -108,8 +108,8 @@ portfolioRouter.post("/memberwise_portfolio_report", async (req, res) => {
         var data = req.body;
         // console.log(data,'data_mbr');
 
-        var select = "a.from_dt,a.to_dt,a.branch_cd,g.form_no,a.loan_id,b.scheme_name,a.cust_type,a.group_cd,c.group_name,a.memb_id,d.client_name,d.client_mobile,d.gurd_name,d.dob,d.religion,d.caste,d.husband_name,CONCAT(d.client_addr,'-Pin:',d.pin_no) Address,d.aadhar_no,d.pan_no,d.voter_id,c.acc_no1 sb_ac_no,c.acc_no2 loan_ac_no,c.bank_name,a.applied_dt,a.applied_amt,a.disb_dt,a.disb_amt,h.proc_charge,h.bank_charge service_charge,a.intt_rt,a.tot_emi,e.fund_name,f.purpose_id,a.co_id,a.co_name,a.demand,a.open_bal,a.dr_amt Disbursement_within_the_period,a.prn_recov,a.intt_recov,(a.prn_recov + a.intt_recov) Recovery_within_the_period,a.prn_amt,a.intt_amt,(a.prn_amt + a.intt_amt) Outstanding,a.overdue_amt,a.od_dt First_overdue_date,a.od_trf_dt Overdue_transfer_date,a.loan_end_dt Loan_end_date,a.last_trn_dt Last_tranaction_date",
-        table_name = "tt_portfolio a LEFT JOIN md_scheme b ON a.scheme_id = b.scheme_id LEFT JOIN md_group c ON a.group_cd  = c.group_code LEFT JOIN md_member d ON a.memb_id   = d.member_code LEFT JOIN md_fund e ON a.fund_id   = e.fund_id LEFT JOIN md_purpose f ON a.purpose   = f.purp_id LEFT JOIN td_grt_basic g ON a.memb_id = g.member_code LEFT JOIN td_loan_transactions h ON a.loan_id = h.loan_id",
+        var select = "a.from_dt,a.to_dt,a.branch_cd,g.form_no,a.loan_id,b.scheme_name,a.cust_type,a.group_cd,c.group_name,a.memb_id,d.client_name,d.client_mobile,d.gurd_name,d.dob,d.religion,d.caste,d.husband_name,CONCAT(d.client_addr,'-Pin:',d.pin_no) Address,d.aadhar_no,d.pan_no,d.voter_id,c.acc_no1 sb_ac_no,c.acc_no2 loan_ac_no,c.bank_name,a.applied_dt,a.applied_amt,a.disb_dt,a.disb_amt,a.proc_charge,a. service_charge,a.intt_rt,a.tot_emi,e.fund_name,f.purpose_id,a.co_id,a.co_name,a.demand,a.open_bal,a.dr_amt Disbursement_within_the_period,a.prn_recov,a.intt_recov,(a.prn_recov + a.intt_recov) Recovery_within_the_period,a.prn_amt,a.intt_amt,(a.prn_amt + a.intt_amt) Outstanding,a.overdue_amt,a.od_dt First_overdue_date,a.od_trf_dt Overdue_transfer_date,a.loan_end_dt Loan_end_date,a.last_trn_dt Last_tranaction_date",
+        table_name = "tt_portfolio a LEFT JOIN md_scheme b ON a.scheme_id = b.scheme_id LEFT JOIN md_group c ON a.group_cd  = c.group_code LEFT JOIN md_member d ON a.memb_id   = d.member_code LEFT JOIN md_fund e ON a.fund_id   = e.fund_id LEFT JOIN md_purpose f ON a.purpose = f.purp_id LEFT JOIN td_grt_basic g ON a.memb_id = g.member_code",
         whr = `a.branch_cd IN (${data.branch_code})`,
         order = `ORDER BY a.disb_dt`;
         var member_portfolio_data = await db_Select(select,table_name,whr,order);
