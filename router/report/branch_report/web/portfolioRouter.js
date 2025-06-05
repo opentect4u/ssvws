@@ -35,7 +35,7 @@ portfolioRouter.post("/groupwise_portfolio_report", async (req, res) => {
         var data = req.body;
         console.log(data,'data_grp');
 
-        var select = `a.from_dt,a.to_dt,a.branch_cd,b.scheme_name,a.cust_type,a.group_cd,c.group_name,.sb_ac_no,
+        var select = `a.from_dt,a.to_dt,a.branch_cd,b.scheme_name,a.cust_type,a.group_cd,c.group_name,a.sb_ac_no,
                       a.loan_ac_no,c.bank_name,a.applied_dt,SUM(a.applied_amt) AS applied_amt,a.disb_dt,
                       SUM(a.disb_amt) AS disb_amt,SUM(a.proc_charge) AS proc_charge,SUM(a.service_charge) AS service_charge,a.intt_rt,SUM(a.tot_emi) AS tot_emi,.fund_name,f.purpose_id,a.co_id,a.co_name,
                       SUM(a.demand) AS demand,SUM(a.open_bal) AS open_bal,SUM(a.dr_amt) AS Disbursement within the period,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,(SUM(a.prn_recov) + SUM(a.intt_recov)) AS Recovery within the period,SUM(a.prn_amt) AS prn_amt,SUM(a.intt_amt) AS intt_amt,SUM(a.prn_amt) + SUM(a.intt_amt)) AS Outstanding,SUM(a.overdue_amt) AS overdue_amt,
