@@ -90,7 +90,7 @@ try{
 
     var select = "a.from_dt,a.to_dt,a.branch_cd,a.cust_type,a.group_cd,c.group_name,a.applied_dt,SUM(a.applied_amt)applied_amt,a.disb_dt,SUM(a.disb_amt)disb_amt,a.intt_rt,SUM(a.tot_emi)tot_emi,a.co_id,a.co_name,SUM(a.demand)demand,SUM(a.open_bal)open_bal,SUM(a.dr_amt)Disbursement_within_the_period,SUM(a.prn_recov) + SUM(a.intt_recov) Recovery_within_the_period,SUM(a.prn_amt)prn_amt,SUM(a.intt_amt)intt_amt,SUM(a.prn_amt) + SUM(a.intt_amt) Outstanding,SUM(a.overdue_amt)overdue_amt,a.od_dt First_overdue_date,a.od_trf_dt Overdue_transfer_date,a.loan_end_dt Loan_end_date,a.last_trn_dt Last_tranaction_date",
     table_name = "tt_portfolio a LEFT JOIN md_group c ON a.group_cd  = c.group_code",
-    whr = `a.branch_cd IN (${data.branch_code}) AND a.fund_id IN (${data.fund_id})`,
+    whr = `a.branch_cd IN (${data.branch_code}) AND a.co_id IN (${data.co_id})`,
     order = `GROUP BY a.from_dt,a.branch_cd,a.cust_type,a.group_cd,c.group_name,a.applied_dt,
        a.disb_dt,a.intt_rt,a.co_id,a.co_name,a.od_dt,a.od_trf_dt,a.loan_end_dt,a.last_trn_dt
        ORDER BY a.disb_dt`;
