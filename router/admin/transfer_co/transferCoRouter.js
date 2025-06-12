@@ -146,31 +146,56 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
 
 // TRANSFER CO DETAILS FOR VIEW
 
+// transferCoRouter.post("/trans_co_view", async (req, res) => {
+//   var data = req.body;
+
+//   try{
+//     if(data.flag == 'P'){
+//         var select = "a.trf_date,a.group_code,a.from_co,a.to_co,b.group_name,a.approval_status",
+//         table_name = "td_co_transfer a, md_group b",
+//         whr = `a.group_code = b.group_code AND a.approval_status = 'U'`,
+//         order = `ORDER BY a.group_code,b.group_name`;
+//         var view_data = await db_Select(select,table_name,whr,order);
+       
+//         res.send(view_data)
+//     }else {
+//     var select = "a.trf_date,a.group_code,a.from_co,a.to_co,b.group_name,a.approval_status",
+//     table_name = "td_co_transfer a, md_group b",
+//     whr = `a.group_code = b.group_code AND a.approval_status = 'A'`,
+//     order = `ORDER BY a.group_code,b.group_name`;
+//     var view_data = await db_Select(select,table_name,whr,order);
+   
+//     res.send(view_data)
+//     }
+//   }catch (error) {
+//     res.send({"suc": 2, "msg": "Error occurred", error })
+//   }
+// });
+
 transferCoRouter.post("/trans_co_view", async (req, res) => {
   var data = req.body;
 
   try{
-    if(data.flag == 'P'){
-        var select = "a.trf_date,a.group_code,a.from_co,a.to_co,b.group_name,a.approval_status",
-        table_name = "td_co_transfer a, md_group b",
-        whr = `a.group_code = b.group_code AND a.approval_status = 'U'`,
-        order = `ORDER BY a.group_code,b.group_name`;
-        var view_data = await db_Select(select,table_name,whr,order);
-       
-        res.send(view_data)
-    }else {
-    var select = "a.trf_date,a.group_code,a.from_co,a.to_co,b.group_name,a.approval_status",
-    table_name = "td_co_transfer a, md_group b",
-    whr = `a.group_code = b.group_code AND a.approval_status = 'A'`,
-    order = `ORDER BY a.group_code,b.group_name`;
-    var view_data = await db_Select(select,table_name,whr,order);
-   
-    res.send(view_data)
+    const isPending = data.flag === 'P';
+    const isAllBranch = data.branch_code == '100';
+
+    const select = "a.trf_date,a.group_code,a.from_co,a.to_co,b.group_name,a.approval_status";
+    const table_name = "td_co_transfer a, md_group b";
+    let whr = `a.group_code = b.group_code 
+               AND a.from_brn = b.branch_code 
+               AND a.approval_status = '${isPending ? 'U' : 'A'}'`;
+    if (!isAllBranch) {
+      // Add branch filter only if not 100
+      whr += ` AND a.from_brn IN (${data.branch_code})`;
     }
+    const order = `ORDER BY a.group_code,b.group_name`;
+    const view_data = await db_Select(select,table_name,whr,order);
+    res.send(view_data)
   }catch (error) {
     res.send({"suc": 2, "msg": "Error occurred", error })
   }
 });
+
 
 transferCoRouter.post("/transfer_co_view_all_details", async (req, res) => {
  var data = req.body;
@@ -196,6 +221,31 @@ transferCoRouter.post("/transfer_co_view_all_details", async (req, res) => {
     res.send({"suc": 2, "msg": "Error occurred", error })
   }
 });
+
+// transferCoRouter.post("/transfer_co_view_all_details", async (req, res) => {
+//  var data = req.body;
+
+//  try{
+//     const isPending = data.flag === 'P';
+//     const isAllBranch = data.branch_code == '100';
+
+
+//     const select = "a.trf_date,a.group_code,a.from_co,a.from_brn,a.to_co,a.to_brn,a.remarks,a.approval_status,a.created_by created_code,a.created_at,a.modified_by modified_code,b.modified_at,a.approved_by approved_code,a.approved_at,b.group_name,c.emp_name from_co_name,d.emp_name to_co_name,e.branch_name from_brn_name,f.branch_name to_brn_name,g.emp_name created_by,h.emp_name modified_by,i.emp_name approved_by";
+//     const table_name = "td_co_transfer a LEFT JOIN md_group b ON a.group_code = b.group_code LEFT JOIN md_employee c ON a.from_co = c.emp_id LEFT JOIN md_employee d ON a.to_co = d.emp_id LEFT JOIN md_branch e ON a.from_brn = e.branch_code LEFT JOIN md_branch f ON a.to_brn = f.branch_code LEFT JOIN md_employee g ON a.created_by = g.emp_id LEFT JOIN md_employee h ON a.modified_by = h.emp_id LEFT JOIN md_employee i ON a.approved_by = i.emp_id";
+//     let whr = `a.group_code = '${data.group_code}' 
+//                AND a.from_co = '${data.from_co}' 
+//                AND a.approval_status = '${isPending ? 'U' : 'A'}'`;
+//     if (!isAllBranch) {
+//       // Add branch filter only if not 100
+//       whr += `AND a.from_brn = '${data.from_brn}'`;
+//     }           
+//     const order = `ORDER BY a.group_code,b.group_name`;
+//     const view_co_trans_dt = await db_Select(select,table_name,whr,order);
+//     res.send(view_co_trans_dt)
+//   }catch (error) {
+//     res.send({"suc": 2, "msg": "Error occurred", error })
+//   }
+// });
 
 transferCoRouter.post("/groupwise_mem_details", async (req, res) => {
     var data = req.body;

@@ -177,31 +177,55 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
 });
 
 //view transfer member details
+// transferMemRouter.post("/transfer_member_view", async (req, res) => {
+//   var data = req.body;
+
+//   try{
+//     if(data.flag == 'P'){
+//         var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_co from_co_id,a.to_group to_group_code,a.to_co to_co_id,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co",
+//         table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id",
+//         whr = `a.approval_status = 'U'`,
+//         order = `ORDER BY a.mem_trans_date`;
+//         var view_data = await db_Select(select,table_name,whr,order);
+       
+//         res.send(view_data)
+//     }else {
+//     var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_co from_co_id,a.to_group to_group_code,a.to_co to_co_id,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co",
+//     table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id",
+//     whr = `a.approval_status = 'A'`,
+//     order = `ORDER BY a.mem_trans_date`;
+//     var view_data = await db_Select(select,table_name,whr,order);
+   
+//     res.send(view_data)
+//     }
+//   }catch (error) {
+//     res.send({"suc": 2, "msg": "Error occurred", error })
+//   }
+// });
+
 transferMemRouter.post("/transfer_member_view", async (req, res) => {
   var data = req.body;
-
+  console.log(data,'hy');
+  
   try{
-    if(data.flag == 'P'){
-        var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_co from_co_id,a.to_group to_group_code,a.to_co to_co_id,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co",
-        table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id",
-        whr = `a.approval_status = 'U'`,
-        order = `ORDER BY a.mem_trans_date`;
-        var view_data = await db_Select(select,table_name,whr,order);
-       
-        res.send(view_data)
-    }else {
-    var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_co from_co_id,a.to_group to_group_code,a.to_co to_co_id,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co",
-    table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id",
-    whr = `a.approval_status = 'A'`,
-    order = `ORDER BY a.mem_trans_date`;
-    var view_data = await db_Select(select,table_name,whr,order);
-   
-    res.send(view_data)
+    const isPending = data.flag === 'P';
+    const isAllBranch = data.branch_code == '100';
+
+    const select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_co from_co_id,a.to_group to_group_code,a.to_co to_co_id,a.from_branch,a.to_branch,a.approval_status,b.client_name,c.group_name from_group,d.emp_name from_co,e.group_name to_group,f.emp_name to_co";
+    const table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_group e ON a.to_group = e.group_code LEFT JOIN md_employee f ON a.to_co = f.emp_id";
+    let whr = `a.approval_status = '${isPending ? 'U' : 'A'}'`;
+    if (!isAllBranch) {
+      // Add branch filter only if not 100
+      whr += ` AND a.to_branch IN (${data.branch_code})`;
     }
+    const order = `ORDER BY a.mem_trans_date`;
+    const view_data = await db_Select(select,table_name,whr,order);
+    res.send(view_data)
   }catch (error) {
     res.send({"suc": 2, "msg": "Error occurred", error })
   }
 });
+
 
 //show all details via member code and group code
 transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => {
@@ -211,7 +235,7 @@ transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => 
     if(data.flag == 'P'){
     var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_branch from_branch_code,a.from_co from_co_id,a.to_group to_group_code,a.to_branch to_branch_code,a.to_co to_co_id,a.remarks,a.approval_status,a.created_by created_code,a.created_at,b.client_name,c.group_name from_group,d.emp_name from_co,e.branch_name from_branch,f.group_name to_group,g.emp_name to_co,h.branch_name to_branch",
     table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_branch e ON a.from_branch = e.branch_code LEFT JOIN md_group f ON a.to_group = f.group_code LEFT JOIN md_employee g ON a.to_co = g.emp_id LEFT JOIN md_branch h ON a.to_branch = h.branch_code",
-    whr = `a.from_group = '${data.from_group}' AND a.member_code = '${data.member_code}' AND a.approval_status = 'U'`,
+    whr = `a.from_group = '${data.from_group}' AND a.member_code = '${data.member_code}' AND a.to_branch = '${data.to_branch}' AND a.approval_status = 'U'`,
     order = null;
     var view_co_trans_dt = await db_Select(select,table_name,whr,order);
    
@@ -219,7 +243,7 @@ transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => 
     }else {
         var select = "a.mem_trans_date,a.member_code,a.from_group from_group_code,a.from_branch from_branch_code,a.from_co from_co_id,a.to_group to_group_code,a.to_branch to_branch_code,a.to_co to_co_id,a.remarks,a.approval_status,a.created_by created_code,a.created_at,b.client_name,c.group_name from_group,d.emp_name from_co,e.branch_name from_branch,f.group_name to_group,g.emp_name to_co,h.branch_name to_branch",
         table_name = "td_member_transfer a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_group c ON a.from_group = c.group_code LEFT JOIN md_employee d ON a.from_co = d.emp_id LEFT JOIN md_branch e ON a.from_branch = e.branch_code LEFT JOIN md_group f ON a.to_group = f.group_code LEFT JOIN md_employee g ON a.to_co = g.emp_id LEFT JOIN md_branch h ON a.to_branch = h.branch_code",
-        whr = `a.from_group = '${data.from_group}' AND a.member_code = '${data.member_code}' AND a.approval_status = 'A'`,
+        whr = `a.from_group = '${data.from_group}' AND a.member_code = '${data.member_code}' AND a.from_branch = '${data.from_branch}' AND a.approval_status = 'A'`,
         order = null;
         var view_co_trans_dt = await db_Select(select,table_name,whr,order); 
         res.send(view_co_trans_dt)

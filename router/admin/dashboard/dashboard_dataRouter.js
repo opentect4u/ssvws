@@ -1035,6 +1035,42 @@ dashboard_dataRouter.post("/co_dashboard_user_logged_in_details", async (req, re
  }
 });
 
+/********************************************************************************
+                          DASHBOARD TOTAL UNAPPROVED GROUP TRANSFER 
+ ********************************************************************************/
 
+dashboard_dataRouter.post("/show_unapproved_grp_memb_transfer", async (req, res) => {
+  try {
+    var data = req.body;
+    console.log(data,'data_logged');
+
+    let tot_grp_transfer_unapprove,tot_memb_transfer_unapprove;
+
+    //total unapprove group transfer per branch
+    var select = "COUNT(DISTINCT group_code)tot_grp_unapprove_trans",
+    table_name = "td_co_transfer",
+    whr = `from_brn IN (${data.branch_code}) AND approval_status = 'U'`,
+    order = null;
+    tot_grp_transfer_unapprove = await db_Select(select,table_name,whr,order);
+
+    //total unapprove member transfer per branch
+    var select = "COUNT(DISTINCT member_code)tot_memb_unapprove_trans",
+    table_name = "td_member_transfer",
+    whr = `from_branch IN (${data.branch_code}) AND approval_status = 'U'`,
+    order = null;
+    tot_memb_transfer_unapprove = await db_Select(select,table_name,whr,order);
+  
+  res.send({
+    suc: 1,
+    data : {
+      total_unapprove_group_transfer: tot_grp_transfer_unapprove.msg[0].tot_grp_unapprove_trans || 0,
+      total_unapprove_member_transfer: tot_memb_transfer_unapprove.msg[0].tot_memb_unapprove_trans || 0,
+    }
+  })
+  }catch(error){
+    console.error("Error fetching unapproved group and member transfer details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }  
+})
 
 module.exports = {dashboard_dataRouter}
