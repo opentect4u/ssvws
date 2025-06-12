@@ -551,7 +551,7 @@ module.exports = {
                       : ""
                   }','${dt.credit}','0','${prnEmi}','${inttEMI}','${prn_recov}','0','${intt_recovs}','${datetime}','R','${data.tr_mode}','${data.bank_name}','${
                     data.cheque_id == "" ? 0 : data.cheque_id
-                  }', '${data.chq_dt == "" ? null : data.chq_dt}',${dt.upload_on}
+                  }', '${data.chq_dt == "" ? null : data.chq_dt}','${dt.upload_on}'
 ,'U','${
                     data.created_by
                   }','${datetime}','${data.trn_lat}','${
