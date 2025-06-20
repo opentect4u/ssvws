@@ -1095,56 +1095,58 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res)
      var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
      var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
      
-     var select = ` 
-        DATE_FORMAT(demand_date, '%M %Y') AS demand_date,
-  CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS "collec between",
-  branch_code, branch_name,loan_id,member_code,client_name,
-  group_code, group_name,
-  co_id, emp_name,
-  disb_dt,disb_amt, curr_roi, loan_period, period_mode,recovery_day,
-  instl_start_dt, instl_end_dt,
-  tot_emi,coll_amt,demand_amt AS demand_after_collection,curr_outstanding
-FROM (
-  SELECT 
-    a.demand_date,a.branch_code,c.branch_name,
-    a.loan_id,a.member_code,f.client_name,
-    a.group_code, d.group_name, d.co_id, e.emp_name,
-    b.disb_dt,b.prn_disb_amt AS disb_amt,
-    b.curr_roi, b.period AS loan_period, b.period_mode,
-     CASE 
+    var select = ` 
+  SELECT  
+    DATE_FORMAT(demand_date, '%M %Y') AS demand_date,
+    CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS \`collec between\`,
+    branch_code, branch_name,loan_id,member_code,client_name,
+    group_code, group_name,
+    co_id, emp_name,
+    disb_dt,disb_amt, curr_roi, loan_period, period_mode,recovery_day,
+    instl_start_dt, instl_end_dt,
+    tot_emi,coll_amt,demand_amt AS demand_after_collection,curr_outstanding
+  FROM (
+    SELECT 
+      a.demand_date,a.branch_code,c.branch_name,
+      a.loan_id,a.member_code,f.client_name,
+      a.group_code, d.group_name, d.co_id, e.emp_name,
+      b.disb_dt,b.prn_disb_amt AS disb_amt,
+      b.curr_roi, b.period AS loan_period, b.period_mode,
+      CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode = 'Weekly' THEN 
-        CASE b.recovery_day
-        WHEN 1 THEN 'Sunday'
-        WHEN 2 THEN 'Monday'
-        WHEN 3 THEN 'Tuesday'
-        WHEN 4 THEN 'Wednesday'
-        WHEN 5 THEN 'Thursday'
-        WHEN 6 THEN 'Friday'
-        WHEN 7 THEN 'Saturday'
-        ELSE 'Unknown'
-        END
+          CASE b.recovery_day
+            WHEN 1 THEN 'Sunday'
+            WHEN 2 THEN 'Monday'
+            WHEN 3 THEN 'Tuesday'
+            WHEN 4 THEN 'Wednesday'
+            WHEN 5 THEN 'Thursday'
+            WHEN 6 THEN 'Friday'
+            WHEN 7 THEN 'Saturday'
+            ELSE 'Unknown'
+          END
         ELSE 'N/A'
-        END AS recovery_day,
-    b.instl_start_dt,b.instl_end_dt,
-    b.tot_emi AS tot_emi, a.dmd_amt AS demand_amt,
-    IFNULL(coll_amt, 0) AS coll_amt,(a.prn_amt + a.intt_amt) AS curr_outstanding
-  FROM tt_loan_demand a 
-  LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
-  LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
-  LEFT JOIN md_group d ON a.group_code = d.group_code 
-  LEFT JOIN md_employee e ON d.co_id = e.emp_id 
-  LEFT JOIN md_member f ON a.member_code = f.member_code
-    
-  LEFT JOIN (
-  SELECT 
-    loan_id, SUM(credit) AS coll_amt
-  FROM td_loan_transactions
-  WHERE payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-  GROUP BY loan_id
-) t ON a.loan_id = t.loan_id
-WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
-ORDER BY a.group_code`
+      END AS recovery_day,
+      b.instl_start_dt,b.instl_end_dt,
+      b.tot_emi AS tot_emi, a.dmd_amt AS demand_amt,
+      IFNULL(coll_amt, 0) AS coll_amt,(a.prn_amt + a.intt_amt) AS curr_outstanding
+    FROM tt_loan_demand a 
+    LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
+    LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
+    LEFT JOIN md_group d ON a.group_code = d.group_code 
+    LEFT JOIN md_employee e ON d.co_id = e.emp_id 
+    LEFT JOIN md_member f ON a.member_code = f.member_code
+    LEFT JOIN (
+      SELECT 
+        loan_id, SUM(credit) AS coll_amt
+      FROM td_loan_transactions
+      WHERE payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+      GROUP BY loan_id
+    ) t ON a.loan_id = t.loan_id
+    WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
+    ORDER BY a.group_code
+  ) AS report_data
+`;
      var member_demand_collec_data_day = await db_Select(select,null,null,null);
      res.send({
        member_demand_collec_data_day,
