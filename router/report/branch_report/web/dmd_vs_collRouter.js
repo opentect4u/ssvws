@@ -1128,7 +1128,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res)
       END AS recovery_day,
       b.instl_start_dt,b.instl_end_dt,
       b.tot_emi AS tot_emi, a.dmd_amt AS demand_amt,
-      0 AS coll_amt,(a.prn_amt + a.intt_amt) AS curr_outstanding
+      IFNULL(t.coll_amt, 0) AS coll_amt,(a.prn_amt + a.intt_amt) AS curr_outstanding
     FROM tt_loan_demand a 
     LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id 
     LEFT JOIN md_branch c ON a.branch_code = c.branch_code 
