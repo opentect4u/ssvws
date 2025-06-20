@@ -1096,7 +1096,6 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res)
      var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
      
     var select = ` 
-  SELECT  
     DATE_FORMAT(demand_date, '%M %Y') AS demand_date,
     CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS \`collec between\`,
     branch_code, branch_name,loan_id,member_code,client_name,
