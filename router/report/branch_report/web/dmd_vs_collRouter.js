@@ -1143,7 +1143,7 @@ FROM (
   WHERE payment_date BETWEEN '${first_create_date}' AND '${create_date}'
   GROUP BY loan_id
 ) t ON a.loan_id = t.loan_id
-WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}
+WHERE b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
 ORDER BY a.group_code;`
  
      var member_demand_collec_data_day = await db_Select(select,null,null,null);
