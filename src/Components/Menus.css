@@ -1,9 +1,0 @@
-.ant-menu-item-selected::after,
-.ant-menu-item:hover::after,
-.ant-menu-submenu::after {
-	border-bottom: none !important;
-}
-
-.ant-menu-item-selected {
-	color: #ffffff !important;
-}
