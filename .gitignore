@@ -1,5 +1,10 @@
-.env
-node_modules
+/node_modules
+/assets
+/core
+/nextgenvenv
+# package-lock.json
+# *.html
 *.zip
-package-lock.json
-web.config
+.env*
+*.sql
+build/*

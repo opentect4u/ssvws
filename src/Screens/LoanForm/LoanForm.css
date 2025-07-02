@@ -1,0 +1,9 @@
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	margin: 0;
+}
+
+table.p-datatable-table thead.p-datatable-thead tr th.p-selection-column .p-checkbox.p-component{display: none;}

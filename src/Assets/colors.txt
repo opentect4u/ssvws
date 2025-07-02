@@ -1,0 +1,37 @@
+#78BC61 - mantis
+#004900 - pakistan green
+#8FCB9B - celadon
+#59A96A - jade
+#FDCA40 - sunglow
+
+
+Primary - #01AB01
+secondary - #79996E
+tertiary - #22A0A6
+error - #FF5449, #C05746
+
+
+
+New palette -
+
+#052d27
+#3eb67e
+#347865
+#065749
+#4c60a3
+#545a41
+#f37373
+#46577a
+#094b4c
+
+#F4EF88
+
+
+Slate
+#98B9F2
+
+New blue pallete
+033860
+087ca7
+004385
+05b2dc

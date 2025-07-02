@@ -1,0 +1,148 @@
+
+* {
+  font-family: "Lato", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+/* .p-stepper-title{
+  color: #1F2937
+}
+.p-stepper-content{
+  color: #1F2937;
+} */
+.p-steps li{
+  background-color: #4a4b4d
+}
+.p-stepper-number{
+  color: #ffffff
+}
+.p-stepper-separator{
+  background-color: #DA4167
+}
+/* .p-stepper-action{ */
+  /* background-color: #1F2937 */
+/* } */
+
+/* .p-dropdown{
+  background: #1F2937 !important;
+  color:white
+}
+.p-dropdown-items-wrapper{
+  background: #1F2937 !important;
+   color:white
+}
+.p-dropdown-items{
+  background: #1F2937 !important;
+   color:white
+}*/
+/* .p-dialog-content{
+   background: #347865 !important;
+   color:white
+  }
+.p-dialog-header{
+  background: #347865 !important;
+
+}
+.p-dialog-header-close{
+  color:white
+}
+.p-dialog-header-maximize{
+  color:white
+  
+}  */
+/* * {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+} */
+
+.p-stepper-number{
+  background-color: #DA4167;
+  color:'white'
+}
+
+.p-checkbox.p-component .p-checkbox-box{background-color: #eaeaea;
+  border: #8a8989 solid 1px;
+  box-shadow: 0 0 5px 2px #bec2c1;}
+.p-checkbox.p-component.p-highlight .p-checkbox-box{background-color: #3d9bd1;
+    border: #d9d7d7 solid 1px;}
+
+table.table_Custome thead tr th{background-color: rgb(203 213 225) !important; padding: 14px 12px;}
+table.table_Custome tbody tr{border-bottom: #FAD1E8 solid 2px;}
+table.table_Custome tbody tr.p-datatable-row-expansion > td{padding: 0;}
+table.table_Custome_2nd thead tr th{
+  /* background-color: rgb(40, 95, 161) !important; padding: 14px 12px; */
+  background-color: #FAD1E8 !important;
+  padding: 10px 12px;
+  color: #000;
+}
+
+table.table_Custome_2nd tbody tr td{
+  /* background-color: rgb(40, 95, 161) !important; padding: 14px 12px; */
+  padding: 10px 12px;
+  background-color: #F0E8ED !important;
+  color: #000;
+}
+
+table.table_Custome_1st thead tr th:first-child{width: 70px;}
+table.table_Custome_2nd thead tr th:first-child{width: auto;}
+
+
+.p-multiselect{
+  border: #a8a7a7 solid 1px;
+}
+
+.p-multiselect-token{
+  background-color: #0694A2;
+}
+
+.p-multiselect-token{
+  background-color: #0694A2;
+
+}
+
+.p-multiselect-label-container{
+  height:38px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color:black
+}

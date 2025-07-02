@@ -1,0 +1,20 @@
+.dialogBody {
+	background: rgba(255, 255, 255, 0.25) !important;
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37) !important;
+	backdrop-filter: blur(4px) !important;
+	-webkit-backdrop-filter: blur(4px) !important;
+	/* border-radius: 10px !important; */
+	/* border: 1px solid rgba( 255, 255, 255, 0.18 ) !important; */
+	/* width:50% !important */
+}
+
+.ant-select.ant-select-outlined{width: 100%; height: 38px;}
+
+.ant-select-item-option-selected {
+	background-color: #f0b27a !important; /* Change this color */
+	color: white !important;
+  }
+
+  .ant-select-selection {
+	background-color: red;
+  }

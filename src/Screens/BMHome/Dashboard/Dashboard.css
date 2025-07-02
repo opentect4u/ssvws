@@ -1,0 +1,30 @@
+.perspective {
+	perspective: 1000px;
+}
+
+.perspective:hover > div {
+	transform: rotateY(180deg);
+}
+
+@keyframes arrowLoop {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	25% {
+		transform: translateY(-12px);
+		opacity: 0;
+	}
+	26% {
+		transform: translateY(20px);
+		opacity: 0;
+	}
+	100% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+
+.group:hover .arrow {
+	animation: arrowLoop 0.8s cubic-bezier(0.7, 0, 0.3, 1) forwards;
+}
