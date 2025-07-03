@@ -1,20 +1,20 @@
-import React, { useState } from "react"
-import { routePaths } from "../../Assets/Data/Routes"
-import { Link } from "react-router-dom"
-import Tooltip from "@mui/material/Tooltip"
+import { useState } from "react"
+// import { routePaths } from "../../Assets/Data/Routes"
+// import { Link } from "react-router-dom"
+// import Tooltip from "@mui/material/Tooltip"
 import { Paginator } from "primereact/paginator"
 import { motion } from "framer-motion"
 import {
-	CheckCircleOutlined,
-	ClockCircleOutlined,
+	// CheckCircleOutlined,
+	// ClockCircleOutlined,
 	EditOutlined,
-	PlusOutlined,
-	FileTextOutlined,
-	SyncOutlined,
-	PlusCircleOutlined,
+	// PlusOutlined,
+	// FileTextOutlined,
+	// SyncOutlined,
+	// PlusCircleOutlined,
 } from "@ant-design/icons"
 import { useNavigate } from "react-router-dom"
-import { Tag } from "antd"
+// import { Tag } from "antd"
 
 function TransferUserTable({
 	loanAppData,

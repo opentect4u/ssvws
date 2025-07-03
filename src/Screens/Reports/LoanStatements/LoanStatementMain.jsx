@@ -304,8 +304,8 @@ function LoanStatementMain() {
 						</div>
 					)}
 
-					{/* <div class="my-4 mx-auto"> */}
-					<div class="w-full gap-5 mt-5 items-end">
+					{/* <div className="my-4 mx-auto"> */}
+					<div className="w-full gap-5 mt-5 items-end">
 						<div className="w-full">
 							<TDInputTemplateBr
 								placeholder={
@@ -328,7 +328,7 @@ function LoanStatementMain() {
 									searchData()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					</div>

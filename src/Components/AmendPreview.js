@@ -694,15 +694,15 @@ function AmendPreview({ id }) {
 										))}
 								</tbody>
 								<tfoot>
-									<tr class="font-semibold text-gray-900 dark:text-white">
+									<tr className="font-semibold text-gray-900 dark:text-white">
 										<th
 											scope="row"
-											class="px-6 py-3 text-base font-bold"
+											className="px-6 py-3 text-base font-bold"
 											colSpan={9}
 										>
 											Total
 										</th>
-										<th class="px-6 py-3 text-base font-bold">{grandTot}</th>
+										<th className="px-6 py-3 text-base font-bold">{grandTot}</th>
 									</tr>
 								</tfoot>
 							</table>

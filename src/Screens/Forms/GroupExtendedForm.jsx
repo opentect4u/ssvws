@@ -993,18 +993,18 @@ function GroupExtendedForm({ groupDataArr }) {
 
 									{/* {console.log("+++++++++++++++++++++++++++++", memberDetails)} */}
 
-									<div class="relative overflow-x-auto">
-										<table class="w-full text-sm shadow-lg text-left rtl:text-right text-gray-500 dark:text-gray-400">
-											<thead class="text-xs text-white uppercase bg-slate-800 dark:text-gray-400">
+									<div className="relative overflow-x-auto">
+										<table className="w-full text-sm shadow-lg text-left rtl:text-right text-gray-500 dark:text-gray-400">
+											<thead className="text-xs text-white uppercase bg-slate-800 dark:text-gray-400">
 												<tr>
-													<th scope="col" class="px-6 py-3">
+													<th scope="col" className="px-6 py-3">
 														Name
 													</th>
 
-													<th scope="col" class="px-6 py-3">
+													<th scope="col" className="px-6 py-3">
 														{/* Price */}
 													</th>
-													<th scope="col" class="px-6 py-3">
+													<th scope="col" className="px-6 py-3">
 														{/* Price */}
 													</th>
 												</tr>
@@ -1029,16 +1029,16 @@ function GroupExtendedForm({ groupDataArr }) {
 														// 					}
 														// 				)
 														// }
-														class="bg-white hover:bg-slate-100 ease-linear transition-all cursor-pointer dark:bg-gray-800 border-b-slate-200 border-2"
+														className="bg-white hover:bg-slate-100 ease-linear transition-all cursor-pointer dark:bg-gray-800 border-b-slate-200 border-2"
 													>
 														<th
 															scope="row"
-															class="px-6 py-3 font-bold whitespace-nowrap dark:text-white text-slate-800"
+															className="px-6 py-3 font-bold whitespace-nowrap dark:text-white text-slate-800"
 														>
 															{item.client_name}
 														</th>
 														<td
-															class={`px-6 py-3 ${
+															className={`px-6 py-3 ${
 																item?.approval_status === "U" ||
 																(userDetails?.id == 3 &&
 																	item?.approval_status === "S")
@@ -1072,7 +1072,7 @@ function GroupExtendedForm({ groupDataArr }) {
 															)}
 														</td>
 														<td
-															class={`px-6 py-4 font-bold ${
+															className={`px-6 py-4 font-bold ${
 																item?.tot_outstanding > 0
 																	? "bg-slate-50"
 																	: "bg-red-50"
@@ -1139,14 +1139,14 @@ function GroupExtendedForm({ groupDataArr }) {
 								<div className="sm:col-span-2 mt-5">
 									<div>
 										<label
-											class="block mb-2 text-sm capitalize font-bold text-slate-800
+											className="block mb-2 text-sm capitalize font-bold text-slate-800
 							dark:text-gray-100"
 										>
 											{" "}
 											Assign Group Member
 											<span
 												style={{ color: "red" }}
-												class="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2"
+												className="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2"
 											>
 												(You can Select Maxmimum 4 Member)
 											</span>
@@ -1199,14 +1199,14 @@ function GroupExtendedForm({ groupDataArr }) {
 								<div className="sm:col-span-2 mt-5">
 									<div>
 										<label
-											class="block mb-2 text-sm capitalize font-bold text-slate-800
+											className="block mb-2 text-sm capitalize font-bold text-slate-800
 					dark:text-gray-100"
 										>
 											{" "}
 											Assign Group Member
 											<span
 												style={{ color: "red" }}
-												class="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2"
+												className="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2"
 											>
 												(You can Select Maxmimum 4 Member)
 											</span>

@@ -32,7 +32,7 @@ const options = [
 	},
 ]
 
-function A_LoanStatementMain() {
+function ALoanStatementMain() {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -908,4 +908,4 @@ function A_LoanStatementMain() {
 	)
 }
 
-export default A_LoanStatementMain
+export default ALoanStatementMain

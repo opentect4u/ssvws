@@ -496,7 +496,7 @@ function RecoveryGroupApproveTable({
 				onClick={() => {
 
 				setVisible(true)
-				}}><CheckCircleOutlined class={`mr-2`} /> Approve  
+				}}><CheckCircleOutlined className={`mr-2`} /> Approve  
 
 				</button>
 
@@ -504,7 +504,7 @@ function RecoveryGroupApproveTable({
 				className={`inline-flex items-center px-4 py-2 mt-0 ml-4 sm:mt-0 text-sm font-medium text-center text-white border border-[#DA4167] bg-[#DA4167] transition ease-in-out hover:bg-[#ac3246] hover:border-[#ac3246] duration-300 rounded-full  dark:focus:ring-primary-900`}
 				onClick={() => {
 				setVisible_Reject(true)
-				}}><CheckCircleOutlined class={`mr-2`} /> Reject  
+				}}><CheckCircleOutlined className={`mr-2`} /> Reject  
 
 				</button>		
 				</div>
@@ -605,7 +605,7 @@ function RecoveryGroupApproveTable({
 										// setVisible(true)
 									}}
 								>
-									<CheckCircleOutlined /> <spann class={`ml-2`}>Approve</spann>
+									<CheckCircleOutlined /> <spann className={`ml-2`}>Approve</spann>
 								</button>
 
 								{/* <Popconfirm
@@ -638,7 +638,7 @@ function RecoveryGroupApproveTable({
 										// 	setVisible_Reject(true)
 										// }}
 									>
-										<CheckCircleOutlined /> <span class={`ml-2`}>Reject</span>
+										<CheckCircleOutlined /> <span className={`ml-2`}>Reject</span>
 									</button>
 								</Popconfirm> */}
 							</motion.section>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Sidebar from "../../../Components/Sidebar"
 import axios from "axios"
 import { url } from "../../../Address/BaseUrl"
@@ -12,20 +12,20 @@ import {
 import Radiobtn from "../../../Components/Radiobtn"
 import TDInputTemplateBr from "../../../Components/TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../../../Utils/formateDate"
-import { saveAs } from "file-saver"
-import * as XLSX from "xlsx"
-import { printTableLoanTransactions } from "../../../Utils/printTableLoanTransactions"
+// import { saveAs } from "file-saver"
+// import * as XLSX from "xlsx"
+// import { printTableLoanTransactions } from "../../../Utils/printTableLoanTransactions"
 import DynamicTailwindTable from "../../../Components/Reports/DynamicTailwindTable"
 import {
-	branchwiseTxnReportHeader,
-	memberwiseOutstandingHeader,
+	// branchwiseTxnReportHeader,
+	// memberwiseOutstandingHeader,
 	overdueBranchReportHeader,
 	overdueCOReportHeader,
 	overdueFundReportHeader,
 	overdueGroupReportHeader,
 	overdueMemberReportHeader,
-	overduereport,
-	overduereportheader,
+	// overduereport,
+	// overduereportheader,
 } from "../../../Utils/Reports/headerMap"
 import Select from "react-select"
 import { exportToExcel } from "../../../Utils/exportToExcel"
@@ -882,7 +882,7 @@ function OverdueReport() {
 									searchData()
 								}}
 							>
-								<SearchOutlined /> <span class={`ml-2`}>Search</span>
+								<SearchOutlined /> <span className={`ml-2`}>Search</span>
 							</button>
 						</div>
 					</div>

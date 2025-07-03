@@ -317,7 +317,7 @@ function DemandVsCollectionMain() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					</div>

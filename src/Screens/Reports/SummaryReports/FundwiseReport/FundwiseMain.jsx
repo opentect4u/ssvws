@@ -1,24 +1,24 @@
-import React, { useEffect, useState } from "react"
+import { useState } from "react"
 import Sidebar from "../../../../Components/Sidebar"
 import axios from "axios"
 import { url } from "../../../../Address/BaseUrl"
-import { Message } from "../../../../Components/Message"
-import { Spin, Button, Modal, Tooltip, DatePicker } from "antd"
-import dayjs from "dayjs"
+// import { Message } from "../../../../Components/Message"
+import { Spin,  Tooltip } from "antd"
+// import dayjs from "dayjs"
 import {
 	LoadingOutlined,
 	SearchOutlined,
 	PrinterOutlined,
 	FileExcelOutlined,
 } from "@ant-design/icons"
-import Radiobtn from "../../../../Components/Radiobtn"
+// import Radiobtn from "../../../../Components/Radiobtn"
 import TDInputTemplateBr from "../../../../Components/TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../../../../Utils/formateDate"
 
 import { saveAs } from "file-saver"
 import * as XLSX from "xlsx"
-import { printTableLoanStatement } from "../../../../Utils/printTableLoanStatement"
-import { printTableLoanTransactions } from "../../../../Utils/printTableLoanTransactions"
+// import { printTableLoanStatement } from "../../../../Utils/printTableLoanStatement"
+// import { printTableLoanTransactions } from "../../../../Utils/printTableLoanTransactions"
 import { printTableRegular } from "../../../../Utils/printTableRegular"
 
 // const { RangePicker } = DatePicker
@@ -30,8 +30,8 @@ function FundwiseMain() {
 
 	// const [openModal, setOpenModal] = useState(false)
 	// const [approvalStatus, setApprovalStatus] = useState("S")
-	const [searchType, setSearchType] = useState(() => "D")
-	const [searchType2, setSearchType2] = useState(() => "M")
+	// const [searchType, setSearchType] = useState(() => "D")
+	// const [searchType2, setSearchType2] = useState(() => "M")
 
 	const [fromDate, setFromDate] = useState()
 	const [toDate, setToDate] = useState()
@@ -167,7 +167,7 @@ function FundwiseMain() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					</div>

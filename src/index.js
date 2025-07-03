@@ -5,72 +5,145 @@ import App from "./App"
 import reportWebVitals from "./reportWebVitals"
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
 // import Auth from "./Screens/Appraiser/Auth"
-import Notfound from "./Screens/Notfound/Notfound"
+// import Notfound from "./Screens/Notfound/Notfound"
 // import Details from "./Screens/Homescreen/Details"
 import { Democontext } from "./Context/Democontext"
 import Loader from "./Components/Loader"
 import CircularProgress from "@mui/material/CircularProgress"
-import LoanStatementMain from "./Screens/Reports/LoanStatements/LoanStatementMain"
-import LoanTransactionsMain from "./Screens/Reports/LoanTransactions/LoanTransactionsMain"
-import DemandReportsMain from "./Screens/Reports/DemandReports/DemandReportsMain"
-import OutstaningReportMain from "./Screens/Reports/OutstandingReports/OutstaningReportMain"
-import DisbursedLoanApproveSingleBM from "./Screens/BMHome/DisbursedLoanApproveSingleBM"
-import TestPage from "./Screens/Reports/LoanTransactions/testPage"
-import MasterEmployees from "./Screens/Admin/Master/Employees/MasterEmployees"
-import EditMasterEmployee from "./Screens/Admin/Master/Employees/EditMasterEmployee"
-import HomeAdmin from "./Screens/Admin/HomeAdmin"
-import AdminDashboard from "./Screens/Admin/Dashboard/AdminDashboard"
-import CreateUser from "./Screens/Admin/UserManagement/CreateUser"
-import ManageUser from "./Screens/Admin/UserManagement/ManageUser"
-import TransferUserManage from "./Screens/Admin/UserManagement/TransferUserManage"
-import TransferUser from "./Screens/Admin/UserManagement/TransferUser"
-import A_LoanStatementMain from "./Screens/Admin/Reports/LoanStatements/A_LoanStatementMain"
-import A_LoanTransactionsMain from "./Screens/Admin/Reports/LoanTransactions/A_LoanTransactionsMain"
-import A_DemandReportsMain from "./Screens/Admin/Reports/DemandReports/A_DemandReportsMain"
-import A_OutstandingReportMain from "./Screens/Admin/Reports/OutstandingReports/A_OutstandingReportMain"
-import DemandVsCollectionMain from "./Screens/Reports/DemandVsCollectionReport/DemandVsCollectionMain"
-import FundwiseMain from "./Screens/Reports/SummaryReports/FundwiseReport/FundwiseMain"
-import SchemewiseMain from "./Screens/Reports/SummaryReports/SchemewiseReport/SchemewiseMain"
-import A_FundwiseMain from "./Screens/Admin/Reports/SummaryReports/FundwiseReport/A_FundwiseMain"
-import A_SchemewiseMain from "./Screens/Admin/Reports/SummaryReports/SchemewiseReport/A_SchemewiseMain"
-import A_DemandVsCollectionMain from "./Screens/Admin/Reports/DemandVsCollectionReports/A_DemandVsCollectionMain"
-import AttendanceDashboard from "./Screens/Admin/Attendance/AttendanceDashboard"
-import AttendanceBM from "./Screens/BMHome/AttendanceBM"
-import GroupClose from "./Screens/Reports/GroupClose/GroupClose"
-import MasterDesignations from "./Screens/Admin/Master/Designations/MasterDesignations"
-import EditMasterDesignations from "./Screens/Admin/Master/Designations/EditMasterDesignations"
-import TranceferCO from "./Screens/BMHome/TranceferCO"
-import TransferCOScreen from "./Screens/BMHome/TransferCOScreen"
-import TranceferCOApproveForm from "./Screens/BMHome/TranceferCOApproveForm"
-import TransferCOApprovalUnic from "./Screens/BMHome/TransferCOApprovalUnic"
-import MemberTransfer from "./Screens/BMHome/MemberTransfer"
-import EditMemberTransfer from "./Screens/Admin/Master/Employees/EditMemberTransfer"
-import ApproveMemberTransfer from "./Screens/BMHome/ApproveMemberTransfer"
-import ApproveMemberTransferForm from "./Screens/Forms/Master/ApproveMemberTransferForm"
-import ApproveEditMemberTrans from "./Screens/Admin/Master/Employees/ApproveEditMemberTrans"
-import ViewMemberTransfer from "./Screens/BMHome/ViewMemberTransfer"
-import TransferMemberViewScreen from "./Screens/BMHome/TransferMemberViewScreen"
-import MonthEnd from "./Screens/Admin/UserManagement/MonthEnd"
-import Payroll from "./Screens/Admin/Payroll/Payroll"
-import OverdueReport from "./Screens/Reports/OverdueReport/OverdueReport"
-import RejectTransaction from "./Screens/BMHome/Loans/RejectTransaction"
-import Landing from "./Screens/Landing/Landing"
-import LandingOutlet from "./Screens/Landing/LandingOutlet"
-import SignInPage from "./Screens/Login/SignInPage"
-import Dashboard from "./Screens/BMHome/Dashboard/Dashboard"
-import EditMasterDistricts from "./Screens/Admin/Master/Districts/EditMasterDistricts"
-import MasterDistricts from "./Screens/Admin/Master/Districts/MasterDistricts"
-import MasterBlocks from "./Screens/Admin/Master/Blocks/MasterBlocks"
-import EditMasterBlocks from "./Screens/Admin/Master/Blocks/EditMasterBlocks"
-import MasterPurpose from "./Screens/Admin/Master/Purpose/MasterPurpose"
-import EditMasterPurpose from "./Screens/Admin/Master/Purpose/EditMasterPurpose"
-import PortfolioReport from "./Screens/Reports/PortfolioReport/PortfolioReport"
-// import A_LoanStatementMain from "./Screens/Admin/Reports/LoanStatements/A_LoanStatementMain"
-// import A_LoanTransactionsMain from "./Screens/Admin/Reports/LoanTransactions/A_LoanTransactionsMain"
-// import A_DemandReportsMain from "./Screens/Admin/Reports/DemandReports/A_DemandReportsMain"
+// import LoanStatementMain from "./Screens/Reports/LoanStatements/LoanStatementMain"
+// import LoanTransactionsMain from "./Screens/Reports/LoanTransactions/LoanTransactionsMain"
+// import DemandReportsMain from "./Screens/Reports/DemandReports/DemandReportsMain"
+// import OutstaningReportMain from "./Screens/Reports/OutstandingReports/OutstaningReportMain"
+// import DisbursedLoanApproveSingleBM from "./Screens/BMHome/DisbursedLoanApproveSingleBM"
+// import TestPage from "./Screens/Reports/LoanTransactions/testPage"
+
+// import MasterEmployees from "./Screens/Admin/Master/Employees/MasterEmployees"
+// import EditMasterEmployee from "./Screens/Admin/Master/Employees/EditMasterEmployee"
+// import HomeAdmin from "./Screens/Admin/HomeAdmin"
+// import AdminDashboard from "./Screens/Admin/Dashboard/AdminDashboard"
+// import CreateUser from "./Screens/Admin/UserManagement/CreateUser"
+// import ManageUser from "./Screens/Admin/UserManagement/ManageUser"
+// import TransferUserManage from "./Screens/Admin/UserManagement/TransferUserManage"
+// import TransferUser from "./Screens/Admin/UserManagement/TransferUser"
+// import ALoanStatementMain from "./Screens/Admin/Reports/LoanStatements/ALoanStatementMain"
+// import ALoanTransactionsMain from "./Screens/Admin/Reports/LoanTransactions/ALoanTransactionsMain"
+// import ADemandReportsMain from "./Screens/Admin/Reports/DemandReports/ADemandReportsMain"
+// import AOutstandingReportMain from "./Screens/Admin/Reports/OutstandingReports/AOutstandingReportMain"
+
+// import DemandVsCollectionMain from "./Screens/Reports/DemandVsCollectionReport/DemandVsCollectionMain"
+// import FundwiseMain from "./Screens/Reports/SummaryReports/FundwiseReport/FundwiseMain"
+// import SchemewiseMain from "./Screens/Reports/SummaryReports/SchemewiseReport/SchemewiseMain"
+
+// import AFundwiseMain from "./Screens/Admin/Reports/SummaryReports/FundwiseReport/AFundwiseMain"
+// import ASchemewiseMain from "./Screens/Admin/Reports/SummaryReports/SchemewiseReport/ASchemewiseMain"
+// import ADemandVsCollectionMain from "./Screens/Admin/Reports/DemandVsCollectionReports/ADemandVsCollectionMain"
+// import AttendanceDashboard from "./Screens/Admin/Attendance/AttendanceDashboard"
+
+// import AttendanceBM from "./Screens/BMHome/AttendanceBM"
+// import GroupClose from "./Screens/Reports/GroupClose/GroupClose"
+
+// import MasterDesignations from "./Screens/Admin/Master/Designations/MasterDesignations"
+// import EditMasterDesignations from "./Screens/Admin/Master/Designations/EditMasterDesignations"
+// import TranceferCO from "./Screens/BMHome/TranceferCO"
+// import TransferCOScreen from "./Screens/BMHome/TransferCOScreen"
+// import TranceferCOApproveForm from "./Screens/BMHome/TranceferCOApproveForm"
+// import TransferCOApprovalUnic from "./Screens/BMHome/TransferCOApprovalUnic"
+// import MemberTransfer from "./Screens/BMHome/MemberTransfer"
+// import EditMemberTransfer from "./Screens/Admin/Master/Employees/EditMemberTransfer"
+
+// import ApproveMemberTransfer from "./Screens/BMHome/ApproveMemberTransfer"
+// import ApproveMemberTransferForm from "./Screens/Forms/Master/ApproveMemberTransferForm"
+
+// import ApproveEditMemberTrans from "./Screens/Admin/Master/Employees/ApproveEditMemberTrans"
+// import ViewMemberTransfer from "./Screens/BMHome/ViewMemberTransfer"
+// import TransferMemberViewScreen from "./Screens/BMHome/TransferMemberViewScreen"
+// import MonthEnd from "./Screens/Admin/UserManagement/MonthEnd"
+// import Payroll from "./Screens/Admin/Payroll/Payroll"
+
+// import OverdueReport from "./Screens/Reports/OverdueReport/OverdueReport"
+
+// import RejectTransaction from "./Screens/BMHome/Loans/RejectTransaction"
+
+// import Landing from "./Screens/Landing/Landing"
+// import LandingOutlet from "./Screens/Landing/LandingOutlet"
+// import SignInPage from "./Screens/Login/SignInPage"
+
+// import Dashboard from "./Screens/BMHome/Dashboard/Dashboard"
+// import EditMasterDistricts from "./Screens/Admin/Master/Districts/EditMasterDistricts"
+// import MasterDistricts from "./Screens/Admin/Master/Districts/MasterDistricts"
+// import MasterBlocks from "./Screens/Admin/Master/Blocks/MasterBlocks"
+// import EditMasterBlocks from "./Screens/Admin/Master/Blocks/EditMasterBlocks"
+// import MasterPurpose from "./Screens/Admin/Master/Purpose/MasterPurpose"
+// import EditMasterPurpose from "./Screens/Admin/Master/Purpose/EditMasterPurpose"
+
+// import PortfolioReport from "./Screens/Reports/PortfolioReport/PortfolioReport"
+// import ALoanStatementMain from "./Screens/Admin/Reports/LoanStatements/ALoanStatementMain"
+// import ALoanTransactionsMain from "./Screens/Admin/Reports/LoanTransactions/ALoanTransactionsMain"
+// import ADemandReportsMain from "./Screens/Admin/Reports/DemandReports/ADemandReportsMain"
 // import A_OutstaningReportMain from "./Screens/Admin/Reports/OutstandingReports/A_OutstaningReportMain"
 // import A_GroupwiseRecoveryReport from "./Screens/Admin/Reports/A_GroupwiseRecoveryReport"
 // import A_MemberwiseRecoveryReport from "./Screens/Admin/Reports/A_MemberwiseRecoveryReport"
+const LoanTransactionsMain = lazy(() => import("./Screens/Reports/LoanTransactions/LoanTransactionsMain"));
+const TestPage = lazy(() => import("./Screens/Reports/LoanTransactions/testPage"));
+const LoanStatementMain =  lazy(() => import("./Screens/Reports/LoanStatements/LoanStatementMain"));
+const DemandReportsMain = lazy(() => import("./Screens/Reports/DemandReports/DemandReportsMain"));
+const DemandVsCollectionMain = lazy(() => import("./Screens/Reports/DemandVsCollectionReport/DemandVsCollectionMain"));
+const GroupClose =  lazy(() => import("./Screens/Reports/GroupClose/GroupClose"));
+const OutstaningReportMain =  lazy(() => import("./Screens/Reports/OutstandingReports/OutstaningReportMain"));
+const OverdueReport = lazy(() => import("./Screens/Reports/OverdueReport/OverdueReport"));
+const PortfolioReport =  lazy(() => import("./Screens/Reports/PortfolioReport/PortfolioReport"));
+const FundwiseMain = lazy(() => import("./Screens/Reports/SummaryReports/FundwiseReport/FundwiseMain"));
+const SchemewiseMain = lazy(() => import("./Screens/Reports/SummaryReports/SchemewiseReport/SchemewiseMain"));
+const Notfound = lazy(() => import("./Screens/Notfound/Notfound"));
+const SignInPage = lazy(() => import("./Screens/Login/SignInPage"));
+const Landing = lazy(() => import("./Screens/Landing/Landing"));
+const LandingOutlet = lazy(() => import("./Screens/Landing/LandingOutlet"));
+const DisbursedLoanApproveSingleBM =  lazy(() => import("./Screens/BMHome/DisbursedLoanApproveSingleBM"));
+const ApproveMemberTransfer = lazy(() => import("./Screens/BMHome/ApproveMemberTransfer"));
+const AttendanceBM = lazy(() => import("./Screens/BMHome/AttendanceBM"));
+const Dashboard = lazy(() => import("./Screens/BMHome/Dashboard/Dashboard"));
+const EditMasterDistricts = lazy(() => import("./Screens/Admin/Master/Districts/EditMasterDistricts"));
+const MasterDistricts = lazy(() => import("./Screens/Admin/Master/Districts/MasterDistricts"));
+const MasterBlocks = lazy(() => import("./Screens/Admin/Master/Blocks/MasterBlocks"));
+const EditMasterBlocks = lazy(() => import("./Screens/Admin/Master/Blocks/EditMasterBlocks"));
+const MasterPurpose = lazy(() => import("./Screens/Admin/Master/Purpose/MasterPurpose"));
+const EditMasterPurpose = lazy(() => import("./Screens/Admin/Master/Purpose/EditMasterPurpose"));
+
+const MasterEmployees = lazy(() => import("./Screens/Admin/Master/Employees/MasterEmployees"));
+const EditMasterEmployee = lazy(() => import("./Screens/Admin/Master/Employees/EditMasterEmployee"));
+const HomeAdmin = lazy(() => import("./Screens/Admin/HomeAdmin"));
+const AdminDashboard = lazy(() => import("./Screens/Admin/Dashboard/AdminDashboard"));
+const CreateUser = lazy(() => import("./Screens/Admin/UserManagement/CreateUser"));
+const ManageUser = lazy(() => import("./Screens/Admin/UserManagement/ManageUser"));
+const TransferUserManage = lazy(() => import("./Screens/Admin/UserManagement/TransferUserManage"));
+const TransferUser = lazy(() => import("./Screens/Admin/UserManagement/TransferUser"));
+const ALoanStatementMain = lazy(() => import("./Screens/Admin/Reports/LoanStatements/ALoanStatementMain"));
+const ALoanTransactionsMain = lazy(() => import("./Screens/Admin/Reports/LoanTransactions/ALoanTransactionsMain"));
+const ADemandReportsMain = lazy(() => import("./Screens/Admin/Reports/DemandReports/ADemandReportsMain"));
+const AOutstandingReportMain = lazy(() => import("./Screens/Admin/Reports/OutstandingReports/AOutstandingReportMain"));
+
+const AFundwiseMain = lazy(() => import("./Screens/Admin/Reports/SummaryReports/FundwiseReport/AFundwiseMain"));
+const ASchemewiseMain = lazy(() => import("./Screens/Admin/Reports/SummaryReports/SchemewiseReport/ASchemewiseMain"));
+const ADemandVsCollectionMain = lazy(() => import("./Screens/Admin/Reports/DemandVsCollectionReports/ADemandVsCollectionMain"));
+const AttendanceDashboard = lazy(() => import("./Screens/Admin/Attendance/AttendanceDashboard"));
+
+const MasterDesignations = lazy(() => import("./Screens/Admin/Master/Designations/MasterDesignations"));
+const EditMasterDesignations = lazy(() => import("./Screens/Admin/Master/Designations/EditMasterDesignations"));
+const TranceferCO = lazy(() => import("./Screens/BMHome/TranceferCO"));
+const TransferCOScreen = lazy(() => import("./Screens/BMHome/TransferCOScreen"));
+const TranceferCOApproveForm = lazy(() => import("./Screens/BMHome/TranceferCOApproveForm"));
+const TransferCOApprovalUnic = lazy(() => import("./Screens/BMHome/TransferCOApprovalUnic"));
+const MemberTransfer = lazy(() => import("./Screens/BMHome/MemberTransfer"));
+const EditMemberTransfer = lazy(() => import("./Screens/Admin/Master/Employees/EditMemberTransfer"));
+
+const ApproveEditMemberTrans = lazy(() => import("./Screens/Admin/Master/Employees/ApproveEditMemberTrans"));
+const ViewMemberTransfer = lazy(() => import("./Screens/BMHome/ViewMemberTransfer"));
+const TransferMemberViewScreen = lazy(() => import("./Screens/BMHome/TransferMemberViewScreen"));
+const MonthEnd = lazy(() => import("./Screens/Admin/UserManagement/MonthEnd"));
+const Payroll = lazy(() => import("./Screens/Admin/Payroll/Payroll"));
+
+const RejectTransaction = lazy(() => import("./Screens/BMHome/Loans/RejectTransaction"));
+
 const MasterBanks = lazy(() =>
 	import("./Screens/Admin/Master/Banks/MasterBanks")
 )
@@ -93,13 +166,13 @@ const MemberwiseRecoveryReport = lazy(() =>
 const GroupwiseRecoveryReport = lazy(() =>
 	import("./Screens/Reports/GroupwiseRecoveryReport")
 )
-const DemandReportScreen = lazy(() =>
-	import("./Screens/Reports/DemandReportScreen")
-)
+// const DemandReportScreen = lazy(() =>
+// 	import("./Screens/Reports/DemandReportScreen")
+// )
 const CatchError = lazy(() => import("./Screens/CatchError"))
-const AuthMis = lazy(() => import("./Screens/MISAssistant/AuthMis"))
-const SigninMis = lazy(() => import("./Screens/MISAssistant/SigninMis"))
-const SignupMis = lazy(() => import("./Screens/MISAssistant/SignupMis"))
+// const AuthMis = lazy(() => import("./Screens/MISAssistant/AuthMis"))
+// const SigninMis = lazy(() => import("./Screens/MISAssistant/SigninMis"))
+// const SignupMis = lazy(() => import("./Screens/MISAssistant/SignupMis"))
 const ForgotPassMis = lazy(() => import("./Screens/MISAssistant/ForgotPassMis"))
 const HomeMis = lazy(() => import("./Screens/MISAssistantHome/HomeMis"))
 const HomeScreenMis = lazy(() =>
@@ -115,7 +188,7 @@ const HomeBM = lazy(() => import("./Screens/BMHome/HomeBM"))
 const HomeScreenBM = lazy(() => import("./Screens/BMHome/HomeScreenBM"))
 const EditGRTFormBM = lazy(() => import("./Screens/BMHome/EditGRTFormBM"))
 const EditGroupFormBM = lazy(() => import("./Screens/BMHome/EditGroupFormBM"))
-const DashboardBM = lazy(() => import("./Screens/BMHome/DashboardBM"))
+// const DashboardBM = lazy(() => import("./Screens/BMHome/DashboardBM"))
 const DashboardMis = lazy(() =>
 	import("./Screens/MISAssistantHome/DashboardMis")
 )
@@ -129,9 +202,9 @@ const SearchGRTFormBM = lazy(() => import("./Screens/BMHome/SearchGRTFormBM"))
 const SearchMemberMis = lazy(() =>
 	import("./Screens/MISAssistantHome/SearchMemberMis")
 )
-const AssignMemberToGroup = lazy(() =>
-	import("./Screens/MISAssistantHome/AssignMemberToGroup")
-)
+// const AssignMemberToGroup = lazy(() =>
+// 	import("./Screens/MISAssistantHome/AssignMemberToGroup")
+// )
 const SignUp = lazy(() => import("./Screens/MISAssistant/SignUp"))
 const SearchGroupBM = lazy(() => import("./Screens/BMHome/SearchGroupBM"))
 const HomeCO = lazy(() => import("./Screens/COHome/HomeCO"))
@@ -526,42 +599,42 @@ const router = createBrowserRouter([
 							},
 							{
 								path: "loanstatements",
-								element: <A_LoanStatementMain />,
+								element: <ALoanStatementMain />,
 							},
 							{
 								path: "loantxns",
-								element: <A_LoanTransactionsMain />,
+								element: <ALoanTransactionsMain />,
 							},
 							{
 								path: "demandreport",
-								element: <A_DemandReportsMain />,
+								element: <ADemandReportsMain />,
 							},
 							{
 								path: "outstasndingreport",
-								element: <A_OutstandingReportMain />,
+								element: <AOutstandingReportMain />,
 							},
 							{
 								path: "fundwisesummary",
-								element: <A_FundwiseMain />,
+								element: <AFundwiseMain />,
 							},
 							{
 								path: "schemewisesummary",
-								element: <A_SchemewiseMain />,
+								element: <ASchemewiseMain />,
 							},
 							{
 								path: "demandvscollectionreport",
-								element: <A_DemandVsCollectionMain />,
+								element: <ADemandVsCollectionMain />,
 							},
 							// {
 							// 	path: "summaryreports",
 							// 	children: [
 							// 		{
 							// 			path: "fundwise",
-							// 			element: <A_FundwiseMain />,
+							// 			element: <AFundwiseMain />,
 							// 		},
 							// 		{
 							// 			path: "schemewise",
-							// 			element: <A_SchemewiseMain />,
+							// 			element: <ASchemewiseMain />,
 							// 		},
 							// 	],
 							// },

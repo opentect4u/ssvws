@@ -222,9 +222,9 @@ function UploadViewTemplate({ flag, title }) {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      fill-rule="evenodd"
+                      fillRule="evenodd"
                       d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                      clip-rule="evenodd"
+                      clipRule="evenodd"
                     />
                   </svg>
                 </div>
@@ -281,7 +281,7 @@ function UploadViewTemplate({ flag, title }) {
           </motion.h2>
         </div>
       )}
-      <div class="relative overflow-x-auto">
+      <div className="relative overflow-x-auto">
         {!loading && copy.length > 0 && (
           <motion.section
             initial={{ opacity: 0 }}
@@ -291,23 +291,23 @@ function UploadViewTemplate({ flag, title }) {
             <p className="text-md italic font-bold text-green-900 my-2 mx-3">
               Search results for "{searchVal}":
             </p>
-            <table class="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
-              <thead class=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
+            <table className="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
+              <thead className=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
                 <tr>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                     #
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                     PO No.
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                     Date
                   </th>
 
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                     Created By
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                     Action
                   </th>
                 </tr>
@@ -315,18 +315,18 @@ function UploadViewTemplate({ flag, title }) {
               <tbody>
                 {po_data &&
                   po_data?.slice(first, rows + first).map((item) => (
-                    <tr class="bg-white text-nowrap border-b dark:bg-gray-800 dark:border-gray-700">
+                    <tr className="bg-white text-nowrap border-b dark:bg-gray-800 dark:border-gray-700">
                       <th
                         scope="row"
-                        class="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                        className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                       >
                         {item.sl_no}
                       </th>
-                      <td class="px-6 py-4">{item.po_no}</td>
-                      <td class="px-6 py-4">{item.test_dt}</td>
+                      <td className="px-6 py-4">{item.po_no}</td>
+                      <td className="px-6 py-4">{item.test_dt}</td>
 
-                      <td class="px-6 py-4">{item.created_by}</td>
-                      <td class="px-3 py-4 flex gap-3">
+                      <td className="px-6 py-4">{item.created_by}</td>
+                      <td className="px-3 py-4 flex gap-3">
                       
                         <Link
                           to={

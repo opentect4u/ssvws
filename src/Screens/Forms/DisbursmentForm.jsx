@@ -1043,7 +1043,7 @@ function DisbursmentForm() {
 											<EyeInvisibleOutlined />
 										)}
 
-										<span class={`ml-2`}>
+										<span className={`ml-2`}>
 											{visibleMember === false ? "Show Detail" : "Hide Detail"}
 										</span>
 									</button>
@@ -1764,7 +1764,7 @@ function DisbursmentForm() {
 										)}
 										<label
 											for="frm_co"
-											class="block mb-2 text-sm capitalize font-bold text-slate-800
+											className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100"
 										>
 											Bank

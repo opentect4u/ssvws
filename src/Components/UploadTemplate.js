@@ -350,7 +350,7 @@ function UploadTemplate({ onSubmit, flag, title }) {
                 mode={2}
                 data={itemList}
               />
-{params.id==0 && po_no && <p id="helper-text-explanation" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Item under this PO not having a certificate appears here. </p>}
+{params.id==0 && po_no && <p id="helper-text-explanation" className="mt-2 text-xs text-gray-500 dark:text-gray-400">Item under this PO not having a certificate appears here. </p>}
               {!item_no && params.id == 0 ? (
                 <VError title={"Item is required"} />
               ) : null}
@@ -415,7 +415,7 @@ function UploadTemplate({ onSubmit, flag, title }) {
                 }}
                 mode={1}
               />
-<p id="helper-text-explanation" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only.  (Max 1MB) </p>
+<p id="helper-text-explanation" className="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only.  (Max 1MB) </p>
               {!doc1 && !doc2 && params.id == 0 ? (
                 <VError title={"Must upload a file (max 1MB)"} />
               ) : null}
@@ -452,7 +452,7 @@ function UploadTemplate({ onSubmit, flag, title }) {
                 }}
                 mode={1}
               />
-              <p id="helper-text-explanation" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only. (Max 1MB) </p>
+              <p id="helper-text-explanation" className="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only. (Max 1MB) </p>
             </div>
             {flag == "T" && (
               <div className="sm:col-span-6">

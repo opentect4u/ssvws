@@ -243,7 +243,7 @@ function A_LoanTransactionsMain() {
 						</div> */}
 					</div>
 
-					{/* <div class="my-4 mx-auto">
+					{/* <div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder={
 								searchType === "M" ? `Member Name / ID` : `Group Name / ID`

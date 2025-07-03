@@ -301,9 +301,9 @@ function PoPreview({ data }) {
           
         </tbody>
         <tfoot>
-            <tr class="font-semibold text-gray-900 dark:text-white">
-                <th scope="row" class="px-1 py-3 text-base font-bold" colSpan={9}>Total</th>
-                <th class="px-1 py-3 text-base font-bold">{grandTot}</th>
+            <tr className="font-semibold text-gray-900 dark:text-white">
+                <th scope="row" className="px-1 py-3 text-base font-bold" colSpan={9}>Total</th>
+                <th className="px-1 py-3 text-base font-bold">{grandTot}</th>
             </tr>
         </tfoot>
     </table>

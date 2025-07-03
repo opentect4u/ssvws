@@ -631,7 +631,7 @@ function TranceferCO({ groupDataArr }) {
 											<>
 												<label
 													for="frm_co"
-													class="block mb-2 text-sm capitalize font-bold text-slate-800
+													className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100"
 												>
 													Search Group Name or Code
@@ -742,7 +742,7 @@ function TranceferCO({ groupDataArr }) {
 											<>
 												<label
 													for="frm_co"
-													class="block mb-2 text-sm capitalize font-bold text-slate-800
+													className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100"
 												>
 													To Branch
@@ -894,12 +894,12 @@ function TranceferCO({ groupDataArr }) {
 									<div className="sm:col-span-2 mt-5">
 										<div>
 											<label
-												class="block mb-2 text-sm capitalize font-bold text-slate-800
+												className="block mb-2 text-sm capitalize font-bold text-slate-800
 					dark:text-gray-100"
 											>
 												{" "}
 												Member List
-												{/* <span style={{color:'red'}} class="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2">
+												{/* <span style={{color:'red'}} className="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2">
 					(You can Select Maxmimum 4 Member)</span> */}
 											</label>
 
@@ -958,12 +958,12 @@ function TranceferCO({ groupDataArr }) {
 									<div className="sm:col-span-2 mt-5">
 										<div>
 											<label
-												class="block mb-2 text-sm capitalize font-bold text-slate-800
+												className="block mb-2 text-sm capitalize font-bold text-slate-800
 					dark:text-gray-100"
 											>
 												{" "}
 												Member List
-												{/* <span style={{color:'red'}} class="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2">
+												{/* <span style={{color:'red'}} className="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2">
 					(You can Select Maxmimum 4 Member)</span> */}
 											</label>
 

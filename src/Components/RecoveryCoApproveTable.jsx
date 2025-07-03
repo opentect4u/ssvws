@@ -560,7 +560,7 @@ function RecoveryCoApproveTable({
 										// setVisible(true)
 									}}
 								>
-									<CheckCircleOutlined /> <span class={`ml-2`}>Approve</span>
+									<CheckCircleOutlined /> <span className={`ml-2`}>Approve</span>
 								</button>
 
 								{/* <Popconfirm
@@ -593,7 +593,7 @@ function RecoveryCoApproveTable({
 										// 	setVisible_Reject(true)
 										// }}
 									>
-										<CheckCircleOutlined /> <span class={`ml-2`}>Reject</span>
+										<CheckCircleOutlined /> <span className={`ml-2`}>Reject</span>
 									</button>
 								</Popconfirm> */}
 							</motion.section>

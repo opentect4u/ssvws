@@ -53,9 +53,9 @@ function POTableView({ po_data, setSearch, title }) {
 										xmlns="http://www.w3.org/2000/svg"
 									>
 										<path
-											fill-rule="evenodd"
+											fillRule="evenodd"
 											d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-											clip-rule="evenodd"
+											clipRule="evenodd"
 										/>
 									</svg>
 								</div>
@@ -80,31 +80,31 @@ function POTableView({ po_data, setSearch, title }) {
 				animate={{ opacity: 1 }}
 				transition={{ delay: 0.5, type: "spring", stiffness: 30 }}
 			>
-				<table class="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
-					<thead class=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
+				<table className="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
+					<thead className=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
 						<tr>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								#
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								PO No.
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								Date
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								Vendor
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								Project
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								Status
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								Created By
 							</th>
-							<th scope="col" class="p-4">
+							<th scope="col" className="p-4">
 								Action
 							</th>
 						</tr>
@@ -113,7 +113,7 @@ function POTableView({ po_data, setSearch, title }) {
 						{po_data &&
 							po_data?.slice(first, rows + first).map((item) => (
 								<tr
-									class={
+									className={
 										item.modified_at == null
 											? +Math.floor(
 													(new Date().getTime() -
@@ -133,11 +133,11 @@ function POTableView({ po_data, setSearch, title }) {
 								>
 									<th
 										scope="row"
-										class="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+										className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 									>
 										{item.serial_number}
 									</th>
-									<td class="px-6 py-4">
+									<td className="px-6 py-4">
 										{item.po_no || "-----"}
 										<p className="text-[10.5px] text-gray-500 italic">
 											{item.modified_at == null ? (
@@ -245,13 +245,13 @@ function POTableView({ po_data, setSearch, title }) {
 											)}
 										</p>
 									</td>
-									<td class="px-6 py-4">{item.po_issue_date}</td>
-									<td class="px-6 py-4">{item.vendor_name}</td>
-									<td class="px-6 py-4">
+									<td className="px-6 py-4">{item.po_issue_date}</td>
+									<td className="px-6 py-4">{item.vendor_name}</td>
+									<td className="px-6 py-4">
 										{item.proj_name}
 										{/* {item.fresh_flag} */}
 									</td>
-									<td class="px-6 py-4">
+									<td className="px-6 py-4">
 										{item.po_status == "P" ? (
 											<Tag
 												className="text-[12px] p-1 rounded-full w-36"
@@ -299,8 +299,8 @@ function POTableView({ po_data, setSearch, title }) {
 											</Tag>
 										)}
 									</td>
-									<td class="px-6 py-4">{item.created_by}</td>
-									<td class="px-6 py-4">
+									<td className="px-6 py-4">{item.created_by}</td>
+									<td className="px-6 py-4">
 										<Link
 											to={
 												item.fresh_flag == "Y"

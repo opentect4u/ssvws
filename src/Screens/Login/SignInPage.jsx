@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
-import { useNavigate } from "react-router-dom"
+import { NavLink, useNavigate } from "react-router-dom"
 import LOGO from "../../Assets/Images/ssvws_crop-round.png"
 import axios from "axios"
 import { Spin } from "antd"
@@ -94,7 +94,7 @@ const SignInPage = () => {
 						userDtls["branch_name"] =
 							userTypeId == 4 || userTypeId == 11 || userTypeId == 10
 								? branches.filter((item) => item.code == formik.values.brnch)[0]
-										?.name
+									?.name
 								: res?.data?.user_dtls?.branch_name
 						if (res?.data?.suc === 1) {
 							localStorage.setItem("session_id", sessionId)
@@ -129,7 +129,7 @@ const SignInPage = () => {
 						userDtls["branch_name"] =
 							userTypeId == 4 || userTypeId == 11 || userTypeId == 10
 								? branches.filter((item) => item.code == formik.values.brnch)[0]
-										?.name
+									?.name
 								: res?.data?.user_dtls?.branch_name
 						if (res?.data?.suc === 1) {
 							localStorage.setItem("session_id", sessionId)
@@ -170,33 +170,39 @@ const SignInPage = () => {
 
 	const handleUserBlur = async (e) => {
 		formik.handleBlur(e)
-		setLoading(true)
-		try {
-			const res = await axios.post(`${url}/fetch_emp_type`, {
-				emp_id: e.target.value,
-			})
-			const id = res.data.msg[0]?.id || 0
-			setUserTypeId(id)
-			if ([10, 11].includes(id)) {
-				const brnRes = await axios.post(`${url}/fetch_brn_assign`, {
-					emp_id: e.target.value,
-				})
-				if (brnRes.data.suc === 1)
-					setBranches(
-						brnRes.data.msg.map((item) => ({
-							code: item.code,
-							name: `${item.name} (${item.code})`,
-						}))
-					)
-				else {
-					setBranches([])
-					Message("error", "No branch assigned to this user!")
+		if(e.target.value){
+			setLoading(true)
+			try {
+				const res = await axios.post(`${url}/fetch_emp_type`, {emp_id: e.target.value})
+				const id = res.data.msg[0]?.id || 0;
+				console.log(id);
+				setUserTypeId(id)
+				if ([10, 11].includes(id)) {
+					const brnRes = await axios.post(`${url}/fetch_brn_assign`, {
+						emp_id: e.target.value,
+					})
+					if (brnRes.data.suc === 1)
+						setBranches(
+							brnRes.data.msg.map((item) => ({
+								code: item.code,
+								name: `${item.name} (${item.code})`,
+							}))
+						)
+					else {
+						setBranches([])
+						Message("error", "No branch assigned to this user!")
+					}
 				}
+			} catch (err) {
+				console.error(err)
+			} finally {
+				setLoading(false)
 			}
-		} catch (err) {
-			console.error(err)
-		} finally {
-			setLoading(false)
+		}
+		else{
+			setUserTypeId(0);
+			setBranches([]);
+			formik.setFieldValue("brnch", "");
 		}
 	}
 
@@ -218,29 +224,48 @@ const SignInPage = () => {
 							</span>
 						</div>
 						<nav className="hidden md:flex space-x-6">
-							<a
-								href="/"
+							{/* <a
+								href={"/"}
 								rel="noreferrer"
 								className="text-gray-600 hover:text-blue-600"
 							>
 								<ArrowBackIcon />
-							</a>
-							<a
-								href={`https://ssvws.opentech4u.co.in/payroll`}
+							</a> */}
+							<NavLink
+								to={"/"}
+								rel="noreferrer"
+								className="text-gray-600 hover:text-blue-600"
+							>
+								<ArrowBackIcon />
+							</NavLink>
+							{/* <a
+								href={`#`}
 								target="_blank"
 								rel="noreferrer"
 								className="text-gray-600 hover:text-blue-600"
 							>
 								Payroll
-							</a>
-							<a
-								href="https://ssvws.opentech4u.co.in/ssvws_fin"
+							</a> */}
+							<NavLink
+								className="text-gray-600 hover:text-blue-600"
+								to={'#'}
+							>
+								Payroll
+							</NavLink>
+							{/* <a
+								href="#"
 								target="_blank"
 								rel="noreferrer"
 								className="text-gray-600 hover:text-blue-600"
 							>
 								Finance
-							</a>
+							</a> */}
+							<NavLink
+								className="text-gray-600 hover:text-blue-600"
+								to={'#'}
+							>
+								Finance
+							</NavLink>
 						</nav>
 					</div>
 

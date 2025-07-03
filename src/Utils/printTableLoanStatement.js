@@ -35,35 +35,35 @@ export const printTableLoanStatement = (
       <h2 style="text-align: center">SSVWS</h2>
       ${
 				searchType === "G"
-					? `<div class="center-div">
-        <div class="italic">
+					? `<div className="center-div">
+        <div className="italic">
           Group: ${metadata?.group_name}, ${metadata?.group_code}
         </div>
-        <div class="italic">
+        <div className="italic">
           Showing results from ${new Date(fromDate)?.toLocaleDateString(
 						"en-GB"
 					)} to ${new Date(toDate)?.toLocaleDateString("en-GB")}
         </div>
-        <div class="italic">
+        <div className="italic">
           Branch: ${metadata?.branch_name}, ${metadata?.branch_code}
         </div>
       </div>`
-					: `<div class="center-div">
-        <div class="italic">
+					: `<div className="center-div">
+        <div className="italic">
 									Member: ${metadata?.client_name}, ${metadata?.member_code}
 								</div>
-								<div class="italic">
+								<div className="italic">
 									Branch: ${metadata?.branch_name}, ${metadata?.branch_code}
 								</div>
-								<div class="italic">
+								<div className="italic">
 									Group: ${metadata?.group_name}, ${metadata?.group_code}
 								</div>
-								<div class="italic">
+								<div className="italic">
 									Showing results from ${new Date(fromDate)?.toLocaleDateString(
 										"en-GB"
 									)} to ${new Date(toDate)?.toLocaleDateString("en-GB")}
 								</div>
-								<div class="italic">Loan ID: ${metadata?.loan_id}</div>
+								<div className="italic">Loan ID: ${metadata?.loan_id}</div>
       </div>`
 			}
 

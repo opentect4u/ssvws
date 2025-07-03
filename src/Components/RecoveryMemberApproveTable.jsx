@@ -405,7 +405,7 @@ function RecoveryMemberApproveTable({
 				onClick={() => {
 
 				setVisible(true)
-				}}><CheckCircleOutlined class={`mr-2`} /> Approve  
+				}}><CheckCircleOutlined className={`mr-2`} /> Approve  
 
 				</button>
 
@@ -413,7 +413,7 @@ function RecoveryMemberApproveTable({
 				className={`inline-flex items-center px-4 py-2 mt-0 ml-4 sm:mt-0 text-sm font-medium text-center text-white border border-[#DA4167] bg-[#DA4167] transition ease-in-out hover:bg-[#ac3246] hover:border-[#ac3246] duration-300 rounded-full  dark:focus:ring-primary-900`}
 				onClick={() => {
 				setVisible_Reject(true)
-				}}><CheckCircleOutlined class={`mr-2`} /> Reject  
+				}}><CheckCircleOutlined className={`mr-2`} /> Reject  
 
 				</button>		
 				</div>
@@ -512,7 +512,7 @@ function RecoveryMemberApproveTable({
 										// await checkingCreditAmt()
 									}}
 								>
-									<CheckCircleOutlined /> <span class={`ml-2`}>Approve</span>
+									<CheckCircleOutlined /> <span className={`ml-2`}>Approve</span>
 								</button>
 
 								{/* <button
@@ -521,7 +521,7 @@ function RecoveryMemberApproveTable({
 										setVisible_Reject(true)
 									}}
 								>
-									<CheckCircleOutlined /> <span class={`ml-2`}>Reject</span>
+									<CheckCircleOutlined /> <span className={`ml-2`}>Reject</span>
 								</button> */}
 
 								{/* <Popconfirm
@@ -554,7 +554,7 @@ function RecoveryMemberApproveTable({
 										// 	setVisible_Reject(true)
 										// }}
 									>
-										<CheckCircleOutlined /> <spann class={`ml-2`}>Reject</spann>
+										<CheckCircleOutlined /> <spann className={`ml-2`}>Reject</spann>
 									</button>
 								</Popconfirm> */}
 							</motion.section>

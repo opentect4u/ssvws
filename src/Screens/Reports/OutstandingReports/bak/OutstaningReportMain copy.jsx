@@ -340,7 +340,7 @@ function OutstaningReportMain() {
 							/>
 						</div>
 					)} */}
-					{/* <div class="my-4 mx-auto">
+					{/* <div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder={
 								searchType === "M" ? `Member Name / ID` : `Group Name / ID`
@@ -367,7 +367,7 @@ function OutstaningReportMain() {
 					/> */}
 
 					{/* <div className="grid grid-cols-2 gap-5 mt-5 align-middle items-center"> */}
-					<div class="grid grid-cols-3 gap-5 mt-5 items-end">
+					<div className="grid grid-cols-3 gap-5 mt-5 items-end">
 						<div>
 							<TDInputTemplateBr
 								placeholder="From Date"
@@ -388,7 +388,7 @@ function OutstaningReportMain() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 						{/* <div>

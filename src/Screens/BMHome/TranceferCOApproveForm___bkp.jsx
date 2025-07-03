@@ -684,7 +684,7 @@ const handleApproveForm = async () => {
 										disabled={params.id > 0 ? true : false}
 									/> */}
 
-<label for="frm_co" class="block mb-2 text-sm capitalize font-bold text-slate-800
+<label for="frm_co" className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100">Search Group Name or Code</label>
                   <Select
                   showSearch
@@ -762,7 +762,7 @@ const handleApproveForm = async () => {
 							</div>
 
 							<div className="col-span-3">
-							<span class="ant-tag ant-tag-has-color text-white mb-2 font-bold css-dev-only-do-not-override-19m0pdw" 
+							<span className="ant-tag ant-tag-has-color text-white mb-2 font-bold css-dev-only-do-not-override-19m0pdw" 
 							style={{backgroundColor:'rgb(218, 65, 103)', fontSize:13, padding:7, borderRadius:5}}>
 								Modify Below Data</span> 
 <button style={{float:'right', fontSize:14, fontWeight:600, color:'#333'}} onClick={() => { editeFrmFnc() }}>
@@ -793,7 +793,7 @@ const handleApproveForm = async () => {
 
 				{editFrm === true &&(
 					<>
-					<label for="frm_co" class="block mb-2 text-sm capitalize font-bold text-slate-800
+					<label for="frm_co" className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100">To Branch</label>
 					{/* <Select
 					

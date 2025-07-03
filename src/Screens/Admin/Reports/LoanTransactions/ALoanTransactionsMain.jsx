@@ -45,7 +45,7 @@ const options2 = [
 	},
 ]
 
-function A_LoanTransactionsMain() {
+function ALoanTransactionsMain() {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -308,7 +308,7 @@ function A_LoanTransactionsMain() {
 						</div> */}
 					</div>
 
-					{/* <div class="my-4 mx-auto">
+					{/* <div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder={
 								searchType === "M" ? `Member Name / ID` : `Group Name / ID`
@@ -419,7 +419,7 @@ function A_LoanTransactionsMain() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					{/* For Recovery/Collection Results MR */}
@@ -1478,4 +1478,4 @@ function A_LoanTransactionsMain() {
 	)
 }
 
-export default A_LoanTransactionsMain
+export default ALoanTransactionsMain

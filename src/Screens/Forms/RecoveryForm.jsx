@@ -824,71 +824,71 @@ function RecoveryForm() {
 										/>
 									</div> */}
 								</div>
-								<div class="relative overflow-x-auto">
-    <table class="w-full text-sm  rounded-t-md my-3 text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-[12px] rounded-t-md text-gray-200 uppercase bg-slate-800 dark:bg-gray-700 dark:text-gray-400">
+								<div className="relative overflow-x-auto">
+    <table className="w-full text-sm  rounded-t-md my-3 text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-[12px] rounded-t-md text-gray-200 uppercase bg-slate-800 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-			<th scope="col" class="px-6 py-3">
+			<th scope="col" className="px-6 py-3">
                     Member
                 </th>
                
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                     Previous Outstanding
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                     Principle
                 </th>
-                <th scope="col" class="px-6 py-3">
+                <th scope="col" className="px-6 py-3">
                     Interest
                 </th>
-				<th scope="col" class="px-6 py-3">
+				<th scope="col" className="px-6 py-3">
                     Current Outstanding
                 </th>
             </tr>
         </thead>
         <tbody>
-           {memb_recov_details.map(item=> <tr class="bg-white border-2 border-b-pink-200 dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" class="px-6 py-3 font-bold text-[#DA4167] whitespace-nowrap dark:text-white">
+           {memb_recov_details.map(item=> <tr className="bg-white border-2 border-b-pink-200 dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-3 font-bold text-[#DA4167] whitespace-nowrap dark:text-white">
                     {item.client_name}
                 </th>
-                <td class="px-6 py-3">
+                <td className="px-6 py-3">
                     {item.prev_outstanding}
                 </td>
-                <td class="px-6 py-3">
+                <td className="px-6 py-3">
                     {item.prn_amt}
                 </td>
-                <td class="px-6 py-3">
+                <td className="px-6 py-3">
                     {item.intt_amt}
                 </td>
-				<td class="px-6 py-3">
+				<td className="px-6 py-3">
                     {item.curr_outstanding}
                 </td>
             </tr>)}
-            {/* <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     Microsoft Surface Pro
                 </th>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     White
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     Laptop PC
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     $1999
                 </td>
             </tr>
-            <tr class="bg-white dark:bg-gray-800">
-                <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+            <tr className="bg-white dark:bg-gray-800">
+                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     Magic Mouse 2
                 </th>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     Black
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     Accessories
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     $99
                 </td>
             </tr> */}

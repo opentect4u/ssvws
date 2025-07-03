@@ -224,7 +224,7 @@ function TransferCOScreen() {
 						}}
 
 					>
-					<PlusCircleOutlined /> <spann class={`ml-2`}>Trancefer CO Form</spann>
+					<PlusCircleOutlined /> <spann className={`ml-2`}>Trancefer CO Form</spann>
 					</button>
 					</div> */}
 					

@@ -284,7 +284,7 @@ function LoanTransactionsMain() {
 						</div> */}
 					</div>
 
-					{/* <div class="my-4 mx-auto">
+					{/* <div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder={
 								searchType === "M" ? `Member Name / ID` : `Group Name / ID`
@@ -343,7 +343,7 @@ function LoanTransactionsMain() {
 									searchData()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					</div>

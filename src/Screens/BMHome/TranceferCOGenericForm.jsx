@@ -117,7 +117,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveSearchGroup && group_name) {
 			return (
 				<div>
-					<label class={labelClass}>Search Group Name or Code </label>
+					<label className={labelClass}>Search Group Name or Code </label>
 					<span>{group_name}</span>
 				</div>
 			)
@@ -125,7 +125,7 @@ const TranceferCOGenericForm = (props) => {
 
 		return (
 			<div>
-				<label for={GROUP_NAME_CODE.name} class={labelClass}>
+				<label for={GROUP_NAME_CODE.name} className={labelClass}>
 					{GROUP_NAME_CODE.label}
 					{getEditBox(GROUP_NAME_CODE.name)}
 				</label>
@@ -143,7 +143,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveSearchGroup && created_by) {
 			return (
 				<div>
-					<label class={labelClass}>Created By</label>
+					<label className={labelClass}>Created By</label>
 					<span>{created_by}</span>
 				</div>
 			)
@@ -166,7 +166,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveSearchGroup && created_at) {
 			return (
 				<div>
-					<label class={labelClass}>Created Date</label>
+					<label className={labelClass}>Created Date</label>
 					<span>{formattedDate}</span>
 				</div>
 			)
@@ -178,7 +178,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveFromCO) {
 			return (
 				<div title={from_co}>
-					<label class={labelClass}>
+					<label className={labelClass}>
 						{FROM_CO.label}
 						{getEditBox(FROM_CO.name)}
 					</label>
@@ -205,7 +205,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveFromBranch) {
 			return (
 				<div title={from_brn}>
-					<label class={labelClass}>
+					<label className={labelClass}>
 						{FROM_BRANCH.label}
 						{getEditBox(FROM_BRANCH.name)}
 					</label>
@@ -232,7 +232,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveToBranch) {
 			return (
 				<div title={to_brn}>
-					<label class={labelClass}>
+					<label className={labelClass}>
 						{TO_BRANCH.label}
 						{getEditBox(TO_BRANCH.name)}
 					</label>
@@ -251,7 +251,7 @@ const TranceferCOGenericForm = (props) => {
 		} else {
 			return (
 				<div>
-					<label for={TO_BRANCH.name} class={labelClass}>
+					<label for={TO_BRANCH.name} className={labelClass}>
 						Search Branch Name or Code
 					</label>
 					{getActualFormFiled(TO_BRANCH.name)}
@@ -288,7 +288,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveToCO) {
 			return (
 				<div title={to_co}>
-					<label class={labelClass}>
+					<label className={labelClass}>
 						{TO_CO.label}
 						{getEditBox(TO_CO.name)}
 					</label>
@@ -307,7 +307,7 @@ const TranceferCOGenericForm = (props) => {
 		} else {
 			return (
 				<div>
-					<label for={TO_CO.name} class={labelClass}>
+					<label for={TO_CO.name} className={labelClass}>
 						Set To CO
 					</label>
 					{getActualFormFiled(TO_CO.name)}
@@ -337,7 +337,7 @@ const TranceferCOGenericForm = (props) => {
 		if (inactiveRemarks) {
 			return (
 				<div>
-					<label class={labelClass}>
+					<label className={labelClass}>
 						{REMARKS.label}
 						{getEditBox(REMARKS.name)}
 					</label>
@@ -347,7 +347,7 @@ const TranceferCOGenericForm = (props) => {
 		} else {
 			return (
 				<div>
-					<label class="block mb-2 text-sm capitalize font-bold text-slate-800">
+					<label className="block mb-2 text-sm capitalize font-bold text-slate-800">
 						Remarks{" "}
 					</label>
 					<textarea
@@ -479,12 +479,12 @@ const TranceferCOGenericForm = (props) => {
 					<div className="sm:col-span-2 mt-5">
 						<div>
 							<label
-								class="block mb-2 text-sm capitalize font-bold text-slate-800
+								className="block mb-2 text-sm capitalize font-bold text-slate-800
 					dark:text-gray-100"
 							>
 								{" "}
 								Member List
-								{/* <span style={{color:'red'}} class="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2">
+								{/* <span style={{color:'red'}} className="ant-tag ml-2 ant-tag-error ant-tag-borderless text-[12.6px] my-2">
 					(You can Select Maxmimum 4 Member)</span> */}
 							</label>
 

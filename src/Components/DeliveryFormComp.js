@@ -309,28 +309,28 @@ function DeliveryFormComp({flag,title,onSubmit}) {
              
              
 
-<div class="relative overflow-x-auto sm:col-span-12">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-        <thead class="text-xs bg-[#C4F1BE] font-bold uppercase text-green-900 dark:bg-gray-700 dark:text-gray-400">
+<div className="relative overflow-x-auto sm:col-span-12">
+    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+        <thead className="text-xs bg-[#C4F1BE] font-bold uppercase text-green-900 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-                <th scope="col" class="px-6 py-3 font-bold">
+                <th scope="col" className="px-6 py-3 font-bold">
                    Item
                 </th>
-                <th scope="col" class="px-6 py-3 font-bold">
+                <th scope="col" className="px-6 py-3 font-bold">
                     Quantity
                 </th>
-                <th scope="col" class="px-6 py-3 font-bold">
+                <th scope="col" className="px-6 py-3 font-bold">
                     Status
                 </th>
              
             </tr>
         </thead>
         <tbody>
-          {items.map(item=>  <tr class="bg-white border-b font-bold dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" class="px-6 w-1/5 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white">
+          {items.map(item=>  <tr className="bg-white border-b font-bold dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-6 w-1/5 py-4 font-bold text-gray-900 whitespace-nowrap dark:text-white">
                     {item.prod_name}
                 </th>
-                <td class="px-6 py-4 w-1/5 font-bold">
+                <td className="px-6 py-4 w-1/5 font-bold">
                     {/* {item.quantity} */}
                     <TDInputTemplate
                   placeholder="Quantity"
@@ -343,7 +343,7 @@ function DeliveryFormComp({flag,title,onSubmit}) {
                   mode={1}
                 />
                 </td>
-                <td class="px-6 py-4 w-1/3">
+                <td className="px-6 py-4 w-1/3">
                 <TDInputTemplate
                   placeholder="Status"
                   type="text"
@@ -401,7 +401,7 @@ function DeliveryFormComp({flag,title,onSubmit}) {
                   mode={2}
                   data={itemList}
                 />
-  {params.id==0 && po_no && <p id="helper-text-explanation" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Item under this PO not having a certificate appears here. </p>}
+  {params.id==0 && po_no && <p id="helper-text-explanation" className="mt-2 text-xs text-gray-500 dark:text-gray-400">Item under this PO not having a certificate appears here. </p>}
                 {!item_no && params.id == 0 ? (
                   <VError title={"Item is required"} />
                 ) : null}
@@ -466,7 +466,7 @@ function DeliveryFormComp({flag,title,onSubmit}) {
                   }}
                   mode={1}
                 />
-  <p id="helper-text-explanation" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only.  (Max 1MB) </p>
+  <p id="helper-text-explanation" className="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only.  (Max 1MB) </p>
                 {!doc1 && !doc2 && params.id == 0 ? (
                   <VError title={"Must upload a file (max 1MB)"} />
                 ) : null}
@@ -503,7 +503,7 @@ function DeliveryFormComp({flag,title,onSubmit}) {
                   }}
                   mode={1}
                 />
-                <p id="helper-text-explanation" class="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only. (Max 1MB) </p>
+                <p id="helper-text-explanation" className="mt-2 text-xs text-gray-500 dark:text-gray-400">Accepts PDF only. (Max 1MB) </p>
               </div>
               {flag == "T" && (
                 <div className="sm:col-span-6">

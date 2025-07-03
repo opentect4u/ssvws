@@ -209,7 +209,7 @@
                         xmlns="http://www.w3.org/2000/svg"
                       >
                         <path
-                          fill-rule="evenodd"
+                          fillRule="evenodd"
                           d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                           clip-rule="evenodd" />
                       </svg>
@@ -251,42 +251,42 @@
 
              {!loading &&  
    <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1}} transition={{ delay: 0.5, type: 'spring', stiffness: 30}}>
-  <table class="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
-        <thead class=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
+  <table className="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
+        <thead className=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
             <tr >
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     #
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     PO No.
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Date
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Vendor 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Project 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Status 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Created By 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Action 
                 </th>
             </tr>
         </thead>
         <tbody>
            {po_data && po_data?.slice(first,rows+first).map(item=> 
-           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" class="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+           <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {item.serial_number}
                 </th>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.po_no}
                     <p className="text-[10.5px] text-gray-500 italic">
                       {item.modified_at==null ? <span> Created {" "}
@@ -298,23 +298,23 @@
 }
                       </p>
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.po_issue_date}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.vendor_name}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.proj_name}
                     {/* {item.fresh_flag} */}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.po_status=='P'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<SyncOutlined spin />} color="processing">In Progress<Tooltip title="Draft saved"> <FileTextOutlined className="text-red-500 ml-7" /></Tooltip> </Tag>:(item.po_status=='A'? <Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Approved</Tag>:(item.po_status=='U'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<ClockCircleOutlined className="animate-pulse"/>} color="error">Pending Approval</Tag>:(item.po_status=='D'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Delivered</Tag>:<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success"> Partially Delivered </Tag>)))}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.created_by}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                   <Link to={routePaths.PURCHASEORDERFORM+'F/'+item.sl_no}>
                 <EditOutlined className="text-md text-green-900" />
                 </Link>
@@ -355,7 +355,7 @@
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                             clip-rule="evenodd" />
                         </svg>
@@ -395,42 +395,42 @@
 
 
        <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1}} transition={{ delay: 0.5, type: 'spring', stiffness: 30}}>
-      <table class="w-full text-sm text-left rtl:text-right shadow-lg text-green-900 dark:text-gray-400">
-          <thead class=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
+      <table className="w-full text-sm text-left rtl:text-right shadow-lg text-green-900 dark:text-gray-400">
+          <thead className=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
               <tr >
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       #
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       PO No.
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Date
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Vendor 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Project 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Status 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Created By 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Action 
                   </th>
               </tr>
           </thead>
           <tbody>
              {po_data?.slice(first,rows+first).map(item=> 
-             <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                  <th scope="row" class="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                  <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {item.serial_number}
                   </th>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.po_no}
                       <p className="text-[10.5px] text-gray-500 italic">
                       {item.modified_at==null ? <span> Created {" "}
@@ -442,23 +442,23 @@
 }
                       </p>
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.po_issue_date}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.vendor_name}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.proj_name}
                       {/* {item.fresh_flag} */}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                     {item.po_status=='P'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<SyncOutlined spin />} color="processing">In Progress<Tooltip title="Draft saved"> <FileTextOutlined className="text-red-500 ml-7" /></Tooltip> </Tag>:(item.po_status=='A'? <Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Approved</Tag>:(item.po_status=='U'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<ClockCircleOutlined className="animate-pulse"/>} color="error">Pending Approval</Tag>:(item.po_status=='D'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Delivered</Tag>:<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success"> Partially Delivered </Tag>)))}
                 </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.created_by}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                     <Link to={routePaths.PURCHASEORDERFORM+'E/'+item.sl_no}>
                   <EditOutlined className="text-md text-green-900" />
                   </Link>
@@ -475,65 +475,65 @@
 //////Approved
 
 
-<div class="relative overflow-x-auto">
+<div className="relative overflow-x-auto">
   {!loading &&   
   
   <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1}} transition={{ delay: 0.5, type: 'spring', stiffness: 30}}>
-  <table class="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
-        <thead class=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
+  <table className="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400">
+        <thead className=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
             <tr >
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     #
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     PO No.
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Date
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Vendor 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Project 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Status 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Created By 
                 </th>
-                <th scope="col" class="p-4">
+                <th scope="col" className="p-4">
                     Action 
                 </th>
             </tr>
         </thead>
         <tbody>
            {po_data && po_data?.slice(first,rows+first).map(item=> 
-           <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" class="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+           <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {item.serial_number} 
                 </th>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.po_no}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.po_issue_date}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.vendor_name}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.proj_name} 
                     {/* {item.fresh_flag} */}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.po_status=='P'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<SyncOutlined spin />} color="processing">In Progress<Tooltip title="Draft saved"> <FileTextOutlined className="text-red-500 ml-7" /></Tooltip> </Tag>:(item.po_status=='A'? <Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Approved</Tag>:(item.po_status=='U'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<ClockCircleOutlined className="animate-pulse"/>} color="error">Pending Approval</Tag>:(item.po_status=='D'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Delivered</Tag>:<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success"> Partially Delivered </Tag>)))}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                     {item.created_by}
                 </td>
-                <td class="px-6 py-4">
+                <td className="px-6 py-4">
                   <Link to={item.fresh_flag=='Y'?routePaths.PURCHASEORDERFORM+'F/'+item.sl_no:routePaths.PURCHASEORDERFORM+'E/'+item.sl_no}>
                 <EditOutlined className="text-md text-green-900" />
                 </Link>
@@ -574,7 +574,7 @@
                           xmlns="http://www.w3.org/2000/svg"
                         >
                           <path
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                             clip-rule="evenodd" />
                         </svg>
@@ -613,47 +613,47 @@
               </motion.section>
               }
   <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1}} transition={{ delay: 0.5, type: 'spring', stiffness: 30}}>
-      <table class="w-full text-sm text-left rtl:text-right shadow-lg text-blue-900 dark:text-gray-400">
-          <thead class=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
+      <table className="w-full text-sm text-left rtl:text-right shadow-lg text-blue-900 dark:text-gray-400">
+          <thead className=" text-md  text-gray-700 capitalize   bg-[#C4F1BE] dark:bg-gray-700 dark:text-gray-400">
               <tr >
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       #
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       PO No.
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Date
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Vendor 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Project 
                   </th>
-                  {/* <th scope="col" class="p-4">
+                  {/* <th scope="col" className="p-4">
                       History 
                   </th> */}
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Status 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       Created By 
                   </th>
-                  <th scope="col" class="p-4">
+                  <th scope="col" className="p-4">
                       
                   </th>
               </tr>
           </thead>
           <tbody>
              {po_data?.slice(first,rows+first).map(item=> 
-             <tr class={item.modified_at==null?(+Math.floor(((new Date().getTime() - new Date(item.created_at).getTime())/1000))<1800?"bg-[#bdd8b9] border-b dark:bg-gray-800 dark:border-gray-700":"bg-white border-b dark:bg-gray-800 dark:border-gray-700"):(+Math.floor(((new Date().getTime() - new Date(item.modified_at).getTime())/1000))<1800?"bg-[#bdd8b9] border-b dark:bg-gray-800 dark:border-gray-700":"bg-white border-b dark:bg-gray-800 dark:border-gray-700")}>
-                  <th scope="row" class="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+             <tr className={item.modified_at==null?(+Math.floor(((new Date().getTime() - new Date(item.created_at).getTime())/1000))<1800?"bg-[#bdd8b9] border-b dark:bg-gray-800 dark:border-gray-700":"bg-white border-b dark:bg-gray-800 dark:border-gray-700"):(+Math.floor(((new Date().getTime() - new Date(item.modified_at).getTime())/1000))<1800?"bg-[#bdd8b9] border-b dark:bg-gray-800 dark:border-gray-700":"bg-white border-b dark:bg-gray-800 dark:border-gray-700")}>
+                  <th scope="row" className="px-3 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                       {item.serial_number+' '}
                       {/* {item.created_at} */}
                      
                   </th>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.po_no}
 
                       <p className="text-[10.5px] text-gray-500 italic">
@@ -666,25 +666,25 @@
 }
                       </p>
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.po_issue_date}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.vendor_name}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.proj_name}
                   </td>
-                  {/* <td class="px-6 py-4">
+                  {/* <td className="px-6 py-4">
                   <img src={PAPER} className="text-green-900"/>
                   </td> */}
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                     {item.po_status=='P'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<SyncOutlined spin />} color="processing">In Progress<Tooltip title="Draft saved"> <FileTextOutlined className="text-red-500 ml-7" /></Tooltip> </Tag>:(item.po_status=='A'? <Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Approved</Tag>:(item.po_status=='U'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<ClockCircleOutlined className="animate-pulse"/>} color="error">Pending Approval</Tag>:(item.po_status=='D'?<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success">Delivered</Tag>:<Tag className="text-[12px] p-1 rounded-full w-36" icon={<CheckCircleOutlined />} color="success"> Partially Delivered </Tag>)))}
                 </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                       {item.created_by}
                   </td>
-                  <td class="px-6 py-4">
+                  <td className="px-6 py-4">
                     <Link to={routePaths.PURCHASEORDERFORM+'F/'+item.sl_no}>
                   <EditOutlined className="text-md text-green-900" />
                   </Link>

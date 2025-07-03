@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Sidebar from "../../../../../Components/Sidebar"
 import axios from "axios"
 import { url } from "../../../../../Address/BaseUrl"
-import { Message } from "../../../../../Components/Message"
-import { Spin, Button, Modal, Tooltip, DatePicker } from "antd"
-import dayjs from "dayjs"
+// import { Message } from "../../../../../Components/Message"
+import { Spin, Tooltip} from "antd"
+// import dayjs from "dayjs"
 import {
 	LoadingOutlined,
 	SearchOutlined,
 	PrinterOutlined,
 	FileExcelOutlined,
 } from "@ant-design/icons"
-import Radiobtn from "../../../../../Components/Radiobtn"
+// import Radiobtn from "../../../../../Components/Radiobtn"
 import TDInputTemplateBr from "../../../../../Components/TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../../../../../Utils/formateDate"
 
 import { saveAs } from "file-saver"
 import * as XLSX from "xlsx"
-import { printTableLoanStatement } from "../../../../../Utils/printTableLoanStatement"
-import { printTableLoanTransactions } from "../../../../../Utils/printTableLoanTransactions"
+// import { printTableLoanStatement } from "../../../../../Utils/printTableLoanStatement"
+// import { printTableLoanTransactions } from "../../../../../Utils/printTableLoanTransactions"
 import { printTableRegular } from "../../../../../Utils/printTableRegular"
 
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
 
-function A_SchemewiseMain() {
+function AFundwiseMain() {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -42,9 +42,7 @@ function A_SchemewiseMain() {
 	// const [tot_sum, setTotSum] = useState(0)
 	// const [search, setSearch] = useState("")
 
-	const [metadataDtls, setMetadataDtls] = useState(
-		() => userDetails?.branch_name
-	)
+	const [metadataDtls, setMetadataDtls] = useState(() => "")
 
 	const handleFetchBranches = async () => {
 		setLoading(true)
@@ -74,7 +72,7 @@ function A_SchemewiseMain() {
 		}
 
 		await axios
-			.post(`${url}/adminreport/loan_summary_report_schemewise_admin`, creds)
+			.post(`${url}/adminreport/loan_summary_report_fundwise_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
@@ -106,7 +104,7 @@ function A_SchemewiseMain() {
 		XLSX.utils.book_append_sheet(wb, ws, "Sheet1")
 		const wbout = XLSX.write(wb, { bookType: "xlsx", type: "binary" })
 		const blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" })
-		saveAs(blob, `Schemewise_Summary_${metadataDtls}.xlsx`)
+		saveAs(blob, `Fundwise_Summary_${metadataDtls}.xlsx`)
 	}
 
 	const s2ab = (s) => {
@@ -134,7 +132,7 @@ function A_SchemewiseMain() {
 				<main className="px-4 pb-5 bg-slate-50 rounded-lg shadow-lg h-auto my-10 mx-32">
 					<div className="flex flex-row gap-3 mt-20  py-3 rounded-xl">
 						<div className="text-3xl text-slate-700 font-bold">
-							SCHEMEWISE SUMMARY REPORT
+							FUNDWISE SUMMARY REPORT
 						</div>
 					</div>
 
@@ -239,7 +237,7 @@ function A_SchemewiseMain() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					</div>
@@ -268,10 +266,10 @@ function A_SchemewiseMain() {
 												Sl. No.
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
-												Scheme ID
+												Fund ID
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
-												Scheme Name
+												Fund Name
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
 												Total Debit
@@ -301,10 +299,10 @@ function A_SchemewiseMain() {
 												>
 													<td className="px-6 py-3">{i + 1}</td>
 													<td className="px-6 py-3">
-														{item?.scheme_id || "---"}
+														{item?.fund_id || "---"}
 													</td>
 													<td className="px-6 py-3">
-														{item?.scheme_name || "---"}
+														{item?.fund_name || "---"}
 													</td>
 													<td className="px-6 py-3">
 														{parseFloat(item?.tot_debit)?.toFixed(2) || "0"}
@@ -352,7 +350,7 @@ function A_SchemewiseMain() {
 									onClick={() =>
 										printTableRegular(
 											reportData,
-											"Schemewise Report",
+											"Fundwise Report",
 											metadataDtls,
 											fromDate,
 											toDate
@@ -375,4 +373,4 @@ function A_SchemewiseMain() {
 	)
 }
 
-export default A_SchemewiseMain
+export default AFundwiseMain

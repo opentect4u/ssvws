@@ -214,7 +214,7 @@ function MemberTransferForm() {
           <div className="col-span-1">
             <label
               for="frm_co"
-              class="block mb-2 text-sm capitalize font-bold text-slate-800
+              className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100"
             >
               Group
@@ -319,7 +319,7 @@ function MemberTransferForm() {
               <div className="col-span-2">
                 <label
                   for="frm_co"
-                  class="block mb-2 text-sm capitalize font-bold text-slate-800
+                  className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100"
                 >
                   Transfer To

@@ -37,7 +37,7 @@ const options = [
 	},
 ]
 
-function A_DemandReportsMain() {
+function ADemandVsCollectionMain() {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -115,7 +115,7 @@ function A_DemandReportsMain() {
 		}
 
 		await axios
-			.post(`${url}/adminreport/loan_demand_report_membwise_admin`, creds)
+			.post(`${url}/adminreport/dmd_vs_collec_report_memberwise_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
@@ -139,7 +139,7 @@ function A_DemandReportsMain() {
 		}
 
 		await axios
-			.post(`${url}/adminreport/loan_demand_report_groupwise_admin`, creds)
+			.post(`${url}/adminreport/dmd_vs_collec_report_groupwise_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
@@ -159,12 +159,12 @@ function A_DemandReportsMain() {
 		const creds = {
 			from_dt: formatDateToYYYYMMDD(fromDate),
 			to_dt: formatDateToYYYYMMDD(toDate),
-			branch_code: userDetails?.brn_code,
+			branch_code: branch?.split(",")[0],
 			co_id: co?.split(",")[0],
 		}
 
 		await axios
-			.post(`${url}/adminreport/loan_demand_report_cowise_admin`, creds)
+			.post(`${url}/adminreport/dmd_vs_collec_report_cowise_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
@@ -210,7 +210,7 @@ function A_DemandReportsMain() {
 		const blob = new Blob([s2ab(wbout)], { type: "application/octet-stream" })
 		saveAs(
 			blob,
-			`Demand_Report_${metadataDtls?.split(",")[0]}_${
+			`Demand_Vs_Collection_${metadataDtls?.split(",")[0]}_${
 				metadataDtls?.split(",")[1]
 			}.xlsx`
 		)
@@ -226,7 +226,9 @@ function A_DemandReportsMain() {
 	}
 
 	let totEmi = 0
-	let totDemand = 0
+	let totPrevDemand = 0
+	let totCurrDemand = 0
+	let totCollAmt = 0
 	let totOut = 0
 
 	return (
@@ -241,7 +243,7 @@ function A_DemandReportsMain() {
 				<main className="px-4 pb-5 bg-slate-50 rounded-lg shadow-lg h-auto my-10 mx-32">
 					<div className="flex flex-row gap-3 mt-20  py-3 rounded-xl">
 						<div className="text-3xl text-slate-700 font-bold">
-							DEMAND REPORT
+							DEMAND VS. COLLECTION
 						</div>
 					</div>
 
@@ -273,7 +275,7 @@ function A_DemandReportsMain() {
 						</div> */}
 					</div>
 
-					<div className="grid grid-cols-3 gap-5 mt-5 items-end">
+					<div className="grid grid-cols-2 gap-5 mt-5 items-end">
 						<div>
 							<TDInputTemplateBr
 								placeholder="From Date"
@@ -350,7 +352,8 @@ function A_DemandReportsMain() {
 						</div>
 
 						{searchType === "C" && (
-							<div className="mb-2 col-span-3 gap-5">
+							<div>
+								<div>
 									<TDInputTemplateBr
 										placeholder="Choose CO..."
 										type="text"
@@ -372,21 +375,22 @@ function A_DemandReportsMain() {
 											name: `${item?.emp_name} - (${item?.emp_id})`,
 										}))}
 									/>
+								</div>
 							</div>
 						)}
 
-						
-					</div>
-					<div className="flex justify-center mt-4 mb-3">
+						<div>
 							<button
 								className={`inline-flex items-center px-4 py-2 mt-0 ml-0 sm:mt-0 text-sm font-small text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full  dark:focus:ring-primary-900`}
 								onClick={() => {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
+					</div>
+
 					{/* "Memberwise" */}
 
 					{reportData.length > 0 && searchType === "M" && (
@@ -450,7 +454,13 @@ function A_DemandReportsMain() {
 												Total EMI
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
-												Demand
+												Previous Demand (Demand + Collection)
+											</th>
+											<th scope="col" className="px-6 py-3 font-semibold ">
+												Current Demand
+											</th>
+											<th scope="col" className="px-6 py-3 font-semibold ">
+												Collection Amount
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
 												Outstanding
@@ -463,7 +473,9 @@ function A_DemandReportsMain() {
 									<tbody>
 										{reportData?.map((item, i) => {
 											totEmi += item?.total_emi
-											totDemand += item?.demand
+											totPrevDemand += item?.previous_demand
+											totCurrDemand += item?.current_demand
+											totCollAmt += item?.coll_amt
 											totOut += item?.current_principal
 
 											return (
@@ -523,7 +535,15 @@ function A_DemandReportsMain() {
 														{parseFloat(item?.total_emi)?.toFixed(2) || "0"}
 													</td>
 													<td className="px-6 py-3">
-														{parseFloat(item?.demand)?.toFixed(2) || "0"}
+														{parseFloat(item?.previous_demand)?.toFixed(2) ||
+															"0"}
+													</td>
+													<td className="px-6 py-3">
+														{parseFloat(item?.current_demand)?.toFixed(2) ||
+															"0"}
+													</td>
+													<td className="px-6 py-3">
+														{parseFloat(item?.coll_amt)?.toFixed(2) || "0"}
 													</td>
 													<td className="px-6 py-3">
 														{parseFloat(item?.current_principal)?.toFixed(2) ||
@@ -539,7 +559,13 @@ function A_DemandReportsMain() {
 											<td colSpan={1}>TOTAL:</td>
 											<td colSpan={12}></td>
 											<td colSpan={1}>{parseFloat(totEmi).toFixed(2)}/-</td>
-											<td colSpan={1}>{parseFloat(totDemand).toFixed(2)}/-</td>
+											<td colSpan={1}>
+												{parseFloat(totPrevDemand).toFixed(2)}/-
+											</td>
+											<td colSpan={1}>
+												{parseFloat(totCurrDemand).toFixed(2)}/-
+											</td>
+											<td colSpan={1}>{parseFloat(totCollAmt).toFixed(2)}/-</td>
 											<td colSpan={1}>{parseFloat(totOut).toFixed(2)}/-</td>
 											<td colSpan={1}></td>
 										</tr>
@@ -600,7 +626,13 @@ function A_DemandReportsMain() {
 												Total EMI
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
-												Demand
+												Previous Demand (Demand + Collection)
+											</th>
+											<th scope="col" className="px-6 py-3 font-semibold ">
+												Current Demand
+											</th>
+											<th scope="col" className="px-6 py-3 font-semibold ">
+												Collection Amount
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
 												Outstanding
@@ -613,7 +645,9 @@ function A_DemandReportsMain() {
 									<tbody>
 										{reportData?.map((item, i) => {
 											totEmi += item?.total_emi
-											totDemand += item?.demand
+											totPrevDemand += item?.previous_demand
+											totCurrDemand += item?.current_demand
+											totCollAmt += item?.coll_amt
 											totOut += item?.outstanding
 
 											return (
@@ -661,7 +695,15 @@ function A_DemandReportsMain() {
 														{parseFloat(item?.total_emi)?.toFixed(2) || "0"}
 													</td>
 													<td className="px-6 py-3">
-														{parseFloat(item?.demand)?.toFixed(2) || "0"}
+														{parseFloat(item?.previous_demand)?.toFixed(2) ||
+															"0"}
+													</td>
+													<td className="px-6 py-3">
+														{parseFloat(item?.current_demand)?.toFixed(2) ||
+															"0"}
+													</td>
+													<td className="px-6 py-3">
+														{parseFloat(item?.coll_amt)?.toFixed(2) || "0"}
 													</td>
 													<td className="px-6 py-3">
 														{parseFloat(item?.outstanding)?.toFixed(2) || "0"}
@@ -676,7 +718,13 @@ function A_DemandReportsMain() {
 											<td colSpan={1}>TOTAL:</td>
 											<td colSpan={8}></td>
 											<td colSpan={1}>{parseFloat(totEmi).toFixed(2)}/-</td>
-											<td colSpan={1}>{parseFloat(totDemand).toFixed(2)}/-</td>
+											<td colSpan={1}>
+												{parseFloat(totPrevDemand).toFixed(2)}/-
+											</td>
+											<td colSpan={1}>
+												{parseFloat(totCurrDemand).toFixed(2)}/-
+											</td>
+											<td colSpan={1}>{parseFloat(totCollAmt).toFixed(2)}/-</td>
 											<td colSpan={1}>{parseFloat(totOut).toFixed(2)}/-</td>
 											<td colSpan={1}></td>
 										</tr>
@@ -749,7 +797,13 @@ function A_DemandReportsMain() {
 												Total EMI
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
-												Demand
+												Previous Demand (Demand + Collection)
+											</th>
+											<th scope="col" className="px-6 py-3 font-semibold ">
+												Current Demand
+											</th>
+											<th scope="col" className="px-6 py-3 font-semibold ">
+												Collection Amount
 											</th>
 											<th scope="col" className="px-6 py-3 font-semibold ">
 												Outstanding
@@ -765,7 +819,9 @@ function A_DemandReportsMain() {
 									<tbody>
 										{reportData?.map((item, i) => {
 											totEmi += item?.total_emi
-											totDemand += item?.previous_demand
+											totPrevDemand += item?.previous_demand
+											totCurrDemand += item?.current_demand
+											totCollAmt += item?.coll_amt
 											totOut += item?.current_principal
 
 											return (
@@ -825,7 +881,15 @@ function A_DemandReportsMain() {
 														{parseFloat(item?.total_emi)?.toFixed(2) || "0"}
 													</td>
 													<td className="px-6 py-3">
-														{parseFloat(item?.demand)?.toFixed(2) || "0"}
+														{parseFloat(item?.previous_demand)?.toFixed(2) ||
+															"0"}
+													</td>
+													<td className="px-6 py-3">
+														{parseFloat(item?.current_demand)?.toFixed(2) ||
+															"0"}
+													</td>
+													<td className="px-6 py-3">
+														{parseFloat(item?.coll_amt)?.toFixed(2) || "0"}
 													</td>
 													<td className="px-6 py-3">
 														{parseFloat(item?.current_principal)?.toFixed(2) ||
@@ -844,7 +908,13 @@ function A_DemandReportsMain() {
 											<td colSpan={1}>TOTAL:</td>
 											<td colSpan={12}></td>
 											<td colSpan={1}>{parseFloat(totEmi).toFixed(2)}/-</td>
-											<td colSpan={1}>{parseFloat(totDemand).toFixed(2)}/-</td>
+											<td colSpan={1}>
+												{parseFloat(totPrevDemand).toFixed(2)}/-
+											</td>
+											<td colSpan={1}>
+												{parseFloat(totCurrDemand).toFixed(2)}/-
+											</td>
+											<td colSpan={1}>{parseFloat(totCollAmt).toFixed(2)}/-</td>
 											<td colSpan={1}>{parseFloat(totOut).toFixed(2)}/-</td>
 											<td colSpan={2}></td>
 										</tr>
@@ -875,7 +945,7 @@ function A_DemandReportsMain() {
 									onClick={() =>
 										printTableRegular(
 											reportData,
-											"Demand Report",
+											"Demand vs. Collection Report",
 											metadataDtls,
 											fromDate,
 											toDate
@@ -898,4 +968,4 @@ function A_DemandReportsMain() {
 	)
 }
 
-export default A_DemandReportsMain
+export default ADemandVsCollectionMain

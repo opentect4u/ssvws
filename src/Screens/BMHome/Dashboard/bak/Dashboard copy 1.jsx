@@ -405,13 +405,13 @@ export default function Dashboard() {
 							}}
 						>
 							<div className="w-full max-h-[160px] overflow-auto">
-								<ul class="max-w-md space-y-1 text-slate-600 list-inside dark:text-slate-400">
+								<ul className="max-w-md space-y-1 text-slate-600 list-inside dark:text-slate-400">
 									{dummyUserList?.map((user, i) => (
 										<>
-											<li class="flex items-center">
+											<li className="flex items-center">
 												{i % 2 === 0 ? (
 													<svg
-														class="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0"
+														className="w-3.5 h-3.5 me-2 text-green-500 dark:text-green-400 shrink-0"
 														aria-hidden="true"
 														xmlns="http://www.w3.org/2000/svg"
 														fill="currentColor"
@@ -421,7 +421,7 @@ export default function Dashboard() {
 													</svg>
 												) : i % 3 === 0 ? (
 													<svg
-														class="w-3.5 h-3.5 me-2 text-slate-500 dark:text-slate-400 shrink-0"
+														className="w-3.5 h-3.5 me-2 text-slate-500 dark:text-slate-400 shrink-0"
 														aria-hidden="true"
 														xmlns="http://www.w3.org/2000/svg"
 														fill="currentColor"
@@ -431,7 +431,7 @@ export default function Dashboard() {
 													</svg>
 												) : (
 													<svg
-														class="w-3.5 h-3.5 me-2 shrink-0"
+														className="w-3.5 h-3.5 me-2 shrink-0"
 														aria-hidden="true"
 														xmlns="http://www.w3.org/2000/svg"
 														viewBox="0 0 20 20"

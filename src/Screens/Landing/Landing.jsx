@@ -12,10 +12,12 @@ import CurrencyRupeeRoundedIcon from "@mui/icons-material/CurrencyRupeeRounded"
 function Landing() {
 	return (
 		<>
-			<div className="flex flex-col items-center justify-center h-screen p-10 bg-slate-900 bg-hero_pattern bg-no-repeat bg-blend-normal bg-center">
-				<img src={logo} className="absolute" width={400} />
+		{/* flex flex-col items-center justify-center  */}
+			<div className="min-w-screen min-h-screen p-10
+			 bg-slate-900 bg-hero_pattern bg-no-repeat bg-blend-normal bg-center">
+				<img src={logo} className="absolute" width={400} alt="SSVWS_Logo"/>
 				<div
-					className="w-full h-full rounded-3xl p-10 shadow-lg
+					className="min-w-screen min-h-[calc(100vh_-_80px)] rounded-3xl p-10 shadow-lg
 							bg-white
 							bg-clip-padding
 							backdrop-filter
@@ -25,25 +27,22 @@ function Landing() {
 							backdrop-contrast-100
 							border-2 border-blue-100 border-opacity-90"
 				>
-					<div className="flex flex-row gap-10 items-center justify-center h-full">
+					<div className="flex flex-col md:flex-row gap-10 items-center justify-center min-h-[calc(100vh_-_160px)]">
 						<Card
 							icon={<AssuredWorkloadRoundedIcon />}
 							title="LOAN"
-							// description="To access your loan site, please click the button below."
 							path={"/loan"}
 						/>
 						<Card
 							icon={<CurrencyRupeeRoundedIcon />}
 							title="PAYROLL"
-							// description="To access your payroll management, please click the button below."
-							path={"https://ssvws.opentech4u.co.in/payroll"}
+							path={"#"}
 							photo={payrollImg}
 						/>
 						<Card
 							icon={<AccountBalanceRoundedIcon />}
 							title="FINANCE"
-							// description="To access your finance management, please click the button below."
-							path={"https://ssvws.opentech4u.co.in/ssvws_fin"}
+							path={"#"}
 							photo={financeImg}
 						/>
 					</div>

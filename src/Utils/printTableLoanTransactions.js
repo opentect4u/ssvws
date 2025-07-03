@@ -36,7 +36,7 @@ export const printTableLoanTransactions = (
       <h2 style="text-align: center">SSVWS</h2>
       <h3 style="text-align: center">${title}</h3>
       
-        <div class="italic center-div">
+        <div className="italic center-div">
           ${
 						searchType2 === "M"
 							? "Memberwise Transaction Report"
@@ -51,7 +51,7 @@ export const printTableLoanTransactions = (
 							: "Err"
 					}
         </div>
-        <div class="italic center-div">
+        <div className="italic center-div">
           ${
 						searchType === "D"
 							? "Disbursement Report"
@@ -60,8 +60,8 @@ export const printTableLoanTransactions = (
 							: "Err"
 					}
         </div>
-        <div class="italic center-div">Branch: ${metadata}</div>
-        <div class="italic center-div">
+        <div className="italic center-div">Branch: ${metadata}</div>
+        <div className="italic center-div">
           Showing results from ${new Date(fromDate)?.toLocaleDateString(
 						"en-GB"
 					)} to ${new Date(toDate)?.toLocaleDateString("en-GB")}

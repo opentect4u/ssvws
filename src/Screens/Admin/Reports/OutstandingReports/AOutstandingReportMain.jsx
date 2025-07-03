@@ -35,7 +35,7 @@ const options = [
 	},
 ]
 
-function A_OutstandingReportMain() {
+function AOutstandingReportMain() {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -320,7 +320,7 @@ function A_OutstandingReportMain() {
 							/>
 						</div>
 					)} */}
-					{/* <div class="my-4 mx-auto">
+					{/* <div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder={
 								searchType === "M" ? `Member Name / ID` : `Group Name / ID`
@@ -380,7 +380,7 @@ function A_OutstandingReportMain() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 
 						</div>
@@ -802,4 +802,4 @@ function A_OutstandingReportMain() {
 	)
 }
 
-export default A_OutstandingReportMain
+export default AOutstandingReportMain

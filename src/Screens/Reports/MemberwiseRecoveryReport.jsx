@@ -124,7 +124,7 @@ function MemberwiseRecoveryReport() {
 							</button>
 						</div> */}
 					</div>
-					<div class="my-4 mx-auto">
+					<div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder="Group Name"
 							type="text"

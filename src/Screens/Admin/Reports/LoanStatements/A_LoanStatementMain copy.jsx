@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from "react"
-import Sidebar from "../../../Components/Sidebar"
+import Sidebar from "../../../../Components/Sidebar"
 import axios from "axios"
-import { url } from "../../../Address/BaseUrl"
-import { Message } from "../../../Components/Message"
+import { url } from "../../../../Address/BaseUrl"
+import { Message } from "../../../../Components/Message"
 import { Spin, Button, Modal, Tooltip, DatePicker } from "antd"
 import {
 	LoadingOutlined,
 	SearchOutlined,
 	PrinterOutlined,
 	FileExcelOutlined,
-	CheckCircleOutlined,
 } from "@ant-design/icons"
-import Radiobtn from "../../../Components/Radiobtn"
-import TDInputTemplateBr from "../../../Components/TDInputTemplateBr"
-import { formatDateToYYYYMMDD } from "../../../Utils/formateDate"
+import Radiobtn from "../../../../Components/Radiobtn"
+import TDInputTemplateBr from "../../../../Components/TDInputTemplateBr"
+import { formatDateToYYYYMMDD } from "../../../../Utils/formateDate"
 
 import { saveAs } from "file-saver"
 import * as XLSX from "xlsx"
-import { printTableLoanStatement } from "../../../Utils/printTableLoanStatement"
+import { printTableLoanStatement } from "../../../../Utils/printTableLoanStatement"
 
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
@@ -31,27 +30,10 @@ const options = [
 		label: "Groupwise",
 		value: "G",
 	},
-    {
-		label: "Schemewise",
-		value: "S",
-	},
-    {
-		label: "Fundwise",
-		value: "F",
-	},
-    {
-		label: "Purposewise",
-		value: "P",
-	},
-    {
-		label: "CO-wise",
-		value: "C",
-	},
 ]
 
-
-function GroupClose() {
-    const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
+function ALoanStatementMain() {
+	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
 	const [openModal, setOpenModal] = useState(false)
@@ -64,6 +46,8 @@ function GroupClose() {
 	const [reportTxnData, setReportTxnData] = useState(() => [])
 	// const [tot_sum, setTotSum] = useState(0)
 	const [search, setSearch] = useState("")
+	const [branch, setBranch] = useState(() => "")
+	const [branches, setBranches] = useState(() => [])
 
 	const [metadataDtls, setMetadataDtls] = useState(() => null)
 
@@ -72,6 +56,25 @@ function GroupClose() {
 		setSearchType(e)
 	}
 
+	const handleFetchBranches = async () => {
+		setLoading(true)
+		await axios
+			.get(`${url}/fetch_all_branch_dt`)
+			.then((res) => {
+				console.log("QQQQQQQQQQQQQQQQ", res?.data)
+				setBranches(res?.data?.msg)
+			})
+			.catch((err) => {
+				console.log("?????????????????????", err)
+			})
+
+		setLoading(false)
+	}
+
+	useEffect(() => {
+		handleFetchBranches()
+	}, [])
+
 	const handleFetchReportMemberwise = async () => {
 		setLoading(true)
 		const creds = {
@@ -79,8 +82,10 @@ function GroupClose() {
 			branch_code: userDetails?.brn_code,
 		}
 
+		console.log("::::::::::::>>>>>>>>>>>>", creds)
+
 		await axios
-			.post(`${url}/loan_statement_memb_dtls`, creds)
+			.post(`${url}/adminreport/loan_statement_memb_dtls_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
@@ -97,11 +102,13 @@ function GroupClose() {
 		setLoading(true)
 		const creds = {
 			grp: search,
-			branch_code: userDetails?.brn_code,
+			// branch_code: userDetails?.brn_code,
 		}
 
+		console.log(">>>>>>>>>>>>::::::::::::", creds)
+
 		await axios
-			.post(`${url}/loan_statement_group_dtls`, creds)
+			.post(`${url}/adminreport/loan_statement_group_dtls_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
@@ -120,10 +127,11 @@ function GroupClose() {
 			from_dt: formatDateToYYYYMMDD(fromDate),
 			to_dt: formatDateToYYYYMMDD(toDate),
 			loan_id: loanId || "",
+			branch_id:userDetails.brn_code
 		}
 
 		await axios
-			.post(`${url}/loan_statement_report`, creds)
+			.post(`${url}/adminreport/loan_statement_report_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS XX======>>>>", res?.data)
 				setReportTxnData(res?.data?.msg)
@@ -145,7 +153,7 @@ function GroupClose() {
 		}
 
 		await axios
-			.post(`${url}/loan_statement_group_report`, creds)
+			.post(`${url}/adminreport/loan_statement_group_report_admin`, creds)
 			.then((res) => {
 				console.log("RESSSSS XX======>>>>", res?.data)
 				setReportTxnData(res?.data?.msg)
@@ -159,18 +167,23 @@ function GroupClose() {
 	}
 
 	// useEffect(() => {
-	// if (searchType === "M" && search.length > 2) {
-	// 	handleFetchReportMemberwise()
-	// } else if (searchType === "G" && search.length > 2) {
-	// 	handleFetchReportGroupwise()
-	// }
+	// 	if (searchType === "M" && search.length > 2) {
+	// 		handleFetchReportMemberwise()
+	// 	} else if (searchType === "G" && search.length > 2) {
+	// 		handleFetchReportGroupwise()
+	// 	}
 	// }, [searchType, search])
 
-	const searchData = () => {
-		if (searchType === "M" && search.length > 2) {
-			handleFetchReportMemberwise()
-		} else if (searchType === "G" && search.length > 2) {
-			handleFetchReportGroupwise()
+	const handleSubmit = async () => {
+		if (!search) {
+			Message("warning", "Fill the necesary details")
+			return
+		}
+
+		if (searchType === "M") {
+			await handleFetchReportMemberwise()
+		} else if (searchType === "G") {
+			await handleFetchReportGroupwise()
 		}
 	}
 
@@ -216,7 +229,7 @@ function GroupClose() {
 				<main className="px-4 pb-5 bg-slate-50 rounded-lg shadow-lg h-auto my-10 mx-32">
 					<div className="flex flex-row gap-3 mt-20  py-3 rounded-xl">
 						<div className="text-3xl text-slate-700 font-bold">
-							GROUP CLOSE REPORT
+							LOAN STATEMENTS
 						</div>
 					</div>
 
@@ -230,9 +243,8 @@ function GroupClose() {
 						/>
 					</div>
 
-					{/* <div className="my-4 mx-auto"> */}
-					<div className="grid grid-cols-3 gap-5 mt-5 items-end">
-						{/* <div>
+					<div className="flex justify-center gap-5 mt-5">
+						<div className="w-full">
 							<TDInputTemplateBr
 								placeholder={
 									searchType === "M" ? `Member Name / ID` : `Group Name / ID`
@@ -246,20 +258,25 @@ function GroupClose() {
 								formControlName={search}
 								mode={1}
 							/>
-						</div> */}
+						</div>
 						{/* <div>
-							<button
-								className={`inline-flex items-center px-4 py-2 mt-0 ml-0 sm:mt-0 text-sm font-small text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full  dark:focus:ring-primary-900`}
-								onClick={() => {
-									searchData()
-								}}
-							>
-								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
-							</button>
+							<TDInputTemplateBr
+								placeholder="Branch..."
+								type="text"
+								label="Branch"
+								name="branch"
+								formControlName={branch}
+								handleChange={(e) => setBranch(e.target.value)}
+								mode={2}
+								data={branches?.map((item, i) => ({
+									code: item?.branch_code,
+									name: item?.branch_name,
+								}))}
+							/>
 						</div> */}
 					</div>
 
-					
+					{reportData.length > 0 && (
 						<div className="grid grid-cols-2 gap-5 mt-5">
 							<div>
 								<TDInputTemplateBr
@@ -299,16 +316,18 @@ function GroupClose() {
 								}}
 							/> */}
 						</div>
-                        <div className="flex justify-center mt-5">
-							<button
-								className={`inline-flex items-center px-4 py-2 mt-0 ml-0 sm:mt-0 text-sm font-small text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full  dark:focus:ring-primary-900`}
-								onClick={() => {
-									searchData()
-								}}
-							>
-								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
-							</button>
-						</div>
+					)}
+
+					<div className="mt-5 flex justify-center">
+						<button
+							className="w-24 h-9 bg-teal-500 hover:bg-green-600 text-white rounded-full"
+							onClick={() => {
+								handleSubmit()
+							}}
+						>
+							Submit
+						</button>
+					</div>
 
 					{/* For memberwise search */}
 
@@ -889,4 +908,4 @@ function GroupClose() {
 	)
 }
 
-export default GroupClose
+export default ALoanStatementMain

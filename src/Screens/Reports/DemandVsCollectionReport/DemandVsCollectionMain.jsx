@@ -858,7 +858,7 @@ function DemandVsCollectionMain() {
 								runProcedureReport()
 							}}
 						>
-							<SearchOutlined /> <span class={`ml-2`}>Process Report</span>
+							<SearchOutlined /> <span className={`ml-2`}>Process Report</span>
 						</button>
 					</div>
 					{searchType === "F" && (

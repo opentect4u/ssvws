@@ -87,11 +87,11 @@ function HomeScreen() {
 	}, [])
 
 	return (
-		<main class="px-4 h-auto my-6">
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+		<main className="px-4 h-auto my-6">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 				<Link
 					to={routePaths.PROJECTS}
-					class="relative cursor-pointer  border-dashed transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 2xl:h-32 flex  items-center"
+					className="relative cursor-pointer  border-dashed transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 2xl:h-32 flex  items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-[#92140C]">
 						<ProjectOutlined className="text-white text-5xl" />
@@ -103,7 +103,7 @@ function HomeScreen() {
 				</Link>
 				<Link
 					to={routePaths.USERS}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-green-700">
 						<UserAddOutlined className="text-white text-5xl" />
@@ -117,7 +117,7 @@ function HomeScreen() {
 				</Link>
 				<Link
 					to={routePaths.VENDORS}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-yellow-500">
 						<InboxOutlined className="text-white text-5xl" />
@@ -131,7 +131,7 @@ function HomeScreen() {
 				</Link>
 				<Link
 					to={routePaths.CLIENTS}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-[#6564DB]">
 						<UserSwitchOutlined className="text-white text-5xl" />
@@ -143,7 +143,7 @@ function HomeScreen() {
 				</Link>
 				{/* <Link
 					to={routePaths.PURCHASEORDER}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-green-700">
 						<FileSearchOutlined className="text-white text-5xl" />
@@ -155,7 +155,7 @@ function HomeScreen() {
 				</Link>
 				<Link
 					to={routePaths.STOCKASSIGNVIEW}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-[#6564DB]">
 						<BarChartOutlined className="text-white text-5xl" />
@@ -169,7 +169,7 @@ function HomeScreen() {
 				</Link>
 				<Link
 					to={routePaths.PROJECTS}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-[#92140C]">
 						<ProjectOutlined className="text-white text-5xl" />
@@ -181,7 +181,7 @@ function HomeScreen() {
 				</Link>
 				<Link
 					to={routePaths.PURCHASEORDER}
-					class="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
+					className="relative cursor-pointer transition ease-in-out hover:-translate-y-1 hover:scale-110 duration-300 border-dashed bg-white rounded-lg shadow-lg border-gray-800 text-white text-5xl dark:border-gray-600 h-24 md:h-24 flex 2xl:h-32 items-center"
 				>
 					<div className="h-full rounded-l-lg w-1/3 flex justify-center items-center bg-yellow-500">
 						<ExceptionOutlined className="text-white text-5xl" />
@@ -195,12 +195,12 @@ function HomeScreen() {
 				</Link> */}
 			</div>
 
-			<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+			<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
 				{/* <div
           initial={{ x: -500 }}
           animate={{ x: 0 }}
           transition={{ delay: 0.5, type: "spring", stiffness: 20 }}
-          class="relative bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 rounded-lg flex justify-center py-5 dark:border-gray-600 h-32 md:h-64 shadow-2xl cursor-pointer"
+          className="relative bg-gradient-to-br from-emerald-600 via-emerald-700 to-emerald-800 rounded-lg flex justify-center py-5 dark:border-gray-600 h-32 md:h-64 shadow-2xl cursor-pointer"
           onClick={() => setVisible(true)}
         >
           <motion.h2
@@ -228,7 +228,7 @@ function HomeScreen() {
             type: "spring",
             stiffness: 20,
           }}
-          class=" rounded-lg bg-transparent col-span-1 dark:border-gray-600 p-4 h-44 md:h-64"
+          className=" rounded-lg bg-transparent col-span-1 dark:border-gray-600 p-4 h-44 md:h-64"
         >
           <div
             initial={{ opacity: 0 }}
@@ -254,7 +254,7 @@ function HomeScreen() {
             </div>
           </div>
         </div>
-        {/* <div class=" flex rounded-lg col-span-2 bg-transparent dark:border-gray-600  h-32 md:h-64">
+        {/* <div className=" flex rounded-lg col-span-2 bg-transparent dark:border-gray-600  h-32 md:h-64">
           <div className="flex flex-col">
             <div
               whileHover={{ scale: 1.1, backgroundColor: "#C05746" }}
@@ -397,7 +397,7 @@ function HomeScreen() {
 					initial={{ opacity: 0, x: -100 }}
 					animate={{ opacity: 1, x: 0 }}
 					transition={{ delay: 1, type: "spring", stiffness: 20 }}
-					class="bg-white rounded-lg shadow-lg dark:border-gray-600 h-32 md:h-64"
+					className="bg-white rounded-lg shadow-lg dark:border-gray-600 h-32 md:h-64"
 				>
 					<Chart
 						type="line"
@@ -410,7 +410,7 @@ function HomeScreen() {
 					initial={{ opacity: 0, x: 600 }}
 					animate={{ opacity: 1, x: 0 }}
 					transition={{ delay: 1, type: "spring", stiffness: 20 }}
-					class="bg-green-700 flex justify-center col-span-1 items-center shadow-lg rounded-lg border-white dark:border-gray-600 h-32 md:h-64"
+					className="bg-green-700 flex justify-center col-span-1 items-center shadow-lg rounded-lg border-white dark:border-gray-600 h-32 md:h-64"
 				>
 					<Progress
 						strokeLinecap="butt"
@@ -419,73 +419,73 @@ function HomeScreen() {
 						percent={75}
 					/>
 				</div>
-				<div class="col-span-2 overflow-x-auto bg-white shadow-md sm:rounded-lg">
-					<table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-						<thead class="text-xs text-white bg-green-700 dark:bg-gray-700 dark:text-gray-400">
+				<div className="col-span-2 overflow-x-auto bg-white shadow-md sm:rounded-lg">
+					<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+						<thead className="text-xs text-white bg-green-700 dark:bg-gray-700 dark:text-gray-400">
 							<tr>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" className="px-6 py-3">
 									Product name
 								</th>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" className="px-6 py-3">
 									Color
 								</th>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" className="px-6 py-3">
 									Category
 								</th>
-								<th scope="col" class="px-6 py-3">
+								<th scope="col" className="px-6 py-3">
 									Price
 								</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+							<tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
 								<th
 									scope="row"
-									class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 								>
 									Apple MacBook Pro 17"
 								</th>
-								<td class="px-6 py-4">Silver</td>
-								<td class="px-6 py-4">Laptop</td>
-								<td class="px-6 py-4">$2999</td>
+								<td className="px-6 py-4">Silver</td>
+								<td className="px-6 py-4">Laptop</td>
+								<td className="px-6 py-4">$2999</td>
 							</tr>
-							<tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+							<tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
 								<th
 									scope="row"
-									class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 								>
 									Microsoft Surface Pro
 								</th>
-								<td class="px-6 py-4">White</td>
-								<td class="px-6 py-4">Laptop PC</td>
-								<td class="px-6 py-4">$1999</td>
+								<td className="px-6 py-4">White</td>
+								<td className="px-6 py-4">Laptop PC</td>
+								<td className="px-6 py-4">$1999</td>
 							</tr>
-							<tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+							<tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
 								<th
 									scope="row"
-									class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 								>
 									Magic Mouse 2
 								</th>
-								<td class="px-6 py-4">Black</td>
-								<td class="px-6 py-4">Accessories</td>
-								<td class="px-6 py-4">$99</td>
+								<td className="px-6 py-4">Black</td>
+								<td className="px-6 py-4">Accessories</td>
+								<td className="px-6 py-4">$99</td>
 							</tr>
-							<tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
+							<tr className="odd:bg-white odd:dark:bg-gray-900 even:bg-slate-50 even:dark:bg-gray-800 border-b dark:border-gray-700">
 								<th
 									scope="row"
-									class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+									className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 								>
 									Google Pixel Phone
 								</th>
-								<td class="px-6 py-4">Gray</td>
-								<td class="px-6 py-4">Phone</td>
-								<td class="px-6 py-4">$799</td>
+								<td className="px-6 py-4">Gray</td>
+								<td className="px-6 py-4">Phone</td>
+								<td className="px-6 py-4">$799</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
-				<div class="col-span-2 overflow-x-auto bg-white shadow-md sm:rounded-lg">
+				<div className="col-span-2 overflow-x-auto bg-white shadow-md sm:rounded-lg">
 					<Chart
 						type="line"
 						className="h-64"
@@ -493,7 +493,7 @@ function HomeScreen() {
 						options={chartOptions}
 					/>
 				</div>
-				<div class="col-span-2 overflow-x-auto bg-white shadow-md sm:rounded-lg">
+				<div className="col-span-2 overflow-x-auto bg-white shadow-md sm:rounded-lg">
 					<Chart
 						type="bar"
 						className="h-64"
@@ -503,18 +503,18 @@ function HomeScreen() {
 				</div>
 			</div>
 
-			<div class="grid grid-cols-2 gap-4 mb-4">
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+			<div className="grid grid-cols-2 gap-4 mb-4">
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
 			</div>
-			<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-96 mb-4"></div>
-			<div class="grid grid-cols-2 gap-4">
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
-				<div class="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+			<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-96 mb-4"></div>
+			<div className="grid grid-cols-2 gap-4">
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
+				<div className="border-2 border-dashed rounded-lg border-white dark:border-gray-600 h-48 md:h-72"></div>
 			</div>
 			<DialogBox
 				visible={visible}

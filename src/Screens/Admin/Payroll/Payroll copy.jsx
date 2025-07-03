@@ -357,53 +357,53 @@ function Payroll() {
 									handleSubmit()
 								}}
 							>
-								<SearchOutlined /> <span class={`ml-2`}>Search</span>
+								<SearchOutlined /> <span className={`ml-2`}>Search</span>
 							</button>
 						</div>
 					</div>
 
 					{employee != "A" && employee && reportData.length > 0 && (
 						<div className="grid grid-cols-3 mt-5 place-items-center">
-							<div class="max-w-sm p-6  col-span-1  bg-white border border-teal-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+							<div className="max-w-sm p-6  col-span-1  bg-white border border-teal-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
 								<a href="#">
-									<p class="mb-3 text-5xl font-light flex justify-center items-center my-2 text-teal-500 dark:text-gray-400">
+									<p className="mb-3 text-5xl font-light flex justify-center items-center my-2 text-teal-500 dark:text-gray-400">
 										{tot_present || 0}
 									</p>
 
-									<h5 class="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
+									<h5 className="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
 										No. of day(s) present
 									</h5>
 								</a>
 							</div>
 
-							<div class="max-w-sm p-6 col-span-1 bg-white border border-pink-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+							<div className="max-w-sm p-6 col-span-1 bg-white border border-pink-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
 								<a href="#">
-									<p class="mb-3 text-5xl font-light flex justify-center items-center my-2 text-pink-500 dark:text-gray-400">
+									<p className="mb-3 text-5xl font-light flex justify-center items-center my-2 text-pink-500 dark:text-gray-400">
 										{tot_hours || 0}
 									</p>
 
-									<h5 class="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
+									<h5 className="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
 										Total hours worked
 									</h5>
 								</a>
 							</div>
 
-							<div class="max-w-sm p-6 col-span-1 bg-white border border-teal-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
+							<div className="max-w-sm p-6 col-span-1 bg-white border border-teal-200 rounded-lg shadow-lg dark:bg-gray-800 dark:border-gray-700">
 								<a href="#">
 									<div className="flex justify-around items-center gap-2">
-										<p class="mb-3 text-5xl font-light flex justify-center items-center my-2 text-teal-500 dark:text-gray-400">
+										<p className="mb-3 text-5xl font-light flex justify-center items-center my-2 text-teal-500 dark:text-gray-400">
 											{tot_late_in || 0}
 										</p>
-										<p class="mb-3 text-5xl font-light flex justify-center items-center my-2 text-teal-500 dark:text-gray-400">
+										<p className="mb-3 text-5xl font-light flex justify-center items-center my-2 text-teal-500 dark:text-gray-400">
 											{tot_early_out || 0}
 										</p>
 									</div>
 
 									<div className="flex justify-around items-center gap-2">
-										<h5 class="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
+										<h5 className="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
 											Late-In(s)
 										</h5>
-										<h5 class="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
+										<h5 className="mb-2 text-2xl font-semibold flex justify-center tracking-tight text-slate-700 dark:text-white">
 											Early-Out(s)
 										</h5>
 									</div>

@@ -34,7 +34,7 @@ const options = [
 	},
 ]
 
-function A_DemandReportsMain() {
+function ADemandReportsMain() {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -208,7 +208,7 @@ function A_DemandReportsMain() {
 						</div> */}
 					</div>
 
-					{/* <div class="my-4 mx-auto">
+					{/* <div className="my-4 mx-auto">
 						<TDInputTemplateBr
 							placeholder={
 								searchType === "M" ? `Member Name / ID` : `Group Name / ID`
@@ -274,7 +274,7 @@ function A_DemandReportsMain() {
 									searchData()
 								}}
 							>
-								<SearchOutlined /> <spann class={`ml-2`}>Search</spann>
+								<SearchOutlined /> <spann className={`ml-2`}>Search</spann>
 							</button>
 						</div>
 					</div>
@@ -470,4 +470,4 @@ function A_DemandReportsMain() {
 	)
 }
 
-export default A_DemandReportsMain
+export default ADemandReportsMain

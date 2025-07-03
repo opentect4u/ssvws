@@ -61,7 +61,7 @@ const ForgotPassMis = () => {
 						) : null}
 						<Link to={"/"}>
 							<a
-								class="mt-1 text-xs flex items-center text-gray-500 dark:text-gray-300"
+								className="mt-1 text-xs flex items-center text-gray-500 dark:text-gray-300"
 								id="file_input_help"
 							>
 								<LeftOutlined className="text-xs" />

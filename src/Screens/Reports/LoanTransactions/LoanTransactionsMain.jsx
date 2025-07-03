@@ -717,7 +717,7 @@ function LoanTransactionsMain() {
 								// 			: selectedCOs.length == 0))
 								// }
 							>
-								<SearchOutlined /> <span class={`ml-2`}>Search</span>
+								<SearchOutlined /> <span className={`ml-2`}>Search</span>
 							</button>
 						</div>
 					</div>
