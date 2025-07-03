@@ -22,8 +22,8 @@ const LoginScreen = () => {
         uat
     } = useContext<any>(AppStore)
 
-    const [username, setUsername] = useState(() => "10128")
-    const [password, setPassword] = useState(() => "SSVWS@2025")
+    const [username, setUsername] = useState(() => "")
+    const [password, setPassword] = useState(() => "")
 
     const requestBluetoothPermissions = async () => {
         if (Platform.OS === 'android') {

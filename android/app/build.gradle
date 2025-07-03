@@ -44,6 +44,13 @@ android {
             signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    def version = variant.versionName
+                    def versionCode = variant.versionCode
+                    outputFileName = "SSVWS-Loan-v${version}-${versionCode}-release.apk" // Set the custom APK name
+                }
+            }
         }
     }
 }
