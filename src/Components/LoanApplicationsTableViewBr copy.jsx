@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 import { routePaths } from "../Assets/Data/Routes"
 import { Link } from "react-router-dom"
 import Tooltip from "@mui/material/Tooltip"
+import { Paginator } from "primereact/paginator"
 import { motion } from "framer-motion"
 import {
 	CheckCircleOutlined,
@@ -18,9 +19,8 @@ import { Toast } from "primereact/toast"
 import { Message } from "@mui/icons-material"
 import axios from "axios"
 import { url } from "../Address/BaseUrl"
-import { Paginator } from 'primereact/paginator';
 
-function LoanRecovApplicationsTableViewBr({
+function LoanApplicationsTableViewBr({
 	loanAppData,
 	loanType,
 	setSearch,
@@ -37,7 +37,7 @@ function LoanRecovApplicationsTableViewBr({
 
 	const [first, setFirst] = useState(0)
 	const [rows, setRows] = useState(10)
-	const [expandedRows, setExpandedRows] = useState(({}))
+	const [expandedRows, setExpandedRows] = useState(null)
 	const toast = useRef(null)
 	const isMounted = useRef(false)
 	const [selectedProducts, setSelectedProducts] = useState(null)
@@ -80,17 +80,13 @@ function LoanRecovApplicationsTableViewBr({
 	// 	setLoading(false)
 	// }
 
-	// const onPageChange = (event) => {
-    //     setFirst(event.first);
-    //     setRows(event.rows);
-    // };
+
 	const fetchLoanGroupMember = async (group_code, loanType) => {
-	if(group_code!=0){
-		console.log(group_code, "res?.data?.msg", {
-			branch_code : userDetails?.brn_code,
-			approval_status : loanType,
-			prov_grp_code : group_code
-		})
+		// console.log(group_code, "res?.data?.msg", {
+		// 	branch_code : userDetails?.brn_code,
+		// 	approval_status : loanType,
+		// 	prov_grp_code : group_code
+		// })
 
 		setLoading(true)
 		await axios
@@ -103,18 +99,17 @@ function LoanRecovApplicationsTableViewBr({
 				if (res?.data?.suc === 1) {
 					setLoading(false)
 					setLoanGroupMember(res?.data?.msg)
-					console.log(res?.data?.msg, "res?.data?.msg", 'sucsess')
+					// console.log(res?.data?.msg, "res?.data?.msg", 'sucsess')
 				} else {
 					Message("error", "No incoming loan applications found.")
 				}
 			})
 			.catch((err) => {
 				Message("error", "Some error occurred while fetching loans!")
-				console.log("ERRR", err)
+				// console.log("ERRR", err)
 			})
 	}
 
-	}
 
 
 
@@ -125,7 +120,7 @@ function LoanRecovApplicationsTableViewBr({
 		if (loanAppData.length > 0) {
 			setLoanAppData(loanAppData)
 		}
-		console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
+		// console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
 		
 	}, [loanAppData,])
 
@@ -148,14 +143,18 @@ function LoanRecovApplicationsTableViewBr({
 	}, [expandedRows])
 
 	const onRowExpand = (event) => {
-		setExpandedRows({})
+		console.log(event)
+		// setExpandedRows(null)
+		// console.log(event.data.group_code, "res?.data?.msg", event?.data)
+		// console.log('itemitemitemitem', 'lll', event.data);
+		// fetchLoanGroupMember(event?.data?.group_code, event?.data?.transaction_date)
 		fetchLoanGroupMember(event?.data?.prov_grp_code, loanType)
 
 		// toast.current.show({severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000});
 	}
 
 	const onRowCollapse = (event) => {
-		// console.log(event.data, "event.data close")
+		console.log(event.data, "event.data close")
 		// toast.current.show({severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000});
 	}
 
@@ -164,11 +163,12 @@ function LoanRecovApplicationsTableViewBr({
 	}
 
 	useEffect(() => {
-		fetchLoanGroupMember(0,0)
-		setExpandedRows({});
-		// console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
+		// fetchLoanGroupMember([])
+		setExpandedRows(null);
+		console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
 		
-	}, [fetchLoanApplicationsDate,])
+	// }, [fetchLoanApplicationsDate])
+}, [])
 
 	const onPageChange = (event) => {
 		setFirst(event.first)
@@ -379,33 +379,15 @@ function LoanRecovApplicationsTableViewBr({
 				)} */}
 
 				{/* <>{JSON.stringify(getloanAppData, null, 2)}</> */}
-				{loanAppData && <DataTable
+				<DataTable
 					value={getloanAppData?.map((item, i) => [{ ...item, id: i }]).flat()}
 					expandedRows={expandedRows}
 					onRowToggle={(e) => {
-						// setExpandedRows(e.data)
-						const newExpanded = e.data;
-						const newKeys = Object.keys(newExpanded);
-						if (newKeys.length === 0) {
-							setExpandedRows({});
-						} else {
-							console.log(newKeys, "newKeys");
-							const clickedKey = newKeys[0];
-							const wasAlreadyExpanded = expandedRows[clickedKey];
-							if (wasAlreadyExpanded) {
-								setExpandedRows({});
-								const restKey = newKeys.filter(key => key != clickedKey);
-								setTimeout(() => {
-									console.log(restKey, "restKey");
-									if(restKey){
-									setExpandedRows({ [restKey]: true });
-									}
-								}, 50);
-							} else {
-								// Expand only the clicked row, collapse all others
-								setExpandedRows({ [clickedKey]: true });
-							}
-						}
+						// console.log(e, "expandedRows");
+						// setExpandedRows(e.data);
+						   const expanded = e.data;
+						   const key = Object.keys(expanded)[0];
+						   setExpandedRows({ [key]: expanded[key] });
 					}}
 					onRowExpand={onRowExpand}
 					onRowCollapse={onRowCollapse}
@@ -457,7 +439,6 @@ function LoanRecovApplicationsTableViewBr({
 
 
 				</DataTable>
-}
 
 			</motion.section>
 
@@ -466,4 +447,4 @@ function LoanRecovApplicationsTableViewBr({
 	)
 }
 
-export default LoanRecovApplicationsTableViewBr
+export default LoanApplicationsTableViewBr

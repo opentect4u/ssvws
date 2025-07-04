@@ -37,7 +37,7 @@ function LoanRecovApplicationsTableViewBr({
 
 	const [first, setFirst] = useState(0)
 	const [rows, setRows] = useState(10)
-	const [expandedRows, setExpandedRows] = useState(({}))
+	const [expandedRows, setExpandedRows] = useState(null)
 	const toast = useRef(null)
 	const isMounted = useRef(false)
 	const [selectedProducts, setSelectedProducts] = useState(null)
@@ -155,7 +155,7 @@ function LoanRecovApplicationsTableViewBr({
 	}
 
 	const onRowCollapse = (event) => {
-		// console.log(event.data, "event.data close")
+		console.log(event.data, "event.data close")
 		// toast.current.show({severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000});
 	}
 
@@ -166,7 +166,7 @@ function LoanRecovApplicationsTableViewBr({
 	useEffect(() => {
 		fetchLoanGroupMember(0,0)
 		setExpandedRows({});
-		// console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
+		console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
 		
 	}, [fetchLoanApplicationsDate,])
 

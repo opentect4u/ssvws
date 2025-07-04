@@ -1,11 +1,11 @@
-import React, { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Dialog } from "primereact/dialog"
 import { useNavigate } from "react-router-dom"
-import { Tabs, Button } from "antd"
+import { Tabs } from "antd"
 import PasswordComp from "./PasswordComp"
 import "../Styles/styles.css"
 import UserProfileUpdateForm from "../Screens/Forms/UserProfileUpdateForm"
-import { Democontext, loadingContext } from "../Context/Democontext"
+import {  loadingContext } from "../Context/Democontext"
 import { routePaths } from "../Assets/Data/Routes"
 
 const DialogBox = ({
@@ -23,7 +23,6 @@ const DialogBox = ({
 	useEffect(() => {
 		setPoNo("")
 	}, [])
-	console.log(data)
 	const onChange = (key) => {
 		console.log(key, "onChange")
 	}
@@ -64,17 +63,17 @@ const DialogBox = ({
 					}
 				>
 					{flag != 2 &&
-					flag != 5 &&
-					flag != 6 &&
-					flag != 7 &&
-					flag != 8 &&
-					flag != 9 &&
-					flag != 10 &&
-					flag != 11
+						flag != 5 &&
+						flag != 6 &&
+						flag != 7 &&
+						flag != 8 &&
+						flag != 9 &&
+						flag != 10 &&
+						flag != 11
 						? "Warning!"
 						: flag != 10
-						? "Information"
-						: "Preview"}
+							? "Information"
+							: "Preview"}
 				</div>
 			}
 			visible={visible}

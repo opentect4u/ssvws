@@ -37,7 +37,7 @@ function LoanApplicationsTableViewBr({
 
 	const [first, setFirst] = useState(0)
 	const [rows, setRows] = useState(10)
-	const [expandedRows, setExpandedRows] = useState(null)
+	const [expandedRows, setExpandedRows] = useState({})
 	const toast = useRef(null)
 	const isMounted = useRef(false)
 	const [selectedProducts, setSelectedProducts] = useState(null)
@@ -82,11 +82,11 @@ function LoanApplicationsTableViewBr({
 
 
 	const fetchLoanGroupMember = async (group_code, loanType) => {
-		console.log(group_code, "res?.data?.msg", {
-			branch_code : userDetails?.brn_code,
-			approval_status : loanType,
-			prov_grp_code : group_code
-		})
+		// console.log(group_code, "res?.data?.msg", {
+		// 	branch_code : userDetails?.brn_code,
+		// 	approval_status : loanType,
+		// 	prov_grp_code : group_code
+		// })
 
 		setLoading(true)
 		await axios
@@ -99,14 +99,14 @@ function LoanApplicationsTableViewBr({
 				if (res?.data?.suc === 1) {
 					setLoading(false)
 					setLoanGroupMember(res?.data?.msg)
-					console.log(res?.data?.msg, "res?.data?.msg", 'sucsess')
+					// console.log(res?.data?.msg, "res?.data?.msg", 'sucsess')
 				} else {
 					Message("error", "No incoming loan applications found.")
 				}
 			})
 			.catch((err) => {
 				Message("error", "Some error occurred while fetching loans!")
-				console.log("ERRR", err)
+				// console.log("ERRR", err)
 			})
 	}
 
@@ -120,11 +120,14 @@ function LoanApplicationsTableViewBr({
 		if (loanAppData.length > 0) {
 			setLoanAppData(loanAppData)
 		}
-		console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
+		// console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
 		
 	}, [loanAppData,])
 
 
+	useEffect(()=>{
+			console.log(expandedRows, 'expandedRows');
+	},[expandedRows])
 
 	
 
@@ -143,31 +146,28 @@ function LoanApplicationsTableViewBr({
 	}, [expandedRows])
 
 	const onRowExpand = (event) => {
-		setExpandedRows(null)
-		console.log(event.data.group_code, "res?.data?.msg", event?.data)
-		// console.log('itemitemitemitem', 'lll', event.data);
-		// fetchLoanGroupMember(event?.data?.group_code, event?.data?.transaction_date)
+		// console.log(event, "event")
+		setExpandedRows({})
 		fetchLoanGroupMember(event?.data?.prov_grp_code, loanType)
-
-		// toast.current.show({severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000});
 	}
 
 	const onRowCollapse = (event) => {
-		console.log(event.data, "event.data close")
+		// console.log(event.data, "event.data close")
 		// toast.current.show({severity: 'success', summary: 'Product Collapsed', detail: event.data.name, life: 3000});
 	}
 
 	const allowExpansion = (rowData) => {
+		// console.log(rowData, 'rowData');
 		return getloanAppData.length > 0
 	}
 
-	useEffect(() => {
-		// fetchLoanGroupMember([])
-		setExpandedRows(null);
-		console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
+// 	useEffect(() => {
+// 		// fetchLoanGroupMember([])
+// 		setExpandedRows(null);
+// 		// console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
 		
-	// }, [fetchLoanApplicationsDate])
-}, [])
+// 	// }, [fetchLoanApplicationsDate])
+// }, [])
 
 	const onPageChange = (event) => {
 		setFirst(event.first)
@@ -176,7 +176,7 @@ function LoanApplicationsTableViewBr({
 
 	const handleSelectionChange = (e) => {
 		// Update the selected products setPaymentDate
-		console.log(e.value, "kkkkkkkkkkkkkkkkkkkk")
+		// console.log(e.value, "kkkkkkkkkkkkkkkkkkkk")
 
 		// Perform any additional logic here, such as enabling a button or triggering another action
 		setSelectedProducts(e.value)
@@ -207,7 +207,7 @@ function LoanApplicationsTableViewBr({
 			// setShowApprov(false)
 			// setDebitAmount(0)
 			// setCachedDateGcode([])
-			console.log("No rows selected")
+			// console.log("No rows selected")
 		}
 	}
 
@@ -251,7 +251,7 @@ function LoanApplicationsTableViewBr({
     body={(rowData) => (
         <button
             onClick={() => {
-                console.log("Selected Item:", rowData);
+                // console.log("Selected Item:", rowData);
                 if (flag === "MIS") {
                     navigate(`/homemis/editgrtform/${rowData?.form_no}`, {
                         state: rowData,
@@ -381,9 +381,33 @@ function LoanApplicationsTableViewBr({
 				<DataTable
 					value={getloanAppData?.map((item, i) => [{ ...item, id: i }]).flat()}
 					expandedRows={expandedRows}
-					onRowToggle={(e) => setExpandedRows(e.data)}
+					onRowToggle={(e) => {
+							const newExpanded = e.data;
+							const newKeys = Object.keys(newExpanded);
+							if (newKeys.length === 0) {
+								setExpandedRows({});
+							} else {
+								console.log(newKeys, "newKeys");
+								const clickedKey = newKeys[0];
+								const wasAlreadyExpanded = expandedRows[clickedKey];
+								if (wasAlreadyExpanded) {
+									setExpandedRows({});
+									const restKey = newKeys.filter(key => key != clickedKey);
+									setTimeout(() => {
+										console.log(restKey, "restKey");
+										if(restKey){
+										setExpandedRows({ [restKey]: true });
+										}
+									}, 50);
+								} else {
+									// Expand only the clicked row, collapse all others
+									setExpandedRows({ [clickedKey]: true });
+								}
+							}
+						 
+					}}
 					onRowExpand={onRowExpand}
-					onRowCollapse={onRowCollapse}
+					// onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}

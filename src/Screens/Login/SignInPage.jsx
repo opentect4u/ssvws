@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { NavLink, useNavigate } from "react-router-dom"
@@ -8,14 +8,13 @@ import { Spin } from "antd"
 import { LoadingOutlined } from "@ant-design/icons"
 import { url } from "../../Address/BaseUrl"
 import { Message } from "../../Components/Message"
-import DialogBox from "../../Components/DialogBox"
 import { generateRandomAlphanumeric } from "../../Utils/generateRandomAlphanumeric"
 import { routePaths } from "../../Assets/Data/Routes"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import Visibility from "@mui/icons-material/Visibility"
 import VisibilityOff from "@mui/icons-material/VisibilityOff"
 import coverPhoto from "../../Assets/Images/ssvws_cover_1.jpg"
-
+const DialogBox = React.lazy(() => import("../../Components/DialogBox"))
 const SignInPage = () => {
 	const navigate = useNavigate()
 	const [loading, setLoading] = useState(false)
@@ -23,29 +22,18 @@ const SignInPage = () => {
 	const [branches, setBranches] = useState([])
 	const [sessionId, setSessionId] = useState("")
 	const [visible, setVisible] = useState(false)
-	const [showPassword, setShowPassword] = useState(false)
+	const [showPassword, setShowPassword] = useState(false);
+
+	// Store controller persistently
+	const abortControllerRef = useRef(null);
+
+	useEffect(()=>{
+		console.log("Loading state changed:", loading)
+	},[loading])
 
 	useEffect(() => {
 		setSessionId(generateRandomAlphanumeric(15))
 	}, [])
-
-	useEffect(() => {
-		if (userTypeId !== 0) {
-			setLoading(true)
-			axios
-				.get(`${url}/admin/fetch_branch`)
-				.then((res) => {
-					setBranches(
-						res.data.msg.map((item) => ({
-							code: item.branch_code,
-							name: `${item.branch_name} (${item.branch_code})`,
-						}))
-					)
-				})
-				.catch(console.error)
-				.finally(() => setLoading(false))
-		}
-	}, [userTypeId])
 
 	const formik = useFormik({
 		initialValues: { user_id: "", password: "", brnch: "" },
@@ -64,8 +52,8 @@ const SignInPage = () => {
 		validateOnMount: true,
 		onSubmit: async (values) => {
 			setLoading(true)
-			console.log(values)
-			console.log(userTypeId == 4, formik.values.brnch != "")
+			// console.log(values)
+			// console.log(userTypeId == 4, formik.values.brnch != "")
 			const creds = {
 				emp_id: values?.user_id,
 				password: values?.password,
@@ -73,84 +61,112 @@ const SignInPage = () => {
 				flag: "W",
 				session_id: sessionId,
 			}
-			if (
-				(userTypeId == 4 || userTypeId == 10 || userTypeId == 11) &&
-				formik.values.brnch != ""
-			) {
-				await axios
-					.post(`${url}/login_web`, creds)
-					.then((res) => {
-						if (res?.data?.suc === 0) {
-							Message("error", res?.data?.msg)
-							setVisible(true)
+			// if (
+			// 	(userTypeId == 4 || userTypeId == 10 || userTypeId == 11) &&
+			// 	formik.values.brnch != ""
+			// ) {
+			// 	await axios
+			// 		.post(`${url}/login_web`, creds)
+			// 		.then((res) => {
+			// 			if (res?.data?.suc === 0) {
+			// 				Message("error", res?.data?.msg)
+			// 				setVisible(true)
 
-							return
-						}
-						var userDtls = res?.data?.user_dtls
-						userDtls["brn_code"] =
-							userTypeId == 4 || userTypeId == 11 || userTypeId == 10
-								? formik.values.brnch
-								: res?.data?.user_dtls?.brn_code
-						userDtls["branch_name"] =
-							userTypeId == 4 || userTypeId == 11 || userTypeId == 10
-								? branches.filter((item) => item.code == formik.values.brnch)[0]
-									?.name
-								: res?.data?.user_dtls?.branch_name
-						if (res?.data?.suc === 1) {
-							localStorage.setItem("session_id", sessionId)
-							localStorage.setItem("server_token", res?.data?.token)
-							localStorage.setItem("refresh_token", res?.data?.refresh_token)
+			// 				return
+			// 			}
+			// 			var userDtls = res?.data?.user_dtls
+			// 			userDtls["brn_code"] =
+			// 				userTypeId == 4 || userTypeId == 11 || userTypeId == 10
+			// 					? formik.values.brnch
+			// 					: res?.data?.user_dtls?.brn_code
+			// 			userDtls["branch_name"] =
+			// 				userTypeId == 4 || userTypeId == 11 || userTypeId == 10
+			// 					? branches.filter((item) => item.code == formik.values.brnch)[0]
+			// 						?.name
+			// 					: res?.data?.user_dtls?.branch_name
+			// 			if (res?.data?.suc === 1) {
+			// 				localStorage.setItem("session_id", sessionId)
+			// 				localStorage.setItem("server_token", res?.data?.token)
+			// 				localStorage.setItem("refresh_token", res?.data?.refresh_token)
 
-							localStorage.setItem("user_details", JSON.stringify(userDtls))
-							navigate(routePaths.BM_HOME)
-						} else {
-							Message("error", "No user found!")
-						}
-					})
-					.catch((err) => {
-						console.log("PPPPPPPPP", err)
-						Message("error", "Some error on server while logging in...")
-					})
-			} else if (userTypeId != 4 && userTypeId != 10 && userTypeId != 11) {
-				await axios
-					.post(`${url}/login_web`, creds)
-					.then((res) => {
-						if (res?.data?.suc === 0) {
-							Message("error", res?.data?.msg)
-							setVisible(true)
-							return
-						}
+			// 				localStorage.setItem("user_details", JSON.stringify(userDtls))
+			// 				navigate(routePaths.BM_HOME)
+			// 			} else {
+			// 				Message("error", "No user found!")
+			// 			}
+			// 		})
+			// 		.catch((err) => {
+			// 			Message("error", "Some error on server while logging in...")
+			// 		})
+			// } else if (userTypeId != 4 && userTypeId != 10 && userTypeId != 11) {
+				
+			// 	await axios
+			// 		.post(`${url}/login_web`, creds)
+			// 		.then((res) => {
+			// 			if (res?.data?.suc === 0) {
+			// 				Message("error", res?.data?.msg)
+			// 				setVisible(true)
+			// 				return
+			// 			}
 
-						var userDtls = res?.data?.user_dtls
-						userDtls["brn_code"] =
-							userTypeId == 4 || userTypeId == 11 || userTypeId == 10
-								? formik.values.brnch
-								: res?.data?.user_dtls?.brn_code
-						userDtls["branch_name"] =
-							userTypeId == 4 || userTypeId == 11 || userTypeId == 10
-								? branches.filter((item) => item.code == formik.values.brnch)[0]
-									?.name
-								: res?.data?.user_dtls?.branch_name
-						if (res?.data?.suc === 1) {
-							localStorage.setItem("session_id", sessionId)
-							localStorage.setItem("server_token", res?.data?.token)
-							localStorage.setItem("refresh_token", res?.data?.refresh_token)
+			// 			var userDtls = res?.data?.user_dtls
+			// 			userDtls["brn_code"] =
+			// 				userTypeId == 4 || userTypeId == 11 || userTypeId == 10
+			// 					? formik.values.brnch
+			// 					: res?.data?.user_dtls?.brn_code
+			// 			userDtls["branch_name"] =
+			// 				userTypeId == 4 || userTypeId == 11 || userTypeId == 10
+			// 					? branches.filter((item) => item.code == formik.values.brnch)[0]
+			// 						?.name
+			// 					: res?.data?.user_dtls?.branch_name
+			// 			if (res?.data?.suc === 1) {
+			// 				localStorage.setItem("session_id", sessionId)
+			// 				localStorage.setItem("server_token", res?.data?.token)
+			// 				localStorage.setItem("refresh_token", res?.data?.refresh_token)
 
-							localStorage.setItem("user_details", JSON.stringify(userDtls))
+			// 				localStorage.setItem("user_details", JSON.stringify(userDtls))
 
-							navigate(routePaths.BM_HOME)
-						} else {
-							Message("error", "No user found!")
-						}
-					})
-					.catch((err) => {
-						console.log("PPPPPPPPP", err)
-						Message("error", "Some error on server while logging in...")
-					})
-			}
+			// 				navigate(routePaths.BM_HOME)
+			// 			} else {
+			// 				Message("error", "No user found!")
+			// 			}
+			// 		})
+			// 		.catch((err) => {
+			// 			Message("error", "Some error on server while logging in...")
+			// 		})
+			// }
+			handleSignIn(creds, "login_web")
+
 			setLoading(false)
 		},
 	})
+
+	const handleSignIn = async (creds,api_name) =>{
+			await axios
+			.post(`${url}/${api_name}`, creds)
+			.then((res) => {
+				if (res?.data?.suc === 0) {
+					Message("error", res?.data?.msg)
+					setVisible(true)
+					return
+				}
+				var userDtls = res?.data?.user_dtls
+				userDtls["brn_code"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 ? formik.values.brnch : res?.data?.user_dtls?.brn_code
+				userDtls["branch_name"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 ? branches.filter((item) => item.code == formik.values.brnch)[0]?.name : res?.data?.user_dtls?.branch_name
+				if (res?.data?.suc === 1) {
+					localStorage.setItem("session_id", sessionId)
+					localStorage.setItem("server_token", res?.data?.token)
+					localStorage.setItem("refresh_token", res?.data?.refresh_token)
+					localStorage.setItem("user_details", JSON.stringify(userDtls))
+					navigate(routePaths.BM_HOME)
+				} else {
+					Message("error", "No user found!")
+				}
+			})
+			.catch((err) => {
+				Message("error", "Some error on server while logging in...")
+			})
+	}
 
 	const forceClearSession = async () => {
 		const creds = {
@@ -170,12 +186,16 @@ const SignInPage = () => {
 
 	const handleUserBlur = async (e) => {
 		formik.handleBlur(e)
-		if(e.target.value){
+		if (e.target.value) {
+			// if (abortControllerRef.current) {
+			// 		abortControllerRef.current.abort();
+			// }
+			// const controller = new AbortController();
+			// abortControllerRef.current = controller; ,{ signal: controller.signal }
 			setLoading(true)
 			try {
 				const res = await axios.post(`${url}/fetch_emp_type`, {emp_id: e.target.value})
 				const id = res.data.msg[0]?.id || 0;
-				console.log(id);
 				setUserTypeId(id)
 				if ([10, 11].includes(id)) {
 					const brnRes = await axios.post(`${url}/fetch_brn_assign`, {
@@ -193,13 +213,41 @@ const SignInPage = () => {
 						Message("error", "No branch assigned to this user!")
 					}
 				}
+				else if(id == 4){
+					// If user id is 4 (Super Admin), fetch all branches
+					axios
+					.get(`${url}/admin/fetch_branch`)
+					.then((res) => {
+						if (res.data.suc === 1){
+								setBranches(
+								res.data.msg.map((item) => ({
+									code: item.branch_code,
+									name: `${item.branch_name} (${item.branch_code})`,
+								}))
+							)
+						}
+						else {
+							setBranches([])
+							Message("error", "No branch available!")
+						}
+					})
+					.catch(console.error)
+				}
 			} catch (err) {
-				console.error(err)
+				console.error(err);
+				if (axios.isCancel(err)) {
+					console.log('Request was cancelled');
+				} else if (err.name === 'CanceledError') {
+					console.log('Request was aborted (AbortController)');
+				} else {
+					console.error('Error fetching user type:', err);
+				}
 			} finally {
-				setLoading(false)
+				setLoading(false);
+				// abortControllerRef.current = null; // Clear the controller reference
 			}
 		}
-		else{
+		else {
 			setUserTypeId(0);
 			setBranches([]);
 			formik.setFieldValue("brnch", "");
@@ -278,7 +326,7 @@ const SignInPage = () => {
 						</h1>
 					</div>
 
-					<form onSubmit={formik.handleSubmit} className="space-y-6">
+					<form onSubmit={formik.handleSubmit} className="space-y-6" autoComplete="off">
 						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 							<div>
 								<label
@@ -377,7 +425,12 @@ const SignInPage = () => {
 							<button
 								type="submit"
 								disabled={!formik.isValid || loading}
-								className="w-full px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-800 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+								className="w-full px-6 py-3 bg-pink-600 text-white rounded-lg
+								 hover:bg-pink-800 transition-colors focus:outline-none focus:ring-2
+								  focus:ring-blue-500 focus:ring-offset-2 cursor-pointer
+								  disabled:opacity-50 disabled:cursor-not-allowed
+								  disabled:hover:bg-pink-600 disabled:transition-none
+								  "
 							>
 								Sign In
 							</button>
