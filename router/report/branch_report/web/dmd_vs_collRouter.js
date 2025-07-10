@@ -501,7 +501,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
      var select = ` 
         DATE_FORMAT(demand_date, '%M %Y') AS demand_date,
   CONCAT(STR_TO_DATE('${first_create_date}', '%Y-%m-%d'), ' to ', STR_TO_DATE('${create_date}', '%Y-%m-%d')) AS "collec between",
-  branch_code, branch_name,loan_id,member_code,client_name,
+  branch_code, branch_name,loan_id,member_code,client_name,client_mobile,
   group_code, group_name,
   co_id, emp_name,
   disb_dt,disb_amt, curr_roi, loan_period, period_mode,recovery_day,
@@ -510,7 +510,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
 FROM (
   SELECT 
     a.demand_date,a.branch_code,c.branch_name,
-    a.loan_id,a.member_code,f.client_name,
+    a.loan_id,a.member_code,f.client_name,f.client_mobile,
     a.group_code, d.group_name, d.co_id, e.emp_name,
     b.disb_dt,b.prn_disb_amt AS disb_amt,
     b.curr_roi, b.period AS loan_period, b.period_mode,
@@ -544,7 +544,7 @@ FROM (
   
   SELECT 
     a.demand_date,a.branch_code, c.branch_name,
-    a.loan_id,a.member_code,f.client_name,
+    a.loan_id,a.member_code,f.client_name,f.client_mobile,
     a.group_code, d.group_name, d.co_id, e.emp_name,
     b.disb_dt, 0 AS disb_amt,
     b.curr_roi, b.period AS loan_period, b.period_mode,
