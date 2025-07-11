@@ -16,6 +16,7 @@ const DynamicTailwindTable = ({
 	indexing = false,
 	bordered = true,
 }) => {
+	console.log('DYDYDY' + data);
 	const [currentPage, setCurrentPage] = useState(1)
 
 	const isDataEmpty = !data || data.length === 0
@@ -57,7 +58,7 @@ const DynamicTailwindTable = ({
 	)
 
 	const visibleIndices = useMemo(
-		() => currentData.map((_, i) => (currentPage - 1) * pageSize + i),
+		() => currentData?.map((_, i) => (currentPage - 1) * pageSize + i),
 		[currentData, currentPage, pageSize]
 	)
 
@@ -147,7 +148,7 @@ const DynamicTailwindTable = ({
 					</thead>
 
 					<tbody>
-						{currentData.map((row, rowIndex) => {
+						{currentData?.map((row, rowIndex) => {
 							const globalIndex = (currentPage - 1) * pageSize + rowIndex
 							const isChecked = selectedRowIndices.includes(globalIndex)
 

@@ -160,6 +160,7 @@ const memberwiseDemandVsCollectionHeader = {
 	loan_id: "Loan ID",
 	member_code: "Member Code",
 	client_name: "Client Name",
+	client_mobile: "Client Mobile",
 	group_code: "Group Code",
 	group_name: "Group Name",
 	co_id: "CO ID",

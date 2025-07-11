@@ -545,7 +545,7 @@ function OverdueReport() {
 
 	useEffect(() => {
 		setReportData([])
-		setSelectedOptions([])
+		// setSelectedOptions([])
 		// setMetadataDtls(null)
 		if (searchType2 === "F") {
 			getFunds()

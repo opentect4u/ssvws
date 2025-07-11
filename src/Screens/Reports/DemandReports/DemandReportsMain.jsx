@@ -518,7 +518,7 @@ function DemandReportsMain() {
 	useEffect(() => {
 		setFetchedReportDate("")
 		setReportData([])
-		setSelectedOptions([])
+		// setSelectedOptions([])
 		setSelectedCOs([])
 		setFromDay("")
 		setToDay("")

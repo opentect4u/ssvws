@@ -263,7 +263,7 @@ function OutstaningReportMain() {
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 		const coCodes = selectedCOs?.map((item, i) => item?.value)
 		const allCos = cos?.map((item, i) => item?.co_id)
-
+		console.log('coCodes -- ' + coCodes);
 		const creds = {
 			supply_date: formatDateToYYYYMMDD(fromDate),
 			branch_code:
@@ -273,7 +273,7 @@ function OutstaningReportMain() {
 					? selectedCO === "AC"
 						? allCos
 						: [selectedCO]
-					: coCodes,
+					: coCodes || [],
 		}
 
 		await axios

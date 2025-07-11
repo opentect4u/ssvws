@@ -519,7 +519,7 @@ function DemandVsCollectionMain() {
 	useEffect(() => {
 		setFetchedReportDate("")
 		setReportData([])
-		setSelectedOptions([])
+		// setSelectedOptions([])
 		setSelectedCOs([])
 		if (searchType === "F") {
 			getFunds()
@@ -1125,7 +1125,7 @@ function DemandVsCollectionMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[12, 19, 20, 21, 22]}
+								columnTotal={[13, 20, 21, 22, 23]}
 								dateTimeExceptionCols={[11, 16, 17, 18, 19, 20]}
 								// colRemove={[16]}
 								headersMap={memberwiseDemandVsCollectionHeader}
