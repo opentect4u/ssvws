@@ -122,9 +122,9 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
     }
 
     useEffect(() => {
-        if (location?.latitude && location.longitude && approvalStatus === "A") {
-            fetchGeoLocaltionAddress()
-        }
+        // if (location?.latitude && location.longitude && approvalStatus === "A") {
+        //     fetchGeoLocaltionAddress()
+        // }
     }, [location])
 
     const requestBluetoothPermissions = async () => {

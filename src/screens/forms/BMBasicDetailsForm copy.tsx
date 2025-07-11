@@ -109,8 +109,8 @@ const BMBasicDetailsForm = forwardRef(({
         }
     }, [isFocused, error])
 
-    // console.log("LOcAtion", location)
-    // console.log("LOcAtion ERRR", error)
+    console.log("LOcAtion", location)
+    console.log("LOcAtion ERRR", error)
 
     const fetchGeoLocaltionAddress = async () => {
         console.log("REVERSE GEO ENCODING API CALLING...")
@@ -251,7 +251,7 @@ const BMBasicDetailsForm = forwardRef(({
     }
 
     useEffect(() => {
-        // handleFetchGroupNames()
+        handleFetchGroupNames()
         handleFetchReligions()
         handleFetchCastes()
         handleFetchEducations()
@@ -351,6 +351,7 @@ const BMBasicDetailsForm = forwardRef(({
 
     const fetchBasicDetails = async () => {
         setLoading(true)
+
         const creds = {
             branch_code: branchCode,
             form_no: formNumber,
@@ -440,9 +441,8 @@ const BMBasicDetailsForm = forwardRef(({
             bm_gps_address: geolocationFetchedAddress,
             modified_by: loginStore?.emp_id,
         }
-        console.log("handleUpdateBasicDetails", creds, "handleUpdateBasicDetails")
         await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, creds).then(res => {
-            // console.log("QQQQQQQQQQQQQQQ", res?.data)
+            console.log("QQQQQQQQQQQQQQQ", res?.data)
             ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
             onSubmit()
         }).catch(err => {
@@ -452,95 +452,75 @@ const BMBasicDetailsForm = forwardRef(({
 
     const handleSubmitBasicDetails = async () => {
         setLoading(true)
-        if(approvalStatus === "U"){
-            await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
-            .then(res => {
-                    submitBasicDetails(res?.data?.results[0]?.formatted_address);
-            }).catch(err =>{
-                console.log("Error fetching geolocation address", err?.message);
-                setLoading(false);
-            })
+        const creds = {
+            member_code: readonlyMemberId || 0,
+            branch_code: loginStore?.brn_code,
+            prov_grp_code: formData?.groupCode || "",
+            gender: formData.clientGender,
+            client_name: formData.clientName,
+            client_mobile: formData.clientMobile,
+            email_id: formData.clientEmail,
+            gurd_name: formData.guardianName,
+            husband_name: formData.husbandName,
+            voter_id: formData.voterId || "",
+            nominee_name: formData.nomineeName || "",
+            gurd_mobile: formData.guardianMobile,
+            client_addr: formData.clientAddress,
+            pin_no: formData.clientPin,
+            aadhar_no: formData.aadhaarNumber,
+            pan_no: formData.panNumber,
+            religion: formData.religion,
+            other_religion: formData.otherReligion,
+            caste: formData.caste,
+            other_caste: formData.otherCaste,
+            education: formData.education,
+            other_education: formData.otherEducation,
+            dob: formattedDob,
+            grt_date: formattedGrtDate,
+            co_lat_val: location?.latitude,
+            co_long_val: location?.longitude,
+            co_gps_address: geolocationFetchedAddress,
+            created_by: loginStore?.emp_id,
         }
-        else{
-             submitBasicDetails(geolocationFetchedAddress);
-        }
-    }
 
-    const submitBasicDetails = (addr:string | null | undefined = '') =>{
-            try{
-                const creds = {
-                    member_code: readonlyMemberId || 0,
-                    branch_code: loginStore?.brn_code,
-                    prov_grp_code: formData?.groupCode || "",
-                    gender: formData.clientGender,
-                    client_name: formData.clientName,
-                    client_mobile: formData.clientMobile,
-                    email_id: formData.clientEmail,
-                    gurd_name: formData.guardianName,
-                    husband_name: formData.husbandName,
-                    voter_id: formData.voterId || "",
-                    nominee_name: formData.nomineeName || "",
-                    gurd_mobile: formData.guardianMobile,
-                    client_addr: formData.clientAddress,
-                    pin_no: formData.clientPin,
-                    aadhar_no: formData.aadhaarNumber,
-                    pan_no: formData.panNumber,
-                    religion: formData.religion,
-                    other_religion: formData.otherReligion,
-                    caste: formData.caste,
-                    other_caste: formData.otherCaste,
-                    education: formData.education,
-                    other_education: formData.otherEducation,
-                    dob: formattedDob,
-                    grt_date: formattedGrtDate,
-                    co_lat_val: location?.latitude,
-                    co_long_val: location?.longitude,
-                    co_gps_address: addr,
-                    created_by: loginStore?.emp_id,
-                }; 
-                console.log('Submitting basic details ',  creds)
-                axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, creds).then(res => {
-                    Alert.alert("Success", `Basic Details Saved!\nMember Code: ${res?.data?.member_code}`)
-                        setFormData({
-                            clientName: "",
-                            clientEmail: "",
-                            clientGender: "",
-                            clientMobile: "",
-                            guardianName: "",
-                            husbandName: "",
-                            nomineeName: "",
-                            guardianMobile: "",
-                            clientAddress: "",
-                            clientPin: "",
-                            aadhaarNumber: "",
-                            panNumber: "",
-                            voterId: "",
-                            religion: "",
-                            otherReligion: "",
-                            caste: "",
-                            otherCaste: "",
-                            education: "",
-                            otherEducation: "",
-                            groupCode: "",
-                            groupCodeName: "",
-                            dob: new Date(),
-                            grtDate: new Date(),
-                        })
-                    setMemberCodeShowHide(false)
-                    onSubmit()
-                    // setResponseMemberCode(res?.data?.member_code)
-                }).catch(err => {
-                    ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
-                    console.log("SAVE_BASIC_DETAILS ERRRRR", err);
-                    // setLoading(false);
-                }).finally(() => {
-                    setLoading(false);
-                });    
-            }
-            catch(err){
-                console.log("Error in submitBasicDetails", err);   
-                setLoading(false);
-            }
+        console.log("YYYYYYYYYYY", creds, "YYYYYYYYYYY")
+
+        await axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, creds).then(res => {
+            console.log("-----------", res?.data)
+            Alert.alert("Success", `Basic Details Saved!\nMember Code: ${res?.data?.member_code}`)
+            setFormData({
+                clientName: "",
+                clientEmail: "",
+                clientGender: "",
+                clientMobile: "",
+                guardianName: "",
+                husbandName: "",
+                nomineeName: "",
+                guardianMobile: "",
+                clientAddress: "",
+                clientPin: "",
+                aadhaarNumber: "",
+                panNumber: "",
+                voterId: "",
+                religion: "",
+                otherReligion: "",
+                caste: "",
+                otherCaste: "",
+                education: "",
+                otherEducation: "",
+                groupCode: "",
+                groupCodeName: "",
+                dob: new Date(),
+                grtDate: new Date(),
+            })
+            setMemberCodeShowHide(false)
+            onSubmit()
+            // setResponseMemberCode(res?.data?.member_code)
+        }).catch(err => {
+            ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
+            console.log("SAVE_BASIC_DETAILS ERRRRR", err)
+        })
+        setLoading(false)
     }
 
     const handleResetForm = () => {
@@ -621,15 +601,13 @@ const BMBasicDetailsForm = forwardRef(({
     //     }
     // }, [onSubmitRef]);
 
-    // console.log("~~~~~~~~~~~~~~~~~", branchCode, loginStore?.brn_code)
+    console.log("~~~~~~~~~~~~~~~~~", branchCode, loginStore?.brn_code)
     // console.log("FORM DATA ============>>>", branchCode, formData)
 
 
     // Compute the disabled condition exactly as used for the UPDATE button.
-    // const updateDisabled =
-    //     loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || !geolocationFetchedAddress || disableCondition(approvalStatus, branchCode);
-
-     const updateDisabled = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || disableCondition(approvalStatus, branchCode);
+    const updateDisabled =
+        loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || !geolocationFetchedAddress || disableCondition(approvalStatus, branchCode);
 
     // Inform parent about the current disabled state.
     useEffect(() => {
@@ -670,14 +648,10 @@ const BMBasicDetailsForm = forwardRef(({
                 }}>
                     {/* <Divider /> */}
 
-                    {/* Location Field Visible */}
-                    
-                    {/* <InputPaper label={approvalStatus === "U" && geolocationFetchedAddress ? `Geo Location Address` : (approvalStatus === "A" || approvalStatus === "S") ? "Geo Location Address" : `Fetching GPS Address...`} multiline leftIcon='google-maps' value={geolocationFetchedAddress || ""} onChangeText={(txt: any) => setGeolocationFetchedAddress(txt)} disabled customStyle={{
+                    <InputPaper label={approvalStatus === "U" && geolocationFetchedAddress ? `Geo Location Address` : (approvalStatus === "A" || approvalStatus === "S") ? "Geo Location Address" : `Fetching GPS Address...`} multiline leftIcon='google-maps' value={geolocationFetchedAddress || ""} onChangeText={(txt: any) => setGeolocationFetchedAddress(txt)} disabled customStyle={{
                         backgroundColor: theme.colors.background,
                         minHeight: 95,
-                    }} /> */}
-
-                    {/* END */}
+                    }} />
 
                     {memberCodeShowHide && <InputPaper label="Member Code" maxLength={18} leftIcon='numeric' keyboardType="numeric" value={readonlyMemberId} onChangeText={(txt: any) => setReadonlyMemberId(txt)} disabled customStyle={{
                         backgroundColor: theme.colors.background,

@@ -59,7 +59,6 @@ const HomeScreen = () => {
     const [clockedInDateTime, setClockedInDateTime] = useState(() => "")
     const [clockedInFetchedAddress, setClockedInFetchedAddress] = useState(() => "")
     const [clockInStatus, setClockInStatus] = useState<string>(() => "")
-    const [checkIsAttandanceStatusPending,setAttanadanceStatusPending] = useState<boolean>(() => true)
 
     useEffect(() => {
         fetchCurrentVersion()
@@ -98,9 +97,9 @@ const HomeScreen = () => {
         }
     }, [isFocused, error])
 
-    // useEffect(()=>{
-    //         console.log('geolocationFetchedAddress' + geolocationFetchedAddress)
-    // },[geolocationFetchedAddress])
+    useEffect(()=>{
+            console.log('geolocationFetchedAddress' + geolocationFetchedAddress)
+    },[geolocationFetchedAddress])
 
     // console.log("LOcAtion", location)
     // console.log("LOcAtion ERRR", error)
@@ -172,126 +171,80 @@ const HomeScreen = () => {
     }, [])
 
     const handleClockIn = async () => {
-        setAttanadanceStatusPending(true);
-        const check = {emp_id: loginStore?.emp_id,}
-        await axios.post(`${ADDRESSES.FETCH_EMP_LOGGED_DTLS}`, check).then((res_dtls) => {
-            console.log("CLOCK IN DTLS", res_dtls?.data)
-            if (res_dtls?.data?.fetch_emp_logged_dt?.msg[0]?.clock_status !== "O") {
-                axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
-                .then(res => {
-                        const creds = {
-                            emp_id: loginStore?.emp_id,
-                            in_date_time: formattedDateTime(currentTime),
-                            in_lat: location?.latitude,
-                            in_long: location?.longitude,
-                            in_addr: res?.data?.results[0]?.formatted_address,
-                            created_by: loginStore?.emp_id
-                        }
-                        axios.post(`${ADDRESSES.CLOCK_IN}`, creds).then(res => {
-                            console.log("CLOCK IN RES", res?.data)
-                            setIsClockedIn(!isClockedIn)
-                        }).catch(err => {
-                            console.log("CLOCK IN ERR", err)
-                        }).finally(() => {
-                            setAttanadanceStatusPending(false);
-                        })
-                }).catch(err =>{
-                         setAttanadanceStatusPending(false);
-                         Alert.alert("WARNING", `Unable to fetch location. Please try agian after some time`, [
-                            { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
-                        ])
-                })
-            }
-            else {
-                setAttanadanceStatusPending(false);
-                Alert.alert("Clock In", `${res_dtls?.data?.msg}`, [
-                    { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
-                ])
-            }
-        }).catch(err => { 
-            console.log("CLOCK IN ERR", err);
-            setAttanadanceStatusPending(false);
-        })
+        console.log(`KLIKKK ${formattedDateTime(currentTime)}`)
+        const check = {
+            emp_id: loginStore?.emp_id,
+
+        }
+        // await axios.post(`${ADDRESSES.FETCH_EMP_LOGGED_DTLS}`, check).then(res_dtls => {
+        //     console.log("CLOCK IN DTLS", res_dtls?.data)
+        //     if (res_dtls?.data?.fetch_emp_logged_dt?.msg[0]?.clock_status !== "O") {
+        //         const creds = {
+        //             emp_id: loginStore?.emp_id,
+        //             in_date_time: formattedDateTime(currentTime),
+        //             in_lat: location?.latitude,
+        //             in_long: location?.longitude,
+        //             in_addr: geolocationFetchedAddress,
+        //             created_by: loginStore?.emp_id
+        //         }
+        //         axios.post(`${ADDRESSES.CLOCK_IN}`, creds).then(res => {
+        //             console.log("CLOCK IN RES", res?.data)
+        //             setIsClockedIn(!isClockedIn)
+        //         }).catch(err => {
+        //             console.log("CLOCK IN ERR", err)
+        //         })
+        //     }
+        //     else {
+        //         Alert.alert("Clock In", `${res_dtls?.data?.msg}`, [
+        //             { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
+        //         ])
+        //     }
+        // }).catch(err => { console.log("CLOCK IN ERR", err) })
 
     }
 
-    /***** OLD Version (DONE By SOUMYADEEP)***/
-    // const handleClockOut = async () => {
-    //     const creds = {
-    //         emp_id: loginStore?.emp_id,
-    //         in_date_time: formattedDateTime(new Date(clockedInDateTime)),
-    //         out_date_time: formattedDateTime(currentTime),
-    //         out_lat: location?.latitude,
-    //         out_long: location?.longitude,
-    //         out_addr: geolocationFetchedAddress,
-    //         modified_by: loginStore?.emp_id
-    //     }
-    //     await axios.post(`${ADDRESSES.CLOCK_OUT}`, creds).then(res => {
-    //         console.log("CLOCK OUT RES", res?.data)
-    //         setIsClockedIn(!isClockedIn)
-    //     }).catch(err => {
-    //         console.log("CLOCK OUT ERR", err)
-    //     })
-    // }
-    /***** END */
-
-    /**** NEW VERSION (DONE BY SUMAN MITRA) */
     const handleClockOut = async () => {
-    setAttanadanceStatusPending(true);
-    await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
-    .then(res => {
-            const creds = {
+        // {
+        //     "emp_id" : "",
+        // "in_date_time":""
+        //     "out_date_time" : "",
+        //     "out_lat" : "",
+        //     "out_long" : "",
+        //     "out_addr" : "",
+        //     "modified_by" : ""
+        // }
+        const creds = {
             emp_id: loginStore?.emp_id,
             in_date_time: formattedDateTime(new Date(clockedInDateTime)),
             out_date_time: formattedDateTime(currentTime),
             out_lat: location?.latitude,
             out_long: location?.longitude,
-            out_addr: res?.data?.results[0]?.formatted_address,
+            out_addr: geolocationFetchedAddress,
             modified_by: loginStore?.emp_id
-            }
-            axios.post(`${ADDRESSES.CLOCK_OUT}`, creds).then(res => {
-                // console.log("CLOCK OUT RES", res?.data)
-                setIsClockedIn(!isClockedIn);
-                // setAttanadanceStatusPending(false);
-            }).catch(err => {
-                // setAttanadanceStatusPending(false);
-                Alert.alert("WARNING", `Unable to process your request right now. Please try agian after some time`, [
-                    { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
-                ])
-            }).finally(() => {
-                setAttanadanceStatusPending(false);
-            })
-    }).catch(err =>{
-            setAttanadanceStatusPending(false);
-            Alert.alert("WARNING", `Unable to fetch location. Please try agian after some time`, [
-                { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
-            ])
-    })
-        
+        }
+        await axios.post(`${ADDRESSES.CLOCK_OUT}`, creds).then(res => {
+            console.log("CLOCK OUT RES", res?.data)
+            setIsClockedIn(!isClockedIn)
+        }).catch(err => {
+            console.log("CLOCK OUT ERR", err)
+        })
     }
-    /*** END */
 
     const fetchClockedInDateTime = async () => {
         const creds = {
             emp_id: loginStore?.emp_id,
         }
         await axios.post(`${ADDRESSES.CLOCKED_IN_DATE_TIME}`, creds).then(res => {
-            // console.log("CLOCK IN RES", res?.data)
-            setAttanadanceStatusPending(false);
-            // console.log(res?.data?.msg?.length)
             if (res?.data?.msg?.length === 0) {
                 setIsClockedIn(false)
                 return
             }
             console.log("CLOCK IN RES================", res?.data)
-            // console.log(formattedDateTime(res?.data?.msg[0]?.in_date_time));
-            console.log("asasdads == ++ === " + formattedDateTime(new Date(res?.data?.msg[0]?.in_date_time)))
             setClockedInDateTime(res?.data?.msg[0]?.in_date_time)
             setClockedInFetchedAddress(res?.data?.msg[0]?.in_addr)
-            setClockInStatus(res?.data?.msg[0]?.clock_status);
+            setClockInStatus(res?.data?.msg[0]?.clock_status)
         }).catch(err => {
-            console.log("CLOCK IN ERR", err);
-            setAttanadanceStatusPending(false);
+            console.log("CLOCK IN ERR", err)
         })
     }
 
@@ -467,7 +420,7 @@ const HomeScreen = () => {
                             icon={"clock-outline"}
                             onPress={
                                 () => {
-                                    // !geolocationFetchedAddress && fetchGeoLocaltionAddress()
+                                    !geolocationFetchedAddress && fetchGeoLocaltionAddress()
                                     Alert.alert("Clock In", `Are you sure you want to Clock In?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
                                         { "text": "Cancel", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" },
                                         { "text": "CLOCK IN", "onPress": async () => await handleClockIn() }
@@ -483,9 +436,8 @@ const HomeScreen = () => {
                                 borderBottomLeftRadius: 15,
                                 padding: 5,
                             }}
-                            loading={checkIsAttandanceStatusPending}
-                            disabled={checkIsAttandanceStatusPending}>
-                                {!checkIsAttandanceStatusPending && "Clock In"}
+                            disabled={!geolocationFetchedAddress}>
+                            {!geolocationFetchedAddress ? "Fetching Address..." : "Clock In"}
                             </ButtonPaper>
 
                         {/* <ButtonPaper
@@ -516,7 +468,7 @@ const HomeScreen = () => {
                             padding: 15,
                             gap: 10,
                         }}>
-                            {/* <ButtonPaper
+                            <ButtonPaper
                                 icon={"clock-out"}
                                 onPress={
                                     () => Alert.alert("Clock Out", `Are you sure you want to Clock Out?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
@@ -532,27 +484,7 @@ const HomeScreen = () => {
                                     borderTopRightRadius: 15,
                                     borderBottomLeftRadius: 15,
                                 }}
-                                disabled={!geolocationFetchedAddress}>Clock Out</ButtonPaper> */}
-
-                                <ButtonPaper
-                                icon={"clock-out"}
-                                onPress={
-                                    () => Alert.alert("Clock Out", `Are you sure you want to Clock Out?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
-                                        { "text": "Cancel", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" },
-                                        { "text": "CLOCK OUT", "onPress": async () => await handleClockOut() }
-                                    ])
-                                }
-                                mode='elevated'
-                                buttonColor={MD2Colors.pink600}
-                                textColor={MD2Colors.pink50}
-                                style={{
-                                    borderRadius: 0,
-                                    borderTopRightRadius: 15,
-                                    borderBottomLeftRadius: 15,
-                                }}
-                                loading={checkIsAttandanceStatusPending}
-                                 disabled={checkIsAttandanceStatusPending}
-                                >{!checkIsAttandanceStatusPending && "Clock Out"}</ButtonPaper>
+                                disabled={!geolocationFetchedAddress}>Clock Out</ButtonPaper>
                             <View style={{
                                 // dashed border outside inside text
                                 borderWidth: 1,
