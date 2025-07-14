@@ -51,13 +51,14 @@ userRouter.post("/fetch_brn_assign", async (req, res) => {
 
 userRouter.get("/fetch_app_version", async (req, res) => {
   var data = req.body;
-
+//  console.log('fetch_app_version');
+ 
   var select = "version",
     table_name = "md_app_version",
     whr = null,
     order = null;
   var app_data = await db_Select(select, table_name, whr, order)
-
+  // console.log(app_data,'app_data');
   res.send(app_data)
 });
 
@@ -177,10 +178,11 @@ userRouter.post('/login_app', async (req, res) => {
 
   try {
       let requiredVersion = null;
-      var session_id = 0;
-      
+      var session_id = '0';
+        // console.log(data.flag,session_id,'hyhy');
       // Fetch app version if flag is 'A'
       if (data.flag === 'A' && session_id) {
+        
           let app_data = await db_Select("version", "md_app_version", null, null);
           console.log(app_data,'poii');
           
