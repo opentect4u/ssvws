@@ -142,6 +142,24 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
             whr = `group_code = '${data.group_code}'`,
             flag = 1;
             var update_td_loan_brn_dtl = await db_Insert(table_name,fields,values,whr,flag); 
+
+            var member_sql = `SELECT member_code FROM td_grt_basic WHERE prov_grp_code = '${data.group_code}'`;
+            var member_code_result = await db_Select("member_code", "td_grt_basic", `prov_grp_code = '${data.group_code}'`, null);
+            const memberCodes = member_code_result.msg.map(row => `'${row.member_code}'`).join(",");
+            
+            var table_name = "md_member",
+            fields = `branch_code = '${data.to_brn}',modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            values = null,
+            whr = `member_code IN (${memberCodes})`,
+            flag = 1;
+            var update_md_member_brn_dtl = await db_Insert(table_name,fields,values,whr,flag);
+
+            var table_name = "td_grt_basic",
+            fields = `branch_code = '${data.to_brn}',modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            values = null,
+            whr = `prov_grp_code = '${data.group_code}'`,
+            flag = 1;
+            var update_td_grt_basic_brn_dtl = await db_Insert(table_name,fields,values,whr,flag); 
         }
 
         res.send(approve_grp_co_dtls);
