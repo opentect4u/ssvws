@@ -130,11 +130,18 @@ transferCoRouter.post("/approve_co_trans_dt", async (req, res) => {
 
         if(approve_grp_co_dtls.suc > 0 && approve_grp_co_dtls.msg.length > 0){
             var table_name = "md_group",
-            fields = `co_id = '${data.to_co}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `branch_code = '${data.to_brn}',co_id = '${data.to_co}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `group_code = '${data.group_code}'`,
             flag = 1;
             var update_grp_co_dtl = await db_Insert(table_name,fields,values,whr,flag);  
+
+            var table_name = "td_loan",
+            fields = `branch_code = '${data.to_brn}',modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+            values = null,
+            whr = `group_code = '${data.group_code}'`,
+            flag = 1;
+            var update_td_loan_brn_dtl = await db_Insert(table_name,fields,values,whr,flag); 
         }
 
         res.send(approve_grp_co_dtls);
