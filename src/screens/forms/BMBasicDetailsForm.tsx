@@ -390,7 +390,7 @@ const BMBasicDetailsForm = forwardRef(({
                     // group_name: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
                 })
                 setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
-
+                console.log("APPROVAL STATUS ===", approvalStatus);
                 if (approvalStatus !== "U") {
                     setGeolocationFetchedAddress(res?.data?.msg[0]?.bm_gps_address || "")
                 }
@@ -407,6 +407,8 @@ const BMBasicDetailsForm = forwardRef(({
     }, [])
 
     const handleUpdateBasicDetails = async () => {
+        // console.log("handleUpdateBasicDetails called - " + geolocationFetchedAddress);
+
         const creds = {
             form_no: formNumber,
             branch_code: branchCode,
@@ -440,14 +442,38 @@ const BMBasicDetailsForm = forwardRef(({
             bm_gps_address: geolocationFetchedAddress,
             modified_by: loginStore?.emp_id,
         }
-        console.log("handleUpdateBasicDetails", creds, "handleUpdateBasicDetails")
-        await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, creds).then(res => {
-            // console.log("QQQQQQQQQQQQQQQ", res?.data)
-            ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
-            onSubmit()
-        }).catch(err => {
-            ToastAndroid.show("Some error while updating basic details!", ToastAndroid.SHORT)
-        })
+        // console.log("handleUpdateBasicDetails", creds, "handleUpdateBasicDetails")
+        // return;
+        if(approvalStatus === "U"){
+                // setLoading(true);
+               await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+                .then((res) => {
+                        console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0])
+                        const payload = {
+                            ...creds,
+                            bm_gps_address: res?.data?.results[0]?.formatted_address
+                        }
+                        console.log(payload);
+                        axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, payload).then(res => {
+                            ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
+                            onSubmit()
+                        }).catch(err => {
+                            ToastAndroid.show("Some error while updating basic details!", ToastAndroid.SHORT)
+                        })
+                }).catch(err =>{
+                    ToastAndroid.show("Error Fetching Location!!", ToastAndroid.SHORT)
+                })  
+        }
+        else{
+            await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, creds).then(res => {
+                // console.log("QQQQQQQQQQQQQQQ", res?.data)
+                ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
+                onSubmit()
+            }).catch(err => {
+                ToastAndroid.show("Some error while updating basic details!", ToastAndroid.SHORT)
+            })
+        }
+
     }
 
     const handleSubmitBasicDetails = async () => {

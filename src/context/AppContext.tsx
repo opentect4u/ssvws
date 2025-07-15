@@ -52,20 +52,20 @@ const AppContext = ({ children }) => {
 
     const fetchCurrentVersion = async () => {
         // console.log('SASD')
-        await axios.get(ADDRESSES.FETCH_APP_VERSION).then(res => {
-            console.log("FETCH VERSION===RES", res?.data)
-            if (+res?.data?.msg[0]?.version !== +appVersion) {
-                setDialogVisible(true);
-            }
+        // await axios.get(ADDRESSES.FETCH_APP_VERSION).then(res => {
+        //     console.log("FETCH VERSION===RES", res?.data)
+        //     if (+res?.data?.msg[0]?.version !== +appVersion) {
+        //         setDialogVisible(true);
+        //     }
 
-        }).catch(err => {
-            console.log("VERSION FETCH ERR", err)
-        })
+        // }).catch(err => {
+        //     console.log("VERSION FETCH ERR", err)
+        // })
     }
 
-    useEffect(() => {
-        fetchCurrentVersion()
-    }, [])
+    // useEffect(() => {
+    //     fetchCurrentVersion()
+    // }, [])
 
     // const isLoggedIn = () => {
     //     if (loginStorage.getAllKeys().length === 0) {
