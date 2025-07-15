@@ -36,13 +36,13 @@ function Landing() {
 						<Card
 							icon={<CurrencyRupeeRoundedIcon />}
 							title="PAYROLL"
-							path={"#"}
+							path={"https://ssvws.opentech4u.co.in/payroll"}
 							photo={payrollImg}
 						/>
 						<Card
 							icon={<AccountBalanceRoundedIcon />}
 							title="FINANCE"
-							path={"#"}
+							path={"https://ssvws.opentech4u.co.in/ssvws_fin"}
 							photo={financeImg}
 						/>
 					</div>

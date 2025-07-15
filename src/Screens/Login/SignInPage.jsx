@@ -296,7 +296,8 @@ const SignInPage = () => {
 							</a> */}
 							<NavLink
 								className="text-gray-600 hover:text-blue-600"
-								to={'#'}
+								to={'https://ssvws.opentech4u.co.in/payroll'}
+								target="_blank"
 							>
 								Payroll
 							</NavLink>
@@ -310,7 +311,8 @@ const SignInPage = () => {
 							</a> */}
 							<NavLink
 								className="text-gray-600 hover:text-blue-600"
-								to={'#'}
+								to={'https://ssvws.opentech4u.co.in/ssvws_fin'}
+								target="_blank"
 							>
 								Finance
 							</NavLink>
