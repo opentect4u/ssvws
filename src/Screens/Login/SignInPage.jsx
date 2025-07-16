@@ -44,7 +44,7 @@ const SignInPage = () => {
 				"branch-required",
 				"Branch is required",
 				(value) => {
-					if ([4, 10, 11].includes(userTypeId)) return Boolean(value)
+					if ([2,4, 10, 11].includes(userTypeId)) return Boolean(value)
 					return true
 				}
 			),
@@ -151,8 +151,8 @@ const SignInPage = () => {
 					return
 				}
 				var userDtls = res?.data?.user_dtls
-				userDtls["brn_code"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 ? formik.values.brnch : res?.data?.user_dtls?.brn_code
-				userDtls["branch_name"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 ? branches.filter((item) => item.code == formik.values.brnch)[0]?.name : res?.data?.user_dtls?.branch_name
+				userDtls["brn_code"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 || userTypeId == 2 ? formik.values.brnch : res?.data?.user_dtls?.brn_code
+				userDtls["branch_name"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 || userTypeId == 2 ? branches.filter((item) => item.code == formik.values.brnch)[0]?.name : res?.data?.user_dtls?.branch_name
 				if (res?.data?.suc === 1) {
 					localStorage.setItem("session_id", sessionId)
 					localStorage.setItem("server_token", res?.data?.token)
@@ -197,7 +197,7 @@ const SignInPage = () => {
 				const res = await axios.post(`${url}/fetch_emp_type`, {emp_id: e.target.value})
 				const id = res.data.msg[0]?.id || 0;
 				setUserTypeId(id)
-				if ([10, 11].includes(id)) {
+				if ([2,10, 11].includes(id)) {
 					const brnRes = await axios.post(`${url}/fetch_brn_assign`, {
 						emp_id: e.target.value,
 					})
@@ -390,7 +390,7 @@ const SignInPage = () => {
 							</div>
 						</div>
 
-						{[4, 10, 11].includes(userTypeId) && (
+						{[2, 4, 10, 11].includes(userTypeId) && (
 							<div>
 								<label
 									htmlFor="brnch"
