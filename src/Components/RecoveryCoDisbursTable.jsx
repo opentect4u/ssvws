@@ -349,9 +349,9 @@ function RecoveryCoDisbursTable({
 							`${rowData.group_name} - ${rowData.loan_id} (${rowData.client_name})`
 						}
 					></Column>
-					{/* <Column field="tot_emi" header="Total EMI"></Column> */}
 					<Column header="Amount" body={(rowData) => `${rowData.amt}`}></Column>
 					{/* <Column field="outstanding" header="Outstanding"></Column> */}
+					<Column field="total_emi" header="Total EMI"></Column>
 					<Column field="created_by" header="Created By"></Column>
 					{/* <Column headerStyle={{ width: '4rem'}}></Column> */}
 				</DataTable>
