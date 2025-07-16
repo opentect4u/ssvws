@@ -507,6 +507,14 @@ function RecoveryCoDisbursTable({
 					></Column>
 
 					<Column
+						field="total_emi"
+						header="Total EMI"
+						body={(rowData) =>
+							`${!rowData?.total_emi ? "--" : rowData?.total_emi}`
+						}
+					></Column>
+
+					<Column
 						header="Collected By"
 						body={(rowData) =>
 							`${rowData?.created_by == null ? "--" : rowData?.created_by}`

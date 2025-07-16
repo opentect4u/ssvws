@@ -406,11 +406,14 @@ function RecoveryMemberDisbursTable({
 							</span>
 						}
 					></Column>
-					{/* <Column
-						field="tot_emi"
+					<Column
+						field="total_emi"
 						header="Total EMI"
-						footer={<span style={{ fontWeight: "bold" }}>{TotalEMI}</span>}
-					></Column> */}
+						body={(rowData) =>
+							`${!rowData?.total_emi  ? "--" : rowData?.total_emi}`
+						}
+						// footer={<span style={{ fontWeight: "bold" }}>{TotalEMI}</span>}
+					></Column>
 					{/* <Column
 						field="outstanding"
 						header="Outstanding"

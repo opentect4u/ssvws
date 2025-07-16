@@ -204,9 +204,11 @@ function CreateUserForm() {
 						"warning",
 						res?.data?.details +
 							" Name: " +
-							res?.data?.msg[0]?.emp_name +
-							" Branch: " +
-							res?.data?.msg[0]?.branch_id
+							res?.data?.msg[0]?.emp_name 
+							// +
+							// " Branch: " +
+							// // res?.data?.msg[0]?.branch_id
+							// res?.data?.msg[0]?.brn_code
 					)
 					onReset()
 					return
@@ -227,13 +229,16 @@ function CreateUserForm() {
 	}
 
 	const handleSaveForm = async () => {
+		console.log("masterUserData", masterUserData);
 		setLoading(true)
 		if (
 			((masterUserData.user_type == 3 ||
+				masterUserData.user_type == 2 ||
 				masterUserData.user_type == 10 ||
 				masterUserData.user_type == 11) &&
 				selectedBranches) ||
 			(masterUserData.user_type != 3 &&
+				masterUserData.user_type != 2 &&
 				masterUserData.user_type != 10 &&
 				masterUserData.user_type != 11)
 		) {
@@ -245,12 +250,15 @@ function CreateUserForm() {
 				designation: masterUserData.designation || "Y",
 				created_by: userDetails?.emp_id || "",
 				modified_by: userDetails?.emp_id || "",
-				assigndtls:
+				assigndtls:(masterUserData.user_type == 3 ||
+				masterUserData.user_type == 2 ||
+				masterUserData.user_type == 10 ||
+				masterUserData.user_type == 11) ?
 					selectedBranches?.map((item) => {
 						return { branch_assign_id: item.code }
-					}) || [],
+					}) || [] : [],
 			}
-
+			console.log("credsForSave", credsForSave)
 			await axios
 				.post(`${url}/save_user_dt`, credsForSave)
 				.then((res) => {
@@ -274,10 +282,12 @@ function CreateUserForm() {
 		console.log(masterUserData)
 		if (
 			((masterUserData.user_type == 3 ||
+				masterUserData.user_type == 2 ||
 				masterUserData.user_type == 10 ||
 				masterUserData.user_type == 11) &&
 				selectedBranches) ||
 			(masterUserData.user_type != 3 &&
+				masterUserData.user_type != 2 &&
 				masterUserData.user_type != 10 &&
 				masterUserData.user_type != 11)
 		) {
@@ -293,11 +303,15 @@ function CreateUserForm() {
 				created_by: userDetails?.emp_id || "",
 				remarks: masterUserData.remarks || "",
 				deactivated_by: userDetails?.emp_id || "",
-				assigndtls: selectedBranches.map((item) => {
-					return { branch_assign_id: item.code }
-				}),
+				assigndtls:(masterUserData.user_type == 3 ||
+				masterUserData.user_type == 2 ||
+				masterUserData.user_type == 10 ||
+				masterUserData.user_type == 11) ?
+					selectedBranches?.map((item) => {
+						return { branch_assign_id: item.code }
+					}) || [] : [],
 			}
-
+			console.log("creds", creds)
 			await axios
 				.post(`${url}/edit_user_dt`, creds)
 				.then((res) => {
@@ -471,6 +485,7 @@ function CreateUserForm() {
 								</div>
 
 								{(masterUserData.user_type == 3 ||
+									masterUserData.user_type == 2 ||
 									masterUserData.user_type == 10 ||
 									masterUserData.user_type == 11) && (
 									<div className="sm:col-span-6">

@@ -95,6 +95,10 @@ function DisbursmentForm() {
 		b_applicationDate: "",
 		b_appliedAmt: "",
 	})
+    
+	useEffect(()=>{
+			console.log("personalDetailsData", personalDetailsData)
+	},[personalDetailsData])
 
 	const handleChangePersonalDetails = (e) => {
 		const { name, value } = e.target
@@ -232,7 +236,7 @@ function DisbursmentForm() {
 				// b_clientName: personalDetails?.client_name || "",
 				b_groupName: personalDetails?.group_name || "",
 				b_acc1: personalDetails?.acc_no1 || "",
-				b_acc2: personalDetails?.acc_no2 || "",
+				b_acc2: personalDetails?.acc_no2 && personalDetails?.acc_no2 != '0' ?  personalDetails?.acc_no2 : "",
 				// b_formNo: personalDetails?.form_no || "",
 				// b_grtApproveDate: personalDetails?.grt_approve_date || "",
 				// b_branch: personalDetails?.branch_name || "",
@@ -297,6 +301,7 @@ function DisbursmentForm() {
 	}, [])
 	const handleDisbursementChange = (index, event) => {
 		// alert()
+		console.log(membersForDisb)
 		let dt = [...membersForDisb]
 		dt[index][event.target.name] = +event.target.value
 		setMembersForDisb(dt)
@@ -395,6 +400,19 @@ function DisbursmentForm() {
 		getPurposeOfLoan()
 	}, [])
 
+	// useEffect(() => {
+	// 		console.log("disbursementDetailsData", (!disbursementDetailsData.b_fund ||
+	// 										!disbursementDetailsData.b_mode ||
+	// 										!disbursementDetailsData.b_period ||
+	// 										!disbursementDetailsData.b_dayOfRecovery ||
+	// 										!transactionDetailsData.b_bankName ||
+	// 										!transactionDetailsData.b_remarks ||
+	// 										!personalDetailsData.b_purpose ||
+	// 										!transactionDetailsData.b_tnxDate ||
+	// 										!disbursementDetailsData.b_period ||
+	// 										!disbursementDetailsData.b_scheme))
+	// },[disbursementDetailsData,transactionDetailsData,personalDetailsData])
+
 	const getSubPurposeOfLoan = async (purpId) => {
 		setLoading(true)
 		await axios
@@ -432,8 +450,9 @@ function DisbursmentForm() {
 				membersForDisb.length = 0
 				var count = 0
 				for (let i of res?.data?.msg[0]?.mem_dt_grp) {
-					count += i.applied_amt
-					setTotDisb((prev) => prev + i.applied_amt)
+					count += Number(i.applied_amt)
+					console.log(count, "count")
+					setTotDisb((prev) => prev + (i.applied_amt ? Number(i.applied_amt) : 0))
 					membersForDisb.push({
 						applied_amt: i.applied_amt,
 						grt_form_no: i.form_no,
@@ -449,7 +468,7 @@ function DisbursmentForm() {
 				console.log(members)
 				console.log(
 					"fetchSearchedApplication ===========>>>>>>>>>>>>>>>>>",
-					res?.data
+					 res?.data?.msg[0]
 				)
 				setPersonalDetailsData({
 					// b_memCode: res?.data?.msg[0]?.member_code,
@@ -460,7 +479,7 @@ function DisbursmentForm() {
 					b_bank_name: res?.data?.msg[0]?.bank_name,
 					b_bank_branch: res?.data?.msg[0]?.branch_name,
 					b_acc1: res?.data?.msg[0]?.acc_no1,
-					b_acc2: res?.data?.msg[0]?.acc_no2,
+					b_acc2: res?.data?.msg[0]?.acc_no2 && res?.data?.msg[0]?.acc_no2 != '0' ? res?.data?.msg[0]?.acc_no2 : '',
 					b_memCode: res?.data?.msg[0]?.mem_dt_grp,
 					// b_formNo: res?.data?.msg[0]?.form_no,
 					// b_grtApproveDate: res?.data?.msg[0]?.grt_approve_date,
@@ -613,9 +632,11 @@ function DisbursmentForm() {
 	}
 
 	const onSubmit = (e) => {
-		e.preventDefault()
-
-		setVisible(true)
+		e.preventDefault();
+		console.log(personalDetailsData.b_acc2)
+		if(personalDetailsData.b_acc2){
+			setVisible(true)
+		}
 	}
 
 	const onReset = async () => {
@@ -646,7 +667,7 @@ function DisbursmentForm() {
 	}, [disbursementDetailsData.b_mode])
 
 	const handleSubmitDisbursementForm = async () => {
-		setLoading(true)
+		// setLoading(true)
 		console.log(personalDetails)
 		// debugger
 		const creds = {
@@ -687,7 +708,7 @@ function DisbursmentForm() {
 
 			///////////////////////////////////////////////////////
 		}
-
+		// console.log(creds, "creds")
 		// period_mode_cus = creds.period_mode;
 		// setPeriod_mode_valid(creds.period_mode)
 
@@ -852,7 +873,7 @@ function DisbursmentForm() {
 											disabled
 										/>
 									</div>
-									<div>
+									<div >
 										<TDInputTemplateBr
 											placeholder="Bank Name"
 											type="text"
@@ -889,7 +910,15 @@ function DisbursmentForm() {
 											disabled
 										/>
 									</div>
-									<div>
+									<div className="relative">
+										{!personalDetailsData.b_acc2 && (
+												<span
+													style={{ color: "red" }}
+													className="left-28 ant-tag ant-tag-error ant-tag-borderless text-[12.6px] my-0 css-dev-only-do-not-override-1tse2sn absolute"
+												>
+													Required!
+												</span>
+											)}
 										<TDInputTemplateBr
 											placeholder="Loan Account"
 											type="text"
@@ -1989,7 +2018,7 @@ function DisbursmentForm() {
 											!personalDetailsData.b_purpose ||
 											!transactionDetailsData.b_tnxDate ||
 											!disbursementDetailsData.b_period ||
-											!disbursementDetailsData.b_scheme ? (
+											!disbursementDetailsData.b_scheme ? (	
 												<BtnComp mode="A" onReset={onReset} />
 											) : (
 												<BtnComp mode="B" onReset={onReset} disabled />
