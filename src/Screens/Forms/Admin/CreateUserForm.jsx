@@ -219,7 +219,12 @@ function CreateUserForm() {
 					emp_name: res?.data?.msg[0]?.emp_name,
 					branch: res?.data?.msg[0]?.branch_id,
 					designation: res?.data?.msg[0]?.designation,
-				}))
+				}));
+				
+				populateDataInBranchesSelectDropdown(masterUserData.user_type, res?.data?.msg[0]?.branch_id);
+
+				// setSelectedBranches(prev => [...prev,{ code: res?.data?.msg[0]?.branch_id, name: res?.data?.msg[0]?.branch_name }]);
+				// 
 			})
 			.catch((err) => {
 				Message("error", "Some error while fetching user details.")
@@ -376,6 +381,31 @@ function CreateUserForm() {
 		// message.error('Click on No');
 	}
 
+	const populateDataInBranchesSelectDropdown = (userType,pre_selected_branch_code) => {
+		try{
+			if(userType == 2){
+				try{
+					const pre_selectedbranc = branches?.find((item) => item.code == pre_selected_branch_code);
+					if(pre_selectedbranc){
+						setSelectedBranches([pre_selectedbranc]);
+					}
+				}
+				catch(err){
+					console.log("Error in setting branches", err);
+					setSelectedBranches([]);
+				}
+			}
+			else{
+				setSelectedBranches([]);
+			}
+		}
+		catch(err){
+			console.log("Error in populating branches", err);
+			setSelectedBranches([]);
+		}
+	}
+	
+
 	return (
 		<>
 			<Spin
@@ -452,7 +482,11 @@ function CreateUserForm() {
 										label="User Type"
 										name="user_type"
 										formControlName={masterUserData.user_type}
-										handleChange={handleChangeForm}
+										handleChange={(e)=>{
+											handleChangeForm(e);
+											// If Branch Admin is selected, log the branches
+											populateDataInBranchesSelectDropdown(e.target.value, masterUserData.branch);
+										}}
 										mode={2}
 										// data={[
 										// 	{ code: "1", name: "Credit Officer" },
