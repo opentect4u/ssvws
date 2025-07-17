@@ -1,5 +1,5 @@
 import { StyleSheet, View } from 'react-native'
-import { IconButton, MD2Colors, Text } from 'react-native-paper'
+import { IconButton, MD2Colors, Text, Tooltip } from 'react-native-paper'
 import React, { useContext } from 'react'
 import { usePaperColorScheme } from "../theme/theme"
 import { CommonActions, useNavigation } from '@react-navigation/native'
@@ -57,7 +57,7 @@ const HeadingComp = ({
                     // textAlign: "left",
                 }}>{subtitle}</Text>
             </View>
-            {footerText && <Text variant="bodySmall" style={{
+            {footerText &&<Text variant="bodySmall"  style={{
                 color: theme.colors.onPrimary,
                 textAlign: "center",
                 bottom: -17,

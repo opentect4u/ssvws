@@ -68,5 +68,6 @@ export const ADDRESSES = {
     FETCH_EMP_ATTENDANCE_DETAILS: `${BASE_URL}/fetch_emp_atten_dtls`,
     CHECK_CAN_TXN: `${BASE_URL}/checking_date_before_transaction`,
 
-    DUPLICATE_PRINT: `${BASE_URL}/fetch_group_dtls_fr_duplicate_print`
+    DUPLICATE_PRINT: `${BASE_URL}/fetch_group_dtls_fr_duplicate_print`,
+    FTECH_BRN_ASSIGN: `${BASE_URL}/fetch_brn_assign`,
 }

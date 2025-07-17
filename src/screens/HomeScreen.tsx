@@ -6,7 +6,7 @@ import { usePaperColorScheme } from '../theme/theme'
 import { CommonActions, useIsFocused, useNavigation } from '@react-navigation/native'
 import HeadingComp from "../components/HeadingComp"
 import ListCard from "../components/ListCard"
-import { loginStorage } from '../storage/appStorage'
+import { branchStorage, loginStorage } from '../storage/appStorage'
 import normalize, { SCREEN_HEIGHT, SCREEN_WIDTH } from 'react-native-normalize'
 import DatePicker from 'react-native-date-picker'
 import axios from 'axios'
@@ -33,9 +33,9 @@ const HomeScreen = () => {
         fetchCurrentVersion,
     } = useContext<any>(AppStore)
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
-
+    const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
     // const [isLocationMocked, setIsLocationMocked] = useState(() => false)
-
+    const [branchAssign, setBranchAssign] = useState(loginStore?.branch_name ?? "")
     const { location, error } = useGeoLocation()
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
 
@@ -65,6 +65,24 @@ const HomeScreen = () => {
         fetchCurrentVersion()
     }, [navigation])
 
+    useEffect(() => {
+        convertArrayIntoList();
+    },[])
+    const convertArrayIntoList = () => {
+        try{
+              if(loginStore?.id === 2){
+                const arr = branchStrore.map((item, index) => item.name).join(', ')
+               setBranchAssign(arr);
+              }
+              else{
+                setBranchAssign(loginStore?.branch_name ?? "");
+              }
+        }
+        catch(err){
+            console.log("Error in converting array into list", err);
+
+        }
+    }
     // const onScroll = ({ nativeEvent }) => {
     //     const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0
 
@@ -439,7 +457,10 @@ const HomeScreen = () => {
                 }
             // onScroll={onScroll}
             >
-                <HeadingComp title={`Hi, ${(loginStore?.emp_name as string)?.split(" ")[0]}`} subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`} background={MD2Colors.blue100} footerText={`Branch • ${loginStore?.branch_name}`} />
+                <HeadingComp title={`Hi, ${(loginStore?.emp_name as string)?.split(" ")[0]}`}
+                 subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`} 
+                 background={MD2Colors.blue100} 
+                 footerText={`Branch • ${branchAssign}`} />
                 <View style={{
                     // paddingHorizontal: 20,
                     // paddingBottom: 120,

@@ -42,6 +42,7 @@ const SearchUnapprovedLoansScreen = () => {
             "loan_id": "0",
             "approval_status": "U"
         }
+        console.log(creds);
         await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds).then(res => {
             console.log(":::;;;:::", res?.data)
             if (res?.data?.suc === 1) {

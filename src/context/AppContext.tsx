@@ -1,7 +1,7 @@
 import axios from "axios"
 import React, { createContext, useEffect, useRef, useState } from "react"
 import { AppState, ToastAndroid, BackHandler, Text } from "react-native"
-import { loginStorage } from "../storage/appStorage"
+import { branchStorage, loginStorage } from "../storage/appStorage"
 import { ADDRESSES } from "../config/api_list"
 import DeviceInfo from "react-native-device-info"
 import DialogBox from "../components/DialogBox";
@@ -13,7 +13,7 @@ const AppContext = ({ children }) => {
     const appVersion = DeviceInfo.getVersion()
     // debugging
     const uat = false
-
+    const [branchAssign, setBranchAssign] = useState<any>([]);
     const [isLogin, setIsLogin] = useState<boolean>(() => false)
     const [isLoading, setIsLoading] = useState<boolean>(() => false)
     const [dialogVisible, setDialogVisible] = useState(false);
@@ -34,10 +34,36 @@ const AppContext = ({ children }) => {
         await axios.post(`${ADDRESSES.LOGIN}`, creds).then(res => {
             console.log("LOGIN LOGGGG===", res?.data);
             if (res?.data?.suc === 1) {
-                ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
-                loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls))
-
-                setIsLogin(true)
+                if(res?.data?.user_dtls?.id == 2){
+                        try{
+                                const creds = {
+                                    emp_id: res?.data?.user_dtls?.emp_id
+                                }
+                                axios.post(`${ADDRESSES.FTECH_BRN_ASSIGN}`, creds).then(response => {
+                                    console.log("FETCH BRANCH ASSIGN RES", response?.data?.msg)
+                                    if (response?.data?.suc === 1) {
+                                        setBranchAssign(response?.data?.msg);
+                                        ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
+                                        loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls));
+                                        branchStorage.set("branch-data", JSON.stringify(response?.data?.msg));
+                                        setIsLogin(true)
+                                    } else {
+                                        ToastAndroid.show("No branches assigned to you!", ToastAndroid.SHORT)
+                                    }
+                                })
+                        }
+                        catch(err){
+                            console.log("Error in fetching branches", err);
+                            ToastAndroid.show("We are unable to process your request, Please try again after some time", ToastAndroid.SHORT)
+                        }
+                }
+                else{
+                     ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
+                     loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls))
+                     setIsLogin(true)
+                }
+               
+                
             } else {
                 ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
                 setIsLogin(false)
@@ -92,8 +118,29 @@ const AppContext = ({ children }) => {
 
 
     const handleLogout = async () => {
-        loginStorage.clearAll()
+        loginStorage.clearAll();
+        branchStorage.clearAll();
         setIsLogin(false)
+    }
+
+    const fetchAssignedBranches = async (empId) => {
+            try{
+                const creds = {
+                    emp_id: empId
+                }
+                await axios.post(`${ADDRESSES.FTECH_BRN_ASSIGN}`, creds).then(res => {
+                    console.log("FETCH BRANCH ASSIGN RES", res?.data)
+                    if (res?.data?.suc === 1) {
+                        setBranchAssign(res?.data?.msg)
+                    } else {
+                        ToastAndroid.show("No branches assigned to you!", ToastAndroid.SHORT)
+                    }
+                })
+            }
+            catch(err){
+                    console.log(err);
+                    ToastAndroid.show("We are unable to process your request, Please try again after some time", ToastAndroid.SHORT)
+            }
     }
 
     return (

@@ -8,7 +8,7 @@ import axios from 'axios'
 import { ADDRESSES } from '../config/api_list'
 import { CommonActions, useNavigation } from '@react-navigation/native'
 import navigationRoutes from '../routes/routes'
-import { loginStorage } from '../storage/appStorage'
+import { branchStorage, loginStorage } from '../storage/appStorage'
 import LoadingOverlay from '../components/LoadingOverlay'
 import DialogBox from '../components/DialogBox'
 import InputPaper from '../components/InputPaper'
@@ -19,7 +19,7 @@ const BMPendingLoansScreen = () => {
     const navigation = useNavigation()
 
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
-
+    const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
     const [loading, setLoading] = useState(() => false)
 
     const [visible, setVisible] = useState(() => false)
@@ -39,6 +39,7 @@ const BMPendingLoansScreen = () => {
         memberCode: ""
     })
 
+
     // const fetchPendingGRTForms = async () => {
     //     setLoading(true)
 
@@ -55,34 +56,38 @@ const BMPendingLoansScreen = () => {
     // }
 
     const searchPendingGRTForms = async () => {
-        setLoading(true)
+        if(search){
+            setLoading(true)
+        
+            const creds = {
+                "bm_search_pending": search,
+                "branch_code": loginStore?.id == 2 ?  branchStrore.map(el => el.code): loginStore?.brn_code
+            }
+            console.log(creds)
+            await axios.post(`${ADDRESSES.BM_SEARCH_PENDING_FORM}`, creds).then(res => {
+                console.log(":::;;;:::", res?.data)
+                if (res?.data?.suc === 1) {
+                    setFormsData(res?.data?.msg)
 
-        const creds = {
-            "bm_search_pending": search,
-            "branch_code": loginStore?.brn_code
+                } else {
+                    setFormsData(() => [])
+                }
+
+                // if(res?.data.group_code != undefined){
+                //     setAssignGroup(res?.data?.msg)
+                // } else {
+                //     setAssignGroup(() => "")
+                // }
+
+            }).catch(err => {
+                ToastAndroid.show("Some error while fetching forms list!", ToastAndroid.SHORT)
+            })
+            setLoading(false)
+        }
+        else{
+            ToastAndroid.show("Please Provide Member Name/Code/Aadhaar/Mobile/PAN", ToastAndroid.SHORT)
         }
 
-        await axios.post(`${ADDRESSES.BM_SEARCH_PENDING_FORM}`, creds).then(res => {
-            console.log(":::;;;:::", res?.data)
-            if (res?.data?.suc === 1) {
-                setFormsData(res?.data?.msg)
-
-            } else {
-                setFormsData(() => [])
-            }
-
-            // if(res?.data.group_code != undefined){
-            //     setAssignGroup(res?.data?.msg)
-            // } else {
-            //     setAssignGroup(() => "")
-            // }
-
-        }).catch(err => {
-            ToastAndroid.show("Some error while fetching forms list!", ToastAndroid.SHORT)
-
-        })
-
-        setLoading(false)
     }
 
     // useEffect(() => {
