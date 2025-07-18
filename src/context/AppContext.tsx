@@ -34,42 +34,46 @@ const AppContext = ({ children }) => {
         await axios.post(`${ADDRESSES.LOGIN}`, creds).then(res => {
             console.log("LOGIN LOGGGG===", res?.data);
             if (res?.data?.suc === 1) {
-                if(res?.data?.user_dtls?.id == 2){
-                        try{
-                                const creds = {
-                                    emp_id: res?.data?.user_dtls?.emp_id
-                                }
-                                axios.post(`${ADDRESSES.FTECH_BRN_ASSIGN}`, creds).then(response => {
-                                    console.log("FETCH BRANCH ASSIGN RES", response?.data?.msg)
-                                    if (response?.data?.suc === 1) {
-                                        setBranchAssign(response?.data?.msg);
-                                        ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
-                                        loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls));
-                                        branchStorage.set("branch-data", JSON.stringify(response?.data?.msg));
-                                        setIsLogin(true)
-                                    } else {
-                                        ToastAndroid.show("No branches assigned to you!", ToastAndroid.SHORT)
-                                    }
-                                })
-                        }
-                        catch(err){
-                            console.log("Error in fetching branches", err);
-                            ToastAndroid.show("We are unable to process your request, Please try again after some time", ToastAndroid.SHORT)
-                        }
-                }
-                else{
-                     ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
+                    ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
                      loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls))
                      setIsLogin(true)
-                }
-               
-                
+                // if(res?.data?.user_dtls?.id == 2){
+                        
+                //         try{
+                //                 const creds = {
+                //                     emp_id: res?.data?.user_dtls?.emp_id
+                //                 }
+                //                 axios.post(`${ADDRESSES.FTECH_BRN_ASSIGN}`, creds).then(response => {
+                //                     console.log("FETCH BRANCH ASSIGN RES", response?.data?.msg)
+                //                     if (response?.data?.suc === 1) {
+                //                         setBranchAssign(response?.data?.msg);
+                //                         ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
+                //                         loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls));
+                //                         branchStorage.set("branch-data", JSON.stringify(response?.data?.msg));
+                //                         setIsLogin(true)
+                //                     } else {
+                //                         ToastAndroid.show("No branches assigned to you!", ToastAndroid.SHORT)
+                //                     }
+                //                 })
+                //         }
+                //         catch(err){
+                //             console.log("Error in fetching branches", err);
+                //             ToastAndroid.show("We are unable to process your request, Please try again after some time", ToastAndroid.SHORT)
+                //         }
+                // }
+                // else{
+                //         //   console.log(JSON.stringify(res?.data?.user_dtls));
+                //         //  console.log("Check - " , (res?.data?.user_dtls?.id == 2));
+                //      ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
+                //      loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls))
+                //      setIsLogin(true)
+                // }
             } else {
                 ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
                 setIsLogin(false)
             }
         }).catch(err => {
-            console.log(">>>>>", err)
+            console.log(">>>>>", err.message)
             ToastAndroid.show(`Something went wrong while logging in.`, ToastAndroid.SHORT)
         })
         console.log('asadsasd')

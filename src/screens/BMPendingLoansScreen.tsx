@@ -19,7 +19,7 @@ const BMPendingLoansScreen = () => {
     const navigation = useNavigation()
 
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
-    const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
+    // const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
     const [loading, setLoading] = useState(() => false)
 
     const [visible, setVisible] = useState(() => false)
@@ -61,7 +61,9 @@ const BMPendingLoansScreen = () => {
         
             const creds = {
                 "bm_search_pending": search,
-                "branch_code": loginStore?.id == 2 ?  branchStrore.map(el => el.code): loginStore?.brn_code
+                // "branch_code": loginStore?.id == 2 ?  branchStrore.map(el => el.code): loginStore?.brn_code
+                "branch_code": loginStore?.brn_code
+
             }
             console.log(creds)
             await axios.post(`${ADDRESSES.BM_SEARCH_PENDING_FORM}`, creds).then(res => {
@@ -224,6 +226,7 @@ const BMPendingLoansScreen = () => {
                                         }}>Group Not Assigned</Text>)}
                                         <Text>Form No: {item?.form_no}</Text>
                                         <Text>GRT Date - {item?.grt_date ? new Date(item?.grt_date).toLocaleDateString("en-GB") : "No Date"}</Text>
+                                        <Text>Branch Code - {item?.branch_code ? item?.branch_code : "N/A"}</Text>
                                     </View>
                                 }
                                 // onPress={() => handleFormListClick(item?.form_no, item?.branch_code)}

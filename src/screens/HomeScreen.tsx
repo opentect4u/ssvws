@@ -33,7 +33,7 @@ const HomeScreen = () => {
         fetchCurrentVersion,
     } = useContext<any>(AppStore)
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
-    const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
+    // const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
     // const [isLocationMocked, setIsLocationMocked] = useState(() => false)
     const [branchAssign, setBranchAssign] = useState(loginStore?.branch_name ?? "")
     const { location, error } = useGeoLocation()
@@ -65,24 +65,25 @@ const HomeScreen = () => {
         fetchCurrentVersion()
     }, [navigation])
 
-    useEffect(() => {
-        convertArrayIntoList();
-    },[])
-    const convertArrayIntoList = () => {
-        try{
-              if(loginStore?.id === 2){
-                const arr = branchStrore.map((item, index) => item.name).join(', ')
-               setBranchAssign(arr);
-              }
-              else{
-                setBranchAssign(loginStore?.branch_name ?? "");
-              }
-        }
-        catch(err){
-            console.log("Error in converting array into list", err);
+    // useEffect(() => {
+    //     // convertArrayIntoList();
+    // },[])
+    // const convertArrayIntoList = () => {
+    //     try{
+    //           if(loginStore?.id === 2){
+    //             const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
+    //             const arr = branchStrore.map((item, index) => item.name).join(', ')
+    //            setBranchAssign(arr);
+    //           }
+    //           else{
+    //             setBranchAssign(loginStore?.branch_name ?? "");
+    //           }
+    //     }
+    //     catch(err){
+    //         console.log("Error in converting array into list", err);
 
-        }
-    }
+    //     }
+    // }
     // const onScroll = ({ nativeEvent }) => {
     //     const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0
 
@@ -457,10 +458,14 @@ const HomeScreen = () => {
                 }
             // onScroll={onScroll}
             >
+                {/* <HeadingComp title={`Hi, ${(loginStore?.emp_name as string)?.split(" ")[0]}`}
+                 subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`} 
+                 background={MD2Colors.blue100} 
+                 footerText={`Branch • ${branchAssign}`} /> */}
                 <HeadingComp title={`Hi, ${(loginStore?.emp_name as string)?.split(" ")[0]}`}
                  subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`} 
                  background={MD2Colors.blue100} 
-                 footerText={`Branch • ${branchAssign}`} />
+                 footerText={`Branch • ${loginStore?.branch_name}`} />
                 <View style={{
                     // paddingHorizontal: 20,
                     // paddingBottom: 120,
