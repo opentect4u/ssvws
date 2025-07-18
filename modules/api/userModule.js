@@ -10,7 +10,8 @@ module.exports = {
       AND  a.user_type=b.type_code
       AND a.brn_code=d.branch_code
       AND a.emp_id = '${data.emp_id}'
-      AND a.user_status = 'A'`
+      AND a.user_status = 'A'
+      AND '${data.emp_id}' REGEXP '^[0-9]+$'`
       order = null;
     var login_dt = await db_Select(select, table_name, whr, order);
     resolve(login_dt);
@@ -24,7 +25,8 @@ module.exports = {
           AND  a.user_type=b.type_code
           AND a.brn_code=d.branch_code
           AND a.emp_id = '${data.emp_id}'
-          AND a.user_status = 'A'`
+          AND a.user_status = 'A'
+          AND '${data.emp_id}' REGEXP '^[0-9]+$'`
           order = null;
         var login_dt = await db_Select(select, table_name, whr, order);
         resolve(login_dt);

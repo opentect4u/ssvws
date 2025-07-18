@@ -26,7 +26,7 @@ module.exports = {
 
                     var edit_user_dtls = await db_Insert(table_name, fields, values, whr, flag);
                     
-                    if(data.user_type == '3' || data.user_type == '10' || data.user_type == '11'){
+                    if(data.user_type == '2' || data.user_type == '3' || data.user_type == '10' || data.user_type == '11'){
                         
                         for (let dt of data.assigndtls) {
                             // console.log(dt,'kiki');
@@ -224,7 +224,7 @@ edit_user_dt : (data) => {
 
                 var edit_user_dtls = await db_Insert(table_name,fields,values,whr,flag);
             
-                if (data.user_type == '3' || data.user_type == '10' || data.user_type == '11') {
+                if (data.user_type == '2' || data.user_type == '3' || data.user_type == '10' || data.user_type == '11') {
                     // Get the currently assigned branches for the user
 
                     var select = "branch_assign_id";

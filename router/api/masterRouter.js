@@ -400,7 +400,7 @@ masterRouter.post("/get_bank", async (req, res) => {
     //get bank details
     var select = "*",
     table_name = "md_bank",
-    whr = `dist_code = '${data.dist_code}' AND (bank_name LIKE '%${data.bank}%' OR branch_name LIKE '%${data.bank}%')`,
+    whr = `dist_code = '${data.dist_code}'`,
     order = null;
     var bank_dt = await db_Select(select,table_name,whr,order);
     res.send(bank_dt) 

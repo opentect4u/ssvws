@@ -607,7 +607,7 @@ module.exports = {
                                     (SELECT MAX(created_at) 
                                                         FROM td_loan_transactions 
                                                     WHERE loan_id IN (${dt.loan_id}))`,
-                      order = `GROUP BY a.loan_id,a.member_code,a.branch_code,a.group_code,b.payment_date,b.credit,b.tr_mode,b.cheque_id,b.created_by,c.group_name,d.branch_name,e.emp_name,f.client_name`;
+                      order = `GROUP BY a.loan_id,a.member_code,a.branch_code,a.group_code,b.payment_date,b.credit,b.tr_mode,b.cheque_id,b.created_by,b.upload_on,c.group_name,d.branch_name,e.emp_name,f.client_name`;
                     trans_dtl = await db_Select(select, table_name, whr, order);
 
                     rec_dtls_prn.msg[0]["trans_dtl"] =

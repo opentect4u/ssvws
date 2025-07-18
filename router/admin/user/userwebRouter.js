@@ -136,7 +136,7 @@ userwebRouter.post("/fetch_empl_dtls", async (req, res) => {
         return res.send({
             suc: 1,
             msg: user_dt.msg,
-            details: "Employee already exists in md_user"
+            details: "Employee already exists"
         });
     }
 
