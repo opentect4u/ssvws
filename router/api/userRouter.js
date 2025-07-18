@@ -85,7 +85,7 @@ userRouter.post("/login_web", async (req, res) => {
     result;
   const pattern = /^\d+$/;
   console.log();
-  if(pattern.test(data?.emp_id)){
+  if(pattern.test(data.emp_id)){
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     // console.log(data, 'Received Data');
     try {
