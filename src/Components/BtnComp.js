@@ -29,10 +29,12 @@ function BtnComp({
 	showSendToBM = false,
 	onSendBackToBM,
 }) {
+	console.log('MODE - ', mode);
 	return (
 		<div className="flex justify-center">
 			{mode == "A" && (
 				<>
+				{/* <p>{param}</p> */}
 					<button
 						type="reset"
 						className="inline-flex items-center px-5 py-2.5 mt-4 mr-2 sm:mt-6 text-sm font-medium text-center text-white border border-[#DA4167] bg-[#DA4167] transition ease-in-out hover:bg-[#ac3246] hover:border-[#ac3246] duration-300 rounded-full  dark:focus:ring-primary-900"
@@ -136,7 +138,7 @@ function BtnComp({
 								onClick={onPressSubmit}
 							>
 								<SaveOutlined className="mr-2" />
-								Update
+								Update - {param?.id > 0 ? "Update" : "Submit"}
 							</button>
 						</>
 					)}

@@ -351,7 +351,11 @@ function RecoveryCoDisbursTable({
 					></Column>
 					<Column header="Amount" body={(rowData) => `${rowData.amt}`}></Column>
 					{/* <Column field="outstanding" header="Outstanding"></Column> */}
-					<Column field="total_emi" header="Total EMI"></Column>
+					<Column field="total_emi" header="EMI"
+						body={(rowData) =>
+							<b className="text-teal-500 font-bold">{!rowData?.total_emi? "--" : rowData?.total_emi}</b>
+						}
+					></Column>
 					<Column field="created_by" header="Created By"></Column>
 					{/* <Column headerStyle={{ width: '4rem'}}></Column> */}
 				</DataTable>

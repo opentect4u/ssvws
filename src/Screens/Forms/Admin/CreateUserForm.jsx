@@ -71,12 +71,29 @@ function CreateUserForm() {
 		await axios
 			.get(`${url}/fetch_all_branch_dt`)
 			.then((res) => {
-				console.log("QQQQQQQQQQQQQQQQ", res?.data)
-				setBranches(
-					res?.data?.msg.map((item) => {
+				// console.log("QQQQQQQQQQQQQQQQ", res?.data)
+				const dt = 	res?.data?.msg.map((item) => {
 						return { code: item.branch_code, name: item.branch_name }
 					})
-				)
+				setBranches(dt)
+				if(+params?.id > 0 && userMasterDetails?.brn_code){
+					if(userMasterDetails.user_type == 2){
+							try{
+								const pre_selectedbranc = dt?.find((item) => item.code == userMasterDetails?.brn_code);
+								// console.log(pre_selectedbranc)
+								if(pre_selectedbranc){
+									setSelectedBranches([pre_selectedbranc]);
+								}
+							}
+							catch(err){
+								console.log("Error in setting branches", err);
+								setSelectedBranches([]);
+							}
+					}
+					else{
+						setSelectedBranches([]);
+					}
+				}
 			})
 			.catch((err) => {
 				console.log("?????????????????????", err)
@@ -160,7 +177,9 @@ function CreateUserForm() {
 	// }, [])
 
 	useEffect(() => {
+		console.log(+params?.id > 0, "params?.id > 0");
 		if (+params?.id > 0) {
+			// console.log("userMasterDetails", userMasterDetails);
 			setMasterUserData({
 				finance_module: userMasterDetails?.finance_toggle || "N",
 				emp_id: userMasterDetails?.emp_id || "",
@@ -170,11 +189,17 @@ function CreateUserForm() {
 				user_type: userMasterDetails?.user_type || "",
 				active_flag: userMasterDetails?.user_status || "A",
 				remarks: userMasterDetails?.deactive_remarks || "",
-			})
+			});
+			// setTimeout(() => {
+			// 	findEmployeeById();
+			// }, 500);
+			
+
 		}
 	}, [userMasterDetails])
 
 	const findEmployeeById = async () => {
+		console.log('asdasd')
 		if (!masterUserData.emp_id) return
 		setLoading(true)
 		const creds = {
@@ -385,7 +410,9 @@ function CreateUserForm() {
 		try{
 			if(userType == 2){
 				try{
+					
 					const pre_selectedbranc = branches?.find((item) => item.code == pre_selected_branch_code);
+					console.log(pre_selectedbranc)
 					if(pre_selectedbranc){
 						setSelectedBranches([pre_selectedbranc]);
 					}
@@ -527,6 +554,7 @@ function CreateUserForm() {
 											Branches
 										</label>
 										<MultiSelect
+											filter	
 											value={selectedBranches}
 											onChange={(e) => setSelectedBranches(e.value)}
 											options={branches?.filter((i) => i.code != 100)}

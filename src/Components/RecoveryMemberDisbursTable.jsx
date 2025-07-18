@@ -410,8 +410,11 @@ function RecoveryMemberDisbursTable({
 						field="total_emi"
 						header="Total EMI"
 						body={(rowData) =>
-							`${!rowData?.total_emi  ? "--" : rowData?.total_emi}`
+							<b className="text-teal-500 font-bold">{!rowData?.total_emi? "--" : rowData?.total_emi}</b>
 						}
+						// body={(rowData) =>
+						// 	`${!rowData?.total_emi  ? "--" : rowData?.total_emi}`
+						// }
 						// footer={<span style={{ fontWeight: "bold" }}>{TotalEMI}</span>}
 					></Column>
 					{/* <Column

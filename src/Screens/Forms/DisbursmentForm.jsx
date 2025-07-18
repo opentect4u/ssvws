@@ -35,6 +35,8 @@ const validationSchema = Yup.object({
 function DisbursmentForm() {
 	const params = useParams()
 	const [loading, setLoading] = useState(false)
+	const [isExistingLoanFetch, setIsExistingLoanFetch] = useState(true)
+
 	const location = useLocation()
 	const personalDetails = location.state[0] || {}
 	const loanType = location.state[1] || "D"
@@ -55,6 +57,7 @@ function DisbursmentForm() {
 
 	const [purposeOfLoan, setPurposeOfLoan] = useState(() => [])
 	const [subPurposeOfLoan, setSubPurposeOfLoan] = useState(() => [])
+
 
 	const [schemes, setSchemes] = useState(() => [])
 	const [funds, setFunds] = useState(() => [])
@@ -94,11 +97,12 @@ function DisbursmentForm() {
 		b_subPurposeId: "",
 		b_applicationDate: "",
 		b_appliedAmt: "",
+		b_dist_code:""
 	})
     
-	useEffect(()=>{
-			console.log("personalDetailsData", personalDetailsData)
-	},[personalDetailsData])
+	// useEffect(()=>{
+	// 		console.log("personalDetailsData", personalDetailsData)
+	// },[personalDetailsData])
 
 	const handleChangePersonalDetails = (e) => {
 		const { name, value } = e.target
@@ -138,7 +142,11 @@ function DisbursmentForm() {
 		b_remarks: "",
 	})
 
-	console.log("transactionDetailsData", transactionDetailsData)
+	// useEffect(() => {
+	// 	console.log("transactionDetailsData", transactionDetailsData)
+	// },[transactionDetailsData])
+
+	// console.log("transactionDetailsData", transactionDetailsData)
 
 	const handleChangeTnxDetailsDetails = (e) => {
 		// console.log(e.target.value)
@@ -202,12 +210,13 @@ function DisbursmentForm() {
 		},
 	]
 
-	const getBanks = async (input) => {
+	const getBanks = async (input,dist_code) => {
 		console.log(input)
 		// if(input){
 		await axios
 			.post(`${url}/get_bank`, {
-				dist_code: userDetails.dist_code,
+				// dist_code: userDetails.dist_code,
+				dist_code:dist_code,
 				bank: input,
 			})
 			.then((res) => {
@@ -223,7 +232,7 @@ function DisbursmentForm() {
 	useEffect(() => {
 		// handleChangePersonalDetails()
 		// debugger;
-		getBanks("")
+		// getBanks("")
 	}, [])
 
 	useEffect(() => {
@@ -296,8 +305,8 @@ function DisbursmentForm() {
 	useEffect(() => {
 		getSchemes()
 		getFunds()
-		getTnxTypes()
-		getTnxModes()
+		// getTnxTypes()
+		// getTnxModes()
 	}, [])
 	const handleDisbursementChange = (index, event) => {
 		// alert()
@@ -414,6 +423,7 @@ function DisbursmentForm() {
 	// },[disbursementDetailsData,transactionDetailsData,personalDetailsData])
 
 	const getSubPurposeOfLoan = async (purpId) => {
+		if(purpId){
 		setLoading(true)
 		await axios
 			.get(`${url}/get_sub_purpose?purp_id=${purpId}`)
@@ -425,6 +435,8 @@ function DisbursmentForm() {
 				console.log("+==========+", err)
 			})
 		setLoading(false)
+		}
+
 	}
 
 	useEffect(() => {
@@ -446,6 +458,7 @@ function DisbursmentForm() {
 				// 	"KKKKKKKKkkkkk8888KKKKKkkkkKKKK",
 				// 	res?.data?.msg[0]?.mem_dt_grp
 				// )
+				getBanks("",res?.data?.msg[0]?.branch_dist_code);
 				setMembers(res?.data?.msg[0]?.mem_dt_grp)
 				membersForDisb.length = 0
 				var count = 0
@@ -465,11 +478,12 @@ function DisbursmentForm() {
 				setTotDisb(count)
 				count = 0
 				setMembersForDisb(membersForDisb)
-				console.log(members)
-				console.log(
-					"fetchSearchedApplication ===========>>>>>>>>>>>>>>>>>",
-					 res?.data?.msg[0]
-				)
+				// console.log(members)
+				// console.log(
+				// 	"fetchSearchedApplication ===========>>>>>>>>>>>>>>>>>",
+				// 	 res?.data?.msg[0]
+				// )
+				console.log("BRANCH" + res?.data?.msg[0]?.branch_name);
 				setPersonalDetailsData({
 					// b_memCode: res?.data?.msg[0]?.member_code,
 					b_clientName: res?.data?.msg[0]?.client_name,
@@ -477,7 +491,7 @@ function DisbursmentForm() {
 					b_branchcode: res?.data?.msg[0]?.branch_code,
 					b_branchname: res?.data?.msg[0]?.brn_name,
 					b_bank_name: res?.data?.msg[0]?.bank_name,
-					b_bank_branch: res?.data?.msg[0]?.branch_name,
+					b_bank_branch: res?.data?.msg[0]?.branch_name || "",
 					b_acc1: res?.data?.msg[0]?.acc_no1,
 					b_acc2: res?.data?.msg[0]?.acc_no2 && res?.data?.msg[0]?.acc_no2 != '0' ? res?.data?.msg[0]?.acc_no2 : '',
 					b_memCode: res?.data?.msg[0]?.mem_dt_grp,
@@ -490,6 +504,7 @@ function DisbursmentForm() {
 					b_subPurposeId: res?.data?.msg[0]?.mem_dt_grp[0]?.sub_pupose,
 					// b_applicationDate: res?.data?.msg[0]?.application_date,
 					// b_appliedAmt: res?.data?.msg[0]?.applied_amt,
+					b_dist_code: res?.data?.msg[0]?.branch_dist_code,
 				})
 			})
 			.catch((err) => {
@@ -500,7 +515,8 @@ function DisbursmentForm() {
 	}
 
 	const checkDisbursedOrNot = async () => {
-		setLoading(true)
+		// setLoading(true)
+
 		const creds = {
 			// form_no: personalDetails?.form_no,
 			group_code: personalDetails?.group_code,
@@ -510,7 +526,7 @@ function DisbursmentForm() {
 			.post(`${url}/admin/fetch_existing_loan`, creds)
 			.then((res) => {
 				console.log("checkDisbursedOrNot --------+++++++", res?.data)
-
+				setIsExistingLoanFetch(false);
 				// setDisburseOrNot(res?.data?.msg)
 				setFetchedLoanData(res?.data?.msg[0])
 				setFetchedTnxData(res?.data?.loan_trans)
@@ -573,7 +589,6 @@ function DisbursmentForm() {
 					.post(`${url}/admin/fetch_disb_trans_dtls`, creds)
 					.then((resDisb) => {
 						console.log("fetch_disb_trans_dtls", resDisb)
-
 						setDisbursementDetailsData({
 							b_scheme: resDisb?.data?.msg[0]?.scheme_id || "",
 							b_fund: resDisb?.data?.msg[0]?.fund_id || "",
@@ -595,9 +610,10 @@ function DisbursmentForm() {
 					})
 			})
 			.catch((err) => {
-				Message("error", "Some error during fetching the status of the form.")
+				Message("error", "Some error during fetching the status of the form.");
+				setIsExistingLoanFetch(false);
 			})
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	useEffect(() => {
@@ -633,8 +649,26 @@ function DisbursmentForm() {
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		console.log(personalDetailsData.b_acc2)
-		if(personalDetailsData.b_acc2){
+		// console.log(personalDetailsData?.b_acc2);
+		if (
+			!personalDetailsData?.b_acc2 ||
+			!personalDetailsData?.b_bank_name  ||
+			!personalDetailsData?.b_bank_branch ||
+			!disbursementDetailsData.b_fund ||
+			!disbursementDetailsData.b_mode ||
+			!disbursementDetailsData.b_period ||
+			!disbursementDetailsData.b_dayOfRecovery ||
+			!transactionDetailsData.b_bankName ||
+			!transactionDetailsData.b_remarks ||
+			!personalDetailsData.b_purpose ||
+			!transactionDetailsData.b_tnxDate ||
+			!disbursementDetailsData.b_period ||
+			!disbursementDetailsData.b_scheme
+		) {
+			console.log("Not Valid");
+		}
+		else{
+			console.log("valid");
 			setVisible(true)
 		}
 	}
@@ -777,9 +811,9 @@ function DisbursmentForm() {
 			})
 		setLoading(false)
 	}
-	useEffect(() => {
-		console.log(personalDetails)
-	}, [])
+	// useEffect(() => {
+	// 	console.log(personalDetails)
+	// }, [])
 	return (
 		<>
 			{disburseOrNot && (
@@ -800,7 +834,7 @@ function DisbursmentForm() {
 				indicator={<LoadingOutlined spin />}
 				size="large"
 				className="text-blue-800 dark:text-gray-400"
-				spinning={loading}
+				spinning={loading || isExistingLoanFetch}
 			>
 				<form onSubmit={onSubmit}>
 					<div>
@@ -874,6 +908,14 @@ function DisbursmentForm() {
 										/>
 									</div>
 									<div >
+										{!personalDetailsData.b_bank_name && (
+												<span
+													style={{ color: "red" }}
+													className="left-28 ant-tag ant-tag-error ant-tag-borderless text-[12.6px] my-0 css-dev-only-do-not-override-1tse2sn absolute"
+												>
+													Required!
+												</span>
+											)}
 										<TDInputTemplateBr
 											placeholder="Bank Name"
 											type="text"
@@ -885,7 +927,15 @@ function DisbursmentForm() {
 											disabled
 										/>
 									</div>
-									<div>
+									<div className="relative">
+										{!personalDetailsData.b_bank_branch && (
+												<span
+													style={{ color: "red" }}
+													className="right-0 ant-tag ant-tag-error ant-tag-borderless text-[12.6px] my-0 css-dev-only-do-not-override-1tse2sn absolute"
+												>
+													Required!
+												</span>
+											)}
 										<TDInputTemplateBr
 											placeholder="Bank Branch"
 											type="text"
@@ -899,6 +949,7 @@ function DisbursmentForm() {
 									</div>
 
 									<div>
+											
 										<TDInputTemplateBr
 											placeholder="SB Account"
 											type="text"
@@ -1801,10 +1852,13 @@ function DisbursmentForm() {
 										<Select
 											showSearch
 											placeholder={"Banks"}
+											 filterOption={(input, option) =>
+													(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+											}
 											label="Banks"
 											name="b_bankName"
-											filterOption={false} // Disable default filtering to use API search
-											onSearch={(e) => getBanks(e)} // Call API on typing
+											// filterOption={true} // Disable default filtering to use API search
+											// onSearch={(e) => getBanks(e,personalDetailsData?.b_dist_code)} // Call API on typing
 											notFoundContent={
 												loading ? <Spin size="small" /> : "No results found"
 											}
@@ -1818,7 +1872,11 @@ function DisbursmentForm() {
 											// value={formValues.Grp_wit_Co ? formValues.Grp_wit_Co : COPickup} // Controlled value
 											onChange={(value) => {
 												console.log(value)
-												handleChangeTnxDetailsDetails(value)
+												// handleChangeTnxDetailsDetails(value)
+												setTransactionDetailsData((prevData) => ({
+													...prevData,
+													b_bankName: value,
+												}))
 												// formik.setFieldValue("Grp_wit_Co", value);
 											}}
 											options={banks?.map((item, _) => ({
@@ -1826,7 +1884,7 @@ function DisbursmentForm() {
 												label: `${item?.bank_name} - ${item?.branch_name} - ${item?.ifsc}`,
 											}))}
 											//   style={{ width: 250 }}
-											mode={2}
+											// mode={2}
 											// disabled={location?.state.approval_status == "A" ? true : false} //location?.state.approval_status == null ? '': location?.state.approval_status
 										/>
 									</>
@@ -2006,9 +2064,8 @@ function DisbursmentForm() {
 								{AppliedDisbursLoan && (
 									<div className="mt-10">
 										{/* {Period_mode_valid ==  'Weekly' || Period_mode_valid ==  'Monthly' ? "" : ""}  */}
-										{
-											// Period_mode_valid === "Weekly" ||
-											// Period_mode_valid === "Monthly" ||
+										{/* {
+											
 											!disbursementDetailsData.b_fund ||
 											!disbursementDetailsData.b_mode ||
 											!disbursementDetailsData.b_period ||
@@ -2018,12 +2075,36 @@ function DisbursmentForm() {
 											!personalDetailsData.b_purpose ||
 											!transactionDetailsData.b_tnxDate ||
 											!disbursementDetailsData.b_period ||
+											!personalDetailsData?.b_bank_name ||
+											!personalDetailsData?.b_bank_branch ||
 											!disbursementDetailsData.b_scheme ? (	
 												<BtnComp mode="A" onReset={onReset} />
 											) : (
 												<BtnComp mode="B" onReset={onReset} disabled />
 											)
-										}
+										} */}
+										{/* {
+											
+											!disbursementDetailsData.b_fund ||
+											!disbursementDetailsData.b_mode ||
+											!disbursementDetailsData.b_period ||
+											!disbursementDetailsData.b_dayOfRecovery ||
+											!transactionDetailsData.b_bankName ||
+											!transactionDetailsData.b_remarks ||
+											!personalDetailsData.b_purpose ||
+											!transactionDetailsData.b_tnxDate ||
+											!disbursementDetailsData.b_period ||
+											!personalDetailsData?.b_bank_name ||
+											!personalDetailsData?.b_bank_branch ||
+											!disbursementDetailsData.b_scheme ? (	
+												<BtnComp mode="A" onReset={onReset} />
+											) : (
+												<BtnComp mode="B" onReset={onReset} disabled />
+											)
+										} */}
+
+										<BtnComp mode="A" onReset={onReset} />
+									
 									</div>
 								)}
 							</>
