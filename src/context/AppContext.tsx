@@ -18,7 +18,7 @@ const AppContext = ({ children }) => {
     const [isLoading, setIsLoading] = useState<boolean>(() => false)
     const [dialogVisible, setDialogVisible] = useState(false);
 
-    const handleLogin = async (username: string, password: string) => {
+    const handleLogin = async (username: string, password: string,branch:any,userId:number,branchName:string) => {
         setIsLoading(true)
         const creds = {
             emp_id: username,
@@ -34,9 +34,25 @@ const AppContext = ({ children }) => {
         await axios.post(`${ADDRESSES.LOGIN}`, creds).then(res => {
             console.log("LOGIN LOGGGG===", res?.data);
             if (res?.data?.suc === 1) {
-                    ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
-                     loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls))
-                     setIsLogin(true)
+                    ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT);
+                    if(userId == 2){
+                        const dt = {
+                            ...res?.data?.user_dtls,
+                            brn_code: branch,
+                            branch_name:branchName
+                        };
+                        loginStorage.set("login-data", JSON.stringify(dt));
+                        console.log("USER DETAILS", dt);
+                        setIsLogin(true);
+                    }
+                    else{
+                        loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls));
+                        // console.log("USER DETAILS", res?.data?.user_dtls);
+                        setIsLogin(true);
+                    }
+                    
+                    //  
+                    //  
                 // if(res?.data?.user_dtls?.id == 2){
                         
                 //         try{

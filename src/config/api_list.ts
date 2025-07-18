@@ -2,6 +2,8 @@ import { BASE_URL } from "./config"
 
 export const ADDRESSES = {
     FETCH_APP_VERSION: `${BASE_URL}/fetch_app_version`,
+    FETCH_EMP_TYPE: `${BASE_URL}/fetch_emp_type`,
+    FTECH_BRN_ASSIGN: `${BASE_URL}/fetch_brn_assign`,
     LOGIN: `${BASE_URL}/login_app`,
     // UPDATE_LOGIN_FLAG: `${BASE_URL}/api/update_login_status`,
     // RECEIPT_SETTINGS: `${BASE_URL}/api/receipt_settings`,
@@ -69,5 +71,4 @@ export const ADDRESSES = {
     CHECK_CAN_TXN: `${BASE_URL}/checking_date_before_transaction`,
 
     DUPLICATE_PRINT: `${BASE_URL}/fetch_group_dtls_fr_duplicate_print`,
-    FTECH_BRN_ASSIGN: `${BASE_URL}/fetch_brn_assign`,
 }
