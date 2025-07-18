@@ -10,5 +10,5 @@
 // export const url = "http://192.168.1.33:3014"
 // export const url = "http://202.21.38.178:3014"
 
-// export const url = "https://ssvwsadmin.opentech4u.co.in" // Production
-export const url = "https://ssvwsoci.synergicapi.in"; // Development
+export const url = "https://ssvwsadmin.opentech4u.co.in" // Production
+// export const url = "https://ssvwsoci.synergicapi.in"; // Development
