@@ -43,6 +43,7 @@ import { DataTable } from "primereact/datatable"
 import Column from "antd/es/table/Column"
 import { Toast } from "primereact/toast"
 import { debounce } from "@mui/material"
+import moment from "moment"
 
 function TranceferCO({ groupDataArr }) {
 	const params = useParams()
@@ -117,6 +118,8 @@ function TranceferCO({ groupDataArr }) {
 		to_co: "",
 		to_branch: "",
 		remarks_: "",
+		trxn_date: new Date().toISOString().split("T")[0], // Set current date in YYYY-MM-DD format
+		has_un_approve_trxn:false
 	}
 	const [formValues, setValues] = useState(initialValues)
 
@@ -140,6 +143,13 @@ function TranceferCO({ groupDataArr }) {
 			params?.id > 0
 				? Yup.string()
 				: Yup.string().required("Remarks is required"),
+		trxn_date: Yup.date().required('Transaction Date is required').test('has_un_approve_trxn', 'There are unapproved transactions before this date.', function (value) {
+			console.log(value, 'value in test');
+			 	const { has_un_approve_trxn } = this.parent;
+				console.log(has_un_approve_trxn, 'has_un_approve_trxn in test');
+				return !has_un_approve_trxn
+		}),
+		has_un_approve_trxn:Yup.boolean().default(false),
 	})
 
 	const [options__Group, setOptions__Group] = useState([
@@ -290,21 +300,28 @@ function TranceferCO({ groupDataArr }) {
 	}
 
 	const handleFetchMemberList = async () => {
-		setLoading(true)
-		const creds = {
-			group_code: COAndBranch[0]?.group_code,
-		}
-		await axios
-			.post(`${url}/groupwise_mem_details`, creds)
-			.then((res) => {
-				console.log("ttttttttttttttttttttttttttttttttt", res?.data?.msg)
-				setMemberList(res?.data?.msg)
-			})
-			.catch((err) => {
-				console.log("?????????????????????", err)
-			})
+		if(COAndBranch.length > 0){
+			setLoading(true)
+			const creds = {
+				group_code: COAndBranch[0]?.group_code,
+			}
+			await axios
+				.post(`${url}/groupwise_mem_details`, creds)
+				.then((res) => {
+					console.log("ttttttttttttttttttttttttttttttttt", res?.data?.msg)
+					setMemberList(res?.data?.msg);
+					checkPreviousDisbursement(formik.values.trxn_date);	
+				})
+				.catch((err) => {
+					console.log("?????????????????????", err)
+				})
 
-		setLoading(false)
+			setLoading(false)
+		}
+		else{
+			setMemberList([]);
+		}
+		
 	}
 
 	const handleFetchMemberListView = async () => {
@@ -326,9 +343,13 @@ function TranceferCO({ groupDataArr }) {
 	}
 
 	useEffect(() => {
-		console.log("////////////////////////", ToBranchName)
-
-		handleFetch_CO_By_Branch()
+		// console.log("////////////////////////", ToBranchName)
+		if(ToBranchName){
+			handleFetch_CO_By_Branch()
+		}
+		else{
+			setTo_COData("");
+		}
 	}, [ToBranchName])
 
 	useEffect(() => {
@@ -382,7 +403,7 @@ function TranceferCO({ groupDataArr }) {
 			branch_code: userDetails?.brn_code,
 			group_code: group_code?.split(",")[1],
 		}
-
+		console.log(creds, "fetch_grp_co_dtls_for_transfer")
 		await axios
 			.post(`${url}/fetch_grp_co_dtls_for_transfer`, creds)
 			.then((res) => {
@@ -395,8 +416,13 @@ function TranceferCO({ groupDataArr }) {
 		setLoading(false)
 	}
 
+	
+
 	useEffect(() => {
-		handleFetchCOBranch(COPickup)
+		console.log("COPickup", COPickup)
+		if(COPickup){
+			handleFetchCOBranch(COPickup)
+		}
 	}, [COPickup])
 
 	const onSubmit = async (values) => {
@@ -420,48 +446,131 @@ function TranceferCO({ groupDataArr }) {
 		validateOnMount: true,
 	})
 
+	// useEffect(()=>{
+	// 	console.log(formik.values, "formik.values")
+	// },[formik.values])
 	const editGroup = async () => {
-		// alert('llllllllllllllllll')
-		const creds = {
-			group_code: formik.values.Grp_wit_Co?.split(",")[1],
-			from_co: COAndBranch[0].co_id,
-			from_brn: COAndBranch[0].grp_brn,
-			to_co: formik.values.to_co,
-			to_brn: ToBranchName,
-			remarks: formik.values.remarks_,
-			created_by: userDetails?.emp_id,
-			modified_by: userDetails?.emp_id,
-		}
+		try{	
+					formik.setFieldValue("has_un_approve_trxn", false);
+					const payload = {
+						branch_code:userDetails?.brn_code,
+						transaction_date: formik.values.trxn_date,
+					}
+						axios.post(`${url}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+											// console.log(res);
+											if(res?.data?.suc === 1){
+												if(res?.data?.msg?.length > 0){
+													const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
+													formik.setFieldValue("has_un_approve_trxn", hasNonZero);
+													if(hasNonZero){
+														Message("error", <>
+																<ul class="list-disc">
+																	{res?.data?.msg[0]?.transactions > 0 && <li>There are unapproved transactions before this date. Please check and try again.</li>}
+																	{res?.data?.msg[0]?.group_migrate > 0 && <li>There are unapproved group migrate transactions before this date. Please check and try again.</li>}
+																	{res?.data?.msg[0]?.member_migrate > 0 && <li>There are unapproved member migrate transactions before this date. Please check and try again.</li>}
+																</ul>
+														</>);
+													}
+													else{
+															const time = moment().format('HH:mm:ss')
+															const creds = {
+																group_code: formik.values.Grp_wit_Co?.split(",")[1],
+																from_co: COAndBranch[0].co_id,
+																from_brn: COAndBranch[0].grp_brn,
+																to_co: formik.values.to_co,
+																to_brn: ToBranchName,
+																remarks: formik.values.remarks_,
+																created_by: userDetails?.emp_id,
+																modified_by: userDetails?.emp_id,
+																trf_date:  moment(`${formik.values.trxn_date} ${time}`).format(),
+															}
+															// console.log(, "approveDataaftersubmit");
+															// console.log(new Date(`${formik.values.trxn_date}T${(new Date()).toTimeString().split(' ')[0]}`), "approveDataaftersubmit");
+															axios.post(`${url}/transfer_co`, creds)
+																.then((response) => {
+																	setLoading(false)
+																	if(response?.data?.suc == 1) {
+																		Message("success", "Group Transfer CO updated successfully.")
+																	}
+																	else{
+																		Message("error", "We are unable to process your request right now!! Please try again later.")
+																	}
 
-		console.log(creds, "approveDataaftersubmit")
-
-		await axios
-			.post(`${url}/transfer_co`, creds)
-			.then((res) => {
-				setLoading(false)
-
-				Message("success", "Updated successfully.")
-
-				// if (params?.id < 1) {
-				// 	navigate(`/homebm/tranceferco/`)
-				// }
-				// navigate(-1);
-				// navigate(`/homebm/trancefercofromapprove-unic`);
-				setTimeout(() => {
-					window.location.reload()
-				}, 500)
-			})
-			.catch((err) => {
-				setLoading(false)
-
-				Message("error", "Some error occurred while updating.")
-			})
+																	// if (params?.id < 1) {
+																	// 	navigate(`/homebm/tranceferco/`)
+																	// }
+																	// navigate(-1);
+																	// navigate(`/homebm/trancefercofromapprove-unic`);
+																	setTimeout(() => {
+																		window.location.reload()
+																	}, 500)
+																})
+																.catch((err) => {
+																	setLoading(false)
+																	Message("error", "Some error occurred while updating.")
+																})
+													}
+												}
+											}
+											else{
+													Message("error", "Something went wrong while checking previous disbursement date. Please try again.");
+											}
+											
+									}).catch((err) => {
+										console.log("Error in checking previous disbursement date", err)
+										Message("error", "Error in checking previous disbursement date");
+									})
+			}
+			catch(err){
+				console.log("Error in checking previous disbursement date", err)
+				Message("error", "Error in checking previous disbursement date")
+			}
+		
 	}
 
 	// const cancel = (e) => {
 	// 	console.log(e)
 	// 	// message.error('Click on No');
 	// }
+		const checkPreviousDisbursement = (date) => {
+			try{	
+					// formik.setFieldValue("has_un_approve_trxn", false);
+					const payload = {
+						branch_code:userDetails?.brn_code,
+						transaction_date: date,
+					}
+						axios.post(`${url}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+											// console.log(res);
+											if(res?.data?.suc === 1){
+												if(res?.data?.msg?.length > 0){
+													const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
+													console.log(hasNonZero, "hasNonZero");
+													formik.setFieldValue("has_un_approve_trxn", hasNonZero);
+													if(hasNonZero){
+														Message("error", <>
+																<ul class="list-disc">
+																	{res?.data?.msg[0]?.transactions > 0 && <li>There are unapproved transactions before this date. Please check and try again.</li>}
+																	{res?.data?.msg[0]?.group_migrate > 0 && <li>There are unapproved group migrate transactions before this date. Please check and try again.</li>}
+																	{res?.data?.msg[0]?.member_migrate > 0 && <li>There are unapproved member migrate transactions before this date. Please check and try again.</li>}
+																</ul>
+														</>);
+													}
+												}
+											}
+											else{
+													Message("error", "Something went wrong while checking previous disbursement date. Please try again.");
+											}
+											
+									}).catch((err) => {
+										console.log("Error in checking previous disbursement date", err)
+										Message("error", "Error in checking previous disbursement date");
+									})
+			}
+			catch(err){
+				console.log("Error in checking previous disbursement date", err)
+				Message("error", "Error in checking previous disbursement date")
+			}
+		}
 
 	return (
 		<>
@@ -857,7 +966,35 @@ function TranceferCO({ groupDataArr }) {
 											<VError title={formik.errors.to_co} />
 										) : null}
 									</div>
-
+									<div>
+										<TDInputTemplateBr
+											placeholder="Transaction Date"
+											type="date"
+											name="trxn_date"
+											label="Transaction Date"
+											handleChange={formik.handleChange}
+											handleBlur={(e) =>{
+												formik.handleBlur(e);
+												if(e.target.value) {
+													// formik.setFieldValue('trxn_date', e.target.value);
+													checkPreviousDisbursement(e.target.value);
+												}
+												else{
+													formik.setFieldValue('has_un_approve_trxn', false);
+												}
+											}}
+											formControlName={formik.values.trxn_date}
+											value={formValues.trxn_date}
+											mode={1}
+												
+											// disabled={params.id > 0 ? true : false}
+										/>
+										{/* <div> */}
+											{formik.errors.trxn_date && formik.touched.trxn_date ? (
+												<VError title={formik.errors.trxn_date} />
+											) : null}
+										{/* </div> */}
+									</div>
 									<div className="sm:col-span-3">
 										<TDInputTemplateBr
 											placeholder="Remarks..."

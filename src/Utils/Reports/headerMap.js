@@ -131,7 +131,8 @@ const groupwiseDemandVsCollectionHeader = {
 	instl_end_dt: "Loan End Date",
 	tot_emi: "Total EMI",
 	coll_amt: "Collection Amount",
-	demand_after_collection: "Demand After Collection",
+	demand_amt: "Demand Amount",
+	// demand_after_collection: "Demand After Collection",
 	curr_outstanding: "Current Outstanding",
 }
 
@@ -148,7 +149,8 @@ const cowiseDemandVsCollectionHeader = {
 	recovery_day: "Recovery Day",
 	tot_emi: "Total EMI",
 	coll_amt: "Collection Amount",
-	demand_after_collection: "Demand After Collection",
+	// demand_after_collection: "Demand After Collection",
+	demand_amt: "Demand Amount",
 	curr_outstanding: "Current Outstanding",
 }
 
@@ -175,7 +177,8 @@ const memberwiseDemandVsCollectionHeader = {
 	instl_end_dt: "Loan End Date",
 	tot_emi: "Total EMI",
 	coll_amt: "Collection Amount",
-	demand_after_collection: "Demand After Collection",
+	// demand_after_collection: "Demand After Collection",
+	demand_amt: "Demand Amount",
 	curr_outstanding: "Current Outstanding",
 }
 
@@ -186,7 +189,9 @@ const branchwiseDemandVsCollectionHeader = {
 	branch_name: "Branch Name",
 	tot_emi: "Total EMI",
 	coll_amt: "Collection Amount",
-	demand_after_collection: "Demand After Collection",
+	// demand_after_collection: "Demand After Collection",
+	demand_amt: "Demand Amount",
+
 	curr_outstanding: "Current Outstanding",
 }
 
@@ -204,7 +209,7 @@ const fundwiseDemandVsCollectionHeader = {
 	period_mode: "Period Mode",
 	recovery_day: "Recovery Day",
 	coll_amt: "Collection Amount",
-	demand_after_collection: "Demand After Collection",
+	demand_amt: "Demand Amount",
 	curr_outstanding: "Current Outstanding",
 }
 
@@ -451,31 +456,65 @@ const absenteesReportHeader = {
 }
 
 const loanStatementHeader = {
+	// trans_date: "Transaction Date",
+	// trans_no: "Transaction No",
+	// tr_type: "Transaction Type",
+	// debit: "Debit",
+	// credit: "Credit",
+	// total_outstanding: "Total Outstanding",
+	// tr_mode: "Transaction Mode",
+	// particulars: "Particulars",
+	// status: "Status"
+
+	loan_id:"Loan ID",
+	member_code:"Member Code",
+	group_code:"Group Code",
+	branch_code:'Branch Code',
+	// client_code: "Client Code",
+	client_name: "Client Name",
 	trans_date: "Transaction Date",
 	trans_no: "Transaction No",
-	tr_type: "Transaction Type",
 	debit: "Debit",
 	credit: "Credit",
-	// prn_bal: "Principal Balance",
-	// intt_bal: "Interest Balance",
+	balance: "Balance",
+	intt_balance: "Interest Balance",
 	total_outstanding: "Total Outstanding",
+	tr_type: "Transaction Type",
 	tr_mode: "Transaction Mode",
 	particulars: "Particulars",
-	status: "Status",
+	created_by: "Created By",
+	created_at: "Created At",
+	approved_by: "Approved By",
+	approved_at: "Approved At",
+	// period: "Period",
 	// period_mode: "Period Mode",
+	STATUS: "Status",
 }
 
 const loanStatementHeaderGroupwise = {
+	loan_id:"Loan ID",
+	member_code:"Member Code",
+	group_code:"Group Code",
+	branch_code:'Branch Code',
+	// client_code: "Client Code",
+	client_name: "Client Name",
 	trans_date: "Transaction Date",
-	tr_type: "Transaction Type",
-	tr_mode: "Transaction Mode",
+	trans_no: "Transaction No",
 	debit: "Debit",
 	credit: "Credit",
+	balance: "Balance",
+	intt_balance: "Interest Balance",
 	total_outstanding: "Total Outstanding",
+	tr_type: "Transaction Type",
+	tr_mode: "Transaction Mode",
 	particulars: "Particulars",
+	created_by: "Created By",
+	created_at: "Created At",
+	approved_by: "Approved By",
+	approved_at: "Approved At",
 	// period: "Period",
 	// period_mode: "Period Mode",
-	status: "Status",
+	STATUS: "Status",
 }
 
 const txnGrpHeader = {

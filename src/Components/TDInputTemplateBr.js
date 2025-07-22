@@ -36,7 +36,7 @@ function TDInputTemplateBr(props) {
 					} focus:border-1 duration-500 block w-full p-2 dark:bg-bg-white dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500`}
 					placeholder={props.placeholder}
 					onChange={props.handleChange}
-					onBlur={props.handleBlur}
+					onBlur={props?.handleBlur}
 					disabled={props.disabled}
 				/>
 			)}

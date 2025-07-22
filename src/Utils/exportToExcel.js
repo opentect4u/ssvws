@@ -7,9 +7,10 @@ export async function exportToExcel(
 	fileName = "report.xlsx",
 	dateTimeColsException = []
 ) {
+	console.log(data);
 	const workbook = new ExcelJS.Workbook()
 	const worksheet = workbook.addWorksheet("Report")
-
+	// console.log(tot_disb_amt);
 	const keys = Object.keys(headerMap)
 	worksheet.columns = keys.map((key) => ({
 		header: headerMap[key],

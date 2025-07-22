@@ -44,6 +44,8 @@ function DisbursmentForm() {
 	const navigate = useNavigate()
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 
+	const [hasBeforeUpnapproveTransDate, setHasBeforeUpnapproveTransDate] = useState(false);
+
 	const [visible, setVisible] = useState(() => false)
 	const [visible2, setVisible2] = useState(() => false)
 	const [visible3, setVisible3] = useState(() => false)
@@ -668,8 +670,56 @@ function DisbursmentForm() {
 			console.log("Not Valid");
 		}
 		else{
-			console.log("valid");
-			setVisible(true)
+			// if(hasBeforeUpnapproveTransDate){
+			// 	Message("error", "There are unapproved transactions before this date. Please check and try again.");
+			// }
+			// else{
+				setLoading(true);
+				setHasBeforeUpnapproveTransDate(false);
+				const payload = {
+					branch_code:userDetails?.brn_code,
+					transaction_date: transactionDetailsData.b_tnxDate,
+				}
+				axios.post(`${url}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+						// console.log(res);
+								setLoading(false);
+
+						if(res?.data?.suc === 1){
+							        const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
+									// console.log("hasNonZero", hasNonZero);
+									setHasBeforeUpnapproveTransDate(hasNonZero);
+									 if(hasNonZero){
+										// setLoading(false);
+										Message("error", <>
+											<ul class="list-disc">
+											{res?.data?.msg[0]?.transactions > 0 && <li>There are unapproved transactions before this date. Please check and try again.</li>}
+											{res?.data?.msg[0]?.group_migrate > 0 && <li>There are unapproved group migrate transactions before this date. Please check and try again.</li>}
+											{res?.data?.msg[0]?.member_migrate > 0 && <li>There are unapproved member migrate transactions before this date. Please check and try again.</li>}
+											</ul>
+										</>);
+									}
+									else{
+										setVisible(true);	
+									}
+							// setHasBeforeUpnapproveTransDate((res?.data?.msg?.length > 0 && res?.data?.msg[0]?.unapprove_trans > 0));
+							// if(res?.data?.msg?.length > 0 && res?.data?.msg[0]?.unapprove_trans > 0){
+							// 	Message("error", "There are unapproved transactions before this date. Please check and try again.");
+							// } else {
+							// 	console.log("valid");
+							// 	setVisible(true);	
+							// }
+						}
+						else{
+								Message("error", "Something went wrong while checking previous disbursement date. Please try again.");
+						}
+						
+				}).catch((err) => {
+					console.log("Error in checking previous disbursement date", err)
+					Message("error", "Error in checking previous disbursement date");
+					setLoading(false);
+				})
+			// }
+		
 		}
 	}
 
@@ -814,6 +864,64 @@ function DisbursmentForm() {
 	// useEffect(() => {
 	// 	console.log(personalDetails)
 	// }, [])
+	const checkPreviousDisbursement = (date) => {
+		try{	
+			// console.log("checkPreviousDisbursement", date)
+				setLoading(true);
+				setHasBeforeUpnapproveTransDate(false);
+				const payload = {
+					branch_code:userDetails?.brn_code,
+					transaction_date: date,
+				}
+				axios.post(`${url}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+						// console.log(res);
+						setLoading(false);
+						if(res?.data?.suc === 1){
+							if(res?.data?.msg?.length > 0){
+								const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
+								console.log("hasNonZero", hasNonZero);
+								setHasBeforeUpnapproveTransDate(hasNonZero);
+								if(hasNonZero){
+									Message("error", <>
+											<ul class="list-disc">
+												{res?.data?.msg[0]?.transactions > 0 && <li>There are unapproved transactions before this date. Please check and try again.</li>}
+												{res?.data?.msg[0]?.group_migrate > 0 && <li>There are unapproved group migrate transactions before this date. Please check and try again.</li>}
+												{res?.data?.msg[0]?.member_migrate > 0 && <li>There are unapproved member migrate transactions before this date. Please check and try again.</li>}
+											</ul>
+									</>);
+								}
+
+								// if(res?.data?.msg[0]?.transactions > 0){
+								// 		Message("error", "There are unapproved transactions before this date. Please check and try again.");
+								// }
+								// if(res?.data?.msg[0]?.group_migrate > 0){
+								// 		Message("error", "There are unapproved group migrate  transactions before this date. Please check and try again.");
+								// }
+								// if(res?.data?.msg[0]?.member_migrate > 0){
+								// 		Message("error", "There are unapproved member migrate transactions before this date. Please check and try again.");
+								// }
+							}
+								
+							// setHasBeforeUpnapproveTransDate((res?.data?.msg?.length > 0 && res?.data?.msg[0]?.unapprove_trans > 0));
+							// if(res?.data?.msg?.length > 0 && res?.data?.msg[0]?.unapprove_trans > 0){
+							// 	Message("error", "There are unapproved transactions before this date. Please check and try again.");
+							// } else {}
+						}
+						else{
+								Message("error", "Something went wrong while checking previous disbursement date. Please try again.");
+						}
+						
+				}).catch((err) => {
+					console.log("Error in checking previous disbursement date", err)
+					Message("error", "Error in checking previous disbursement date");
+					setLoading(false);
+				})
+		}
+		catch(err){
+			console.log("Error in checking previous disbursement date", err)
+			Message("error", "Error in checking previous disbursement date")
+		}
+	}
 	return (
 		<>
 			{disburseOrNot && (
@@ -1367,12 +1475,28 @@ function DisbursmentForm() {
 										label="Transaction Date"
 										name="b_tnxDate"
 										formControlName={transactionDetailsData.b_tnxDate}
-										handleChange={handleChangeTnxDetailsDetails}
+										handleChange={(e) =>{
+											handleChangeTnxDetailsDetails(e);
+											// if(e.target.value){
+											// 	console.log("Transaction Date", e.target.value);
+											// }
+										}}
+										handleBlur={(e) =>{
+											console.log("Transaction Date", e.target.value);
+											if(e.target.value){
+												checkPreviousDisbursement(e.target.value);
+											}
+										}}
 										min={"1900-12-31"}
 										max={formatDateToYYYYMMDD(new Date())}
 										mode={1}
 										// disabled={disburseOrNot}
 									/>
+									{
+										hasBeforeUpnapproveTransDate && <p className="text-red-500 text-xs mt-1 font-medium">
+											There are unapproved transactions before this date, Please approve them to proceed.
+										</p>
+									}
 								</div>
 								<div className="sm:col-span-4">
 									{!disbursementDetailsData.b_scheme && (

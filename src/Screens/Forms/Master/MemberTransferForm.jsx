@@ -21,6 +21,7 @@ import { calculateRetirementDate } from "../../../Utils/calculateRetirementDate"
 import moment from "moment/moment";
 
 function MemberTransferForm() {
+  const [hasBeforeUpnapproveTransDate, setHasBeforeUpnapproveTransDate] = useState(false);
   const params = useParams();
   const [loading, setLoading] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -78,6 +79,8 @@ function MemberTransferForm() {
         });
     }
   };
+
+
   const fetchGroupDtls = () => {
     setLoading(true);
     axios
@@ -114,38 +117,81 @@ function MemberTransferForm() {
       });
   };
   const saveTransferGroup = () => {
-    const cred = {
-      mem_trans_date: todayDate,
-      from_branch: from_branch_id,
-      from_co: from_co_id,
-      to_group: group_to,
-      from_group:group,
-      to_branch: to_branch_id,
-      to_co: to_co_id,
-      remarks: remarks,
-      created_by: userDetails.emp_id,
-      modified_by: userDetails.emp_id,
-      trans_mem_dtls: mem_dtls
-        .filter((e) => e.check == true)
-        .map((item) => {
-          return {
-            member_code: item.member_code,
-          };
-        }),
-    };
+    // if(hasBeforeUpnapproveTransDate){
+    //     Message("error", "There are unapproved transactions before this date. Please check and try again.");
+    //     return;
+    // }
     setLoading(true)
-    // console.log(cred);
-    axios.post(`${url}/transfer_member`,cred).then(res=>{console.log(res)
-       setLoading(false)
-      if(res?.data?.suc){
-        Message('success',res?.data?.msg)
-        navigate(-1)
-      }
-      else{
-        Message('error',res?.data?.msg)
+     const payload = {
+            branch_code:userDetails?.brn_code,
+            transaction_date: todayDate,
+          }
+        axios.post(`${url}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+            // console.log(res);
+            if(res?.data?.suc === 1){
+              if(res?.data?.msg?.length > 0){
+                const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
+                // console.log("hasNonZero", hasNonZero);
+                setHasBeforeUpnapproveTransDate(hasNonZero);
+                if(hasNonZero){
+                  setLoading(false);
+                  Message("error", <>
+                      <ul class="list-disc">
+                        {res?.data?.msg[0]?.transactions > 0 && <li>There are unapproved transactions before this date. Please check and try again.</li>}
+                        {res?.data?.msg[0]?.group_migrate > 0 && <li>There are unapproved group migrate transactions before this date. Please check and try again.</li>}
+                        {res?.data?.msg[0]?.member_migrate > 0 && <li>There are unapproved member migrate transactions before this date. Please check and try again.</li>}
+                      </ul>
+                  </>);
+                }
+                else{
+                    const cred = {
+                    mem_trans_date: todayDate,
+                    from_branch: from_branch_id,
+                    from_co: from_co_id,
+                    to_group: group_to,
+                    from_group:group,
+                    to_branch: to_branch_id,
+                    to_co: to_co_id,
+                    remarks: remarks,
+                    created_by: userDetails.emp_id,
+                    modified_by: userDetails.emp_id,
+                    trans_mem_dtls: mem_dtls
+                      .filter((e) => e.check == true)
+                      .map((item) => {
+                        return {
+                          member_code: item.member_code,
+                        };
+                      }),
+                  };
+                
+                  // console.log(cred);
+                  axios.post(`${url}/transfer_member`,cred).then(res=>{console.log(res)
+                    setLoading(false)
+                    if(res?.data?.suc){
+                      Message('success',res?.data?.msg)
+                      navigate(-1)
+                    }
+                    else{
+                      Message('error',res?.data?.msg)
+                    }
+                  }).catch(err=>{
+                    setLoading(false)
+                    Message("error", "Error in transfer member");
+                  })
+                }
+              }
+            }
+            else{
+                setLoading(false);
+                Message("error", "Something went wrong while checking previous disbursement date. Please try again.");
+            }
+            
+        }).catch((err) => {
+          console.log("Error in checking previous disbursement date", err)
+          Message("error", "Error in checking previous disbursement date");
+          setLoading(false);
+        })
 
-      }
-    })
   };
   const fetchTransGroupDtls = () => {
     setLoading(true);
@@ -161,14 +207,18 @@ function MemberTransferForm() {
         setBranchId(res?.data?.msg[0]?.branch_id);
         setCoId(res?.data?.msg[0]?.co_id);
 
-        setLoading(false);
-        // axios
-        //   .post(`${url}/fetch_group_member_dtls`, { group_code: group })
-        //   .then((resMemb) => {
-        //     console.log(resMemb?.data?.msg);
-        //     setMemDtls(resMemb?.data?.msg);
-        //     setLoading(false);
-        //   });
+        // setLoading(false);
+        axios
+          .post(`${url}/fetch_group_member_dtls`, { group_code: group })
+          .then((resMemb) => {
+            console.log(resMemb?.data?.msg);
+            setMemDtls(resMemb?.data?.msg);
+            setLoading(false);
+          }).catch(err =>{
+            console.log("Error fetching group member details", err);
+            setLoading(false);
+            Message("error", "Error fetching group member details");
+          });
 
         // }
       });
@@ -178,6 +228,7 @@ function MemberTransferForm() {
     fetchGroupDtls();
   }, [group]);
   useEffect(() => {
+    console.log(group_to);
     if(group_to!="")
     fetchTransGroupDtls();
   }, [group_to]);
@@ -190,6 +241,50 @@ function MemberTransferForm() {
 
     console.log(dt);
   };
+
+    const checkPreviousDisbursement = (date) => {
+      try{	
+        // console.log("checkPreviousDisbursement", date)
+          setLoading(true);
+          setHasBeforeUpnapproveTransDate(false);
+          const payload = {
+            branch_code:userDetails?.brn_code,
+            transaction_date: date,
+          }
+          axios.post(`${url}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+              // console.log(res);
+              setLoading(false);
+              if(res?.data?.suc === 1){
+                if(res?.data?.msg?.length > 0){
+                  const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
+                  console.log("hasNonZero", hasNonZero);
+                  setHasBeforeUpnapproveTransDate(hasNonZero);
+                  if(hasNonZero){
+                    Message("error", <>
+                        <ul class="list-disc">
+                          {res?.data?.msg[0]?.transactions > 0 && <li>There are unapproved transactions before this date. Please check and try again.</li>}
+                          {res?.data?.msg[0]?.group_migrate > 0 && <li>There are unapproved group migrate transactions before this date. Please check and try again.</li>}
+                          {res?.data?.msg[0]?.member_migrate > 0 && <li>There are unapproved member migrate transactions before this date. Please check and try again.</li>}
+                        </ul>
+                    </>);
+                  }
+                }
+              }
+              else{
+                  Message("error", "Something went wrong while checking previous disbursement date. Please try again.");
+              }
+              
+          }).catch((err) => {
+            console.log("Error in checking previous disbursement date", err)
+            Message("error", "Error in checking previous disbursement date");
+            setLoading(false);
+          })
+      }
+      catch(err){
+        console.log("Error in checking previous disbursement date", err)
+        Message("error", "Error in checking previous disbursement date")
+      }
+    }
   return (
     <>
       <Spin
@@ -207,9 +302,23 @@ function MemberTransferForm() {
               name="todayDate"
               formControlName={todayDate}
               handleChange={(e) => setTodayDate(e.target.value)}
+              handleBlur={(e) => {
+                console.log(e.target.value);
+                if(e.target.value){
+                  checkPreviousDisbursement(e.target.value);
+                } 
+                else{
+                  setHasBeforeUpnapproveTransDate(false);
+                }
+              }}
               min={"1900-12-31"}
               mode={1}
             />
+            	{
+                hasBeforeUpnapproveTransDate && <p className="text-red-500 text-xs mt-1 font-medium">
+                  There are unapproved transactions before this date, Please approve them to proceed.
+                </p>
+              }
           </div>
           <div className="col-span-1">
             <label
@@ -311,11 +420,12 @@ function MemberTransferForm() {
                 </Tag>
               )}
           </div>
-          {mem_dtls.length > 0 &&
+          {(mem_dtls.length > 0 &&
             mem_dtls.reduce(
-              (accumulator, item) => accumulator + item.outstanding,
+              (accumulator, item) => accumulator + Number(item.outstanding),
               0
-            ) == 0 && (
+            ) == 0) && (
+
               <div className="col-span-2">
                 <label
                   for="frm_co"
@@ -369,7 +479,7 @@ function MemberTransferForm() {
           )}
           {mem_dtls.length > 0 &&
             mem_dtls.reduce(
-              (accumulator, item) => accumulator + item.outstanding,
+              (accumulator, item) => accumulator + Number(item.outstanding),
               0
             ) == 0 &&
             group_to && (

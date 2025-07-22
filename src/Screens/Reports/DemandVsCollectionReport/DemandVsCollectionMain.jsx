@@ -312,7 +312,7 @@ function DemandVsCollectionMain() {
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
 		}
-
+		console.log(creds)
 		await axios
 			.post(`${url}/dmd_vs_collec_report_fundwise`, creds)
 			.then((res) => {
@@ -421,6 +421,7 @@ function DemandVsCollectionMain() {
 			period_mode: searchType2,
 			from_day: fromDay,
 			to_day: toDay,
+			branch_code: userDetails?.brn_code,
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_groupwise`, creds)
@@ -436,6 +437,8 @@ function DemandVsCollectionMain() {
 
 	const handleFetchFundwiseDayReport = async () => {
 		setLoading(true)
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+		const selectedFunds = funds?.map((item, i) => item?.fund_id)
 		const creds = {
 			// demand_date: fetchedReportDate,
 			send_year: choosenYear,
@@ -443,6 +446,8 @@ function DemandVsCollectionMain() {
 			period_mode: searchType2,
 			from_day: fromDay,
 			to_day: toDay,
+			branch_code:branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_fundwise`, creds)
@@ -458,6 +463,11 @@ function DemandVsCollectionMain() {
 
 	const handleFetchCOwiseDayReport = async () => {
 		setLoading(true)
+		
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+		const coCodes = selectedCOs?.map((item, i) => item?.value)
+		const allCos = cos?.map((item, i) => item?.co_id)
+
 		const creds = {
 			// demand_date: fetchedReportDate,
 			send_year: choosenYear,
@@ -465,6 +475,12 @@ function DemandVsCollectionMain() {
 			period_mode: searchType2,
 			from_day: fromDay,
 			to_day: toDay,
+			co_id:coCodes?.length === 0
+					? selectedCO === "AC"
+						? allCos
+						: [selectedCO]
+					: coCodes,
+			branch_code:branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_cowise`, creds)
@@ -480,6 +496,7 @@ function DemandVsCollectionMain() {
 
 	const handleFetchMemberwiseDayReport = async () => {
 		setLoading(true)
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 		const creds = {
 			// demand_date: fetchedReportDate,
 			send_year: choosenYear,
@@ -487,6 +504,8 @@ function DemandVsCollectionMain() {
 			period_mode: searchType2,
 			from_day: fromDay,
 			to_day: toDay,
+			// branch_code: branchCodes
+			branch_code:branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_membwise`, creds)
@@ -1082,7 +1101,7 @@ function DemandVsCollectionMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[9, 16, 17, 18, 19]}
+								columnTotal={[8, 15, 16, 17, 18]}
 								// colRemove={[13]}
 								dateTimeExceptionCols={[8, 13, 14, 15]}
 								headersMap={groupwiseDemandVsCollectionHeader}
@@ -1125,8 +1144,8 @@ function DemandVsCollectionMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[13, 20, 21, 22, 23]}
-								dateTimeExceptionCols={[11, 16, 17, 18, 19, 20]}
+								columnTotal={[12, 20, 21, 22, 23]}
+								dateTimeExceptionCols={[11, 16, 17, 18, 19]}
 								// colRemove={[16]}
 								headersMap={memberwiseDemandVsCollectionHeader}
 							/>
@@ -1140,8 +1159,8 @@ function DemandVsCollectionMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								// columnTotal={[2, 3]}
-								// dateTimeExceptionCols={[8]}
+								columnTotal={[3, 4,5,6]}
+								dateTimeExceptionCols={[8]}
 								headersMap={branchwiseDemandVsCollectionHeader}
 							/>
 						</>
@@ -1153,9 +1172,38 @@ function DemandVsCollectionMain() {
 						<div className="flex gap-4">
 							<Tooltip title="Export to Excel">
 								<button
-									onClick={() =>
-										exportToExcel(dataToExport, headersToExport, fileName, [0])
-									}
+									onClick={() =>{
+										console.log(dataToExport);
+										const exportData = dataToExport;
+											const tot_disb_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.disb_amt) , 0);
+											const tot_emi_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.tot_emi) , 0);
+											const tot_coll_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.coll_amt) , 0);
+											const tot_demand_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.demand_amt) , 0);
+											const tot_curr_outstanding = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.curr_outstanding) , 0);
+											exportData.push({
+													"demand_date": "",
+													"collec between": "",
+													"branch_code": "",
+													"branch_name": "",
+													"group_code": "",
+													"group_name": "",
+													"co_id": "",
+													"emp_name": "",
+													"disb_dt": "",
+													"disb_amt": tot_disb_amt.toFixed(2),
+													"curr_roi": "",
+													"loan_period": "",
+													"period_mode": "",
+													"recovery_day": "",
+													"instl_start_dt": "",
+													"instl_end_dt": "",
+													"tot_emi": tot_emi_amt.toFixed(2),
+													"coll_amt": tot_coll_amt.toFixed(2),
+													"demand_amt": tot_demand_amt.toFixed(2),
+													"curr_outstanding": tot_curr_outstanding.toFixed(2)
+										})
+										exportToExcel(exportData, headersToExport, fileName, [0])
+									}}
 									className="mt-5 justify-center items-center rounded-full text-green-900"
 								>
 									<FileExcelOutlined

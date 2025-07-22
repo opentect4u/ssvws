@@ -25,6 +25,7 @@ import {
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import DynamicTailwindTable from "../../../Components/Reports/DynamicTailwindTable"
 import { printTableReport } from "../../../Utils/printTableReport"
+import moment from "moment"
 
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
@@ -590,10 +591,15 @@ function LoanStatementMain() {
 
 						{searchType === "M" && reportTxnData.length > 0 && (
 							<DynamicTailwindTable
-								data={reportTxnData}
+								data={reportTxnData?.map(el => {
+									el.tr_type = el.tr_type == 'D' ? 'Disbursement' : (el.tr_type == 'R' ? 'Recovery' : '');
+									el.trans_date = moment(el.trans_date).format("DD/MM/YYYY");
+									return el;
+								})}
 								dateTimeExceptionCols={[0]}
-								colRemove={[5]}
-								columnTotal={[2, 3]}
+								// colRemove={[5]}
+								columnTotal={[7, 8]}
+								// colRemove={[0,1,2,3,4,6,10,11,13,14,15,16]}
 								headersMap={loanStatementHeader}
 								indexing
 							/>
@@ -603,23 +609,70 @@ function LoanStatementMain() {
 
 						{searchType === "G" && reportTxnData.length > 0 && (
 							<DynamicTailwindTable
-								data={reportTxnData}
+								data={reportTxnData?.map(el => {
+									el.tr_type = el.tr_type == 'D' ? 'Disbursement' : (el.tr_type == 'R' ? 'Recovery' : '');
+									el.trans_date = moment(el.trans_date).format("DD/MM/YYYY");
+									return el;
+								})}
 								dateTimeExceptionCols={[0]}
-								columnTotal={[1, 2]}
-								colRemove={[4]}
+								columnTotal={[7, 8]}
+								// colRemove={[0,1,2,3,4,6,10,11,13,14,15,16]}
 								headersMap={loanStatementHeaderGroupwise}
 								indexing
 							/>
 						)}
 						{reportTxnData.length !== 0 && (
 							<div className="flex gap-4 -mt-14">
-								<Tooltip title="Export to Excel">
+								<Tooltip title="Export to Excels">
 									<button
-										onClick={() =>
-											exportToExcel(dataToExport, headersToExport, fileName, [
+										onClick={() =>{
+											// console.log(dataToExport);
+											// console.log(headersToExport)
+											// const columnToExport = {
+											// 	...headersToExport,
+											// 	// STATUS:'STATUS',
+											// 	// loan_id: "Loan ID",
+											// 	// member_code: "Member Code",
+											// 	// group_code: "Group Code",
+											// 	// branch_code: "Branch Code",
+											// 	// client_name: "Client Name",
+											// 	// trans_no: "Transaction No.",
+											// 	// created_by: "Created By",
+											// 	// created_at: "Created At",
+											// 	// approved_by: "Approved By",
+											// 	// approved_at: "Approved At",
+											// }
+											// const {status,...rest} = columnToExport;
+											// console.log(dataToExport);
+											// return;
+											console.log(reportTxnData);
+
+											const exportData = reportTxnData
+											const tot_debit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
+											const tot_credit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.credit) , 0);
+											if(searchType === "M") {
+												exportData.push({
+													trans_no: "Total",
+													debit: tot_debit_amt,
+													credit: tot_credit_amt,
+												})
+											}	
+											else{
+												exportData.push({
+													trans_no: "Total",
+													debit: tot_debit_amt,
+													credit: tot_credit_amt,
+												})
+												
+											}
+											// const mainDT = exportData.map(el => {
+											// 	el.tr_type = el.tr_type == 'D' ? 'Disbursement' : (el.tr_type == 'R' ? 'Recovery' : '');
+											// 	return el;
+											// })
+											exportToExcel(exportData, headersToExport, fileName, [
 												0,
 											])
-										}
+										}}
 										className="mt-5 justify-center items-center rounded-full text-green-900"
 									>
 										<FileExcelOutlined

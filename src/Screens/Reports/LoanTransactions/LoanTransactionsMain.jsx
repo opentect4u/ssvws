@@ -792,14 +792,17 @@ function LoanTransactionsMain() {
 						<div className="flex gap-4">
 							<Tooltip title="Export to Excel">
 								<button
-									onClick={() =>
+									onClick={() =>{
+										// console.log(dataToExport);
+										// console.log(headersToExport);
+										
 										exportToExcel(
 											dataToExport,
 											headersToExport,
 											fileName,
 											[0, 2]
 										)
-									}
+										}}
 									className="mt-5 justify-center items-center rounded-full text-green-900"
 								>
 									<FileExcelOutlined

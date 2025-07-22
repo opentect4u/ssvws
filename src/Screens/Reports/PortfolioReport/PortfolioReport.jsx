@@ -71,6 +71,10 @@ function PortfolioReport() {
 		setSearchType(e)
 	}
 
+	useEffect(() => {
+			console.log(reportData, ' reportData');
+	},[reportData])
+
 	const handleFetchReportPortfolioMemberwise = async () => {
 		setLoading(true)
 
@@ -143,14 +147,14 @@ function PortfolioReport() {
 
 		const creds = {
 			branch_code:
-				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+				branchCodes?.length === 0 ? [Number(userDetails?.brn_code)] : branchCodes,
 			// supply_date: formatDateToYYYYMMDD(fromDate),
 		}
 
 		await axios
 			.post(`${url}/groupwise_portfolio_report`, creds)
 			.then((res) => {
-				const data = res?.data?.msg?.msg || []
+				const data = res?.data?.suc == 0 ? [] : (res?.data?.msg?.msg || [])
 				if (data.length === 0) {
 					console.log(
 						"--------------- LOOP BREAKS ---------------",
@@ -705,8 +709,7 @@ function PortfolioReport() {
 								</div>
 							</>
 						)}
-					</div>
-
+					</div>	
 					{searchType === "M" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable

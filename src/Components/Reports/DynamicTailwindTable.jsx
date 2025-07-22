@@ -30,7 +30,11 @@ const DynamicTailwindTable = ({
 		() =>
 			originalHeaders
 				.map((header, index) => ({ header, index }))
-				.filter((item) => !colRemove.includes(item.index)),
+				.filter((item) => {
+					console.log('item.index: ' + item.index);
+					console.log('item.header: ' + item.header);
+					return !colRemove.includes(item.index);
+				}),
 		[originalHeaders, colRemove]
 	)
 
@@ -101,7 +105,11 @@ const DynamicTailwindTable = ({
 		const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
 		if (typeof value === "string" && isoRegex.test(value)) {
 			if (dateTimeExceptionCols.includes(colIndex)) {
-				return new Date(value).toLocaleDateString("en-GB")
+				return new Date(value).toLocaleDateString("en-GB", {
+					day: '2-digit',
+					month: '2-digit',
+					year: 'numeric'
+					})
 			}
 			return new Date(value).toLocaleString("en-GB")
 		}
