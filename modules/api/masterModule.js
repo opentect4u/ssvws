@@ -881,7 +881,7 @@ const get_prn_amt = (loan_id, get_date) => {
         whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${get_date}'`,
         order = null;
       var fetch_max_pay_date = await db_Select(select, table_name, whr, order);  
-      console.log(fetch_max_pay_date.msg[0].payment_date);
+      // console.log(fetch_max_pay_date.msg[0].payment_date);
           
 
       if (fetch_max_pay_date.suc > 0 && fetch_max_pay_date.msg.length > 0) {
@@ -977,7 +977,7 @@ const fetch_date = (branch_code, get_dt) => {
         // Convert both dates to Date objects for comparison
         let closedDate = (dateFormat(closed_upto,'yyyy-mm-dd'));
         let formDate = (dateFormat(formattedDate,'yyyy-mm-dd'));
-        console.log(closedDate,formDate,'formDate');
+        // console.log(closedDate,formDate,'formDate');
 
         if (closedDate >= formDate) {
           resolve({ suc: 0, msg: "Error: formDate must be greater than closed_upto." });

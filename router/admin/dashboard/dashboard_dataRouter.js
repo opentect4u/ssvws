@@ -359,7 +359,7 @@ dashboard_dataRouter.post("/dashboard_tot_loan_unapprove_dtls", async (req, res)
 dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
   try {
     var data = req.body;
-    console.log(data, 'data_overdue');
+    // console.log(data, 'data_overdue');
 
     const getMonthPrev = await db_Select(
       "closed_upto",
@@ -374,7 +374,7 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
 
     const rawDate = new Date(getMonthPrev.msg[0].closed_upto);
     const trf_date = dateFormat(rawDate, 'yyyy-mm-dd'); 
-    console.log(trf_date, 'formatted trf_date');
+    // console.log(trf_date, 'formatted trf_date');
 
     let totalLoanOD = { msg: [{ tot_loan_od: 0, tot_overdue_grp: 0 }] };
     let weeklyLoanOD = { msg: [{ weekly_od: 0, weekly_grp: 0 }] };
@@ -1042,7 +1042,7 @@ dashboard_dataRouter.post("/co_dashboard_user_logged_in_details", async (req, re
 dashboard_dataRouter.post("/show_unapproved_grp_memb_transfer", async (req, res) => {
   try {
     var data = req.body;
-    console.log(data,'data_logged');
+    // console.log(data,'data_logged');
 
     let tot_grp_transfer_unapprove,tot_memb_transfer_unapprove;
 

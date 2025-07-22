@@ -450,7 +450,7 @@ module.exports = {
   //05.03.2025 (problem create like interest row inserted recovery row not)
   // use upload on as time field for duplicate print 23.05.2025
    recovery_trans: (data) => {
-    console.log(data,'data');
+    // console.log(data,'data');
     
     return new Promise(async (resolve, reject) => {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -484,10 +484,10 @@ module.exports = {
             // console.log(dt,'dtdtd');
             if (dt.credit > 0 && dt.credit) {
               let balance = parseFloat(dt.prn_amt) || 0; //previous prn amt
-              console.log(balance,'balance');
+              // console.log(balance,'balance');
 
               let prnEmi = parseFloat(dt.prn_emi) || 0; //prn recovery
-              console.log(prnEmi,'prnEmi');
+              // console.log(prnEmi,'prnEmi');
 
               let intt_balance = parseFloat(dt.intt_amt); //previous intt
               let inttEMI = parseFloat(dt.intt_emi); //intt recovery
@@ -579,7 +579,7 @@ module.exports = {
                   let outstanding =
                     parseFloat(prn_recov) + parseFloat(intt_update);
 
-                  console.log(prn_recov,intt_update,outstanding,'calculate');
+                  // console.log(prn_recov,intt_update,outstanding,'calculate');
 
                   var table_name = "td_loan",
                     fields = `prn_amt = '${prn_update}', intt_amt = '${intt_update}', outstanding = '${outs_update}', instl_paid = '${dt.instl_paid}', last_trn_dt = '${dt.last_trn_dt}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,

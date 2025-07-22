@@ -51,7 +51,6 @@ loanRouter.post("/scheme_dtls", async (req, res) => {
 //   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
 //     let group_code = fetch_appl_dtls.msg[0].group_code;
 //     console.log(group_code,'code');
-    
 
 //     var select = "COUNT(group_code) group_code",
 //     table_name = "td_loan",
@@ -94,10 +93,10 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
   var fetch_appl_dtls = await db_Select(select, table_name, whr, order);
 
   if (fetch_appl_dtls.suc > 0 && fetch_appl_dtls.msg.length > 0) {
-    for(let dt of fetch_appl_dtls.msg){
+    for (let dt of fetch_appl_dtls.msg) {
       let group_code = dt.group_code;
       // console.log(group_code, "code");
-  
+
       // Check if the group code exists in td_loan
       var loanCheckQuery = await db_Select(
         "COUNT(group_code) AS group_count",
@@ -105,11 +104,15 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
         `branch_code = '${data.branch_code}' AND group_code = '${group_code}'`,
         null
       );
-  
-      if ( loanCheckQuery.suc > 0 && loanCheckQuery.msg.length > 0 && loanCheckQuery.msg[0].group_count > 0 ) {
-        dt['loan_exist'] = loanCheckQuery.msg[0].group_count
-        dt['loan_exist_msg'] = 'Loan already disbursed on this group'
-      }else{
+
+      if (
+        loanCheckQuery.suc > 0 &&
+        loanCheckQuery.msg.length > 0 &&
+        loanCheckQuery.msg[0].group_count > 0
+      ) {
+        dt["loan_exist"] = loanCheckQuery.msg[0].group_count;
+        dt["loan_exist_msg"] = "Loan already disbursed on this group";
+      } else {
         // Fetch member details only if no loan exists
         select =
           "a.member_code,a.client_name,b.form_no,DATE_FORMAT(b.grt_date, '%Y-%m-%d') application_date,DATE_FORMAT(b.approved_at, '%Y-%m-%d') grt_approve_date,c.applied_amt,c.loan_purpose,CONCAT(d.sub_purpose,'-',d.purpose_id)purpose_id,f.prn_disb_amt";
@@ -119,9 +122,9 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
           AND b.prov_grp_code = '${group_code}' 
           AND a.delete_flag = 'N' 
           AND b.approval_status = 'A'`;
-    
+
         var grp_mem_dt = await db_Select(select, table_name, whr, null);
-    
+
         dt["mem_dt_grp"] =
           grp_mem_dt.suc > 0 && grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : [];
       }
@@ -131,15 +134,16 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
   res.send(fetch_appl_dtls);
 });
 
-
 loanRouter.post("/fetch_disb_trans_dtls", async (req, res) => {
   var data = req.body;
 
-  var select = "a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.particulars,b.bank_charge,b.proc_charge,b.bank_name code,c.scheme_name,d.fund_name,e.bank_name",
-  table_name = "td_loan a JOIN td_loan_transactions b ON a.loan_id = b.loan_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_bank e ON b.bank_name = e.bank_code",
-  whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
-  order = `GROUP BY a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.particulars,b.bank_charge,b.proc_charge,b.bank_name,c.scheme_name,d.fund_name,e.bank_name`;
-  var fetch_disb_dtls = await db_Select(select,table_name,whr,order);
+  var select =
+      "a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.particulars,b.bank_charge,b.proc_charge,b.bank_name code,c.scheme_name,d.fund_name,e.bank_name",
+    table_name =
+      "td_loan a JOIN td_loan_transactions b ON a.loan_id = b.loan_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_bank e ON b.bank_name = e.bank_code",
+    whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
+    order = `GROUP BY a.scheme_id,a.fund_id,a.period,a.curr_roi,a.recovery_day,a.period_mode,b.particulars,b.bank_charge,b.proc_charge,b.bank_name,c.scheme_name,d.fund_name,e.bank_name`;
+  var fetch_disb_dtls = await db_Select(select, table_name, whr, order);
 
   res.send(fetch_disb_dtls);
 });
@@ -273,9 +277,9 @@ loanRouter.post("/save_loan_transaction", async (req, res) => {
 //   try{
 //   var data = req.body;
 //   console.log(data,'lolo');
-  
-//   let memberCodes = data.member_code.map(m => m.member_code); 
-//   let memberCodesStr = memberCodes.join(","); 
+
+//   let memberCodes = data.member_code.map(m => m.member_code);
+//   let memberCodesStr = memberCodes.join(",");
 
 // var select = "SUM(applied_amt) applied_amt",
 // table_name = "td_loan",
@@ -303,32 +307,38 @@ loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
     // console.log("Received Data:", data);
 
     if (!Array.isArray(data.member_code)) {
-      return res.send({ suc: 0, msg: "Invalid member_code format. Expected an array." });
+      return res.send({
+        suc: 0,
+        msg: "Invalid member_code format. Expected an array.",
+      });
     }
 
-    let memberCodes = data.member_code.map(m => m.member_code);
-    let memberCodesStr = memberCodes.map(code => `'${code}'`).join(",");
+    let memberCodes = data.member_code.map((m) => m.member_code);
+    let memberCodesStr = memberCodes.map((code) => `'${code}'`).join(",");
 
     var select = "SUM(applied_amt) applied_amt",
-        table_name = "td_loan",
-        whr = `member_code IN (${memberCodesStr})`,
-        order = null;
+      table_name = "td_loan",
+      whr = `member_code IN (${memberCodesStr})`,
+      order = null;
 
     var verify_tot_dib_dt = await db_Select(select, table_name, whr, order);
 
     let appliedAmt = verify_tot_dib_dt.msg[0].applied_amt || 0;
 
     if (data.tot_disb_amt > appliedAmt) {
-      res.send({ "suc": 0, "msg": "Applied amount is greater than disbursed amount", appliedAmt });
+      res.send({
+        suc: 0,
+        msg: "Applied amount is greater than disbursed amount",
+        appliedAmt,
+      });
     } else {
-      res.send({ "suc": 1, "msg": "Disburse amount", appliedAmt });
+      res.send({ suc: 1, msg: "Disburse amount", appliedAmt });
     }
   } catch (error) {
     console.error("Error:", error);
-    res.send({ "suc": 0, "msg": "Internal server error" });
+    res.send({ suc: 0, msg: "Internal server error" });
   }
 });
-
 
 loanRouter.post("/fetch_recovery_day", async (req, res) => {
   var data = req.body;
@@ -546,18 +556,18 @@ loanRouter.post("/search_grp_view", async (req, res) => {
   var data = req.body;
 
   //search group for view
-  if(data.branch_code == '100'){
+  if (data.branch_code == "100") {
     var select = "branch_code,group_code,group_name,group_type",
-    table_name = "md_group",
-    whr = `group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%'`,
-    order = null;
+      table_name = "md_group",
+      whr = `group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%'`,
+      order = null;
     var search_grp_view = await db_Select(select, table_name, whr, order);
-  }else {
+  } else {
     var select = "group_code,group_name,group_type",
-    table_name = "md_group",
-    whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%')`,
-    order = null;
-  var search_grp_view = await db_Select(select, table_name, whr, order);
+      table_name = "md_group",
+      whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.group_name_view}%' OR group_code like '%${data.group_name_view}%')`,
+      order = null;
+    var search_grp_view = await db_Select(select, table_name, whr, order);
   }
   res.send(search_grp_view);
 });
@@ -566,14 +576,18 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
   var data = req.body;
 
   //fetch search group view details
-  var select ="a.*, b.block_name,c.emp_name,d.branch_name brn_name",
-    table_name ="md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+  var select = "a.*, b.block_name,c.emp_name,d.branch_name brn_name",
+    table_name =
+      "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
     whr = `a.group_code = '${data.group_code}' AND a.branch_code = '${data.branch_code}'`,
     order = null;
   var fetch_search_group_view = await db_Select(select, table_name, whr, order);
 
   //fetch member details on that group
-  if (fetch_search_group_view.suc > 0 && fetch_search_group_view.msg.length > 0) {
+  if (
+    fetch_search_group_view.suc > 0 &&
+    fetch_search_group_view.msg.length > 0
+  ) {
     // var select = `a.loan_id,a.member_code,a.outstanding curr_outstanding,b.client_name`,
     //   table_name =
     //     "td_loan a LEFT JOIN md_member b ON a.branch_code = b.branch_code AND a.member_code = b.member_code",
@@ -582,14 +596,15 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     // var grp_mem_dtls = await db_Select(select, table_name, whr, order);
 
     var select = `a.member_code,b.client_name,c.loan_id,(c.prn_amt + c.od_prn_amt + c.intt_amt + c.od_intt_amt) curr_outstanding`,
-    table_name ="td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan c ON a.member_code = c.member_code AND a.prov_grp_code = c.group_code",
-    // whr = `a.prov_grp_code = '${data.group_code}' AND c.outstanding > 0`,
-    whr = `a.prov_grp_code = '${data.group_code}' 
+      table_name =
+        "td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN td_loan c ON a.member_code = c.member_code AND a.prov_grp_code = c.group_code",
+      // whr = `a.prov_grp_code = '${data.group_code}' AND c.outstanding > 0`,
+      whr = `a.prov_grp_code = '${data.group_code}' 
            AND a.approval_status != 'R'`,
-    order = `ORDER BY c.loan_id desc`;
-  var grp_mem_dtls = await db_Select(select, table_name, whr, order);
+      order = `ORDER BY c.loan_id desc`;
+    var grp_mem_dtls = await db_Select(select, table_name, whr, order);
 
-  //outstanding details
+    //outstanding details
     var select = `SUM(outstanding) AS total_outstanding`,
       table_name = "td_loan",
       whr = `group_code = '${data.group_code}'`,
@@ -606,16 +621,13 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     // table_name = "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id",
     // whr = `group_code = '${data.group_code}'`,
     // order = `GROUP BY a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,a.disb_dt`;
-    var select = "a.loan_id,a.member_code,e.client_name,a.purpose,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.recovery_day,a.period,a.period_mode,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,a.disb_dt,(a.prn_disb_amt) disburse_amt,(a.tot_emi)tot_emi,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
-    table_name = "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_member e ON a.member_code = e.member_code",
-    whr = `group_code = '${data.group_code}'`,
-    order = `ORDER BY a.disb_dt DESC`;
-  var disburse_details = await db_Select(
-    select,
-    table_name,
-    whr,
-    order
-  );
+    var select =
+        "a.loan_id,a.member_code,e.client_name,a.purpose,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.recovery_day,a.period,a.period_mode,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,a.disb_dt,(a.prn_disb_amt) disburse_amt,(a.tot_emi)tot_emi,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
+      table_name =
+        "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_member e ON a.member_code = e.member_code",
+      whr = `group_code = '${data.group_code}'`,
+      order = `ORDER BY a.disb_dt DESC`;
+    var disburse_details = await db_Select(select, table_name, whr, order);
 
     fetch_search_group_view.msg[0]["memb_dt"] =
       grp_mem_dtls.suc > 0 && grp_mem_dtls.msg.length > 0
@@ -627,9 +639,9 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
         ? total_outstanding_result.msg[0]["total_outstanding"]
         : 0;
     fetch_search_group_view.msg[0]["disb_details"] =
-        disburse_details.suc > 0 && disburse_details.msg.length > 0
-          ? disburse_details.msg
-          : [];    
+      disburse_details.suc > 0 && disburse_details.msg.length > 0
+        ? disburse_details.msg
+        : [];
   }
 
   res.send(fetch_search_group_view);
@@ -703,25 +715,121 @@ loanRouter.post("/change_loan_trans_date", async (req, res) => {
 });
 
 loanRouter.post("/change_recovery_day", async (req, res) => {
-  try{
-  var data = req.body;
-  // console.log(data,'dtdt');
-  
-   let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+  try {
+    var data = req.body;
+    // console.log(data,'dtdt');
 
-  for (let dt of data.recov_day_dtls){
-    // console.log(dt,'dtttt');
-    
-    var table_name = "td_loan",
-    fields = `recovery_day = '${data.recovery_day}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
-    values = null,
-    whr = `loan_id = '${dt.loan_id}'`,
-    flag = 1;
-    var update_recov_day = await db_Insert(table_name, fields, values, whr, flag);
-  }
-  res.send({ suc : 1, msg: "Recovery day updated successfully"});
-  }catch(error){
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    for (let dt of data.recov_day_dtls) {
+      // console.log(dt,'dtttt');
+
+      var table_name = "td_loan",
+        fields = `recovery_day = '${data.recovery_day}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+        values = null,
+        whr = `loan_id = '${dt.loan_id}'`,
+        flag = 1;
+      var update_recov_day = await db_Insert(
+        table_name,
+        fields,
+        values,
+        whr,
+        flag
+      );
+    }
+    res.send({ suc: 1, msg: "Recovery day updated successfully" });
+  } catch (error) {
     console.error("Error updating loan recovery day:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
+// fetch unapprove dtls before trns dt
+// loanRouter.post("/fetch_unapprove_dtls_before_trns_dt", async (req, res) => {
+//   try {
+//     var data = req.body;
+//     console.log(data,'data');
+
+//     var select = `SUM(unpp_trn) transactions,SUM(unpp_grp)group_migrate,SUM(unpp_memb)member_migrate
+//                 FROM (
+// 	SELECT COUNT(loan_id)unpp_trn,0 unpp_grp,0 unpp_memb FROM td_loan_transactions
+// 	WHERE loan_id IN (SELECT loan_id FROM td_loan WHERE branch_code = '${data.branch_code}')
+// 	AND  STATUS = 'U'
+// 	AND  payment_date < '${data.transaction_date}'
+// 	UNION
+// 	SELECT 0 unpp_trn,COUNT(group_code)unpp_grp,0 unpp_memb 
+// 	FROM td_co_transfer
+// 	WHERE from_brn = '${data.branch_code}'
+// 	AND   approval_status = 'U'
+// 	AND   DATE(trf_date) < '${data.transaction_date}'
+// 	UNION
+// 	SELECT 0 unpp_trn,0 unpp_grp,COUNT(member_code)unpp_memb 
+// 	FROM td_member_transfer
+// 	WHERE from_branch = '${data.branch_code}'
+// 	AND   approval_status = 'U'
+// 	AND   DATE(mem_trans_date) < '${data.transaction_date}')a`,
+     
+
+//     res.send(fetch_unapprove_data_before_trans_date);
+//   } catch (error) {
+//     console.error(
+//       "Error fetch unapprove details before transaction date:",
+//       error
+//     );
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// });
+
+
+loanRouter.post("/fetch_unapprove_dtls_before_trns_dt", async (req, res) => {
+  try {
+    var data = req.body;
+    const branchCode = data.branch_code;
+    const transactionDate = data.transaction_date;
+
+    var select = `SUM(unpp_trn) transactions,SUM(unpp_grp)group_migrate,SUM(unpp_memb)member_migrate
+      FROM (
+        SELECT 
+          COUNT(loan_id) AS unpp_trn,
+          0 AS unpp_grp,
+          0 AS unpp_memb
+        FROM td_loan_transactions
+        WHERE loan_id IN (
+          SELECT loan_id FROM td_loan WHERE branch_code = '${branchCode}'
+        )
+        AND status = 'U'
+        AND payment_date < '${transactionDate}'
+
+        UNION
+
+        SELECT 
+          0 AS unpp_trn,
+          COUNT(group_code) AS unpp_grp,
+          0 AS unpp_memb
+        FROM td_co_transfer
+        WHERE from_brn = '${branchCode}'
+        AND approval_status = 'U'
+        AND DATE(trf_date) < '${transactionDate}'
+
+        UNION
+
+        SELECT 
+          0 AS unpp_trn,
+          0 AS unpp_grp,
+          COUNT(member_code) AS unpp_memb
+        FROM td_member_transfer
+        WHERE from_branch = '${branchCode}'
+        AND approval_status = 'U'
+        AND DATE(mem_trans_date) < '${transactionDate}'
+      ) AS a;
+    `,
+    table_name = null,
+    whr = null,
+    order = null;
+     var result = await db_Select(select,table_name,whr,order)
+    res.send(result);
+  } catch (error) {
+    console.error("Error fetching unapprove details before transaction date:", error);
     res.send({ suc: 0, msg: "An error occurred" });
   }
 });

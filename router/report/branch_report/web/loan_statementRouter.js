@@ -48,10 +48,14 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
 
-    var select = `payment_date trans_date,payment_id trans_no,debit,credit,(balance + od_balance + intt_balance)total_outstanding,tr_type,IF(tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,particulars,IF(status = 'A', 'Approved', 'Unapproved')status`,
-    table_name = "td_loan_transactions",
-    whr = `branch_id = '${data.branch_id}' AND date(payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND loan_id = '${data.loan_id}' AND tr_type NOT IN ('O', 'I')`,
-    order = `ORDER BY payment_date,tr_type`;
+    var select = `a.loan_id,b.member_code,b.group_code,b.branch_code,c.client_name,date(a.payment_date) trans_date,a.payment_id trans_no,a.debit,a.credit,a.balance,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)total_outstanding,a.tr_type,IF(a.tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,a.particulars,a.created_by,a.created_at,a.approved_by,a.approved_at,IF(a.status = 'A', 'Approved', 'Unapproved')STATUS`,
+    table_name = "td_loan_transactions a,td_loan b,md_member c",
+    whr = `a.loan_id = b.loan_id
+           AND b.member_code = c.member_code
+           AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' 
+           AND a.loan_id = '${data.loan_id}' 
+           AND a.tr_type NOT IN ('O', 'I')`,
+    order = `ORDER BY a.payment_date,a.tr_type,a.payment_id`;
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
     }catch(err){
@@ -77,16 +81,14 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR GROUP CODE
 
-    var select = `trans_date,debit,credit,total_outstanding,tr_type,IF(tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,particulars,IF(status = 'A', 'Approved', 'Unapproved')status`,
-    table_name = `(
-        select a.payment_date trans_date,a.tr_type,a.tr_mode,a.particulars particulars,SUM(a.debit) debit,SUM(a.credit) credit,SUM(a.balance + a.od_balance +a.intt_balance) total_outstanding,a.status
-        from td_loan_transactions a,td_loan b  
-         where a.branch_id = '${data.branch_code}' AND a.loan_id = b.loan_id AND b.group_code = '${data.group_code}' AND date(a.payment_date) BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type NOT IN ('O', 'I')
-         GROUP BY a.payment_date,a.tr_type,a.tr_mode,a.particulars,a.status)a`,
-    whr = null,
-    // order = `GROUP BY trans_date,tr_type,tr_mode,particulars,status
-    //          ORDER BY trans_date,tr_type`
-     order = `ORDER BY trans_date,tr_type`
+    var select = `a.loan_id,b.member_code,b.group_code,b.branch_code,c.client_name,date(a.payment_date) trans_date,a.payment_id trans_no,a.debit,a.credit,a.balance,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)total_outstanding,a.tr_type,IF(a.tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,a.particulars,a.created_by,a.created_at,a.approved_by,a.approved_at,IF(a.status = 'A', 'Approved', 'Unapproved')STATUS`,
+    table_name = "td_loan_transactions a,td_loan b,md_member c", 
+    whr = `a.loan_id = b.loan_id
+           AND b.member_code = c.member_code
+           AND b.group_code = '${data.group_code}'
+           AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
+           AND a.tr_type NOT IN ('O', 'I')`,
+     order = `ORDER BY a.loan_id,a.payment_date,a.tr_type,a.payment_id`
     var loan_report_dt = await db_Select(select,table_name,whr,order);
     res.send(loan_report_dt);
 });

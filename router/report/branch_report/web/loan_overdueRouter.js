@@ -243,7 +243,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
            try {
         var data = req.body;
         let finalData = [];
-        console.log(data,'gt');
+        // console.log(data,'gt');
 
         // console.log(data,'data');
         

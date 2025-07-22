@@ -205,7 +205,7 @@ transferMemRouter.post("/transfer_member", async (req, res) => {
 
 transferMemRouter.post("/transfer_member_view", async (req, res) => {
   var data = req.body;
-  console.log(data,'hy');
+//   console.log(data,'hy');
   
   try{
     const isPending = data.flag === 'P';

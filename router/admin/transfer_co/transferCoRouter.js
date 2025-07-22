@@ -90,11 +90,16 @@ transferCoRouter.post("/fetch_co_name_branchwise", async (req, res) => {
 // TRANSFER CO 
 transferCoRouter.post("/transfer_co", async (req, res) => {
     var data = req.body;
-    const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    // console.log(data,'hytr');
+    
+    const transfer_date = dateFormat(data.trf_date, "yyyy-mm-dd HH:MM:ss");
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    // console.log(transfer_date,'trans');
+    
     try {
         var table_name = "td_co_transfer",
                 fields = `(trf_date,group_code,from_co,from_brn,to_co,to_brn,remarks,created_by,created_at)`,
-                values = `('${datetime}','${data.group_code}','${data.from_co ? data.from_co : 0}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.remarks.split("'").join("\\'")}','${data.created_by}','${datetime}')`,
+                values = `('${transfer_date}','${data.group_code}','${data.from_co ? data.from_co : 0}','${data.from_brn}','${data.to_co}','${data.to_brn}','${data.remarks.split("'").join("\\'")}','${data.created_by}','${datetime}')`,
                 whr = null,
                 flag = 0;
                 var save_trans_co_dtls = await db_Insert(table_name,fields,values,whr,flag);  
@@ -111,6 +116,8 @@ transferCoRouter.post("/transfer_co", async (req, res) => {
                 res.send(update_grp_co_dtls);
 
     }catch (error){
+        console.log(error,'error');
+        
         res.send({"suc": 2, "msg": "Error occurred", details: error });
         
     }
@@ -291,5 +298,23 @@ transferCoRouter.post("/groupwise_mem_details", async (req, res) => {
 
     res.send(grp_mem_details);
 });
+
+//fetch unapprove dtls before group transfer
+// transferCoRouter.post("/unapprove_dtls_before_group_transfer", async (req, res) => {
+// try{
+//   var data = req.body;
+//   console.log(data,'data');
+
+//   var select = "COUNT(*) unapprove_trans",
+//   table_name = "td_co_transfer",
+//   whr = `from_brn = '${data.branch_code}' AND approval_status = 'U' AND trf_date < '${data.transaction_date}'`,
+//   order = null;
+//   var fetch_unapprove_data_grp_transfer = await db_Select(select,table_name,whr,order)
+//   res.send(fetch_unapprove_data_grp_transfer);
+//  }catch (error){
+//    console.error("Error fetch unapprove details before transaction date in transfer group:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//  }
+// });
 
 module.exports = {transferCoRouter}

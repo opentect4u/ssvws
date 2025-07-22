@@ -161,7 +161,7 @@ loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
 
                           // if last row fetching is sucessful then update prn_amt,intt_amt,od_prn_amt and outstanding balance in td_loan table
                           if(last_row.suc > 0 && last_row.msg.length > 0){
-                            console.log(last_row,'lass');                 
+                            // console.log(last_row,'lass');                 
                             var payment_date = last_row.msg[0].payment_date
                             var prn_amt = last_row.msg[0].balance
                             var od_prn_amt = last_row.msg[0].od_balance
