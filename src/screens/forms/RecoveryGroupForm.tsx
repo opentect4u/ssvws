@@ -420,6 +420,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
             "tr_mode": formData.txnMode,
             "bank_name": formData?.bankName || "",
             "cheque_id": formData?.chequeId || 0,
+            // "cheque_id": 0,
             "chq_dt": formattedDate(formData?.chequeDate) || "",
             "group_code": fetchedData?.group_code,
             // "prn_amt":formData?.prn_amt,
