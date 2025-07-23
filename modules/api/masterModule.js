@@ -252,6 +252,36 @@ const getPurposeCode = () => {
   });
 };
 
+const getFundCode = () => {
+  return new Promise(async (resolve, reject) => {
+
+      var select = "max(fund_id) + 1 as fund_code",
+          table_name = "md_fund",
+          whr = null,
+          order = null;
+      var result = await db_Select(select, table_name, whr, order);
+
+      let newfundCode = result.msg[0].fund_code;
+
+      resolve(newfundCode)
+  });
+};
+
+const getSchemeCode = () => {
+  return new Promise(async (resolve, reject) => {
+
+      var select = "max(scheme_id) + 1 as scheme_code",
+          table_name = "md_scheme",
+          whr = null,
+          order = null;
+      var result = await db_Select(select, table_name, whr, order);
+
+      let newschemeCode = result.msg[0].scheme_code;
+
+      resolve(newschemeCode)
+  });
+};
+
 const getBankCode = () => {
   return new Promise(async (resolve, reject) => {
     var select = "max(bank_code) as max_bank_code",
@@ -1019,5 +1049,7 @@ module.exports = {
   fetch_date,
   getDistCode,
   getBlockCode,
-  getPurposeCode
+  getPurposeCode,
+  getFundCode,
+  getSchemeCode
 };

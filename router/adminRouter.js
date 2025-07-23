@@ -4,10 +4,12 @@ const { dashboard_dataRouter } = require('./admin/dashboard/dashboard_dataRouter
 const { desigRouter } = require('./admin/designation/desigRouter');
 const { districtRouter } = require('./admin/district/districtrouter');
 const { fetchRouter } = require('./admin/fetchRouter');
+const { fundRouter } = require('./admin/fund/fundRouter');
 const { loanRouter } = require('./admin/loanRouter');
 const { monthEndRouter } = require('./admin/month_end/monthEndRouter');
 const { purposeRouter } = require('./admin/purpose/purposeRouter');
 const { reportwebRouter } = require('./admin/reportwebRouter');
+const { schemeRouter } = require('./admin/scheme/schemeRouter');
 const { userRouter } = require('./admin/userRouter');
 
 const express = require('express'),
@@ -24,6 +26,8 @@ const express = require('express'),
     adminRouter.use(blockRouter);
     adminRouter.use(dashboard_dataRouter);
     adminRouter.use(purposeRouter);
+    adminRouter.use(fundRouter);
+    adminRouter.use(schemeRouter);
 
 module.exports = {adminRouter}
     
