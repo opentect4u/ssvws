@@ -19,6 +19,7 @@ import {
 	Divider,
 	Typography,
 	List,
+	Select,
 } from "antd"
 import {
 	LoadingOutlined,
@@ -92,7 +93,7 @@ function GroupExtendedForm({ groupDataArr }) {
 	const [group_code, setGroupCode] = useState(0)
 
 	const [blocks, setBlocks] = useState(() => [])
-	const [block, setBlock] = useState(() => "")
+	const [block, setBlock] = useState("")
 
 	const [groupDetails, setGroupDetails] = useState(() => [])
 	const [memberDetails, setMemberDetails] = useState(() => [])
@@ -338,9 +339,9 @@ function GroupExtendedForm({ groupDataArr }) {
 	const handleFetchBlocks = async (brn) => {
 		setLoading(true)
 		await axios
-			.get(`${url}/get_block?dist_id=${brn}`)
+			.get(`${url}/get_block?dist_id=${brn.split(',')[0]}`)
 			.then((res) => {
-				console.log("******************", res?.data)
+				// console.log("******************", res?.data)
 				setBlocks(res?.data?.msg)
 			})
 			.catch((err) => {
@@ -350,7 +351,10 @@ function GroupExtendedForm({ groupDataArr }) {
 	}
 
 	useEffect(() => {
-		handleFetchBlocks(branch)
+		console.log(branch);
+		if(branch){
+			handleFetchBlocks(branch)
+		}
 	}, [branch])
 
 	const onSubmit = async (values) => {
@@ -756,7 +760,7 @@ function GroupExtendedForm({ groupDataArr }) {
 								)}
 
 								<div className={params.id > 0 ? "" : "sm:col-span-2"}>
-									<TDInputTemplateBr
+									{/* <TDInputTemplateBr
 										placeholder="Group Block"
 										type="text"
 										label="Group Block"
@@ -771,12 +775,41 @@ function GroupExtendedForm({ groupDataArr }) {
 											name: item?.block_name,
 										}))}
 										mode={2}
+									/> */}
+									<label
+										htmlFor="g_block"
+										className={`block mb-2 text-sm capitalize font-bold text-slate-800
+										dark:text-gray-100`}
+									>
+										Group Block
+									</label>
+									<Select
+										showSearch
+										placeholder={"Choose Group Block"}
+											filterOption={(input, option) =>
+												(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+										}
+										id="g_block"
+										label="Group Block"
+										name="g_block"
+										notFoundContent={
+											loading ? <Spin size="small" /> : "No results found"
+										}
+										// value={formik.values.g_block}
+										value={block}
+										onChange={(value) => {
+											console.log(value)
+											setBlock(value)
+											formik.setFieldValue("g_block", value)
+										}}
+										options={blocks?.map((item, _) => ({
+											value: item?.block_id,
+											label: `${item?.block_name}`,
+										}))}
 									/>
 									{formik.errors.g_block && formik.touched.g_block ? (
 										<VError title={formik.errors.g_block} />
 									) : null}
-
-									{/* {JSON.stringify(block, 2)}  */}
 								</div>
 							</>
 							{/* )} */}

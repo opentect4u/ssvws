@@ -231,9 +231,22 @@ const EditDisburseApproveFormBM = lazy(() =>
 	import("./Screens/BMHome/EditDisburseApproveFormBM")
 )
 
+/*** Scheme Screen Including Add Or Update */
+const SchemeLayout = lazy(() => import("./Screens/Admin/Master/Scheme/SchemeLayout"));
+const SchemeListPage = lazy(() =>import("./Screens/Admin/Master/Scheme/SchemeList"));
+const SchemeAddOrUpdatePage = lazy(() =>import("./Screens/Admin/Master/Scheme/AddOrUpdateScheme"));
+/**** End */
+
+/*** Funds Screen Including Drawer */
+const FundsListPage = lazy(() =>import("./Screens/Admin/Master/Funds/FundsList"));
+/*** End */
+
+const LoanCalculator = lazy(() =>import("./Screens/BMHome/Loans/LoanCalculator/index"))
+
 // const AuthBr = lazy(() => import("./Screens/BranchManager/AuthBr"))
 
 const root = ReactDOM.createRoot(document.getElementById("root"))
+
 
 // window.addEventListener("beforeunload", (ev) => {
 // 	ev.preventDefault()
@@ -364,6 +377,10 @@ const router = createBrowserRouter([
 							{
 								path: "approvemembertransfer/:id",
 								element: <ApproveEditMemberTrans />,
+							},
+							{
+								path:'loancalculator',
+								element: <LoanCalculator />,
 							},
 							// {
 							// 	path: "masterbanks",
@@ -528,6 +545,24 @@ const router = createBrowserRouter([
 							{
 								path: "masterbanks",
 								element: <MasterBanks />,
+							},
+							{
+								path:"masterschemes",
+								element: <SchemeLayout />,
+								children: [
+									{
+										path: "",
+										element: <SchemeListPage />,
+									},
+									{
+										path: ":scheme_id",
+										element: <SchemeAddOrUpdatePage />,
+									}
+								]
+							},
+							{
+								path:'masterfunds',
+								element: <FundsListPage />,
 							},
 							{
 								path: "masterbanks/:id",

@@ -18,6 +18,9 @@ function TDInputTemplateBr(props) {
 					  " (" +
 					  (props.formControlName?.length || "0") +
 					  "/500)"}
+					  {props.required && (
+						<span className="text-red-500">*</span>
+					  )}
 			</label>
 			{props.mode == 1 && (
 				<input
@@ -65,7 +68,7 @@ function TDInputTemplateBr(props) {
 				// onBlur={props.handleBlur}
 				// />
 				<select
-					id="countries"
+					id={props.name}
 					className={`bg-white border-1 border-gray-400 text-gray-800 text-sm rounded-lg ${
 						userDetails?.id == 3
 							? "active:border-slate-600 focus:ring-slate-600 focus:border-slate-800"
@@ -79,7 +82,7 @@ function TDInputTemplateBr(props) {
 					onBlur={props.handleBlur}
 					disabled={props.disabled}
 				>
-					<option defaultValue={undefined}>{props.placeholder}</option>
+					<option value={""}>{props.placeholder}</option>
 					{props?.data?.map((item, index) => (
 						<option key={index} value={item.code}>
 							{item.name}

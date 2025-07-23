@@ -216,6 +216,12 @@ function MenusBr({ theme, data }) {
 					label: <Link to={"/homeadmin/masterdesignations"}>Designations</Link>,
 					// hidden: data?.designation == "Y" ? false : true,
 				},
+				{
+					key: "sub5-7",
+					icon: <DatabaseOutlined />,
+					label: <Link to={"/homeadmin/masterfunds"}>Funds</Link>,
+					// hidden: data?.designation == "Y" ? false : true,
+				},
 			],
 		},
 		{

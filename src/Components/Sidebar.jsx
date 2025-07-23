@@ -225,6 +225,12 @@ function Sidebar({ mode = 0 }) {
 									},
 								],
 							},
+							{
+								key: "sub4-5",
+								icon: <DatabaseOutlined />,
+								label: <Link to={"/homebm/loancalculator"}>Loan EMI Calculator</Link>,
+								// hidden: data?.designation == "Y" ? false : true,
+							},
 						],
 					},
 					{
@@ -269,6 +275,18 @@ function Sidebar({ mode = 0 }) {
 								key: "sub5-6",
 								icon: <DatabaseOutlined />,
 								label: <Link to={"/homeadmin/masterpurpose"}>Purpose</Link>,
+								// hidden: data?.designation == "Y" ? false : true,
+							},
+							{
+								key: "sub5-7",
+								icon: <DatabaseOutlined />,
+								label: <Link to={"/homeadmin/masterfunds"}>Funds</Link>,
+								// hidden: data?.designation == "Y" ? false : true,
+							},
+							{
+								key: "sub5-8",
+								icon: <DatabaseOutlined />,
+								label: <Link to={"/homeadmin/masterschemes"}>Scheme</Link>,
 								// hidden: data?.designation == "Y" ? false : true,
 							},
 						],
