@@ -1101,7 +1101,7 @@ const populateOverdue = (branch_code, DATE) => {
           whr = `loan_id = '${loan.loan_id}' AND payment_date <= '${DATE}'`,
           order = null;
           var get_credit = await db_Select(select, table_name, whr, order);
-          let collc_amt = parseFloat(get_credit[0]?.collc_amt || 0);
+          let collc_amt = parseFloat(get_credit[0].collc_amt || 0);
 
           // Get calculated values from functions loan demand
           let dmd_amt = await f_getdemand(loan.loan_id, DATE);
