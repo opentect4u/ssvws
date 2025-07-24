@@ -144,6 +144,7 @@ const AddOrUpdateScheme = () => {
 
   const onReset = () =>{
     console.log("Form Reset");
+    formik.resetForm();
   }
   return (
     <div>

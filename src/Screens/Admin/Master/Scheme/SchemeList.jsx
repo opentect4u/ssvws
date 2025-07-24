@@ -65,7 +65,15 @@ const SchemeList = () => {
     const setSearch = (word) => {
       setMdSchemes(
         md_copy_schemes?.filter((e) =>
-          e?.scheme_name?.toString()?.toLowerCase().includes(word?.toLowerCase())
+          e?.scheme_name?.toString()?.toLowerCase().includes(word?.toLowerCase()) || 
+          e?.scheme_id
+						?.toString()
+						?.toLowerCase()
+						.includes(word?.toLowerCase()) || 
+              e?.payment_mode
+						?.toString()
+						?.toLowerCase()
+						.includes(word?.toLowerCase())
         )
       )
 	}

@@ -87,16 +87,8 @@ const AddOrUpdateFunds = (
 
              
         </div>
-           <div className="mt-10 absolute bottom-0 w-full ">
-                {/* <button
-                    type="submit"
-                    className="inline-flex items-center float-end px-5 py-2.5 mt-4 ml-2 sm:mt-6 text-sm font-medium text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full  dark:focus:ring-primary-900"
-                >
-                    <SaveOutlined className="mr-2" />
-                    Submit
-                </button> */}
-                <Button type="primary" loading={formik.isSubmitting} htmlType="submit" disabled={!formik.isValid} size='middle' className='float-end'>Submit</Button>
-            </div>
+                <Button  type="primary" block loading={formik.isSubmitting} htmlType="submit" disabled={!formik.isValid} size='middle' className='float-end mt-2'>Submit</Button>
+
      </form>
     </div>
   )

@@ -61,11 +61,7 @@ const FundsList = () => {
     const setSearch = (word) => {
 		setMdFunds(
 			copyfunds?.filter((e) =>
-				e?.fund_name?.toString()?.toLowerCase().includes(word?.toLowerCase()) || 
-                e?.fund_id
-						?.toString()
-						?.toLowerCase()
-						.includes(word?.toLowerCase())
+				e?.fund_name?.toString()?.toLowerCase().includes(word?.toLowerCase())
 			)
 		)
 	}

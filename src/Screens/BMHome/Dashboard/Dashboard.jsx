@@ -13,7 +13,7 @@ import axios from "axios"
 import TDInputTemplateBr from "../../../Components/TDInputTemplateBr"
 import DashboardCard from "../../../Components/Dashboard/DashboardCard"
 import { url } from "../../../Address/BaseUrl"
-import { Empty, Spin } from "antd"
+import { Alert, Empty, Modal, Spin } from "antd"
 // import { Squircle } from "@squircle-js/react"
 import CurrencyRupeeOutlinedIcon from "@mui/icons-material/CurrencyRupeeOutlined"
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined"
@@ -21,6 +21,7 @@ import ListAltOutlinedIcon from "@mui/icons-material/ListAltOutlined"
 import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined"
 import { Message } from "../../../Components/Message"
 import { getOrdinalSuffix } from "../../../Utils/ordinalSuffix"
+import moment from "moment"
 
 const formatINR = (num) =>
 	new Intl.NumberFormat("en-IN", {
@@ -55,6 +56,7 @@ const formatNumber = (num) => new Intl.NumberFormat("en-IN").format(num || 0)
 // ]
 
 export default function Dashboard() {
+	/*** For Modal */
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || {}
 	const type = userDetails.id === 2 ? "BM" : "Admin 2"
 	const branchId = userDetails?.brn_code
@@ -578,6 +580,10 @@ export default function Dashboard() {
 		}
 	}
 
+	// useEffect(()=>{
+	// 		console.log(odDetails)
+	// },[odDetails])
+
 	const fetchOverdueDetails = async () => {
 		setLoadingOd(true)
 		try {
@@ -586,7 +592,9 @@ export default function Dashboard() {
 				branch_code: getBranchCodes(),
 				recov_day: odFlags.recovDay,
 			}
-			const res = await axios.post(`${url}/admin/dashboard_overdue_dtls`, creds)
+			const res = await axios.post(`${url}/admin/dashboard_overdue_dtls`, creds);
+			console.log(res);
+			console.log(odFlags.flag, "OD FLAG");
 			setOdDetails(
 				odFlags.flag === "M"
 					? {
@@ -608,6 +616,7 @@ export default function Dashboard() {
 							noOfGroups: "",
 					  }
 			)
+			
 		} catch {
 		} finally {
 			setLoadingOd(false)
@@ -697,7 +706,7 @@ export default function Dashboard() {
 							data: "",
 							noOfGroups: "",
 					  }
-			)
+			);
 		} catch {
 		} finally {
 			setLoadingDmd(false)
@@ -737,6 +746,8 @@ export default function Dashboard() {
 
 	useEffect(() => {
 		if (branches.length) {
+				console.log(choosenBranch)
+
 			if (+choosenBranch !== 100) {
 				fetchOverdueDetails()
 			} else {
@@ -758,6 +769,19 @@ export default function Dashboard() {
 
 	return (
 		<div className="p-8 space-y-6 bg-slate-50 min-h-screen rounded-3xl">
+			  {odDetails?.noOfGroups > 0 && <Alert
+			  	// style={{
+				// 	fontSize: "2.2rem",
+				// 	fontWeight: "500",
+				// 	// color:'hsl(var())'
+				// }}
+				
+				message="Warning"
+				description={<p className="text-3xl font-normal"><span className="text-lg ">Total OD As on {moment().format('DD/MM/YYYY')} for {odDetails?.noOfGroups} group/s is </span>Rs. {formatINR(odDetails?.data)}</p>}
+				type="warning"
+				showIcon
+				closable
+				/>}
 			<div className="flex flex-col md:flex-row justify-between items-center">
 				<h1 className="text-2xl font-bold text-slate-700 uppercase">
 					Welcome back,{" "}
