@@ -82,7 +82,7 @@ const { loan_outstandingAdminrouter } = require("./router/report/branch_report/a
 const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_summaryRouter");
 const { loan_summaryAdminRouter } = require("./router/report/branch_report/admin_web/loan_summaryAdminRouter");
 const { dmd_vs_collRouter } = require("./router/report/branch_report/web/dmd_vs_collRouter");
-const { getLoanBal, getLoanDmd } = require("./modules/api/masterModule");
+const { getLoanBal, getLoanDmd, populateOverdue } = require("./modules/api/masterModule");
 const { dmd_vs_collAdminRouter } = require("./router/report/branch_report/admin_web/dmd_vs_collAdminRouter");
 const { loan_demandAdminRouter } = require("./router/report/branch_report/admin_web/loan_demandAdminRouter");
 const { attendanceRouter } = require("./router/api/emp_attandence/attendanceRouter");
@@ -174,6 +174,17 @@ app.get("/",async (req, res) => {
     // res.redirect("/login");
 //   }
 // res.send(currentDate)
+// try{
+//   const currentDate = dateFormat(new Date(), "yyyy-mm-dd");
+//   const branch_code = "111";
+//  const result = await populateOverdue(branch_code, currentDate);
+//   res.send({
+//       message: "Populate Overdue Success",
+//        result
+//     });
+// }catch(error){
+//   console.log(error);
+// }
 });
 
 // app.get("/", async (req, res) => {

@@ -1024,6 +1024,127 @@ const fetch_date = (branch_code, get_dt) => {
   });
 };
 
+// CALCULATE LOAN DEMAND
+const f_getdemand = (loan_id,adt_dt) => {
+   return new Promise(async (resolve, reject) => {
+    try{
+     //Fetch loan details
+     var select = "disb_dt,period,period_mode,instl_start_dt,instl_end_dt,tot_emi,prn_amt,intt_amt",
+     table_name = "td_loan",
+     whr = `loan_id = '${loan_id}'`,
+     order = null;
+     var get_data = await db_Select(select,table_name,whr,order);
+
+    const {disb_dt,period,period_mode,instl_start_dt,instl_end_dt,tot_emi,prn_amt,intt_amt} = get_data[0];
+
+    //Get paid amount up to adt_dt
+     const paid_result = await db_Select(
+        "IFNULL(SUM(credit), 0) as paid_amt",
+        "td_loan_transactions",
+        `loan_id = '${loan_id}' AND tr_type = 'R' AND payment_date <= '${adt_dt}'`,
+        null
+      );
+      const paid_amt = parseFloat(paid_result[0]?.paid_amt || 0);
+
+      let ld_demand = 0;
+
+      if (new Date(adt_dt) >= new Date(instl_end_dt)) {
+        ld_demand = parseFloat(prn_amt) + parseFloat(intt_amt);
+      } else {
+        // Calculate how many periods have passed
+         const instl_start = new Date(instl_start_dt);
+         const get_adt_dt = new Date(adt_dt);
+         let diff = 0;
+
+        if (period_mode === "Monthly") {
+          diff =
+            (get_adt_dt.getFullYear() - instl_start.getFullYear()) * 12 +
+            (get_adt_dt.getMonth() - instl_start.getMonth()) +
+            1;
+        } else {
+          // Weekly mode: calculate total weeks
+          const timeDiff = get_adt_dt.getTime() - instl_start.getTime();
+          diff = Math.floor(timeDiff / (1000 * 60 * 60 * 24 * 7)) + 1;
+        }
+        const actual_amt = diff * parseFloat(tot_emi);
+        ld_demand = actual_amt - paid_amt;
+      }
+      if (ld_demand <= 0) ld_demand = 0;
+
+      resolve(Math.round(ld_demand));
+
+    } catch (error) {
+      console.error("Error calculating month difference:", error);
+      reject(error);
+    }
+  });
+}
+
+// FUNCTION TO POPULATE LOAN OVERDUE 24.07.2025
+
+const populateOverdue = (branch_code, DATE) => {
+  return new Promise(async (resolve, reject) => {
+    try {
+      var select = `loan_id,branch_code,group_code,member_code,(prn_disb_amt + intt_cal_amt) disb_amt, (prn_amt + intt_amt) outstanding,tot_emi,period_mode,instl_start_dt`,
+      table_name = "td_loan",
+      whr = `branch_code = '${branch_code}' AND outstanding > 0 AND disb_dt <= '${DATE}'`,
+      order = null;
+      var get_loan_data = await db_Select(select, table_name, whr, order);
+
+      // loop through each loan and process
+      if (Array.isArray(get_loan_data)) {
+         for (let loan of get_loan_data) {
+
+           // Get sum of credits
+          var select = "SUM(credit) collc_amt",
+          table_name = "td_loan_transactions",
+          whr = `loan_id = '${loan.loan_id}' AND payment_date <= '${DATE}'`,
+          order = null;
+          var get_credit = await db_Select(select, table_name, whr, order);
+          let collc_amt = parseFloat(get_credit[0]?.collc_amt || 0);
+
+          // Get calculated values from functions loan demand
+          let dmd_amt = await f_getdemand(loan.loan_id, DATE);
+
+          // demand amount > 0 then calculate period
+          if (dmd_amt > 0) {
+            let li_period = Math.round(collc_amt / loan.tot_emi);
+
+         // calculate overdue date   
+         let od_dt;
+         let instl_date = new Date(loan.instl_start_dt);
+         if (loan.period_mode === 'Monthly') {
+              instl_date.setMonth(instl_date.getMonth() + li_period);
+         } else {
+              instl_date.setDate(instl_date.getDate() + (li_period * 7));
+            }
+         od_dt = instl_date.toISOString().slice(0, 10);
+
+         // check if overdue
+          if (new Date(od_dt) <= new Date(DATE)) {
+          
+          // Insert into td_od_loan
+          var table_name = "td_od_loan",
+          fields = "(trf_date, od_date, loan_id, branch_code, disb_amt, collc_amt, od_amt, outstanding, remarks)",
+          values =  `('${DATE}', '${od_dt}', '${loan.loan_id}', '${loan.branch_code}', '${loan.disb_amt}', '${collc_amt}', '${dmd_amt}', '${loan.outstanding}', 'To OD')`,
+          whr = null,
+          flag = 0;
+          var insert_od_data = await db_Insert(table_name,fields,values,whr,flag);
+          }
+           }
+           }
+      } else {
+           console.error("Expected an array but got:", get_loan_data);
+      }
+      resolve("Overdue processing completed");
+    } catch (error) {
+      console.error("Error calculating month difference:", error);
+      reject(error);
+    }
+  });
+};
+
+
 module.exports = {
   getFormNo,
   groupCode,
@@ -1051,5 +1172,7 @@ module.exports = {
   getBlockCode,
   getPurposeCode,
   getFundCode,
-  getSchemeCode
+  getSchemeCode,
+  f_getdemand,
+  populateOverdue
 };
