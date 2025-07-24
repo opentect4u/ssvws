@@ -1044,7 +1044,7 @@ const f_getdemand = (loan_id,adt_dt) => {
         `loan_id = '${loan_id}' AND tr_type = 'R' AND payment_date <= '${adt_dt}'`,
         null
       );
-      const paid_amt = parseFloat(paid_result[0]?.paid_amt || 0);
+      const paid_amt = parseFloat(paid_result[0].paid_amt || 0);
 
       let ld_demand = 0;
 
