@@ -22,6 +22,7 @@ import AutoAwesomeOutlinedIcon from "@mui/icons-material/AutoAwesomeOutlined"
 import { Message } from "../../../Components/Message"
 import { getOrdinalSuffix } from "../../../Utils/ordinalSuffix"
 import moment from "moment"
+import AlertComp from "../../../Components/AlertComp"
 
 const formatINR = (num) =>
 	new Intl.NumberFormat("en-IN", {
@@ -56,7 +57,8 @@ const formatNumber = (num) => new Intl.NumberFormat("en-IN").format(num || 0)
 // ]
 
 export default function Dashboard() {
-	/*** For Modal */
+	
+	const [odDtls,setOdDtls] = useState(() => {})
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || {}
 	const type = userDetails.id === 2 ? "BM" : "Admin 2"
 	const branchId = userDetails?.brn_code
@@ -616,6 +618,14 @@ export default function Dashboard() {
 							noOfGroups: "",
 					  }
 			)
+
+			if(odFlags.flag == 'M'){
+				setOdDtls({
+					data: res?.data?.data?.total_loan_od,
+					noOfGroups: res?.data?.data?.total_overdue_groups,
+					date: moment().subtract(1, 'M').format("MMM YYYY"),
+				})
+			}
 			
 		} catch {
 		} finally {
@@ -655,7 +665,15 @@ export default function Dashboard() {
 							data: "",
 							noOfGroups: "",
 					  }
+					  
 			)
+			if(odFlags.flag == 'M'){
+				setOdDtls({
+					data: res?.data?.data?.total_loan_od,
+					noOfGroups: res?.data?.data?.total_overdue_groups,
+					date: moment().subtract(1, 'M').format("MMM YYYY"),
+				})
+			}
 		} catch {
 		} finally {
 			setLoadingOd(false)
@@ -769,19 +787,11 @@ export default function Dashboard() {
 
 	return (
 		<div className="p-8 space-y-6 bg-slate-50 min-h-screen rounded-3xl">
-			  {odDetails?.noOfGroups > 0 && <Alert
-			  	// style={{
-				// 	fontSize: "2.2rem",
-				// 	fontWeight: "500",
-				// 	// color:'hsl(var())'
-				// }}
-				
-				message="Warning"
-				description={<p className="text-3xl font-normal"><span className="text-lg ">Total OD As on {moment().format('DD/MM/YYYY')} for {odDetails?.noOfGroups} group/s is </span>Rs. {formatINR(odDetails?.data)}</p>}
-				type="warning"
-				showIcon
-				closable
-				/>}
+			{
+				(odDtls && odDtls?.noOfGroups > 0) && <AlertComp
+					msg={<p className="text-3xl font-normal"><span className="text-lg ">Total OD as on {odDtls?.date} for {odDtls?.noOfGroups} group is </span>{formatINR(odDtls?.data)}</p>}
+				/>
+			}
 			<div className="flex flex-col md:flex-row justify-between items-center">
 				<h1 className="text-2xl font-bold text-slate-700 uppercase">
 					Welcome back,{" "}

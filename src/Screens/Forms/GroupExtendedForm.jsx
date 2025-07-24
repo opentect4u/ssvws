@@ -42,6 +42,9 @@ import { Checkbox } from "antd"
 import { DataTable } from "primereact/datatable"
 import Column from "antd/es/table/Column"
 import { Toast } from "primereact/toast"
+import AlertComp from "../../Components/AlertComp"
+// import { format } from "date-fns"
+
 // const members = [
 // 	{ client_name: "Soumyadeep Mondal", form_no: 2025000154, member_code: 1202880324 },
 // 	{ client_name: "Soumyadeep Mondal hhh", form_no: 202458800014, member_code: 120777280324 },
@@ -57,8 +60,15 @@ import { Toast } from "primereact/toast"
 // 	// { form_no: 202500023, member_code: 120280333, client_name: "Lokesh" },
 // 	// { form_no: 202500024, member_code: 120280334, client_name: "Sayantika" },
 //   ];
-
+const formatINR = (num) =>
+	new Intl.NumberFormat("en-IN", {
+		style: "currency",
+		currency: "INR",
+		minimumFractionDigits: 2,
+	}).format(num || 0)
 function GroupExtendedForm({ groupDataArr }) {
+	const [isOverdue, setIsOverdue] = useState('N');
+	const [overDueAmt, setOverDueAmt] = useState(0);
 	const params = useParams()
 	const [loading, setLoading] = useState(false)
 	const location = useLocation()
@@ -191,6 +201,8 @@ function GroupExtendedForm({ groupDataArr }) {
 				)
 				setCEOData(res?.data?.msg[0]?.co_id)
 				setBlock(res?.data?.msg[0]?.block)
+				setIsOverdue(res?.data?.msg[0]?.overdue_flag);
+				setOverDueAmt(res?.data?.msg[0]?.overdue_amt);
 			})
 			.catch((err) => {
 				Message("error", "Some error occurred while fetching group form")
@@ -582,13 +594,18 @@ function GroupExtendedForm({ groupDataArr }) {
 
 	return (
 		<>
+		{
+			isOverdue === 'Y' && <AlertComp 
+			
+			msg={<p className="text-2xl font-normal"><span className="text-lg ">Loan Overdue Amount is </span>{formatINR(overDueAmt)}</p>} />
+		}
 			<Spin
 				indicator={<LoadingOutlined spin />}
 				size="large"
 				className="text-blue-800 dark:text-gray-400"
 				spinning={loading}
 			>
-				<form onSubmit={formik.handleSubmit}>
+				<form onSubmit={formik.handleSubmit} className={`${isOverdue == 'Y' ? 'mt-5' : ''}`}>
 					<div className="flex justify-start gap-5">
 						<div
 							// className={

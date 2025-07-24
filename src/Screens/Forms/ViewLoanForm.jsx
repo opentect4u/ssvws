@@ -34,8 +34,16 @@ import TimelineComp from "../../Components/TimelineComp"
 import DynamicTailwindTable from "../../Components/Reports/DynamicTailwindTable"
 import { disbursementDetailsHeader } from "../../Utils/Reports/headerMap"
 import { getOrdinalSuffix } from "../../Utils/ordinalSuffix"
-
+import AlertComp from "../../Components/AlertComp"
+const formatINR = (num) =>
+	new Intl.NumberFormat("en-IN", {
+		style: "currency",
+		currency: "INR",
+		minimumFractionDigits: 2,
+	}).format(num || 0)
 function ViewLoanForm({ groupDataArr }) {
+	const [isOverdue, setIsOverdue] = useState('N');
+	const [overDueAmt, setOverDueAmt] = useState(0);
 	const params = useParams()
 	const [loading, setLoading] = useState(false)
 	const location = useLocation()
@@ -219,6 +227,8 @@ function ViewLoanForm({ groupDataArr }) {
 					res?.data?.msg[0]?.disctrict + "," + res?.data?.msg[0]?.branch_code
 				)
 				setBlock(res?.data?.msg[0]?.block)
+				setIsOverdue(res?.data?.msg[0]?.overdue_flag);
+				setOverDueAmt(res?.data?.msg[0]?.overdue_amt);
 			})
 			.catch((err) => {
 				Message("error", "Some error occurred while fetching group form")
@@ -370,13 +380,18 @@ function ViewLoanForm({ groupDataArr }) {
 
 	return (
 		<>
+		{
+					isOverdue === 'Y' && <AlertComp 
+					
+					msg={<p className="text-2xl font-normal"><span className="text-lg ">Loan Overdue Amount is </span>{formatINR(overDueAmt)}</p>} />
+				}
 			<Spin
 				indicator={<LoadingOutlined spin />}
 				size="large"
 				className="text-blue-800 dark:text-gray-400"
 				spinning={loading}
 			>
-				<form onSubmit={formik.handleSubmit}>
+				<form onSubmit={formik.handleSubmit} className={`${isOverdue == 'Y' ? 'mt-5' : ''}`}>
 					<div className="flex flex-col justify-start gap-5">
 						<div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
 							{/* {params?.id > 0 && (
