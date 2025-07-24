@@ -1,5 +1,6 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
 const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm, remove_member_dtls } = require('../../modules/admin/fetchModule');
+const { f_getOverdue } = require('../../modules/api/masterModule');
 
 const fetchRouter = require('express').Router();
 dateFormat = require('dateformat');
@@ -475,9 +476,85 @@ fetchRouter.post("/search_group_web", async (req, res) => {
     res.send(search_group_web)
 });
 
+// fetchRouter.post("/fetch_search_group_web", async (req, res) => {
+//     var data = req.body;
+//     let fetch_search_group_web;
+
+//     const currDate = new Date().toISOString().split("T")[0];
+//     // call f_getOverdue to check overdue for group
+
+//      let overdue_flag = 'N';
+//      try {
+//       const overdue_result = await f_getOverdue(data.group_code, currDate);
+//       if (overdue_result.suc > 0 && overdue_result.msg.length > 0) {
+//       const count = overdue_result.msg[0]['count(*)'];
+//       if (count > 0) {
+//         overdue_flag = 'Y';
+//       }
+//      }
+//     } catch (err) {
+//     console.error("Error while checking overdue:", err);
+//     }
+
+
+//     //fetch search group details in web
+//     if(data.branch_code == '100'){
+//     var select = "a.*, b.block_name,c.emp_name,d.branch_name brn_name",
+//     table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+//     whr = `a.group_code = '${data.group_code}'`,
+//     order = null;
+//     fetch_search_group_web = await db_Select(select,table_name,whr,order);
+
+//     if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
+//         var select = "a.member_code,a.client_name,b.form_no,b.prov_grp_code,b.approval_status,SUM(c.outstanding) tot_outstanding",
+//         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_loan c ON a.branch_code = c.branch_code AND a.member_code = c.member_code",
+//         whr = `b.prov_grp_code = '${data.group_code}' AND b.approval_status != 'R'`,
+//         order = `GROUP BY a.member_code,a.client_name,b.form_no,b.approval_status`;
+//         var grp_mem_dt = await db_Select(select,table_name,whr,order);
+//         fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
+//     }
+// }else {
+//     var select = "a.*, b.block_name,c.emp_name,d.branch_name brn_name",
+//     table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+//     whr = `a.group_code = '${data.group_code}' AND a.branch_code = '${data.branch_code}'`,
+//     order = null;
+//     fetch_search_group_web = await db_Select(select,table_name,whr,order);
+
+//     if(fetch_search_group_web.suc > 0 && fetch_search_group_web.msg.length > 0){
+//         var select = "a.member_code,a.client_name,b.form_no,b.prov_grp_code,b.approval_status,SUM(c.outstanding) tot_outstanding",
+//         table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.member_code = b.member_code LEFT JOIN td_loan c ON a.branch_code = c.branch_code AND a.member_code = c.member_code",
+//         whr = `a.branch_code IN (${data.branch_code}) AND b.prov_grp_code = '${data.group_code}' AND b.approval_status != 'R'`,
+//         order = `GROUP BY a.member_code,a.client_name,b.form_no,b.approval_status`;
+//         var grp_mem_dt = await db_Select(select,table_name,whr,order);
+//         fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
+//     }
+// }
+//     res.send(fetch_search_group_web)
+// });
+
 fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     var data = req.body;
     let fetch_search_group_web;
+
+    const currDate = new Date().toISOString().split("T")[0];
+        // Initialize overdue variables
+        let overdue_flag = 'N';
+        let overdue_amt = 0;
+        let overdue_count = 0;
+
+     try {
+      const overdue_result = await f_getOverdue(data.group_code, currDate);
+      if (overdue_result.suc > 0 && overdue_result.msg.length > 0) {
+       overdue_count = overdue_result.msg[0]['overdue_count'];
+       overdue_amt = overdue_result.msg[0]['overdue_amt'];
+      if (overdue_count > 0) {
+        overdue_flag = 'Y';
+      }
+     }
+    } catch (err) {
+    console.error("Error while checking overdue:", err);
+    }
+
 
     //fetch search group details in web
     if(data.branch_code == '100'){
@@ -509,6 +586,11 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
         order = `GROUP BY a.member_code,a.client_name,b.form_no,b.approval_status`;
         var grp_mem_dt = await db_Select(select,table_name,whr,order);
         fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
+         // Add overdue info
+        fetch_search_group_web.msg[0]['overdue_flag'] = overdue_flag;
+        fetch_search_group_web.msg[0]['overdue_amt'] = overdue_amt;
+        fetch_search_group_web.msg[0]['overdue_count'] = overdue_count;
+        
     }
 }
     res.send(fetch_search_group_web)

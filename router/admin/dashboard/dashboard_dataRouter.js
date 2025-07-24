@@ -444,6 +444,7 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
         // d_trf_date: monthlyLoanOD.msg[0].d_trf_date,
         total_loan_od: monthlyLoanOD.msg[0].monthly_od || 0,
         total_overdue_groups: monthlyLoanOD.msg[0].monthly_grp || 0,
+        // trf_date: monthlyLoanOD.msg[0].trf_date ? new Date(monthlyLoanOD.msg[0].trf_date).toISOString().split('T')[0]: null,
         weekly_loan_od: weeklyLoanOD.msg[0].weekly_od || 0,
         weekly_overdue_groups: weeklyLoanOD.msg[0].weekly_grp || 0,
         monthly_loan_od: totalLoanOD.msg[0].tot_loan_od || 0,
@@ -456,89 +457,89 @@ dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
   }
 });
 
-dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
-  try {
-    var data = req.body;
-    // console.log(data, 'data_overdue');
+// dashboard_dataRouter.post("/dashboard_overdue_dtls", async (req, res) => {
+//   try {
+//     var data = req.body;
+//     // console.log(data, 'data_overdue');
 
-    const getMonthPrev = await db_Select(
-      "closed_upto",
-      "td_month_close",
-      `branch_code IN (${data.branch_code})`,
-      null
-    );
+//     const getMonthPrev = await db_Select(
+//       "closed_upto",
+//       "td_month_close",
+//       `branch_code IN (${data.branch_code})`,
+//       null
+//     );
 
-    if (!getMonthPrev.msg.length || !getMonthPrev.msg[0].closed_upto) {
-      return res.send({ suc: 0, msg: "Previous month data not found" });
-    }
+//     if (!getMonthPrev.msg.length || !getMonthPrev.msg[0].closed_upto) {
+//       return res.send({ suc: 0, msg: "Previous month data not found" });
+//     }
 
-    const rawDate = new Date(getMonthPrev.msg[0].closed_upto);
-    const trf_date = dateFormat(rawDate, 'yyyy-mm-dd'); 
-    // console.log(trf_date, 'formatted trf_date');
+//     const rawDate = new Date(getMonthPrev.msg[0].closed_upto);
+//     const trf_date = dateFormat(rawDate, 'yyyy-mm-dd'); 
+//     // console.log(trf_date, 'formatted trf_date');
 
-    let totalLoanOD = { msg: [{ tot_loan_od: 0, tot_overdue_grp: 0 }] };
-    let weeklyLoanOD = { msg: [{ weekly_od: 0, weekly_grp: 0 }] };
-    let monthlyLoanOD = { msg: [{ monthly_od: 0, monthly_grp: 0 }] };
+//     let totalLoanOD = { msg: [{ tot_loan_od: 0, tot_overdue_grp: 0 }] };
+//     let weeklyLoanOD = { msg: [{ weekly_od: 0, weekly_grp: 0 }] };
+//     let monthlyLoanOD = { msg: [{ monthly_od: 0, monthly_grp: 0 }] };
 
-    const branchCodes = data.branch_code;
+//     const branchCodes = data.branch_code;
 
-    if (data.flag === 'D') {
-      monthlyLoanOD = await db_Select(
-        "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, MAX(a.trf_date) d_trf_date, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
-        "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date = (SELECT MAX(trf_date)
-                    FROM   td_od_loan
-                    WHERE  branch_code IN (${branchCodes})
-                    AND    trf_date <= '${trf_date}') 
-            AND a.branch_code IN (${branchCodes})
-            AND b.period_mode = 'Monthly' 
-            AND b.recovery_day = '${data.recov_day}'`,
-        null
-      );
-    } else if (data.flag === 'W') {
-      weeklyLoanOD = await db_Select(
-        "IFNULL(SUM(a.od_amt), 0) AS weekly_od, MAX(a.trf_date) w_trf_date, COUNT(DISTINCT b.group_code) AS weekly_grp",
-        "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date = (SELECT MAX(trf_date)
-                    FROM   td_od_loan
-                    WHERE  branch_code IN (${branchCodes})
-                    AND    trf_date <= '${trf_date}') 
-          AND a.branch_code IN (${branchCodes}) 
-          AND b.period_mode = 'Weekly' 
-          AND b.recovery_day = '${data.recov_day}'`,
-        null
-      );
-    } else {
-      totalLoanOD = await db_Select(
-        "IFNULL(SUM(a.od_amt), 0) AS monthly_od, COUNT(DISTINCT b.group_code) AS monthly_grp",
-        "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.trf_date = (SELECT MAX(trf_date)
-                       FROM td_od_loan
-                       WHERE  branch_code IN (${branchCodes})
-                       AND trf_date <= '${trf_date}')
-          AND a.branch_code IN (${branchCodes})`,
-        null
-      );
-    }
+//     if (data.flag === 'D') {
+//       monthlyLoanOD = await db_Select(
+//         "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, MAX(a.trf_date) d_trf_date, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
+//         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//         `a.trf_date = (SELECT MAX(trf_date)
+//                     FROM   td_od_loan
+//                     WHERE  branch_code IN (${branchCodes})
+//                     AND    trf_date <= '${trf_date}') 
+//             AND a.branch_code IN (${branchCodes})
+//             AND b.period_mode = 'Monthly' 
+//             AND b.recovery_day = '${data.recov_day}'`,
+//         null
+//       );
+//     } else if (data.flag === 'W') {
+//       weeklyLoanOD = await db_Select(
+//         "IFNULL(SUM(a.od_amt), 0) AS weekly_od, MAX(a.trf_date) w_trf_date, COUNT(DISTINCT b.group_code) AS weekly_grp",
+//         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//         `a.trf_date = (SELECT MAX(trf_date)
+//                     FROM   td_od_loan
+//                     WHERE  branch_code IN (${branchCodes})
+//                     AND    trf_date <= '${trf_date}') 
+//           AND a.branch_code IN (${branchCodes}) 
+//           AND b.period_mode = 'Weekly' 
+//           AND b.recovery_day = '${data.recov_day}'`,
+//         null
+//       );
+//     } else {
+//       totalLoanOD = await db_Select(
+//         "IFNULL(SUM(a.od_amt), 0) AS monthly_od, COUNT(DISTINCT b.group_code) AS monthly_grp",
+//         "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//         `a.trf_date = (SELECT MAX(trf_date)
+//                        FROM td_od_loan
+//                        WHERE  branch_code IN (${branchCodes})
+//                        AND trf_date <= '${trf_date}')
+//           AND a.branch_code IN (${branchCodes})`,
+//         null
+//       );
+//     }
 
-    res.send({
-      suc: 1,
-      data: {
-        total_loan_od: monthlyLoanOD.msg[0].tot_loan_od || 0,
-        total_overdue_groups: monthlyLoanOD.msg[0].tot_overdue_grp || 0,
-        d_trf_date: monthlyLoanOD.msg[0].d_trf_date,
-        weekly_loan_od: weeklyLoanOD.msg[0].weekly_od || 0,
-        weekly_overdue_groups: weeklyLoanOD.msg[0].weekly_grp || 0,
-        w_trf_date: weeklyLoanOD.msg[0].w_trf_date,
-        monthly_loan_od: totalLoanOD.msg[0].monthly_od || 0,
-        monthly_overdue_groups: totalLoanOD.msg[0].monthly_grp || 0,
-      }
-    });
-  } catch (error) {
-    console.error("Error fetching dashboard total loan overdue details:", error);
-    res.send({ suc: 0, msg: "An error occurred" });
-  }
-});
+//     res.send({
+//       suc: 1,
+//       data: {
+//         total_loan_od: monthlyLoanOD.msg[0].tot_loan_od || 0,
+//         total_overdue_groups: monthlyLoanOD.msg[0].tot_overdue_grp || 0,
+//         d_trf_date: monthlyLoanOD.msg[0].d_trf_date,
+//         weekly_loan_od: weeklyLoanOD.msg[0].weekly_od || 0,
+//         weekly_overdue_groups: weeklyLoanOD.msg[0].weekly_grp || 0,
+//         w_trf_date: weeklyLoanOD.msg[0].w_trf_date,
+//         monthly_loan_od: totalLoanOD.msg[0].monthly_od || 0,
+//         monthly_overdue_groups: totalLoanOD.msg[0].monthly_grp || 0,
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error fetching dashboard total loan overdue details:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// });
 
 
 //Dashboard total branch overdue amount calculation (All branches)
@@ -590,8 +591,8 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
 
         // console.log(`Monthly Result for Branch ${branchCode}:`, totalLoanOD.msg);
 
-        result.total_loan_od += totalLoanOD.msg[0].tot_loan_od || 0;
-        result.total_overdue_groups += totalLoanOD.msg[0].tot_overdue_grp || 0;
+        result.total_loan_od += Number(totalLoanOD.msg[0].tot_loan_od) || 0;
+        result.total_overdue_groups += Number(totalLoanOD.msg[0].tot_overdue_grp) || 0;
 
       } else if (data.flag === 'W') {
         // Weekly logic
@@ -604,8 +605,8 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
 
         // console.log(`Weekly Result for Branch ${branchCode}:`, weeklyLoanOD.msg);
 
-        result.weekly_loan_od += weeklyLoanOD.msg[0].weekly_od || 0;
-        result.weekly_overdue_groups += weeklyLoanOD.msg[0].weekly_grp || 0;
+        result.weekly_loan_od += Number(weeklyLoanOD.msg[0].weekly_od) || 0;
+        result.weekly_overdue_groups += Number(weeklyLoanOD.msg[0].weekly_grp) || 0;
 
       } else {
          monthlyLoanOD = await db_Select(  // Daywise
@@ -615,8 +616,8 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
           null
         );
 
-        result.monthly_loan_od += monthlyLoanOD.msg[0].monthly_od || 0;
-        result.monthly_overdue_groups += monthlyLoanOD.msg[0].monthly_grp || 0;
+        result.monthly_loan_od += Number(monthlyLoanOD.msg[0].monthly_od) || 0;
+        result.monthly_overdue_groups += Number(monthlyLoanOD.msg[0].monthly_grp) || 0;
 
       }
     }
@@ -629,6 +630,93 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
     res.send({ suc: 0, msg: "An error occurred" });
   }
 });
+
+// dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) => {
+//   try {
+//     var data = req.body;
+
+//     const result = {
+//       total_loan_od: 0,
+//       total_overdue_groups: 0,
+//       weekly_loan_od: 0,
+//       weekly_overdue_groups: 0,
+//       monthly_loan_od: 0,
+//       monthly_overdue_groups: 0,
+//     };
+
+//     // Fetch latest transfer dates per branch
+//     const fetch_max_trf_date = await db_Select(
+//       "MAX(trf_date) trf_date, branch_code",
+//       "td_od_loan",
+//       null,
+//       "GROUP BY branch_code ORDER BY branch_code"
+//     );
+    
+//     const branchDateMap = {};
+//     for (let row of fetch_max_trf_date.msg) {
+//       branchDateMap[row.branch_code] = row.trf_date;
+//     }
+
+//     // console.log("Branch Date Map:", branchDateMap);
+
+//     for (let branchCode of data.branch_code) {
+//       let rawDate = branchDateMap[branchCode];
+//       // console.log(rawDate,'hyt');
+
+
+//       const trf_date = dateFormat(rawDate, 'yyyy-mm-dd');
+
+
+//       if (data.flag === 'M') {
+//         // Monthly logic
+//         const totalLoanOD = await db_Select(
+//           "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
+//           "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//           `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Monthly'`,
+//           null
+//         );
+
+//         // console.log(`Monthly Result for Branch ${branchCode}:`, totalLoanOD.msg);
+
+//         result.total_loan_od += Number(totalLoanOD.msg[0].tot_loan_od) || 0;
+//         result.total_overdue_groups += Number(totalLoanOD.msg[0].tot_overdue_grp) || 0;
+
+//       } else if (data.flag === 'W') {
+//         // Weekly logic
+//         const weeklyLoanOD = await db_Select(
+//           "IFNULL(SUM(a.od_amt), 0) AS weekly_od, COUNT(DISTINCT b.group_code) AS weekly_grp",
+//           "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//           `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Weekly' AND b.recovery_day = '${data.recov_day}'`,
+//           null
+//         );
+
+//         // console.log(`Weekly Result for Branch ${branchCode}:`, weeklyLoanOD.msg);
+
+//         result.weekly_loan_od += Number(weeklyLoanOD.msg[0].weekly_od) || 0;
+//         result.weekly_overdue_groups += Number(weeklyLoanOD.msg[0].weekly_grp) || 0;
+
+//       } else {
+//          monthlyLoanOD = await db_Select(  // Daywise
+//           "IFNULL(SUM(a.od_amt), 0) AS monthly_od, COUNT(DISTINCT b.group_code) AS monthly_grp",
+//           "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+//           `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Monthly' AND b.recovery_day = '${data.recov_day}'`,
+//           null
+//         );
+
+//         result.monthly_loan_od += Number(monthlyLoanOD.msg[0].monthly_od) || 0;
+//         result.monthly_overdue_groups += Number(monthlyLoanOD.msg[0].monthly_grp) || 0;
+
+//       }
+//     }
+
+//     // console.log("Final Aggregated Result:", result);
+//     res.send({ suc: 1, data: result });
+
+//   } catch (error) {
+//     console.error("Error fetching dashboard overdue amounts:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// });
 
 /********************************************************************************
  *                                Demand

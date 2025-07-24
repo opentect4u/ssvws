@@ -1144,6 +1144,27 @@ const populateOverdue = (branch_code, DATE) => {
   });
 };
 
+// FUNCTION TO FETCH ANY OVERDUE IN PARTICULAR GROUP
+
+const f_getOverdue = (group_code, currDate) => {
+  return new Promise(async (resolve, reject) => {
+    try{
+     var select = "count(*)overdue_count,IFNULL(SUM(od_amt), 0) AS overdue_amt",
+     table_name = "td_od_loan",
+     whr = `trf_date = (SELECT MAX(trf_date)
+                    FROM   td_od_loan
+                    WHERE  trf_date <= '${currDate}' )
+            AND loan_id IN (SELECT loan_id FROM td_loan
+		                        WHERE  group_code = '${group_code}')`,
+     order = null;
+     var fetch_data_overdue = await db_Select(select,table_name,whr,order);
+     resolve(fetch_data_overdue)
+    }catch (error) {
+      console.error("Error calculating overdue for particular group:", error);
+      reject(error);
+    }
+  });
+}
 
 module.exports = {
   getFormNo,
@@ -1174,5 +1195,6 @@ module.exports = {
   getFundCode,
   getSchemeCode,
   f_getdemand,
-  populateOverdue
+  populateOverdue,
+  f_getOverdue
 };
