@@ -82,7 +82,7 @@ const { loan_outstandingAdminrouter } = require("./router/report/branch_report/a
 const { loan_summaryrouter } = require("./router/report/branch_report/web/loan_summaryRouter");
 const { loan_summaryAdminRouter } = require("./router/report/branch_report/admin_web/loan_summaryAdminRouter");
 const { dmd_vs_collRouter } = require("./router/report/branch_report/web/dmd_vs_collRouter");
-const { getLoanBal, getLoanDmd, populateOverdue } = require("./modules/api/masterModule");
+const { getLoanBal, getLoanDmd, populateOverdue, populate_overdue } = require("./modules/api/masterModule");
 const { dmd_vs_collAdminRouter } = require("./router/report/branch_report/admin_web/dmd_vs_collAdminRouter");
 const { loan_demandAdminRouter } = require("./router/report/branch_report/admin_web/loan_demandAdminRouter");
 const { attendanceRouter } = require("./router/api/emp_attandence/attendanceRouter");
@@ -186,6 +186,25 @@ app.get("/",async (req, res) => {
 //   console.log(error);
 // }
 });
+
+// app.get("/populate_overdue", async (req, res) => {
+//   var result = await populateOverdue('151','2025-06-30')
+//   console.log(result,'get');
+
+//   res.send(result)
+// })
+
+app.get("/populate_overdue", async (req, res) => {
+  try {
+    const result = await populate_overdue('2025-06-30', '151');
+    console.log("Overdue result:", result);
+    res.send(result);
+  } catch (error) {
+    console.error("Error in populate_overdue:", error);
+    res.send({ error: "Internal Server Error" });
+  }
+});
+
 
 // app.get("/", async (req, res) => {
 //   var get_loan_bal = await getLoanDmd('67553','2025-01-31')

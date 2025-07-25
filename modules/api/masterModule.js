@@ -1035,7 +1035,7 @@ const f_getdemand = (loan_id,adt_dt) => {
      order = null;
      var get_data = await db_Select(select,table_name,whr,order);
 
-    const {disb_dt,period,period_mode,instl_start_dt,instl_end_dt,tot_emi,prn_amt,intt_amt} = get_data[0];
+    const {disb_dt,period,period_mode,instl_start_dt,instl_end_dt,tot_emi,prn_amt,intt_amt} = get_data.msg[0];
 
     //Get paid amount up to adt_dt
      const paid_result = await db_Select(
@@ -1044,7 +1044,7 @@ const f_getdemand = (loan_id,adt_dt) => {
         `loan_id = '${loan_id}' AND tr_type = 'R' AND payment_date <= '${adt_dt}'`,
         null
       );
-      const paid_amt = parseFloat(paid_result[0].paid_amt || 0);
+      const paid_amt = parseFloat(paid_result.msg[0].paid_amt || 0);
 
       let ld_demand = 0;
 
@@ -1080,66 +1080,205 @@ const f_getdemand = (loan_id,adt_dt) => {
   });
 }
 
+// function of fetch principal amount
+// const f_getprn = (loan_id,adt_dt) => {
+//   return new Promise(async (resolve, reject) => {
+//     try{
+//        const formattedDate = new Date(adt_dt).toISOString().slice(0, 10);
+//       // Get max payment_date
+//       var select = "MAX(payment_date) payment_date",
+//       table_name = "td_loan_transactions",
+//       whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${formattedDate}'`,
+//       order = null;
+//       var pay_date = await db_Select(select,table_name,whr,order);
+//       var ldt_max_dt_raw = pay_date.msg[0].payment_date;
+
+//       const ldt_max_dt = new Date(ldt_max_dt_raw).toISOString().slice(0, 10); 
+//       console.log(ldt_max_dt,'dt');
+      
+
+//       //  Get max payment_id for the max payment_date
+//       var select = "MAX(payment_id) payment_id",
+//       table_name = "td_loan_transactions",
+//       whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${ldt_max_dt}'`,
+//       order = null;
+//       var pay_id = await db_Select(select,table_name,whr,order);
+//       const ldt_max_id = pay_id.msg[0].payment_id;
+//       console.log(ldt_max_id,'id');
+      
+
+//       // Get balance, od_balance, intt_balance
+//       var select = "balance, od_balance, intt_balance",
+//       table_name = "td_loan_transactions",
+//       whr = `loan_id = '${loan_id}' AND payment_date = '${ldt_max_dt}' AND payment_id = '${ldt_max_id}'`,
+//       order = null;
+//       var fetch_balance = await db_Select(select,table_name,whr,order);
+
+//       // fetch principal and overdue balance
+//       var ld_curr_prn = 0;
+//       var ld_od_prn = 0;
+
+//       // var ld_curr_prn = parseFloat(fetch_balance.msg[0].balance || 0);
+//       if (fetch_balance.msg && fetch_balance.msg.length > 0) {
+//       ld_curr_prn = parseFloat(fetch_balance.msg[0].balance || 0);
+//       ld_od_prn = parseFloat(fetch_balance.msg[0].od_balance || 0);
+//       }
+//       console.log(ld_curr_prn,ld_od_prn,'prn');
+      
+//       // calculate principal and overdue balance
+//       var final_bal = ld_curr_prn + ld_od_prn
+//       console.log(final_bal,'bal');
+      
+//       resolve(final_bal)
+//     } catch (error) {
+//       console.error("Error calculating month difference:", error);
+//       reject(error);
+//     }
+//   });
+// }
+
+// function of fetch interest amount
+// const f_getintt = (loan_id,adt_dt) => {
+//   return new Promise(async (resolve, reject) => {
+//     try{
+//        const formattedDate = new Date(adt_dt).toISOString().slice(0, 10);
+
+//       // Get max payment_date
+//       var select = "MAX(payment_date) payment_date",
+//       table_name = "td_loan_transactions",
+//       whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${formattedDate}'`,
+//       order = null;
+//       var pay_date = await db_Select(select,table_name,whr,order);
+//       var ldt_max_dt_raw  = pay_date.msg[0].payment_date;
+
+//       const ldt_max_dt = new Date(ldt_max_dt_raw).toISOString().slice(0, 10); 
+//       console.log(ldt_max_dt,'intt_dt');
+      
+
+//       //  Get max payment_id for the max payment_date
+//       var select = "MAX(payment_id) payment_id",
+//       table_name = "td_loan_transactions",
+//       whr = `loan_id = '${loan_id}' AND tr_type != 'I' AND payment_date <= '${ldt_max_dt}'`,
+//       order = null;
+//       var pay_id = await db_Select(select,table_name,whr,order);
+//       const ldt_max_id = pay_id.msg[0].payment_id;
+//       console.log(ldt_max_id,'max_id_intt');
+      
+
+//       // Get balance, od_balance, intt_balance
+//       var select = "balance, od_balance, intt_balance",
+//       table_name = "td_loan_transactions",
+//       whr = `loan_id = '${loan_id}' AND payment_date = '${ldt_max_dt}' AND payment_id = '${ldt_max_id}'`,
+//       order = null;
+//       var fetch_balance = await db_Select(select,table_name,whr,order);
+
+//       // fetch interest balance
+//       var ld_intt_amt = 0;
+
+//       if (fetch_balance.msg && fetch_balance.msg.length > 0) {
+//       ld_intt_amt = parseFloat(fetch_balance.msg[0].intt_balance || 0);
+//       }
+//       console.log(ld_intt_amt,'ld_intt');
+      
+//       resolve(ld_intt_amt)
+//     } catch (error) {
+//       console.error("Error calculating month difference:", error);
+//       reject(error);
+//     }
+//   });
+// }
+
 // FUNCTION TO POPULATE LOAN OVERDUE 24.07.2025
 
-const populateOverdue = (branch_code, DATE) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      var select = `loan_id,branch_code,group_code,member_code,(prn_disb_amt + intt_cal_amt) disb_amt, (prn_amt + intt_amt) outstanding,tot_emi,period_mode,instl_start_dt`,
-      table_name = "td_loan",
-      whr = `branch_code = '${branch_code}' AND outstanding > 0 AND disb_dt <= '${DATE}'`,
-      order = null;
-      var get_loan_data = await db_Select(select, table_name, whr, order);
+// const populateOverdue = (branch_code, DATE) => {
+  
+//   return new Promise(async (resolve, reject) => {
+//     try {
+//       var select = `loan_id,branch_code,group_code,member_code,(prn_disb_amt + intt_cal_amt) disb_amt,tot_emi,period_mode,instl_start_dt`,
+//       table_name = "td_loan",
+//       whr = `branch_code = '${branch_code}' AND outstanding > 0 AND disb_dt <= '${DATE}'`,
+//       order = null;
+//       var get_loan_data = await db_Select(select, table_name, whr, order);
+      
+//       let insert_od_data = [];
 
-      // loop through each loan and process
-      if (Array.isArray(get_loan_data)) {
-         for (let loan of get_loan_data) {
+//       // loop through each loan and process
+//          for (let loan of get_loan_data.msg) {
 
-           // Get sum of credits
-          var select = "SUM(credit) collc_amt",
-          table_name = "td_loan_transactions",
-          whr = `loan_id = '${loan.loan_id}' AND payment_date <= '${DATE}'`,
-          order = null;
-          var get_credit = await db_Select(select, table_name, whr, order);
-          let collc_amt = parseFloat(get_credit[0].collc_amt || 0);
-
-          // Get calculated values from functions loan demand
-          let dmd_amt = await f_getdemand(loan.loan_id, DATE);
-
-          // demand amount > 0 then calculate period
-          if (dmd_amt > 0) {
-            let li_period = Math.round(collc_amt / loan.tot_emi);
-
-         // calculate overdue date   
-         let od_dt;
-         let instl_date = new Date(loan.instl_start_dt);
-         if (loan.period_mode === 'Monthly') {
-              instl_date.setMonth(instl_date.getMonth() + li_period);
-         } else {
-              instl_date.setDate(instl_date.getDate() + (li_period * 7));
-            }
-         od_dt = instl_date.toISOString().slice(0, 10);
-
-         // check if overdue
-          if (new Date(od_dt) <= new Date(DATE)) {
+//            // Get sum of credits
+//           var select = "SUM(credit) collc_amt",
+//           table_name = "td_loan_transactions",
+//           whr = `loan_id = '${loan.loan_id}' AND payment_date <= '${DATE}'`,
+//           order = null;
+//           var get_credit = await db_Select(select, table_name, whr, order);
+//           // var collc_amt = parseFloat(get_credit.msg[0].collc_amt || 0);
+//           var collc_amt = parseFloat((get_credit.msg && get_credit.msg[0]?.collc_amt) || 0);
           
-          // Insert into td_od_loan
-          var table_name = "td_od_loan",
-          fields = "(trf_date, od_date, loan_id, branch_code, disb_amt, collc_amt, od_amt, outstanding, remarks)",
-          values =  `('${DATE}', '${od_dt}', '${loan.loan_id}', '${loan.branch_code}', '${loan.disb_amt}', '${collc_amt}', '${dmd_amt}', '${loan.outstanding}', 'To OD')`,
-          whr = null,
-          flag = 0;
-          var insert_od_data = await db_Insert(table_name,fields,values,whr,flag);
-          }
-           }
-           }
-      } else {
-           console.error("Expected an array but got:", get_loan_data);
-      }
-      resolve("Overdue processing completed");
-    } catch (error) {
-      console.error("Error calculating month difference:", error);
-      reject(error);
+//           // calculate principal and interest amount
+
+//           let prn_amt = await f_getprn(loan.loan_id, DATE);
+//           const principal_amt = parseFloat(prn_amt || 0);   
+
+//           let intt_amt = await f_getintt(loan.loan_id, DATE);
+//           const interest_amt = parseFloat(intt_amt || 0);   
+
+//           // Get demand upto provided date for each loan
+//           let demand_amt = await f_getdemand(loan.loan_id, DATE);
+//           const dmd_amt = parseFloat(demand_amt || 0);          
+
+//           // demand amount > 0 then calculate that how many installment the customer has paid ie total credit divided by per month emi
+//           if (dmd_amt > 0) {
+//             // let li_period = Math.round(collc_amt / loan.tot_emi);
+//             let li_period = Math.trunc(collc_amt / loan.tot_emi);
+           
+//          // calculate overdue date   
+//          let od_dt;
+//          let instl_date = new Date(loan.instl_start_dt);
+//          if (loan.period_mode === 'Monthly') {
+//               instl_date.setMonth(instl_date.getMonth() + li_period);
+//          } else {
+//               instl_date.setDate(instl_date.getDate() + (li_period * 7));
+//             }
+//          od_dt = instl_date.toISOString().slice(0, 10);
+          
+
+//          // check if overdue
+//           if (new Date(od_dt) <= new Date(DATE)) {
+          
+//           // Insert into td_od_loan
+//           let formatted_inst_start_dt = new Date(loan.instl_start_dt).toISOString().slice(0, 10);
+//           let outstanding = principal_amt + interest_amt
+//           console.log(outstanding,'outstanding');
+          
+
+//           var table_name = "td_od_loan",
+//           fields = "(trf_date, inst_start_dt, period, od_date, loan_id, branch_code, disb_amt, collc_amt, od_amt, outstanding, remarks)",
+//           values =  `('${DATE}', '${formatted_inst_start_dt}', '${li_period}', '${od_dt}', '${loan.loan_id}', '${loan.branch_code}', '${loan.disb_amt}', '${collc_amt}', '${dmd_amt}', '${outstanding}', 'To OD')`,
+//           whr = null,
+//           flag = 0;
+//           var result_data = await db_Insert(table_name,fields,values,whr,flag);
+//           insert_od_data.push(result_data);
+//           console.log("Inserted:", result_data);
+//           }
+//            }
+//            }
+//       resolve(insert_od_data);
+//     } catch (error) {
+//       console.error("Error calculating month difference:", error);
+//       reject(error);
+//     }
+//   });
+// };
+
+// call function useing procedure for population of overdue loan
+const populate_overdue = (DATE, branch_code) => {
+  return new Promise( async (resolve, reject) => {
+     try {
+    var overdue_balance = await db_Select(null,null,null,null,true,`CALL p_pop_od('${DATE}','${branch_code}')`);
+    resolve({success: true , overdue_balance}) ;
+     }catch (error) {
+        console.error("Error fetching loan mismatch balance:", error);
+        reject({ success: false, message: "Failed to fetch overdue balance", error });
     }
   });
 };
@@ -1195,6 +1334,9 @@ module.exports = {
   getFundCode,
   getSchemeCode,
   f_getdemand,
-  populateOverdue,
-  f_getOverdue
+  // f_getprn,
+  // f_getintt,
+  // populateOverdue,
+  f_getOverdue,
+  populate_overdue
 };
