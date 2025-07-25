@@ -5,7 +5,7 @@ const {
   loan_trans_date,
   update_recovery_day,
 } = require("../../modules/admin/loanModule");
-const { getLoanDmd, f_getOverdue } = require("../../modules/api/masterModule");
+const { getLoanDmd, f_getOverdue, f_getOverdue_loan_id } = require("../../modules/api/masterModule");
 
 const loanRouter = require("express").Router();
 dateFormat = require("dateformat");
@@ -576,23 +576,23 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
   var data = req.body;
 
    const currDate = new Date().toISOString().split("T")[0];
-        // Initialize overdue variables
-        let overdue_flag = 'N';
-        let overdue_amt = 0;
-        let overdue_count = 0;
+  // Initialize overdue variables
 
-     try {
-      const overdue_result = await f_getOverdue(data.group_code, currDate);
-      if (overdue_result.suc > 0 && overdue_result.msg.length > 0) {
-       overdue_count = overdue_result.msg[0]['overdue_count'];
-       overdue_amt = overdue_result.msg[0]['overdue_amt'];
-      if (overdue_count > 0) {
-        overdue_flag = 'Y';
-      }
-     }
-    } catch (err) {
-    console.error("Error while checking overdue:", err);
-    }     
+        let overdue_flag = 'N';
+        let overdue_loan_ids = [];
+        overdue_count = 0;
+        let overdue_amt = 0;
+
+  const overdue_result = await f_getOverdue(data.branch_code, data.group_code, currDate);
+  
+    if (overdue_result.length > 0) {
+      overdue_loan_ids = overdue_result;
+      overdue_amt=overdue_result.reduce((sum,acc) => sum + acc.overdue_amount, 0);
+      overdue_count=overdue_result.length;
+      overdue_flag = 'Y';
+      // console.log(overdue_loan_ids,'overdue_loan_ids');
+    }
+
 
   //fetch search group view details
   var select = "a.*, b.block_name,c.emp_name,d.branch_name brn_name",
@@ -663,11 +663,35 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
         : [];
      // Add overdue info
         fetch_search_group_view.msg[0]['overdue_flag'] = overdue_flag;
+        fetch_search_group_view.msg[0]['overdue_count'] = overdue_count;
+        // fetch_search_group_view.msg[0]['loan_id'] = loan_id;
         fetch_search_group_view.msg[0]['overdue_amt'] = overdue_amt;
-        fetch_search_group_view.msg[0]['overdue_count'] = overdue_count;   
+        fetch_search_group_view.msg[0]['overdue_loan_ids'] = overdue_loan_ids;
+        // fetch_search_group_view.msg[0]['loan_overdue_list'] = overdue_result.loanOverdueList;
+        // fetch_search_group_view.msg[0]['overdue_count'] = overdue_count; 
   }
 
   res.send(fetch_search_group_view);
+});
+
+loanRouter.post("/look_overdue_details", async (req, res) => {
+ try{
+var data = req.body;
+const currDate = new Date().toISOString().split("T")[0];
+ var select = "*",
+ table_name = "td_od_loan",
+ whr = `trf_date = (SELECT MAX(trf_date)
+                    FROM   td_od_loan
+                    WHERE  trf_date <= '${currDate}' 
+                    AND    branch_code = '${data.branch_code}')
+            AND loan_id IN (${data.loan_id})`,
+ order = null;
+ var fetch_overdue = await db_Select(select,table_name,whr,order);
+ res.send(fetch_overdue)
+ } catch (error) {
+    console.error("Error fetching overdue loan details:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+ }
 });
 
 loanRouter.post("/view_loan_dtls", async (req, res) => {

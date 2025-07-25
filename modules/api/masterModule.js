@@ -1285,25 +1285,65 @@ const populate_overdue = (DATE, branch_code) => {
 
 // FUNCTION TO FETCH ANY OVERDUE IN PARTICULAR GROUP
 
-const f_getOverdue = (group_code, currDate) => {
+const f_getOverdue = (branch_code, group_code, currDate) => {
   return new Promise(async (resolve, reject) => {
     try{
-     var select = "count(*)overdue_count,IFNULL(SUM(od_amt), 0) AS overdue_amt",
+    //  var select = "count(*)overdue_count,IFNULL(SUM(od_amt), 0) AS overdue_amt",
+     var select = "loan_id,od_amt AS overdue_amt",
      table_name = "td_od_loan",
      whr = `trf_date = (SELECT MAX(trf_date)
                     FROM   td_od_loan
-                    WHERE  trf_date <= '${currDate}' )
+                    WHERE  trf_date <= '${currDate}' 
+                    AND    branch_code = '${branch_code}')
             AND loan_id IN (SELECT loan_id FROM td_loan
 		                        WHERE  group_code = '${group_code}')`,
      order = null;
      var fetch_data_overdue = await db_Select(select,table_name,whr,order);
-     resolve(fetch_data_overdue)
+       let loanOverdueList = [];
+
+      if (fetch_data_overdue.suc > 0 && fetch_data_overdue.msg.length > 0) {
+        loanOverdueList = fetch_data_overdue.msg.map(row => ({
+          loan_id: row.loan_id,
+          overdue_amount: Number(row.overdue_amt || 0)
+        }));
+        // console.log(loanOverdueList,'loan');
+        
+      }
+     resolve(loanOverdueList)
     }catch (error) {
       console.error("Error calculating overdue for particular group:", error);
       reject(error);
     }
   });
 }
+
+// const f_getOverdue_loan_id = (group_code, currDate) => {
+//   return new Promise(async (resolve, reject) => {
+//     try{
+//      var select = "loan_id,od_amt AS overdue_amount",
+//      table_name = "td_od_loan",
+//      whr = `trf_date = (SELECT MAX(trf_date)
+//                     FROM   td_od_loan
+//                     WHERE  trf_date <= '${currDate}' )
+//             AND loan_id IN (SELECT loan_id FROM td_loan
+// 		                        WHERE  group_code = '${group_code}')`,
+//      order = null;
+//      var fetch_data_overdue = await db_Select(select,table_name,whr,order);
+       
+//       if (fetch_data_overdue.suc > 0 && fetch_data_overdue.msg.length > 0) {
+//         const loanIds = fetch_data_overdue.msg.map(row => row.loan_id);
+//         const loanAmt = fetch_data_overdue.msg.map(row => row.od_amt);
+//         resolve({ success: true, loanIds, rawData: fetch_data_overdue.msg });
+//       } else {
+//         resolve({ success: true, loanIds: [], rawData: [] });
+//       }
+//      resolve(fetch_data_overdue)
+//     }catch (error) {
+//       console.error("Error calculating overdue for particular group:", error);
+//       reject(error);
+//     }
+//   });
+// }
 
 module.exports = {
   getFormNo,
@@ -1338,5 +1378,6 @@ module.exports = {
   // f_getintt,
   // populateOverdue,
   f_getOverdue,
-  populate_overdue
+  populate_overdue,
+  // f_getOverdue_loan_id
 };
