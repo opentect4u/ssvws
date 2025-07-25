@@ -16,7 +16,6 @@ const DynamicTailwindTable = ({
 	indexing = false,
 	bordered = true,
 }) => {
-	console.log('DYDYDY' + data);
 	const [currentPage, setCurrentPage] = useState(1)
 
 	const isDataEmpty = !data || data.length === 0
@@ -31,8 +30,7 @@ const DynamicTailwindTable = ({
 			originalHeaders
 				.map((header, index) => ({ header, index }))
 				.filter((item) => {
-					console.log('item.index: ' + item.index);
-					console.log('item.header: ' + item.header);
+					
 					return !colRemove.includes(item.index);
 				}),
 		[originalHeaders, colRemove]

@@ -1,18 +1,12 @@
 import { Alert } from 'antd'
 import React from 'react'
 
-const AlertComp = ({msg,msgType}) => {
+const AlertComp = ({msg,msgType,title="ALERT"}) => {
   return (
         <Alert
-            // style={{
-            // 	fontSize: "2.2rem",
-            // 	fontWeight: "500",
-            // 	// color:'hsl(var())'
-            // }}
-            
-            message={msgType ? msgType : "Warning"}
+            message={title}
             description={msg}
-            type="warning"
+            type={msgType ? msgType : "warning"}
             showIcon
             closable
         />

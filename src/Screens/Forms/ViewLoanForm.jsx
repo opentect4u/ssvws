@@ -10,7 +10,7 @@ import * as Yup from "yup"
 import axios from "axios"
 import { Message } from "../../Components/Message"
 import { url } from "../../Address/BaseUrl"
-import { Spin, Button, Popconfirm, Tag, Timeline, Divider } from "antd"
+import { Spin, Button, Popconfirm, Tag, Timeline, Divider, Modal } from "antd"
 import {
 	LoadingOutlined,
 	DeleteOutlined,
@@ -35,6 +35,7 @@ import DynamicTailwindTable from "../../Components/Reports/DynamicTailwindTable"
 import { disbursementDetailsHeader } from "../../Utils/Reports/headerMap"
 import { getOrdinalSuffix } from "../../Utils/ordinalSuffix"
 import AlertComp from "../../Components/AlertComp"
+import moment from "moment"
 const formatINR = (num) =>
 	new Intl.NumberFormat("en-IN", {
 		style: "currency",
@@ -42,6 +43,7 @@ const formatINR = (num) =>
 		minimumFractionDigits: 2,
 	}).format(num || 0)
 function ViewLoanForm({ groupDataArr }) {
+	const [loanDtls,setLoanDtls] = useState([]);
 	const [isOverdue, setIsOverdue] = useState('N');
 	const [overDueAmt, setOverDueAmt] = useState(0);
 	const params = useParams()
@@ -52,7 +54,7 @@ function ViewLoanForm({ groupDataArr }) {
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 	const [count, setCount] = useState(0)
 	const [groupData, setGroupData] = useState(() => [])
-
+	const [openModal, setOpenModal] = useState(false)
 	const [branches, setBranches] = useState(() => [])
 	const [branch, setBranch] = useState(() => "")
 
@@ -83,9 +85,6 @@ function ViewLoanForm({ groupDataArr }) {
 	const handleMouseLeave = () => {
 		setIsHovered(false)
 	}
-
-	console.log(params, "paramsssssssssssssss")
-	console.log(location, "location")
 
 	{
 		/* purpose,scheme name,interest rate,period,period mode,fund name,total applied amount,total disbursement amount,disbursement date,current outstanding */
@@ -179,7 +178,6 @@ function ViewLoanForm({ groupDataArr }) {
 		await axios
 			.post(`${url}/admin/fetch_search_grp_view`, creds)
 			.then((res) => {
-				console.log("........>>>>>>>>>>", res?.data)
 				setValues({
 					g_co_name: res?.data?.msg[0]?.emp_name,
 					g_group_name: res?.data?.msg[0]?.group_name,
@@ -219,7 +217,6 @@ function ViewLoanForm({ groupDataArr }) {
 					g_current_outstanding:
 						res?.data?.msg[0]?.disb_details[0]?.curr_outstanding,
 				})
-				console.log(res?.data?.msg)
 				setGroupData(res?.data?.msg)
 				setPeriodMode(res?.data?.msg[0].disb_details[0]?.period_mode)
 				setPeriodModeVal(res?.data?.msg[0].disb_details[0]?.recovery_day)
@@ -377,6 +374,33 @@ function ViewLoanForm({ groupDataArr }) {
 	// 	console.log("VVVVVVVVVVVVVVVVVVVVVVVV", creds)
 	// 	setLoading(false)
 	// }
+
+	const callAPi = (item) =>{
+			console.log(item);
+			setLoading(true);
+			setLoanDtls([]);
+			try{
+					const payload = {
+						branch_code: userDetails?.brn_code,
+						loan_id: item?.loan_id,
+					}
+					axios.post(`${url}/admin/look_overdue_details`,payload)
+					.then((res) => {
+						// console.log("API response:", res.data);
+						setOpenModal(true);
+						setLoanDtls(res?.data?.msg || []);
+						setLoading(false);
+					})
+					.catch((err) => {
+						setLoading(false);
+						console.log("Error occurred while calling API:", err);
+					});
+			}
+			catch(err){
+				setLoading(false);
+				console.log("Error occurred while calling API:", err);
+			}
+	}
 
 	return (
 		<>
@@ -1020,7 +1044,6 @@ function ViewLoanForm({ groupDataArr }) {
 										Members in this Group
 									</div>
 
-									{console.log("+++++++++++++++++++++++++++++", memberDetails)}
 
 									{/* {groupData[0]?.memb_dt?.map((item, i) => (
 										<Tag
@@ -1090,7 +1113,15 @@ function ViewLoanForm({ groupDataArr }) {
 															>
 																{item?.client_name}
 															</th>
-															<td className="px-6 py-4">{item?.loan_id}</td>
+															<td className="px-6 py-4">
+																{
+																	groupData[0]?.overdue_loan_ids?.filter(el => el.loan_id == item?.loan_id).length == 0 ? item?.loan_id :  
+																	<Button onClick={() => callAPi(item)} size="small" type="primary">
+																	{item?.loan_id}
+																</Button>
+																}
+															
+																</td>
 															<td className="px-6 py-4">{item?.member_code}</td>
 															<td className="px-6 py-4">
 																{item?.curr_outstanding}/-
@@ -1154,6 +1185,50 @@ function ViewLoanForm({ groupDataArr }) {
 				}}
 				onPressNo={() => setVisible(!visible)}
 			/>
+
+			<Modal
+				// width={{
+				// 	xs: '90%',
+				// 	sm: '80%',
+				// 	md: '70%',
+				// 	lg: '60%',
+				// 	xl: '50%',
+				// 	xxl: '40%',
+				// 	}}
+				title="Overdue Details"
+				okButtonProps={null}
+				open={openModal}
+				onCancel={() => setOpenModal(false)}>
+					<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+								<thead className="text-xs text-white uppercase bg-slate-800 dark:bg-gray-700 dark:text-gray-400">
+									<tr>
+										<th scope="col" className="px-6 py-3 font-semibold">
+											Overdue Amount
+										</th>
+										<th scope="col" className="px-6 py-3 font-semibold">
+											Overdue Date
+										</th>
+										
+									</tr>
+								</thead>
+								<tbody>
+									{loanDtls.map((item, i) => (
+										<tr
+											key={i}
+											className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-600"
+										>
+											
+											<td className="px-6 py-4">{item?.od_amt ? item?.od_amt : '0.00'}</td>
+											<td className="px-6 py-4">
+												{item?.od_date ? moment(item?.od_date).format("DD-MM-YYYY") : "N/A"}
+											</td>
+											
+										</tr>
+									))}
+									
+								</tbody>
+							</table>
+			</Modal>
 		</>
 	)
 }
