@@ -1,29 +1,37 @@
 import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native'
-import React from 'react'
+import React, { useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import HeadingComp from "../components/HeadingComp"
 import BMBasicDetailsForm from './forms/BMBasicDetailsForm'
 import { loginStorage } from '../storage/appStorage'
 
 const GRTFormScreen = () => {
-    const theme = usePaperColorScheme()
+    const theme = usePaperColorScheme();
+    const [isHeaderShown,setHEaderShownStatus] = useState(true);
     // 110 -> Branch Code
     // const navigation = useNavigation()
 
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
 
     return (
-        <SafeAreaView>
+        <SafeAreaView
+        >
             <ScrollView keyboardShouldPersistTaps="handled" style={{
                 backgroundColor: theme.colors.background
-            }}>
-                <HeadingComp title="GRT Form" subtitle="Basic Details" isBackEnabled />
+        }}
+        
+        >
+                {isHeaderShown && <HeadingComp title="GRT Form" subtitle="Basic Details" isBackEnabled />}
                 <View style={{
-                    paddingHorizontal: 20,
-                    paddingTop: 10,
-                    gap: 10
+                    paddingHorizontal: isHeaderShown ? 20 : 0,
+                    paddingTop: isHeaderShown  ? 10 : 0,
+                    gap: isHeaderShown ? 10 : 0,
                 }}>
-                    <BMBasicDetailsForm flag='CO' branchCode={loginStore?.brn_code} />
+                    <BMBasicDetailsForm 
+                    closeHeader={(e:boolean)=>{
+                        setHEaderShownStatus(e)
+                    }}
+                    flag='CO' branchCode={loginStore?.brn_code} />
                 </View>
             </ScrollView>
         </SafeAreaView>

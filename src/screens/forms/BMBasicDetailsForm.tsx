@@ -1,6 +1,6 @@
-import { StyleSheet, SafeAreaView, View, Alert, ToastAndroid, Linking } from 'react-native'
-import { Divider, Icon, List } from "react-native-paper"
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
+import { StyleSheet, SafeAreaView, View, Alert, ToastAndroid, Linking, Dimensions, StatusBar } from 'react-native'
+import { ActivityIndicator, Divider, Icon, IconButton, List, Text, useTheme } from "react-native-paper"
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { formattedDate } from "../../utils/dateFormatter"
 import InputPaper from "../../components/InputPaper"
 import ButtonPaper from "../../components/ButtonPaper"
@@ -16,6 +16,7 @@ import useGeoLocation from '../../hooks/useGeoLocation'
 import { disableCondition } from "../../utils/disableCondition"
 // import { Dropdown } from 'react-native-element-dropdown'
 import { SCREEN_WIDTH } from 'react-native-normalize'
+import { Camera, useCameraDevice, useCameraDevices, useCameraPermission } from 'react-native-vision-camera'
 
 interface BMBasicDetailsFormProps {
     formNumber?: any
@@ -23,6 +24,7 @@ interface BMBasicDetailsFormProps {
     flag?: "CO" | "BM"
     approvalStatus?: "U" | "A" | "S"
     onSubmit?: any
+    closeHeader?: any,
     onUpdateDisabledChange?: (disabled: boolean) => void
 }
 
@@ -32,8 +34,17 @@ const BMBasicDetailsForm = forwardRef(({
     flag = "BM",
     approvalStatus = "U",
     onSubmit = () => null,
+    closeHeader,
     onUpdateDisabledChange = () => { }
 }: BMBasicDetailsFormProps, ref) => {
+  
+    const [isFront,setFront] = useState(true);
+    const device = useCameraDevice(isFront ? 'front' : 'back');
+    const { hasPermission, requestPermission } = useCameraPermission()
+    const [isPendingPermission,setPendingPermission] = useState(true);
+    const cameraRef = useRef(null);
+    const [isCameraOpen,setOpenCamera] = useState(false);
+
     const theme = usePaperColorScheme()
     // 110 -> Branch Code
     const navigation = useNavigation()
@@ -80,6 +91,8 @@ const BMBasicDetailsForm = forwardRef(({
         groupCodeName: "",
         dob: new Date(),
         grtDate: new Date(),
+        uploadImg:"", // image to be uploaded
+        previewImg:"" // image to be previewed
     })
 
     const [readonlyMemberId, setReadonlyMemberId] = useState(() => "")
@@ -148,6 +161,7 @@ const BMBasicDetailsForm = forwardRef(({
     }, [location])
 
     useEffect(() => {
+        checkCameraPermission();
         setMemberGenders([])
         setMemberGenders(prev => [
             ...prev,
@@ -156,6 +170,28 @@ const BMBasicDetailsForm = forwardRef(({
             { title: "Others", func: () => handleFormChange("clientGender", "O") }
         ])
     }, [])
+
+    const checkCameraPermission = () =>{
+        try{    
+              if(!hasPermission){
+                    setPendingPermission(true);
+                    requestPermission().then(res =>{
+                        console.log(res);
+                        setPendingPermission(false);
+                    }).catch(err =>{
+                        console.log(err);
+                        setPendingPermission(false);
+                    })
+              }
+              else{
+                setPendingPermission(false);
+              }
+        }
+        catch(err){
+            console.log(err);
+        }
+    }
+
 
     const handleFormChange = (field: string, value: any) => {
         setFormData((prev) => ({
@@ -388,6 +424,8 @@ const BMBasicDetailsForm = forwardRef(({
                     dob: new Date(res?.data?.msg[0]?.dob) ?? new Date(),
                     grtDate: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
                     // group_name: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
+                    previewImg:"",
+                    uploadImg:""
                 })
                 setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
                 console.log("APPROVAL STATUS ===", approvalStatus);
@@ -523,6 +561,7 @@ const BMBasicDetailsForm = forwardRef(({
                     co_long_val: location?.longitude,
                     co_gps_address: addr,
                     created_by: loginStore?.emp_id,
+                    own_file:formData?.uploadImg
                 }; 
                 console.log('Submitting basic details ',  creds)
                 axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, creds).then(res => {
@@ -551,6 +590,8 @@ const BMBasicDetailsForm = forwardRef(({
                             groupCodeName: "",
                             dob: new Date(),
                             grtDate: new Date(),
+                            previewImg:"",
+                            uploadImg:""
                         })
                     setMemberCodeShowHide(false)
                     onSubmit()
@@ -600,6 +641,8 @@ const BMBasicDetailsForm = forwardRef(({
                     groupCodeName: "",
                     dob: new Date(),
                     grtDate: new Date(),
+                    uploadImg:"",
+                    previewImg:""
                 })
                 setMemberCodeShowHide(false)
                 // setDob(new Date())
@@ -684,6 +727,110 @@ const BMBasicDetailsForm = forwardRef(({
     useImperativeHandle(ref, () => ({
         updateAndNext: triggerUpdateButton
     }))
+
+    const takePhoto = async () => {
+    if (!cameraRef.current) return;
+    const photo = await cameraRef.current.takePhoto({});
+    // setPhotoUri('file://' + photo.path);
+        setFormData((prev) => ({
+            ...prev,
+            uploadImg: 'file://' + photo.path,
+            previewImg: 'file://' + photo.path,
+        }))
+        closeHeader(true);
+        setOpenCamera(false);
+  };
+
+  
+    if(!hasPermission) return <>
+                <SafeAreaView>
+                    <View
+                        style={{
+                            flex:1,
+                            justifyContent:'center',
+                            alignItems:'center'
+                        }}
+                    >
+                        {
+                            isPendingPermission ? <ActivityIndicator
+                                size={'large'}
+                            /> : <PermissionsPage/>
+                        }
+                        
+                    </View>
+                </SafeAreaView>
+    </>
+
+    if (device == null) return <NoCameraDeviceError />
+
+    if(isCameraOpen) return <>
+          <View style={{
+                flex: 1,
+                backgroundColor: 'black',
+                height:Dimensions.get('screen').height,
+                width:Dimensions.get('screen').width
+          }}>
+            <Camera
+                ref={cameraRef}
+                // style={{}}
+                style={StyleSheet.absoluteFillObject}
+                device={device}
+                
+                isActive={true}
+                photo={true}
+            />
+
+            <View
+                style={{
+                    position:'absolute',
+                    top:StatusBar.currentHeight + 50,
+                    right:20,
+                    display:'flex',
+                    justifyContent:'center',
+                    alignItems:'center',
+                    gap:5,
+                    flexDirection:'row'
+                }}
+            >
+
+               
+
+                 <IconButton
+                    icon="camera-retake-outline"
+                    iconColor={theme.colors.background}
+                    size={30}
+                    onPress={() => {
+                        console.log('CAMERA TYPE ', device)
+                        setFront(prev => !prev)
+                    }}
+                />
+                <IconButton
+                    icon="close"
+                    
+                    iconColor={theme.colors.background}
+                    size={30}
+                    onPress={() => {
+                        closeHeader(true);
+                        setOpenCamera(false);
+                    }}
+                />
+            </View>
+            <View style={styles.controls}>
+                    <IconButton
+                            contentStyle={{
+                                backgroundColor:theme.colors.background
+                            }}
+                        icon="camera"
+                        background={'#fff'}
+                        iconColor={theme.colors.primary}
+                        size={30}
+                        onPress={() => {
+                            takePhoto()
+                        }}
+                    />
+            </View>
+            </View>
+    </>
 
     return (
         <SafeAreaView>
@@ -977,6 +1124,27 @@ const BMBasicDetailsForm = forwardRef(({
                         backgroundColor: theme.colors.background,
                     }} disabled={disableCondition(approvalStatus, branchCode)} />}
 
+
+                    {/* Image Upload */}
+                         <List.Item
+                        title={'Upload Image *'}
+                        description={`Photo`}
+                        left={props => <List.Icon {...props} icon="cloud-upload-outline" />}
+                        right={props => {
+                            return  <ButtonPaper mode="text" textColor={theme.colors.primary} icon="camera-outline" onPress={() => {
+                                // console.log('asdasd')
+                                closeHeader(false)
+                               setOpenCamera(true);
+                            }}>
+                            Choose
+                        </ButtonPaper>
+                        }}
+                        descriptionStyle={{
+                            color: theme.colors.tertiary,
+                        }}
+                    />
+                    {/* End */}
+
                     {/* <View style={{
                         flexDirection: "row",
                         justifyContent: "center",
@@ -1029,6 +1197,34 @@ const BMBasicDetailsForm = forwardRef(({
     )
 })
 
+const PermissionsPage = () =>{
+    return <Text>
+            Don't have permission to access camera.
+    </Text>
+}
+
+const NoCameraDeviceError = () =>{
+    return <SafeAreaView>
+        <View 
+        style={{
+            flex:1,
+            justifyContent:'center',
+            alignItems:'center'
+        }}
+        >
+                <Text 
+                    variant='bodyLarge'
+                    style={{
+                        color:useTheme().colors.error
+                    }}
+                >
+                        Error!! No Camera Found.
+
+                </Text>
+        </View>
+    </SafeAreaView>
+}
+
 export default BMBasicDetailsForm
 
 const styles = StyleSheet.create({
@@ -1058,6 +1254,17 @@ const styles = StyleSheet.create({
     inputSearchStyle: {
         height: 40,
         fontSize: 16,
+    },
+    controls: {
+        position: 'absolute',
+        display:'flex',
+        justifyContent:'center',
+        bottom: 0,
+        flexDirection:'row',
+        gap:2,
+        width: '100%',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)'
     },
 
 })
