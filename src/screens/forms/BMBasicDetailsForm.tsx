@@ -558,7 +558,7 @@ const BMBasicDetailsForm = forwardRef(({
                     co_long_val: location?.longitude,
                     co_gps_address: addr,
                     created_by: loginStore?.emp_id,
-                    own_file:formData?.uploadImg
+                    // own_file:formData?.uploadImg
                 }; 
                 console.log('Submitting basic details ',  creds)
                 axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, creds).then(res => {
