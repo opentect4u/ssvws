@@ -562,7 +562,8 @@ const BMBasicDetailsForm = forwardRef(({
                 }; 
                 console.log('Submitting basic details ',  creds)
                 axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, creds).then(res => {
-                    Alert.alert("Success", `Basic Details Saved!\nMember Code: ${res?.data?.member_code}`)
+                        
+                        Alert.alert("Success", `Basic Details Saved!\nMember Code: ${res?.data?.member_code}`)
                         setFormData({
                             clientName: "",
                             clientEmail: "",
@@ -590,8 +591,8 @@ const BMBasicDetailsForm = forwardRef(({
                             previewImg:"",
                             uploadImg:""
                         })
-                    setMemberCodeShowHide(false)
-                    onSubmit()
+                        setMemberCodeShowHide(false)
+                        onSubmit()
                     // setResponseMemberCode(res?.data?.member_code)
                 }).catch(err => {
                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
