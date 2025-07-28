@@ -7,7 +7,7 @@ import { loginStorage } from '../storage/appStorage'
 
 const GRTFormScreen = () => {
     const theme = usePaperColorScheme();
-    const [isHeaderShown,setHEaderShownStatus] = useState(true);
+    const [isHeaderShown,setHeaderShownStatus] = useState(true);
     // 110 -> Branch Code
     // const navigation = useNavigation()
 
@@ -29,7 +29,7 @@ const GRTFormScreen = () => {
                 }}>
                     <BMBasicDetailsForm 
                     closeHeader={(e:boolean)=>{
-                        setHEaderShownStatus(e)
+                        setHeaderShownStatus(e)
                     }}
                     flag='CO' branchCode={loginStore?.brn_code} />
                 </View>

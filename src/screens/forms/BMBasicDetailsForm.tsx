@@ -17,7 +17,7 @@ import { disableCondition } from "../../utils/disableCondition"
 // import { Dropdown } from 'react-native-element-dropdown'
 import { SCREEN_WIDTH } from 'react-native-normalize'
 import { Camera, useCameraDevice, useCameraDevices, useCameraPermission } from 'react-native-vision-camera'
-
+import ImageView from "react-native-image-viewing";
 interface BMBasicDetailsFormProps {
     formNumber?: any
     branchCode?: any
@@ -37,7 +37,7 @@ const BMBasicDetailsForm = forwardRef(({
     closeHeader,
     onUpdateDisabledChange = () => { }
 }: BMBasicDetailsFormProps, ref) => {
-  
+    const [visible, setVisible] = useState(false);
     const [isFront,setFront] = useState(true);
     const device = useCameraDevice(isFront ? 'front' : 'back');
     const { hasPermission, requestPermission } = useCameraPermission()
@@ -91,7 +91,7 @@ const BMBasicDetailsForm = forwardRef(({
         groupCodeName: "",
         dob: new Date(),
         grtDate: new Date(),
-        uploadImg:"", // image to be uploaded
+        uploadImg:null, // image to be uploaded
         previewImg:"" // image to be previewed
     })
 
@@ -395,9 +395,6 @@ const BMBasicDetailsForm = forwardRef(({
 
         await axios.post(`${ADDRESSES.FETCH_BASIC_DETAILS}`, creds).then(res => {
             if (res?.data?.suc === 1) {
-                console.log("LLLLLLLLLLLLLLLLL", res?.data?.msg[0]?.prov_grp_code)
-                console.log("//////////////////////////////////////////////", res?.data?.msg[0], '///////////////////////////////')
-                // Alert.alert("Success", "Basic Details Saved!", res.data.msg[0])
                 setMemberCodeShowHide(true)
                 setFormData({
                     clientName: res?.data?.msg[0]?.client_name || "",
@@ -425,7 +422,7 @@ const BMBasicDetailsForm = forwardRef(({
                     grtDate: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
                     // group_name: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
                     previewImg:"",
-                    uploadImg:""
+                    uploadImg:null
                 })
                 setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
                 console.log("APPROVAL STATUS ===", approvalStatus);
@@ -731,10 +728,22 @@ const BMBasicDetailsForm = forwardRef(({
     const takePhoto = async () => {
     if (!cameraRef.current) return;
     const photo = await cameraRef.current.takePhoto({});
+    // console.log(photo);
+    const fileName = photo.path.split('/').pop() ?? 'photo.jpg';
+    const filePath = `file://${photo.path}`;
+    console.log({
+                    uri: filePath,
+                    name: fileName,
+                    type: `image/${fileName.split('.').pop()}`,
+                })
     // setPhotoUri('file://' + photo.path);
         setFormData((prev) => ({
             ...prev,
-            uploadImg: 'file://' + photo.path,
+            uploadImg: {
+                    uri: filePath,
+                    name: fileName,
+                    type: `image/${fileName.split('.').pop()}`,
+                },
             previewImg: 'file://' + photo.path,
         }))
         closeHeader(true);
@@ -800,7 +809,6 @@ const BMBasicDetailsForm = forwardRef(({
                     iconColor={theme.colors.background}
                     size={30}
                     onPress={() => {
-                        console.log('CAMERA TYPE ', device)
                         setFront(prev => !prev)
                     }}
                 />
@@ -841,6 +849,12 @@ const BMBasicDetailsForm = forwardRef(({
                     gap: 10,
                     paddingBottom: 10
                 }}>
+                    <ImageView
+                        images={formData?.previewImg ?  [{uri:formData?.previewImg}] : []}
+                        imageIndex={0} // which image to show first
+                        visible={visible}
+                        onRequestClose={() => setVisible(false)}
+                    />
                     {/* <Divider /> */}
 
                     {/* Location Field Visible */}
@@ -1128,7 +1142,32 @@ const BMBasicDetailsForm = forwardRef(({
                     {/* Image Upload */}
                          <List.Item
                         title={'Upload Image *'}
-                        description={`Photo`}
+                        description={formData?.previewImg && <View
+                            style={{
+                                display:'flex',
+                                flexDirection:'row'
+                            }}
+                        >
+                                <IconButton size={20}
+                                    icon={'eye-outline'}
+                                    iconColor={theme.colors.primary}
+                                    onPress={() =>{
+                                        setVisible(true);
+                                    }}
+                                />
+
+                                 <IconButton size={20}
+                                    icon={'trash-can-outline'}
+                                    iconColor={theme.colors.error}
+                                    onPress={() =>{
+                                        setFormData((prev) => ({
+                                            ...prev,
+                                            uploadImg:null,
+                                            previewImg:''
+                                        }))
+                                    }}
+                                />
+                        </View>}
                         left={props => <List.Icon {...props} icon="cloud-upload-outline" />}
                         right={props => {
                             return  <ButtonPaper mode="text" textColor={theme.colors.primary} icon="camera-outline" onPress={() => {
