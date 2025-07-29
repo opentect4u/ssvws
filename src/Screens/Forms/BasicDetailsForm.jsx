@@ -9,7 +9,7 @@ import * as Yup from "yup"
 import axios from "axios"
 import { Message } from "../../Components/Message"
 import { url } from "../../Address/BaseUrl"
-import { Checkbox, Spin } from "antd"
+import { Button, Checkbox, Image, Spin } from "antd"
 import { LoadingOutlined } from "@ant-design/icons"
 import { useLocation } from "react-router"
 import TDInputTemplateBr from "../../Components/TDInputTemplateBr"
@@ -17,6 +17,7 @@ import { formatDateToYYYYMMDD } from "../../Utils/formateDate"
 import DialogBox from "../../Components/DialogBox"
 // import { disableInputArray } from "./disableInputArray"
 import { disableCondition } from "./disableCondition"
+import { Eye } from "lucide-react"
 
 function BasicDetailsForm({ memberDetails }) {
 	const params = useParams()
@@ -25,7 +26,8 @@ function BasicDetailsForm({ memberDetails }) {
 	// const { loanAppData } = location.state || {}
 	const navigate = useNavigate()
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
-
+	const [uploadedImage,setUploadedImage] = useState('');
+	const [ imageVisible,setImageVisible] = useState(false);
 	const [branches, setBranches] = useState(() => [])
 	const [loanTypes, setLoanTypes] = useState(() => [])
 	const [visible, setVisible] = useState(() => false)
@@ -95,6 +97,7 @@ function BasicDetailsForm({ memberDetails }) {
 		b_groupCodeName: "",
 		b_dob: "",
 		b_grtDate: "",
+		// b_previewImg:""
 	})
 
 	const validationSchema = Yup.object({
@@ -131,6 +134,7 @@ function BasicDetailsForm({ memberDetails }) {
 		b_groupCode: Yup.string().required("Group code is required"),
 		b_dob: Yup.string().required("DOB is required"),
 		b_grtDate: Yup.string().required("GRT Date is required"),
+		// b_previewImg: Yup.string().optional().default('')
 	})
 
 	const onSubmit = async (values) => {
@@ -184,7 +188,8 @@ function BasicDetailsForm({ memberDetails }) {
 		await axios
 			.post(`${url}/admin/fetch_basic_dtls_web`, creds)
 			.then((res) => {
-				console.log("++--++--++--", res?.data)
+				// setUploadedImage(res?.data?)
+				// console.log("++--++--++--", res?.data?)
 				setValues({
 					b_clientName: res?.data?.msg[0]?.client_name,
 					b_branch_name: res?.data?.msg[0]?.branch_name,
@@ -421,6 +426,34 @@ function BasicDetailsForm({ memberDetails }) {
 		await handleVerification("P", isChecked ? "Y" : "N")
 	}
 
+	const fetchUploadedImage = async () =>{
+			console.log(memberDetails);
+			setLoading(true);
+			try{
+					const creds = {
+							member_code:memberDetails?.member_code
+					}
+					axios.post(`${url}/admin/preview_image_web`,creds).then(res =>{
+						if(res?.data?.msg.length > 0){
+							const timestamp = new Date().getTime();
+							setUploadedImage(`${url}/uploads/${res.data?.msg[0].img_path}`)
+							setImageVisible(true);
+						}
+						else{
+							Message('warning','No image uploaded yet')
+						}
+						setLoading(false);
+						
+					}).catch(err =>{
+						setLoading(false);
+						Message('error','We are unable to process your request')
+					})
+			}
+			catch(err){
+				console.log(err.message)
+				setLoading(false);
+			}
+	}	
 	return (
 		<>
 			<Spin
@@ -447,7 +480,17 @@ function BasicDetailsForm({ memberDetails }) {
 					}) => ( */}
 				<form onSubmit={formik.handleSubmit}>
 					<div>
+						<div className="flex justify-between items-center">
+									<Button type="primary"
+										onClick={() =>{
+											fetchUploadedImage()
+										}}
+								 		size={'middle'}>
+										View Image
+								 	</Button>
+							</div>	
 						<div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
+							
 							<div className="mb-4">
 								<TDInputTemplateBr
 									placeholder="Form Number"
@@ -967,6 +1010,22 @@ function BasicDetailsForm({ memberDetails }) {
 									) : null}
 								</div>
 							)}
+
+							
+							 <Image
+								width={200}
+								style={{ display: 'none' }}
+								src={uploadedImage}
+								preview={{
+								visible:imageVisible,
+								src: uploadedImage,
+								width:300,
+								height:500,
+								onVisibleChange: (value) => {
+									setImageVisible(value);
+								},
+								}}
+							/>
 
 							{userDetails?.id === 3 && (
 								<div>
