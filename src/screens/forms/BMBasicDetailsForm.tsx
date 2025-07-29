@@ -16,8 +16,9 @@ import useGeoLocation from '../../hooks/useGeoLocation'
 import { disableCondition } from "../../utils/disableCondition"
 // import { Dropdown } from 'react-native-element-dropdown'
 import { SCREEN_WIDTH } from 'react-native-normalize'
-import { Camera, useCameraDevice, useCameraDevices, useCameraPermission } from 'react-native-vision-camera'
+import { Camera, useCameraDevice, useCameraDevices, useCameraFormat, useCameraPermission } from 'react-native-vision-camera'
 import ImageView from "react-native-image-viewing";
+import { BASE_URL } from '../../config/config'
 interface BMBasicDetailsFormProps {
     formNumber?: any
     branchCode?: any
@@ -37,9 +38,13 @@ const BMBasicDetailsForm = forwardRef(({
     closeHeader,
     onUpdateDisabledChange = () => { }
 }: BMBasicDetailsFormProps, ref) => {
+   
     const [visible, setVisible] = useState(false);
     const [isFront,setFront] = useState(true);
     const device = useCameraDevice(isFront ? 'front' : 'back');
+     const format = useCameraFormat(device, [
+        { photoResolution: { width: 100, height: 100 } }, // Lower resolution
+    ])
     const { hasPermission, requestPermission } = useCameraPermission()
     const [isPendingPermission,setPendingPermission] = useState(true);
     const cameraRef = useRef(null);
@@ -52,6 +57,7 @@ const BMBasicDetailsForm = forwardRef(({
 
     const { location, error } = useGeoLocation()
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
+    const [bggeolocationFetchedAddress, setBgGeolocationFetchedAddress] = useState(() => "")
     // console.log("****************", formNumber, branchCode, flag, approvalStatus)
 
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
@@ -395,6 +401,7 @@ const BMBasicDetailsForm = forwardRef(({
 
         await axios.post(`${ADDRESSES.FETCH_BASIC_DETAILS}`, creds).then(res => {
             if (res?.data?.suc === 1) {
+                console.log(res?.data)
                 setMemberCodeShowHide(true)
                 setFormData({
                     clientName: res?.data?.msg[0]?.client_name || "",
@@ -426,15 +433,41 @@ const BMBasicDetailsForm = forwardRef(({
                 })
                 setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
                 console.log("APPROVAL STATUS ===", approvalStatus);
-                if (approvalStatus !== "U") {
-                    setGeolocationFetchedAddress(res?.data?.msg[0]?.bm_gps_address || "")
-                }
+                setGeolocationFetchedAddress(res?.data?.msg[0]?.co_gps_address || "");
+                setBgGeolocationFetchedAddress(res?.data?.msg[0]?.bm_gps_address || "");
+                fetchCoUploadImage(res?.data?.msg[0]?.member_code)
+                // setBgGeolocationFetchedAddress()
+                // if (approvalStatus !== "U") {
+                //     setGeolocationFetchedAddress(res?.data?.msg[0]?.bm_gps_address || "")
+                // }
             }
         }).catch(err => {
             ToastAndroid.show("Some error while fetching basic details!", ToastAndroid.SHORT)
         })
 
         setLoading(false)
+    }
+
+    const fetchCoUploadImage = async (member_code) =>{
+            try{
+                axios.post(`${BASE_URL}/admin/preview_image_web`,{
+                    member_code:member_code
+                }).then(res =>{
+                     const timestamp = new Date().getTime();
+                    //  console.log(`${BASE_URL}/uploads/${res?.data?.msg[0]?.img_path}`)
+                     setFormData((prev) => ({
+                        ...prev,
+                        previewImg:`${BASE_URL}/uploads/${res?.data?.msg[0]?.img_path}?t=${timestamp}`
+                     })) ;
+                    //  setVisible(true)
+                }).catch((error) => {
+                        console.log('ERRORR!!' , error.message);
+                         ToastAndroid.show(error.message, ToastAndroid.SHORT)
+                })
+            }
+            catch(err){
+                console.log(err)
+            }
     }
 
     useEffect(() => {
@@ -474,9 +507,13 @@ const BMBasicDetailsForm = forwardRef(({
             grt_date: formattedGrtDate,
             bm_lat_val: location?.latitude,
             bm_long_val: location?.longitude,
-            bm_gps_address: geolocationFetchedAddress,
+            bm_gps_address: bggeolocationFetchedAddress,
             modified_by: loginStore?.emp_id,
         }
+        // const fb = new FormData();
+        // Object.keys(creds).forEach(keys =>{
+        //         fb.append(keys,creds[keys])
+        // })
         // console.log("handleUpdateBasicDetails", creds, "handleUpdateBasicDetails")
         // return;
         if(approvalStatus === "U"){
@@ -488,8 +525,21 @@ const BMBasicDetailsForm = forwardRef(({
                             ...creds,
                             bm_gps_address: res?.data?.results[0]?.formatted_address
                         }
-                        console.log(payload);
-                        axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, payload).then(res => {
+                        const fb = new FormData();
+                        Object.keys(payload).forEach(keys =>{
+                                fb.append(keys,payload[keys])
+                        })
+                        fb.append('files',formData?.uploadImg ? formData?.uploadImg : '')
+                        // console.log(payload);
+                        axios.post(
+                            `${ADDRESSES.EDIT_BASIC_DETAILS}`, 
+                            fb,
+                            {
+                                headers: {
+                                'Content-Type': 'multipart/form-data',
+                                }
+                            }
+                        ).then(res => {
                             ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
                             onSubmit()
                         }).catch(err => {
@@ -500,7 +550,19 @@ const BMBasicDetailsForm = forwardRef(({
                 })  
         }
         else{
-            await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, creds).then(res => {
+             const fb = new FormData();
+            Object.keys(creds).forEach(keys =>{
+                    fb.append(keys,creds[keys])
+            })
+            fb.append('files',formData?.uploadImg ? formData?.uploadImg : '')
+            await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, 
+                fb,
+                {
+                    headers: {
+                    'Content-Type': 'multipart/form-data',
+                    }
+                }
+            ).then(res => {
                 // console.log("QQQQQQQQQQQQQQQ", res?.data)
                 ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
                 onSubmit()
@@ -558,46 +620,128 @@ const BMBasicDetailsForm = forwardRef(({
                     co_long_val: location?.longitude,
                     co_gps_address: addr,
                     created_by: loginStore?.emp_id,
-                    // own_file:formData?.uploadImg
                 }; 
-                console.log('Submitting basic details ',  creds)
-                axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, creds).then(res => {
+                const fb = new FormData();
+                Object.keys(creds).forEach(key => {
+                    fb.append(key,creds[key])
+                })
+                fb.append('files',formData?.uploadImg)
+                // console.log('Submitting basic details ',  fb)
+                axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, fb,{
+                            headers: {
+                            'Content-Type': 'multipart/form-data',
+                            }
+                }
+                ).then(response => {
+                        console.log(response?.data);
+                        setLoading(false);
+                        if(response?.data?.suc == 1){
+                            Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
+                            setFormData({
+                                clientName: "",
+                                clientEmail: "",
+                                clientGender: "",
+                                clientMobile: "",
+                                guardianName: "",
+                                husbandName: "",
+                                nomineeName: "",
+                                guardianMobile: "",
+                                clientAddress: "",
+                                clientPin: "",
+                                aadhaarNumber: "",
+                                panNumber: "",
+                                voterId: "",
+                                religion: "",
+                                otherReligion: "",
+                                caste: "",
+                                otherCaste: "",
+                                education: "",
+                                otherEducation: "",
+                                groupCode: "",
+                                groupCodeName: "",
+                                dob: new Date(),
+                                grtDate: new Date(),
+                                previewImg:"",
+                                uploadImg:""
+                            })
+                            setMemberCodeShowHide(false)
+                            onSubmit()
+                        }
+                        else{
+                            ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
+                        }
+
+                        // if(response?.data?.suc == 1){
+                        //     console.log('dsfdssdfsfs : ', response?.data?.member_code)
+                        //         console.log(formData?.uploadImg);
+                        //         const fb = new FormData();
+                        //         fb.append('files',formData?.uploadImg);
+                        //         fb.append('form_no',response?.data?.form_no);
+                        //         fb.append('member_code',response?.data?.member_code);
+                        //         fb.append('created_by',loginStore?.emp_id);
+                        //         fb.append('branch_code',loginStore?.brn_code);
+                        //         axios.post(
+                        //             ADDRESSES.UPLOAD_GRT_IMAGE,
+                        //             fb,
+                        //             {
+                        //                 headers: {
+                        //                 'Content-Type': 'multipart/form-data',
+                        //                 },
+                        //             }
+                        //         ).then(res =>{
+                        //                      setLoading(false);
+                        //                 console.log(res);
+                        //                 console.log(res?.data , 'asadads')
+                        //                 if(res?.data?.suc == 1){
+                        //                     Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
+                        //                     setFormData({
+                        //                         clientName: "",
+                        //                         clientEmail: "",
+                        //                         clientGender: "",
+                        //                         clientMobile: "",
+                        //                         guardianName: "",
+                        //                         husbandName: "",
+                        //                         nomineeName: "",
+                        //                         guardianMobile: "",
+                        //                         clientAddress: "",
+                        //                         clientPin: "",
+                        //                         aadhaarNumber: "",
+                        //                         panNumber: "",
+                        //                         voterId: "",
+                        //                         religion: "",
+                        //                         otherReligion: "",
+                        //                         caste: "",
+                        //                         otherCaste: "",
+                        //                         education: "",
+                        //                         otherEducation: "",
+                        //                         groupCode: "",
+                        //                         groupCodeName: "",
+                        //                         dob: new Date(),
+                        //                         grtDate: new Date(),
+                        //                         previewImg:"",
+                        //                         uploadImg:null
+                        //                     })
+                        //                     setMemberCodeShowHide(false)
+                        //                     onSubmit()
+                        //                 }
+                        //                 else{
+                        //                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
+                        //                     setLoading(false);
+                        //                 }
+                        //         }).catch(err =>{
+                        //             ToastAndroid.show(err?.message, ToastAndroid.SHORT);
+                        //             setLoading(false);
+                        //         })
+                        // }
+                        // else{
+                        //              ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
+                        //           setLoading(false);
+                        // }
                         
-                        Alert.alert("Success", `Basic Details Saved!\nMember Code: ${res?.data?.member_code}`)
-                        setFormData({
-                            clientName: "",
-                            clientEmail: "",
-                            clientGender: "",
-                            clientMobile: "",
-                            guardianName: "",
-                            husbandName: "",
-                            nomineeName: "",
-                            guardianMobile: "",
-                            clientAddress: "",
-                            clientPin: "",
-                            aadhaarNumber: "",
-                            panNumber: "",
-                            voterId: "",
-                            religion: "",
-                            otherReligion: "",
-                            caste: "",
-                            otherCaste: "",
-                            education: "",
-                            otherEducation: "",
-                            groupCode: "",
-                            groupCodeName: "",
-                            dob: new Date(),
-                            grtDate: new Date(),
-                            previewImg:"",
-                            uploadImg:""
-                        })
-                        setMemberCodeShowHide(false)
-                        onSubmit()
-                    // setResponseMemberCode(res?.data?.member_code)
                 }).catch(err => {
                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
                     console.log("SAVE_BASIC_DETAILS ERRRRR", err);
-                    // setLoading(false);
+                    setLoading(false);
                 }).finally(() => {
                     setLoading(false);
                 });    
@@ -696,7 +840,7 @@ const BMBasicDetailsForm = forwardRef(({
     // const updateDisabled =
     //     loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || !geolocationFetchedAddress || disableCondition(approvalStatus, branchCode);
 
-     const updateDisabled = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || disableCondition(approvalStatus, branchCode);
+     const updateDisabled = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || (!formData.uploadImg && flag == 'CO') || disableCondition(approvalStatus, branchCode);
 
     // Inform parent about the current disabled state.
     useEffect(() => {
@@ -785,7 +929,7 @@ const BMBasicDetailsForm = forwardRef(({
                 // style={{}}
                 style={StyleSheet.absoluteFillObject}
                 device={device}
-                
+                format={format}
                 isActive={true}
                 photo={true}
             />
@@ -860,10 +1004,10 @@ const BMBasicDetailsForm = forwardRef(({
 
                     {/* Location Field Visible */}
                     
-                    {/* <InputPaper label={approvalStatus === "U" && geolocationFetchedAddress ? `Geo Location Address` : (approvalStatus === "A" || approvalStatus === "S") ? "Geo Location Address" : `Fetching GPS Address...`} multiline leftIcon='google-maps' value={geolocationFetchedAddress || ""} onChangeText={(txt: any) => setGeolocationFetchedAddress(txt)} disabled customStyle={{
+                    {flag == 'BM' && <InputPaper label={approvalStatus === "U" && geolocationFetchedAddress ? `Geo Location Address` : (approvalStatus === "A" || approvalStatus === "S") ? "Geo Location Address" : `Fetching GPS Address...`} multiline leftIcon='google-maps' value={geolocationFetchedAddress || ""} onChangeText={(txt: any) => setGeolocationFetchedAddress(txt)} disabled customStyle={{
                         backgroundColor: theme.colors.background,
                         minHeight: 95,
-                    }} /> */}
+                    }} />}
 
                     {/* END */}
 
@@ -1142,47 +1286,47 @@ const BMBasicDetailsForm = forwardRef(({
 
                     {/* Image Upload */}
                          <List.Item
-                        title={'Upload Image *'}
-                        description={formData?.previewImg && <View
-                            style={{
-                                display:'flex',
-                                flexDirection:'row'
-                            }}
-                        >
-                                <IconButton size={20}
-                                    icon={'eye-outline'}
-                                    iconColor={theme.colors.primary}
-                                    onPress={() =>{
-                                        setVisible(true);
-                                    }}
-                                />
+                            title={'Upload Image *'}
+                            description={formData?.previewImg && <View
+                                style={{
+                                    display:'flex',
+                                    flexDirection:'row'
+                                }}
+                            >
+                                    <IconButton size={20}
+                                        icon={'eye-outline'}
+                                        iconColor={theme.colors.primary}
+                                        onPress={() =>{
+                                            setVisible(true);
+                                        }}
+                                    />
 
-                                 <IconButton size={20}
-                                    icon={'trash-can-outline'}
-                                    iconColor={theme.colors.error}
-                                    onPress={() =>{
-                                        setFormData((prev) => ({
-                                            ...prev,
-                                            uploadImg:null,
-                                            previewImg:''
-                                        }))
-                                    }}
-                                />
-                        </View>}
-                        left={props => <List.Icon {...props} icon="cloud-upload-outline" />}
-                        right={props => {
-                            return  <ButtonPaper mode="text" textColor={theme.colors.primary} icon="camera-outline" onPress={() => {
-                                // console.log('asdasd')
-                                closeHeader(false)
-                               setOpenCamera(true);
-                            }}>
-                            Choose
-                        </ButtonPaper>
-                        }}
-                        descriptionStyle={{
-                            color: theme.colors.tertiary,
-                        }}
-                    />
+                                    <IconButton size={20}
+                                        icon={'trash-can-outline'}
+                                        iconColor={theme.colors.error}
+                                        onPress={() =>{
+                                            setFormData((prev) => ({
+                                                ...prev,
+                                                uploadImg:null,
+                                                previewImg:''
+                                            }))
+                                        }}
+                                    />
+                            </View>}
+                            left={props => <List.Icon {...props} icon="cloud-upload-outline" />}
+                            right={props => {
+                                return  <ButtonPaper mode="text" textColor={theme.colors.primary} icon="camera-outline" onPress={() => {
+                                    // console.log('asdasd')
+                                    closeHeader(false)
+                                setOpenCamera(true);
+                                }}>
+                                Choose
+                            </ButtonPaper>
+                            }}
+                            descriptionStyle={{
+                                color: theme.colors.tertiary,
+                            }}
+                        />
                     {/* End */}
 
                     {/* <View style={{

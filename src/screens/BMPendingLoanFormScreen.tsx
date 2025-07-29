@@ -4,7 +4,7 @@ import { usePaperColorScheme } from '../theme/theme'
 import StepIndicator from 'react-native-step-indicator'
 import HeadingComp from '../components/HeadingComp'
 import ButtonPaper from '../components/ButtonPaper'
-import { Icon } from 'react-native-paper'
+import { Icon, Text } from 'react-native-paper'
 import BMBasicDetailsForm from "./forms/BMBasicDetailsForm"
 import BMOccupationDetailsForm from "./forms/BMOccupationDetailsForm"
 import BMHouseholdDetailsForm from "./forms/BMHouseholdDetailsForm"
@@ -17,6 +17,7 @@ const BMPendingLoanFormScreen = () => {
     const [currentPosition, setCurrentPosition] = useState(0)
     const [basicDetailsUpdateDisabled, setBasicDetailsUpdateDisabled] = useState(true)
     const [occupationUpdateDisabled, setOccupationUpdateDisabled] = useState(true)
+    const [isHeaderShown,setHeaderShownStatus] = useState(true);
 
     const labels = ["Basic Details", "Occupation Details", "Household Details"]
 
@@ -69,17 +70,19 @@ const BMPendingLoanFormScreen = () => {
     return (
         <SafeAreaView>
             <ScrollView style={{ backgroundColor: theme.colors.background, height: 'auto' }}>
-                <HeadingComp title="GRT Form" subtitle={`Form no. ${params?.formNumber}`} isBackEnabled />
+              
+                {isHeaderShown && <HeadingComp title="GRT Form" subtitle={`Form no. ${params?.formNumber}`} isBackEnabled />}
+            
                 <View style={{
-                    paddingHorizontal: 20,
-                    paddingTop: 10,
-                    gap: 10,
+                    paddingHorizontal: isHeaderShown ? 20 : 0,
+                    paddingTop:  isHeaderShown  ? 10 : 0,
+                    gap:  isHeaderShown ? 10 : 0,
                     paddingBottom: 20,
                     height: "auto",
                     justifyContent: "space-between",
                     alignItems: "stretch"
                 }}>
-                    <StepIndicator
+                    {isHeaderShown && <StepIndicator
                         customStyles={customStyles}
                         currentPosition={currentPosition}
                         labels={labels}
@@ -94,10 +97,13 @@ const BMPendingLoanFormScreen = () => {
                                             ? <Icon size={20} source="home-city-outline" color={(stepStatus === "current" || stepStatus === "unfinished") ? theme.colors.green : theme.colors.greenContainer} />
                                             : null
                         }
-                    />
+                    />}
 
                     {currentPosition === 0 && (
                         <BMBasicDetailsForm
+                              closeHeader={(e:boolean)=>{
+                                    setHeaderShownStatus(e)
+                                }}
                             ref={basicDetailsFormRef}
                             formNumber={params?.formNumber}
                             branchCode={params?.branchCode}
@@ -122,7 +128,7 @@ const BMPendingLoanFormScreen = () => {
                         />
                     )}
                     {/* BMFamilyMemberDetailsForm can be added similarly */}
-                    <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
+                    { isHeaderShown && <View style={{ flexDirection: "row", justifyContent: "space-around" }}>
                         <ButtonPaper
                             mode='outlined'
                             icon="arrow-left-thick"
@@ -144,7 +150,7 @@ const BMPendingLoanFormScreen = () => {
                         >
                             NEXT
                         </ButtonPaper>
-                    </View>
+                    </View>}
                 </View>
             </ScrollView>
         </SafeAreaView>
