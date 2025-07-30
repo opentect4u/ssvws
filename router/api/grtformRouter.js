@@ -1,33 +1,172 @@
-const { db_Select, db_Insert } = require('../../model/mysqlModel');
-const { save_basic_dtls, grp_save, save_occu_dtls, edit_grt_data, edit_basic_dt, edit_occup_dt, edit_household_dt, edit_family_dt, edit_grp_save, final } = require('../../modules/api/grtformModule');
+const { db_Select, db_Insert, db_Delete } = require('../../model/mysqlModel');
+const { save_basic_dtls, grp_save, save_occu_dtls, edit_grt_data, edit_basic_dt, edit_occup_dt, edit_household_dt, edit_family_dt, edit_grp_save, final, saveFile } = require('../../modules/api/grtformModule');
 
 const express = require('express'),
 grtformRouter = express.Router(),
 dateFormat = require('dateformat');
 
+
+// grtformRouter.post("/save_basic_dtls", async (req, res) =>{
+//     var data = req.body, res_data;
+//     // console.log(data,'grt dt');
+
+//     //save basic details
+//     save_basic_dtls(data).then(data => {
+//         res_data = data
+//     }).catch(err => {
+//         res_data = err
+//     }).finally(() => {
+//         res.send(res_data)
+//     })    
+// });
+
 grtformRouter.post("/save_basic_dtls", async (req, res) =>{
-    var data = req.body, res_data;
-    // console.log(data,'grt dt');
+    var data = req.body;
+    let res_data;
+      console.log(data,'data');
+      
+    // const files = req.files || null;
+    // console.log(req.files.files,'grt dt');
 
+     if (!req.files || !req.files.files) {
+        return res.send('No file uploaded.');
+    }
     //save basic details
-    save_basic_dtls(data).then(data => {
-        // console.log(data);
+    save_basic_dtls(data,req.files.files).then(data => {
         res_data = data
-        // console.log(res_data,'ttttt');
-        
-        // res.send(data)
     }).catch(err => {
-        // console.log(err);
         res_data = err
-        // console.log(res_data);
-
-        // res.send(err)
     }).finally(() => {
         res.send(res_data)
-    })
-    // console.log(basic_dt,'lo');
-    
+    })    
 });
+
+// grtformRouter.post("/image_grt_save", async (req, res) => {
+//   try{
+//     var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var dates = dateFormat(new Date(), "yyyy-mm-dd");
+//     var data = req.body
+//     console.log(req.files);
+//     if (!req.files || !req.files.file) {
+//         return res.send('No file uploaded.');
+//     }
+//     console.log('sadasasd')
+//     const uploadedFile = req.files.file;
+//     var dir = "assets";
+//     var subDir = `uploads/${data.form_no}_${data.member_code}`;
+// //    const fullPath = path.join(dir, subDir);
+//     // const uploadPath = path.join(dir, subDir, uploadedFile.name);
+
+//     // if (!fs.existsSync(uploadPath)) {
+//     //     fs.mkdirSync(uploadPath, { recursive: true });
+//     // }
+//    var ownFile_name = data.form_no +  "_" + data.member_code +  "_" + uploadedFile.name;
+//     uploadedFile.mv(path.join("assets", `uploads/${data.form_no}_${data.member_code}`, ownFile_name), (err) => {
+//         if (err) return res.send(err);
+//         // res.send({ status: 'success', path: `/uploads/${uploadedFile.name}` });
+//          db_Insert(
+//               "td_grt_img_upload",
+//               "(form_no, member_code, img_path, uploaded_by, uploaded_at)",
+//               `('${data.form_no}','${data.member_code}','uploads_${dates}_${ownFile_name}','${data.created_by}','${datetime}')`,
+//               null,
+//               0
+//             ).then((res)=>{
+//                     console.log(res);
+//                     res.send({ status: 'success', msg: "uploaded sucessfully" });
+//             }).catch(err =>{
+//                     res.send({ status: 'failed', msg: "Failed to upload" });
+//             })
+//     });
+//   }catch(err){
+//     console.error("Error saving file:", err);
+//     res.send("File upload failed",err);
+//   }
+// });
+
+// grtformRouter.post("/save_basic_dtls", async (req, res) =>{
+//     var data = req.body, res_data;
+//     // console.log(data,'grt dt');
+
+//     //save basic details
+//     save_basic_dtls(data).then(data => {
+//         // console.log(data);
+//         res_data = data
+//         // console.log(res_data,'ttttt');
+        
+//         // res.send(data)
+//     }).catch(err => {
+//         // console.log(err);
+//         res_data = err
+//         // console.log(res_data);
+
+//         // res.send(err)
+//     }).finally(() => {
+//         res.send(res_data)
+//     })
+//     // console.log(basic_dt,'lo');
+    
+// });
+
+// grtformRouter.post("/image_grt_save", async (req, res) => {
+//   try{
+//     var data = req.body;
+//     // console.log('asdasdasd')
+//     var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var dates = dateFormat(new Date(), "yyyy-mm-dd");
+
+//     console.log(req.files);
+//     if (!req.files || !req.files.files) {
+//         return res.send('No file uploaded.');
+//     }
+//     const uploadedFile = req.files.files;
+//     // console.log('sadasasd')
+
+//     var dir = "assets";
+//     var subDir = `uploads/${data.form_no}_${data.member_code}`;
+//    const fullPath = path.join(dir, subDir);
+//    var ownFile_name = `${data.form_no}_${data.member_code}_${uploadedFile.name}`;
+
+//     // const fullPath = path.join(dir, subDir);
+//     const uploadPath = path.join(dir, subDir, ownFile_name);
+
+//     if (!fs.existsSync(fullPath)) {
+//         fs.mkdirSync(fullPath, { recursive: true });
+//     }
+// //    console.log(ownFile_name, ' ownFile_name')
+// //    const uploadPath = path.join("assets", `uploads/${data.form_no}_${data.member_code}`, ownFile_name)
+//     uploadedFile.mv(uploadPath, (err) => {
+//         console.log(err);
+//         if (err) {
+//             db_Delete(
+//                 "md_member",
+//                 `branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`
+//             );
+//             db_Delete(
+//                 "td_grt_basic",
+//                 `branch_code = '${data.branch_code}' AND form_no = '${data.form_no}'`
+//             )
+
+//         };
+//         // res.send({ status: 'success', path: `${uploadPath}` });
+//          db_Insert(
+//               "td_grt_img_upload",
+//               "(form_no, member_code, img_path, uploaded_by, uploaded_at)",
+//               `('${data.form_no}','${data.member_code}','${ownFile_name}','${data.created_by}','${datetime}')`,
+//               null,
+//               0
+//             ).then((response)=>{
+//                     console.log('sadadasd' + response);
+//                     res.send({ suc: 1, msg: "Saved successfully" });
+//             }).catch(err =>{
+//                     console.log('ERRROROROROR ' + err);
+//                     res.send({ suc: 0, msg: "We are unable to process your request" });
+//             })
+//     });
+//   }catch(err){
+//     console.error("Error saving file:", err);
+//     res.send("File upload failed",err);
+//   }
+// });
 
 grtformRouter.post("/edit_grt_dtls", async (req, res) => {
     var data = req.body;
@@ -54,8 +193,8 @@ grtformRouter.post("/fetch_basic_dtls", async (req, res) => {
     var data = req.body;
 
     //fetch basic details
-    var select = "a.*,b.*,c.group_name",
-    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code = c.group_code",
+    var select = "a.*,b.*,c.group_name,d.img_path",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code = c.group_code LEFT JOIN td_grt_img_upload d ON a.member_code = d.member_code AND b.form_no = d.form_no",
     whr = `a.branch_code = '${data.branch_code}' 
     AND b.form_no = '${data.form_no}' 
     AND b.approval_status = '${data.approval_status}'`,
@@ -179,9 +318,13 @@ grtformRouter.post("/delete_form", async (req, res) => {
 
 grtformRouter.post("/edit_basic_dtls", async (req, res) => {
     var data = req.body;
-
+    console.log(data,'getdata');
+    
+ if (!req.files || !req.files.files) {
+        return res.send('No file uploaded.');
+    }
     //edit basic details
-    var basic_dt = await edit_basic_dt(data)
+    var basic_dt = await edit_basic_dt(data,req.files.files)
     res.send(basic_dt);
 });
 

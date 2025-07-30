@@ -30,6 +30,26 @@ app.set("layout", "templates/layout");
 // SET ASSETS AS A STATIC PATH //
 app.use(express.static(path.join(__dirname, "assets/")));
 
+const fileUpload = require("express-fileupload");
+
+app.use(fileUpload());
+
+// app.post('/upload', (req, res) => {
+//     if (!req.files || !req.files.file) {
+//         return res.send('No file uploaded.');
+//     }
+//     console.log('sadasasd')
+//     const uploadedFile = req.files.file;
+//     var __dirname = "assets";
+//     // var subDir = `uploads/`;
+//     const uploadPath = path.join(__dirname, 'uploads', uploadedFile.name);
+//     console.log(uploadPath)
+//     uploadedFile.mv(uploadPath, (err) => {
+//         if (err) return res.send(err);
+//         res.send({ status: 'success', path: `/uploads/${uploadedFile.name}` });
+//     });
+// });
+
 // Set up the session middleware
 // app.use(
 //   session({

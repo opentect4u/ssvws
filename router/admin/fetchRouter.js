@@ -106,6 +106,22 @@ fetchRouter.post("/fetch_basic_dtls_web", async (req, res) => {
     res.send(fetch_basic);
 });
 
+fetchRouter.post("/preview_image_web", async (req, res) => {
+try{
+    var data = req.body;
+
+    var select = "img_path,uploaded_by,uploaded_at",
+    table_name = "td_grt_img_upload",
+    whr = `member_code = '${data.member_code}'`,
+    order = null;
+    var fetch_img_dtls_web = await db_Select(select,table_name,whr,order)
+    res.send(fetch_img_dtls_web)
+}catch(error){
+    console.log(error);
+    res.send(error);
+}
+});
+
 
 fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     var data = req.query;

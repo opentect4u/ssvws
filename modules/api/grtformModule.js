@@ -1,10 +1,270 @@
 var dateFormat = require("dateformat");
+const path = require('path');
+const fs = require('fs');
 const { db_Select, db_Insert } = require("../../model/mysqlModel");
 const { getFormNo, groupCode, getMemberCode } = require("./masterModule");
 
-module.exports = {
+  const dynamicFileUpload = (filePath, fileName, file) => {
+  return new Promise((resolve, reject) => {
+    var res_dt,
+      nowTime = new Date().getTime();
+    if (file) {
+      file.mv(filePath, async (err) => {
+        if (err) {
+          console.log(`${fileName} not uploaded`);
+          res_dt = { suc: 0, msg: err };
+        } else {
+          res_dt = { suc: 1, msg: `${fileName} uploaded successfully.` };
+        }
+        resolve(res_dt);
+      });
+    } else {
+      resolve({ suc: 0, msg: "No file found" });
+    }
+  });
+};
 
-    save_basic_dtls: (data) => {
+const handleImageUpload = async (file, form_no, member_code, created_by) => {
+    return new Promise((resolve, reject) => {
+        try {
+            let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+            let dir = "assets";
+            // let subDir = `uploads/${form_no}_${member_code}`;
+            let subDir = `uploads/`;
+            const fullPath = path.join(dir, subDir);
+            // const ownFile_name = `${form_no}_${member_code}_${file.name}`;
+            const ownFile_name = `${member_code}.${file.name.split(".").pop()}`;
+            const uploadPath = path.join(fullPath, ownFile_name);
+            // const uploadPath = path.join(fullPath);
+
+            if (!fs.existsSync(fullPath)) {
+                fs.mkdirSync(fullPath, { recursive: true });
+            }
+
+            file.mv(uploadPath, async (err) => {
+                if (err) {
+                    // Cleanup if file move fails
+                    return reject({ suc: 0, msg: "File move failed", error: err });
+                }
+
+                // Insert file path to DB
+                await db_Insert(
+                    "td_grt_img_upload",
+                    "(form_no, member_code, img_path, uploaded_by, uploaded_at)",
+                    `('${form_no}','${member_code}','${ownFile_name}','${created_by}','${datetime}')`,
+                    null,
+                    0
+                );
+
+                resolve({ suc: 1, msg: "Image uploaded successfully" });
+            });
+        } catch (err) {
+            reject({ suc: 0, msg: "Error during image upload", error: err });
+        }
+    });
+};
+
+const handlefileUpdate = async (file, form_no, member_code, modified_by) => {
+    return new Promise((resolve, reject) => {
+        try {
+            let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+            let dir = "assets";
+            // let subDir = `uploads/${form_no}_${member_code}`;
+            let subDir = `uploads/`;
+            const fullPath = path.join(dir, subDir);
+            // const ownFile_name = `${form_no}_${member_code}_${file.name}`;
+            const ownFile_name = `${member_code}.${file.name.split(".").pop()}`;
+            const uploadPath = path.join(fullPath, ownFile_name);
+            // const uploadPath = path.join(fullPath);
+
+           // Step 1: Delete existing file if it exists
+           if (fs.existsSync(uploadPath)) {
+             fs.unlinkSync(uploadPath);
+          console.log(`Deleted existing file: ${uploadPath}`);
+           }
+
+            file.mv(uploadPath, async (err) => {
+                if (err) {
+                    // Cleanup if file move fails
+                    return reject({ suc: 0, msg: "File move failed", error: err });
+                }
+
+                // Insert file path to DB
+                await db_Insert(
+                    "td_grt_img_upload",
+                    `img_path = '${ownFile_name}', uploaded_by = '${modified_by}', uploaded_at = '${datetime}'`,
+                    null,
+                    `form_no = '${form_no}' AND member_code = '${member_code}'`,
+                    1
+                );
+
+                resolve({ suc: 1, msg: "Image uploaded successfully" });
+            });
+        } catch (err) {
+            reject({ suc: 0, msg: "Error during image upload", error: err });
+        }
+    });
+};
+
+
+module.exports = {
+    // save_basic_dtls: (data) => {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //         console.log(data);
+                
+    //         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    //         let form_no = await getFormNo()
+    //         let member_code = await getMemberCode(data.branch_code)
+
+    //         // var select = "client_mobile",
+    //         // table_name = "md_member",
+    //         // whr = `client_mobile = '${data.client_mobile}'`,
+    //         // order = null;
+    //         // var mobile_dt = await db_Select(select,table_name,whr,order)
+
+    //         // if(mobile_dt.suc > 0 && mobile_dt.msg.length == 0){
+               
+    //                 var table_name = "md_member",
+    //                 fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = ${data.gurd_name == '' ? 'NULL' : data.gurd_name}, gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = '${data.husband_name}', client_addr = '${data.client_addr.split("'").join("\\'")}',
+    //                 pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, nominee_name, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, voter_id, voter_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
+    //                 values =  `('${data.branch_code}', '${member_code}', '${data.gender}', '${data.client_name}', '${datetime}',
+    //                 '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.husband_name}', '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.nominee_name}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.voter_id}', 'Y', '${data.religion}', '${data.religion == 'Others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'Others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'Others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
+    //                 whr = data.member_code > 0 ? `member_code = '${data.member_code}'` : null,
+    //                 flag = data.member_code > 0 ? 1 : 0;
+    //                 var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+    //                 var current_member_code = data.member_code ? data.member_code : member_code;
+
+    //                 var table_name = "td_grt_basic",
+    //                 fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
+    //                 values = `('${form_no}', '${data.grt_date}', '${data.branch_code}', '0', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+    //                 whr = null,
+    //                 flag =  0;
+    //                 var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
+    //                 basic_dt["member_code"] = member_code;
+    //                 basic_dt["form_no"] = form_no;
+
+    //                  resolve(basic_dt);
+    //         // }else {
+    //         //     reject({ "suc": 0, "msg": "Mobile number already exists." });
+    //         // }
+    //     }catch(error){
+    //         reject({"suc": 0, "msg": "Error occurred during saving details", details: error });
+    //     } 
+    //     });
+    // },
+
+  //    saveFile: (files, data) => {
+  //   return new Promise(async (resolve, reject) => {
+  //     var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss"),
+  //     dates = dateFormat(new Date(), "yyyy-mm-dd"),
+  //       res_dt;
+
+  //     if (files) {
+  //       var dir = "assets";
+  //       var subDir = `uploads/${data.form_no}_${data.member_code}`;
+  //       const fullPath = path.join(dir, subDir);
+  //       if (!fs.existsSync(fullPath)) {
+  //         fs.mkdirSync(fullPath, { recursive: true });
+  //       }
+
+  //       if (files) {
+  //       //   var nowTime = new Date().getTime();
+  //         var ownFile_name = data.form_no +  "_" + data.member_code +  "_" + files.name;
+  //         var file_upload = await dynamicFileUpload(
+  //           path.join("assets", `uploads/${data.form_no}_${data.member_code}`, ownFile_name),
+  //           ownFile_name,
+  //           files
+  //         );
+  //         if (file_upload.suc > 0) {
+
+  //           res_dt = await db_Insert(
+  //             "td_grt_img_upload",
+  //             "(form_no, member_code, img_path, uploaded_by, uploaded_at)",
+  //             `('${data.form_no}','${data.member_code}','uploads_${dates}_${ownFile_name}','${data.created_by}','${datetime}')`,
+  //             null,
+  //             0
+  //           );
+  //         } else {
+  //           res_dt = file_upload;
+  //         }
+  //       }
+
+  //       resolve(res_dt);
+  //     } else {
+  //       resolve({ suc: 0, msg: "No file found" });
+  //     }
+  //   });
+  // },
+
+    // save_basic_dtls: (data,files) => {
+    //     return new Promise(async (resolve, reject) => {
+    //         try {
+    //         console.log(data);
+                
+    //         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    //         let form_no = await getFormNo()
+    //         let member_code = await getMemberCode(data.branch_code)
+
+    //         // var select = "client_mobile",
+    //         // table_name = "md_member",
+    //         // whr = `client_mobile = '${data.client_mobile}'`,
+    //         // order = null;
+    //         // var mobile_dt = await db_Select(select,table_name,whr,order)
+
+    //         // if(mobile_dt.suc > 0 && mobile_dt.msg.length == 0){
+               
+    //                 var table_name = "md_member",
+    //                 fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = ${data.gurd_name == '' ? 'NULL' : data.gurd_name}, gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = '${data.husband_name}', client_addr = '${data.client_addr.split("'").join("\\'")}',
+    //                 pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, nominee_name, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, voter_id, voter_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
+    //                 values =  `('${data.branch_code}', '${member_code}', '${data.gender}', '${data.client_name}', '${datetime}',
+    //                 '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.husband_name}', '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.nominee_name}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.voter_id}', 'Y', '${data.religion}', '${data.religion == 'Others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'Others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'Others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
+    //                 whr = data.member_code > 0 ? `member_code = '${data.member_code}'` : null,
+    //                 flag = data.member_code > 0 ? 1 : 0;
+    //                 var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
+    //                 console.log(basic_dt,'basic_dt');
+                    
+    //                 var current_member_code = data.member_code ? data.member_code : member_code;
+                     
+    //                   var table_name = "td_grt_basic",
+    //                   fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
+    //                   values = `('${form_no}', '${data.grt_date}', '${data.branch_code}', '0', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
+    //                   whr = null,
+    //                   flag =  0;
+    //                   var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
+    //                   console.log(grt_dt,'grt_dt');
+    //                     basic_dt["member_code"] = current_member_code;
+    //                     grt_dt["form_no"] = form_no;
+    //                     console.log(member_code,form_no);
+                        
+    //                   // resolve(basic_dt)
+                      
+    //                   if (files) {
+    //                     console.log('asdasdadadsad')
+    //                     //  form_no = form_no; // Add form_no to data object
+    //                     //  member_code = member_code; // Ensure this is passed too
+    //                       await handleImageUpload(files, form_no, current_member_code, data.created_by); // 👈 Upload image
+    //                       resolve(basic_dt);
+
+    //                     }
+    //                 //       resolve(basic_dt);
+    //                 // }).catch(err =>{
+    //                 //     reject({"suc": 0, "msg": "occurred during saving details", details: err });
+    //                 // })
+                    
+    //                 // 👈 Call image upload only if file exists
+                   
+    //         // }else {
+    //         //     reject({ "suc": 0, "msg": "Mobile number already exists." });
+    //         // }
+    //     }catch(error){
+    //         reject({"suc": 0, "msg": "Error occurred during saving details", details: error });
+    //     } 
+    //     });
+    // },
+
+    save_basic_dtls: (data,files) => {
         return new Promise(async (resolve, reject) => {
             try {
                 // console.log(data);
@@ -30,7 +290,7 @@ module.exports = {
                     flag = data.member_code > 0 ? 1 : 0;
                     var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
 
-                    var current_member_code = data.member_code ? data.member_code : member_code;
+                    var current_member_code = data.member_code != 0 ? data.member_code : member_code;
 
                     var table_name = "td_grt_basic",
                     fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
@@ -38,7 +298,12 @@ module.exports = {
                     whr = null,
                     flag =  0;
                     var grt_dt = await db_Insert(table_name, fields, values, whr, flag);
-                    basic_dt["member_code"] = member_code;
+                    basic_dt["member_code"] = current_member_code;
+                    grt_dt["form_no"] = form_no
+
+                    if(grt_dt.suc > 0){
+                      await handleImageUpload(files,form_no,current_member_code,data.created_by)
+                    }
 
                 resolve(basic_dt);
             // }else {
@@ -49,6 +314,7 @@ module.exports = {
         } 
         });
     },
+
 
     edit_grt_data: (data) => {
         return new Promise(async (resolve, reject) => {
@@ -141,8 +407,62 @@ module.exports = {
     //     });
     // },
 
-    edit_basic_dt: (data) => {
-        // console.log(data,'data');
+    // edit_basic_dt: (data) => {
+    //     // console.log(data,'data');
+        
+    //     return new Promise(async (resolve, reject) => {
+    //         let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+    
+    //         var table_name = "md_member",
+    //         fields = `gender = '${data.gender}', 
+    //                   client_name = '${data.client_name}', 
+    //                   client_mobile = '${data.client_mobile}', 
+    //                   email_id = '${data.email_id}', 
+    //                   gurd_name = '${data.gurd_name}', 
+    //                   gurd_mobile = ${data.gurd_mobile == '' ? 0 : `'${data.gurd_mobile}'`}, 
+    //                   husband_name = ${data.husband_name == 'NULL' ? 'NULL' : `'${data.husband_name}'`}, 
+    //                   client_addr = '${data.client_addr.split("'").join("\\'")}', 
+    //                   pin_no = '${data.pin_no}', 
+    //                   nominee_name = '${data.nominee_name}', 
+    //                   aadhar_no = '${data.aadhar_no}', 
+    //                   pan_no = '${data.pan_no}', 
+    //                   voter_id = '${data.voter_id}', 
+    //                   religion = '${data.religion}', 
+    //                   other_religion = ${data.religion == 'Others' ? `'${data.other_religion}'` : 'NULL'}, 
+    //                   caste = '${data.caste}', 
+    //                   other_caste = ${data.caste == 'Others' ? `'${data.other_caste}'` : 'NULL'}, 
+    //                   education = '${data.education}', 
+    //                   other_education = ${data.education == 'Others' ? `'${data.other_education}'` : 'NULL'}, 
+    //                   dob = '${data.dob}', 
+    //                   modified_by = '${data.modified_by}', 
+    //                   modified_at = '${datetime}'`,
+    //         values = null,
+    //         whr = `member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
+    //         flag = 1;
+    
+    //         var edit_basic_dt = await db_Insert(table_name, fields, values, whr, flag);
+    
+    //         if (edit_basic_dt.suc > 0) {
+    //             var table_name = "td_grt_basic",
+    //             fields = `grt_date = '${data.grt_date}', 
+    //                       bm_lat_val = '${data.bm_lat_val}', 
+    //                       bm_long_val = '${data.bm_long_val}', 
+    //                       bm_gps_address = '${data.bm_gps_address}', 
+    //                       modified_by = '${data.modified_by}', 
+    //                       modified_at = '${datetime}'`,
+    //             values = null,
+    //             whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}' AND member_code = '${data.member_code}'`,
+    //             flag = 1;
+    
+    //             var final_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+    //  
+    //         resolve(edit_basic_dt);
+    //     });
+    // },
+    
+     edit_basic_dt: (data,files) => {
+        console.log(data,'data');
         
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -189,11 +509,24 @@ module.exports = {
                 flag = 1;
     
                 var final_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+            // ✅ If image provided, update td_img_upload
+                 if(final_dt.suc > 0){
+                 if (files) {
+                  console.log(files,'files');
+                  
+                   await handlefileUpdate(files,data.form_no,data.member_code,data.modified_by)
+                }else {
+                  resolve({suc : 1, msg : 'Data successfully updated'});
+                }
+              }else {
+                resolve({suc: 0, msg: 'Failed to update grt basic details.'});
+              }
+
             }
             resolve(edit_basic_dt);
         });
     },
-    
 
     edit_occup_dt: (data) => {
         return new Promise(async (resolve, reject) => {
