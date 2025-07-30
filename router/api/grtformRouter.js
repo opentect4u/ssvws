@@ -28,7 +28,11 @@ grtformRouter.post("/save_basic_dtls", async (req, res) =>{
     // const files = req.files || null;
     // console.log(req.files.files,'grt dt');
 
-     if (!req.files || !req.files.files) {
+    //  if (!req.files || !req.files.files) {
+    //     return res.send('No file uploaded.');
+    // }
+
+     if (!req.files) {
         return res.send('No file uploaded.');
     }
     //save basic details
