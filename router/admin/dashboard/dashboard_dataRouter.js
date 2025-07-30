@@ -631,6 +631,76 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
   }
 });
 
+
+// co show monthwise overdue amount
+dashboard_dataRouter.post("/dashboard_cowise_overdue_amt", async (req, res) => {
+  try{
+    var data = req.body;
+
+    let co_totalLoanOD = { msg: [{ tot_loan_od: 0, tot_overdue_grp: 0 }] };
+    let co_weeklyLoanOD = { msg: [{ weekly_od: 0, weekly_grp: 0 }] };
+    let co_monthlyLoanOD = { msg: [{ monthly_od: 0, monthly_grp: 0 }] };
+
+    if (data.flag === 'D') {
+       co_totalLoanOD= await db_Select(
+        "c.co_id,d.emp_name,IFNULL(SUM(a.od_amt), 0) AS od_amt,COUNT(DISTINCT b.group_code)group_count",
+        "td_od_loan a, td_loan b,md_group c,md_employee d",
+        `a.loan_id = b.loan_id
+         AND b.group_code = c.group_code
+         AND c.co_id = d.emp_id
+         AND a.branch_code IN (${data.branch_code})
+         AND b.period_mode = 'Monthly'
+         AND b.recovery_day = '${data.recov_day}'
+         AND a.trf_date = (SELECT MAX(trf_date)
+                         FROM   td_od_loan
+                         WHERE  branch_code IN (${data.branch_code}))`,
+        `GROUP BY c.co_id,d.emp_name
+         ORDER BY c.co_id`
+      );
+    } else if (data.flag === 'W') {
+      co_weeklyLoanOD = await db_Select(
+        "c.co_id,d.emp_name,IFNULL(SUM(a.od_amt), 0) AS od_amt,COUNT(DISTINCT b.group_code)group_count",
+        "td_od_loan a, td_loan b,md_group c,md_employee d",
+        `a.loan_id = b.loan_id
+         AND b.group_code = c.group_code
+         AND c.co_id = d.emp_id
+         AND a.branch_code IN (${data.branch_code})
+         AND b.period_mode = 'Weekly'
+         AND b.recovery_day = '${data.recov_day}'
+         AND a.trf_date    = (SELECT MAX(trf_date)
+                         FROM   td_od_loan
+                         WHERE  branch_code IN (${data.branch_code}))`,
+         `GROUP BY c.co_id,d.emp_name
+         ORDER BY c.co_id`
+      );
+    } else {
+      co_monthlyLoanOD = await db_Select(
+        "c.co_id,d.emp_name,IFNULL(SUM(a.od_amt), 0) AS od_amt,COUNT(DISTINCT b.group_code)group_count",
+        "td_od_loan a, td_loan b,md_group c,md_employee d",
+        `a.loan_id = b.loan_id
+         AND b.group_code = c.group_code
+         AND c.co_id = d.emp_id
+         AND a.branch_code IN (${data.branch_code})
+         AND a.trf_date = (SELECT MAX(trf_date)
+                         FROM   td_od_loan
+                         WHERE  branch_code IN (${data.branch_code}))`,
+         `GROUP BY c.co_id,d.emp_name
+         ORDER BY c.co_id`
+      );
+    }
+     res.send(
+       data.flag === 'D'
+          ? co_totalLoanOD
+          : data.flag === 'W'
+          ? co_weeklyLoanOD
+          : co_monthlyLoanOD,
+    );
+  }catch(error){
+    console.log("Error fetching cowise dashboard overdue amounts:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
+});
+
 // dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) => {
 //   try {
 //     var data = req.body;
