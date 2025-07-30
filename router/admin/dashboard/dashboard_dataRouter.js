@@ -585,7 +585,7 @@ dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) =
         const totalLoanOD = await db_Select(
           "IFNULL(SUM(a.od_amt), 0) AS tot_loan_od, COUNT(DISTINCT b.group_code) AS tot_overdue_grp",
           "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}' AND b.period_mode = 'Monthly'`,
+          `a.trf_date = '${trf_date}' AND a.branch_code = '${branchCode}'`,
           null
         );
 
@@ -700,6 +700,82 @@ dashboard_dataRouter.post("/dashboard_cowise_overdue_amt", async (req, res) => {
     res.send({ suc: 0, msg: "An error occurred" });
   }
 });
+
+// co show monthwise overdue amount for all branch
+// dashboard_dataRouter.post("/dashboard_cowise_allbrn_od_amt", async (req, res) => {
+//   try {
+//     var data = req.body;
+
+//      const result = {
+//       total_loan_od: 0,
+//       total_overdue_groups: 0,
+//       weekly_loan_od: 0,
+//       weekly_overdue_groups: 0,
+//       monthly_loan_od: 0,
+//       monthly_overdue_groups: 0,
+//     };
+
+//     // Join branch codes for SQL IN clause
+//     const branchList = data.branch_code.map(code => `'${code}'`).join(',');
+//     let queryResult = [];
+
+//      for (let branchCode of data.branch_code) {
+//           if (data.flag === 'D') {
+//        co_totalLoanOD= await db_Select(
+//         "c.co_id,d.emp_name,IFNULL(SUM(a.od_amt), 0) AS od_amt,COUNT(DISTINCT b.group_code)group_count",
+//         "td_od_loan a, td_loan b,md_group c,md_employee d",
+//         `a.loan_id = b.loan_id
+//          AND b.group_code = c.group_code
+//          AND c.co_id = d.emp_id
+//          AND a.branch_code IN (${branchCode})
+//          AND b.period_mode = 'Monthly'
+//          AND b.recovery_day = '${data.recov_day}'
+//          AND a.trf_date = (SELECT MAX(trf_date)
+//                          FROM   td_od_loan
+//                          WHERE  branch_code IN (${branchCode}))`,
+//         `GROUP BY c.co_id,d.emp_name
+//          ORDER BY c.co_id`
+//       );
+//     } else if (data.flag === 'W') {
+//       co_weeklyLoanOD = await db_Select(
+//         "c.co_id,d.emp_name,IFNULL(SUM(a.od_amt), 0) AS od_amt,COUNT(DISTINCT b.group_code)group_count",
+//         "td_od_loan a, td_loan b,md_group c,md_employee d",
+//         `a.loan_id = b.loan_id
+//          AND b.group_code = c.group_code
+//          AND c.co_id = d.emp_id
+//          AND a.branch_code IN (${branchCode})
+//          AND b.period_mode = 'Weekly'
+//          AND b.recovery_day = '${data.recov_day}'
+//          AND a.trf_date    = (SELECT MAX(trf_date)
+//                          FROM   td_od_loan
+//                          WHERE  branch_code IN (${branchCode}))`,
+//          `GROUP BY c.co_id,d.emp_name
+//          ORDER BY c.co_id`
+//       );
+//     } else {
+//       co_monthlyLoanOD = await db_Select(
+//         "c.co_id,d.emp_name,IFNULL(SUM(a.od_amt), 0) AS od_amt,COUNT(DISTINCT b.group_code)group_count",
+//         "td_od_loan a, td_loan b,md_group c,md_employee d",
+//         `a.loan_id = b.loan_id
+//          AND b.group_code = c.group_code
+//          AND c.co_id = d.emp_id
+//          AND a.branch_code IN (${branchCode})
+//          AND a.trf_date = (SELECT MAX(trf_date)
+//                          FROM   td_od_loan
+//                          WHERE  branch_code IN (${branchCode}))`,
+//          `GROUP BY c.co_id,d.emp_name
+//          ORDER BY c.co_id`
+//       );
+//     }
+//      }
+
+//      res.send({ suc: 1, data: result });
+
+//   }catch(error){
+//     console.log("Error fetching cowise all branch dashboard overdue amounts:", error);
+//     res.send({ suc: 0, msg: "An error occurred" });
+//   }
+// })
 
 // dashboard_dataRouter.post("/dashboard_overdue_amt_fr_allbrn", async (req, res) => {
 //   try {
