@@ -32,6 +32,7 @@ export async function exportToExcel(
 				}
 			}
 		})
+
 		worksheet.addRow(row)
 	})
 

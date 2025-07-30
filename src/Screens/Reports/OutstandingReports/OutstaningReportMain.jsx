@@ -8,6 +8,7 @@ import {
 	SearchOutlined,
 	PrinterOutlined,
 	FileExcelOutlined,
+	ExportOutlined,
 } from "@ant-design/icons"
 import { RefreshOutlined, Search } from "@mui/icons-material"
 import Radiobtn from "../../../Components/Radiobtn"
@@ -808,14 +809,26 @@ function OutstaningReportMain() {
 						<div className="flex gap-4">
 							<Tooltip title="Export to Excel">
 								<button
-									onClick={() =>
+									onClick={() =>{
+										const exportedDT = dataToExport;
+										const tot_intt_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.intt_outstanding) , 0);
+										const tot_prn_disb_amt =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_disb_amt) , 0);
+										const tot_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.outstanding) , 0);
+										const tot_prn_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_outstanding) , 0);
+										dataToExport.push({
+											intt_outstanding: tot_intt_outstanding,
+											outstanding: tot_outstanding,
+											prn_disb_amt: tot_prn_disb_amt,
+											prn_outstanding: tot_prn_outstanding,
+											branch_code:"TOTAL"
+										})
 										exportToExcel(
 											dataToExport,
 											headersToExport,
 											fileName,
 											[29, 31]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-green-900 disabled:text-green-300"
 								>
 									<FileExcelOutlined style={{ fontSize: 30 }} />

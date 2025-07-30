@@ -13,7 +13,7 @@ import axios from "axios"
 import TDInputTemplateBr from "../../../Components/TDInputTemplateBr"
 import DashboardCard from "../../../Components/Dashboard/DashboardCard"
 import { url } from "../../../Address/BaseUrl"
-import { Alert, Empty, Modal, Spin } from "antd"
+import { Alert, Button, Empty, Input, Modal, Spin, Table } from "antd"
 // import { Squircle } from "@squircle-js/react"
 import CurrencyRupeeOutlinedIcon from "@mui/icons-material/CurrencyRupeeOutlined"
 import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined"
@@ -55,9 +55,39 @@ const formatNumber = (num) => new Intl.NumberFormat("en-IN").format(num || 0)
 // 	{ month: "2022", disbursement: 4500, recovery: 4200 },
 // 	{ month: "2023", disbursement: 4800, recovery: 4500 },
 // ]
+const columns = [
+  {
+    title: 'ID',
+    dataIndex: 'co_id',
+    key: 'co_id',
+	sorter: (a, b) => a.co_id.toString().localeCompare(b.co_id.toString()),
+  },
+  {
+    title: 'Name',
+    dataIndex: 'emp_name',
+    key: 'emp_name',
+	sorter: (a, b) => a.emp_name.localeCompare(b.emp_name),
+  },
+  {
+    title: 'Amount',
+    dataIndex: 'od_amt',
+    key: 'od_amt',
+	sorter: (a, b) => a.od_amt - b.od_amt,
+  },
+  {
+    title: 'No. Of Groups',
+    dataIndex: 'group_count',
+    key: 'group_count',
+	sorter: (a, b) => a.group_count - b.group_count,
+   },
+  
+];
 
 export default function Dashboard() {
-	
+	const [monthlyOverdueDemand,setMonthlyOverdueDemand] = useState([])
+	const [isOverdueLoadingPending,setOverdueLoadingPendingStatus] = useState(false);
+	  const [searchText, setSearchText] = useState('');
+	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [odDtls,setOdDtls] = useState(() => {})
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || {}
 	const type = userDetails.id === 2 ? "BM" : "Admin 2"
@@ -158,7 +188,9 @@ export default function Dashboard() {
 		if (+choosenBranch === 100) return branches.map((b) => b.code)
 		return [+choosenBranch]
 	}
-
+	const showModal = () => setIsModalOpen(true);
+	const handleOk = () => setIsModalOpen(false);
+  	const handleCancel = () => setIsModalOpen(false);
 	const fetchBranches = async () => {
 		setLoading(true)
 		try {
@@ -378,6 +410,12 @@ export default function Dashboard() {
 			setLoading(false)
 		}
 	}
+
+	const filteredData = monthlyOverdueDemand.filter((item) =>
+		Object.values(item).some((value) =>
+		String(value).toLowerCase().includes(searchText.toLowerCase())
+		)
+	);
 
 	// const fetchCODashboardDetails = async (flag) => {
 	// 	setLoading(true)
@@ -784,7 +822,31 @@ export default function Dashboard() {
 
 	const handleBranchChange = (e) => setChoosenBranch(e.target.value)
 	const handleGraphYearChange = (e) => setChoosenGraphYear(e.target.value)
-
+	const showCoWiseBreadkup = () =>{
+			try{
+				setOverdueLoadingPendingStatus(true);
+				setMonthlyOverdueDemand([]);
+				const payLoad = {
+					flag: odFlags.flag,
+					branch_code: getBranchCodes(),
+					recov_day: odFlags.recovDay
+				}
+				axios.post(`${url}/admin/dashboard_cowise_overdue_amt`,payLoad).then(res =>{
+						setOverdueLoadingPendingStatus(false);
+						showModal(res?.data?.suc == 1)
+						if(res?.data?.suc == 1){
+							setMonthlyOverdueDemand(res?.data?.msg)
+						}
+				}).catch(err=>{
+					setOverdueLoadingPendingStatus(false);
+					Message('error','We are unable to process your request!! Please try again later')
+				})
+			}
+			catch(err){
+				setOverdueLoadingPendingStatus(false);
+				Message('error','We are unable to process your request!! Please try again later')
+			}
+	}
 	return (
 		<div className="p-8 space-y-6 bg-slate-50 min-h-screen rounded-3xl">
 			{
@@ -1286,6 +1348,15 @@ export default function Dashboard() {
 							<span className="text-sm text-slate-600">Groups</span>
 						</div>
 					</div>
+					<div className="flex justify-end items-center border-t pt-2">
+								  <Button type="text" size="large"
+								  style={{ fontWeight: 'bold' }}
+								  loading={isOverdueLoadingPending}
+								  onClick={() => {
+									showCoWiseBreadkup();
+								  }}
+								  >View All</Button>
+					</div>
 				</div>
 				{/* <DashboardCard
 					title="Overdue Amount"
@@ -1421,6 +1492,43 @@ export default function Dashboard() {
 					</BarChart>
 				</ResponsiveContainer>
 			</div> */}
+			  <Modal
+				title="CO Wise Breakup Details"
+				open={isModalOpen}
+				footer={null}
+				onCancel={handleCancel}
+				width={700}
+			>
+				<Input
+				placeholder="Search..."
+				value={searchText}
+				onChange={(e) => setSearchText(e.target.value)}
+				style={{ marginBottom: 16 }}
+				allowClear
+				/>
+				<Table size="small" 
+				bordered={true}
+				dataSource={filteredData} 
+				columns={columns} 
+				pagination={false} 
+				summary={(pageData) => {
+					let totalAmt = 0;
+					let totalGrp = 0;
+					pageData.forEach(({ od_amt, group_count }) => {
+					totalAmt += Number(od_amt);
+					totalGrp += group_count;
+					});
+
+					return (
+					<Table.Summary.Row>
+						<Table.Summary.Cell index={0} colSpan={2}><strong>Total</strong></Table.Summary.Cell>
+						<Table.Summary.Cell index={1}><strong>{totalAmt}</strong></Table.Summary.Cell>
+						<Table.Summary.Cell index={2} ><strong>{totalGrp}</strong></Table.Summary.Cell>
+					</Table.Summary.Row>
+					);
+				}}
+				/>
+			</Modal>
 		</div>
 	)
 }
