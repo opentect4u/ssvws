@@ -1,5 +1,5 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
-const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm, remove_member_dtls } = require('../../modules/admin/fetchModule');
+const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm, remove_member_dtls, fwd_ho_user } = require('../../modules/admin/fetchModule');
 const { f_getOverdue } = require('../../modules/api/masterModule');
 
 const fetchRouter = require('express').Router();
@@ -218,6 +218,14 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
     var household_dt_web = await edit_household_dt_web(data);
     res.send(household_dt_web);
   });
+
+  fetchRouter.post("/forward_ho_user", async (req, res) => {
+    var data = req.body;
+
+    //forward mis assistant details
+    var fwd_dt_ho = await fwd_ho_user(data);
+    res.send(fwd_dt_ho)
+});
 
   fetchRouter.post("/edit_family_dtls_web", async (req, res) => {
     var data = req.body, res_data;

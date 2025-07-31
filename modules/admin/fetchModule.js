@@ -56,7 +56,7 @@ module.exports = {
           let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     
           var table_name = "md_member",
-          fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', client_addr = '${data.client_addr.split("'").join("\\'")}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
+          fields = `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = '${data.gurd_name}', gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = '${data.husband_name}', client_addr = '${data.client_addr.split("'").join("\\'")}', pin_no = '${data.pin_no}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}',
             dob = '${data.dob}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
           values = null,
           whr = `member_code = '${data.member_code}'`,
@@ -65,8 +65,7 @@ module.exports = {
 
           if(edit_basic_dt_web.suc > 0){
             var table_name = "td_grt_basic",
-            fields = `grt_date = '${data.grt_date}',
-            bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+            fields = `grt_date = '${data.grt_date}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             // fields = `grt_date = '${data.grt_date}', 
             // bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
@@ -138,7 +137,7 @@ module.exports = {
           var table_name = "td_grt_occupation_household",
             fields = `no_of_rooms = '0', house_type = ${data.house_type ? `'${data.house_type}'` : 'NULL'}, own_rent = ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, land = '${data.land == '' ? 0 : data.land}', tv_flag = ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, 
                     bike_flag = ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, fridge_flag = ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, wm_flag = ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'}, poltical_flag = ${data.political_flag ? `'${data.political_flag}'` : 'NULL'},
-                 parental_addr = '${data.parental_addr.split("'").join("\\'")}', parental_phone = '${data.parental_phone == '' ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                 parental_addr = '${data.parental_addr ? data.parental_addr.split("'").join("\\'") : ''}', parental_phone = '${data.parental_phone == '' ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}'`,
             flag = 1;
@@ -200,6 +199,35 @@ module.exports = {
                 reject({ "suc": 0, "msg": "No member details provided" });
             } 
         });
+    },
+
+    fwd_ho_user: (data) => {
+      return new Promise(async (resolve, reject) => {
+        console.log(data,'data');
+        
+        try{
+        let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+        var table_name = "td_grt_basic",
+        fields = `bm_lat_val = '${data.bm_lat_val}', bm_long_val = '${data.bm_long_val}', bm_gps_address = '${data.bm_gps_address.split("'").join("\\'")}', approval_status = 'S', remarks = '${data.remarks ? data.remarks.split("'").join("\\'") : ''}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+        values = null,
+        whr = `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`,
+        flag = 1;
+        var fwd_dt = await db_Insert(table_name,fields,values,whr,flag);
+        // if(final_dt.suc > 0){
+        // var table_name = "td_grt_basic",
+        // fields = ` modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+        // values = null,
+        // whr = `form_no = '${data.form_no}' AND member_code = '${data.member_id}'`,
+        // flag = 1;
+        // var fwd_dt = await db_Insert(table_name, fields, values, whr, flag);
+        // console.log(fwd_dt,'dt');
+
+        resolve(fwd_dt);
+      } catch (error) {
+        reject(error);
+      }
+      });
     },
 
     fwd_mis_asst: (data) => {
