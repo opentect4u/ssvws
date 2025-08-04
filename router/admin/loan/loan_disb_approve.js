@@ -10,7 +10,7 @@ loan_disb_approveRouter.post("/fetch_groupwise_disburse_admin", async (req, res)
     //FETCH GROUPWISE DISBURSE DATA
     var select = "a.payment_date transaction_date,SUM(a.debit) debit_amt,b.group_code,a.created_by created_code,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,SUM(b.tot_emi) total_emi,c.group_name,d.emp_name created_by,CONCAT(e.sub_purpose,'-',e.purpose_id)purpose_id,f.scheme_name",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_purpose e ON b.purpose = e.purp_id LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id",
-    whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
+    whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
     order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,c.group_name,d.emp_name,e.purpose_id,f.scheme_name`;
     var fetch_grp_dt_disb = await db_Select(select,table_name,whr,order);
 
@@ -25,7 +25,7 @@ loan_disb_approveRouter.post("/fetch_grp_member_dtls_disb", async (req, res) => 
     //FETCH GROUPWISE DISBURSE DATA OF MEMBER
     var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,e.client_name,a.debit amt,b.tot_emi total_emi,a.created_by creted_code,d.emp_name created_by",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-    whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND b.group_code = '${data.group_code}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
+    whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND b.group_code = '${data.group_code}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
     order = null;
     var fetch_grp_memb__disb_dt = await db_Select(select,table_name,whr,order);
 
@@ -39,7 +39,7 @@ loan_disb_approveRouter.post("/fetch_memberwise_disburse_admin", async (req, res
         //FETCH MEMBERWISE DISBURSE DATA 13.02.2025
         var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi total_emi,b.grt_form_no,e.member_code,e.client_name,a.debit amt,a.created_by creted_code,d.emp_name created_by",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-        whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
+        whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D'`,
         order = null;
         var fetch_disb_memb_dt = await db_Select(select,table_name,whr,order);
    
@@ -65,7 +65,7 @@ loan_disb_approveRouter.post("/fetch_cowise_disb_data", async (req, res) => {
      //FETCH COWISE DISBURSE DATA
      var select = "a.payment_date transaction_date,SUM(a.debit) debit_amt,b.group_code,a.created_by created_code,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,SUM(b.tot_emi) total_emi,c.group_name,d.emp_name created_by,CONCAT(e.sub_purpose,'-',e.purpose_id)purpose_id,f.scheme_name",
      table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_purpose e ON b.purpose = e.purp_id LEFT JOIN md_scheme f ON b.scheme_id = f.scheme_id",
-     whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND a.created_by = '${data.co_id}'`,
+     whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND a.created_by = '${data.co_id}'`,
      order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,b.purpose,b.scheme_id,b.fund_id,b.period,b.period_mode,b.curr_roi,c.group_name,d.emp_name,e.purpose_id,f.scheme_name`;
      var fetch_co_dt = await db_Select(select,table_name,whr,order);
  
@@ -78,7 +78,7 @@ loan_disb_approveRouter.post("/fetch_cowise_disb_member_dtls", async (req, res) 
     //FETCH COWISE RECOVERY DATA OF MEMBER
     var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,e.client_name,a.debit amt,b.tot_emi total_emi,a.created_by creted_code,d.emp_name created_by",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-    whr = `a.branch_id = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
+    whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'D' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
     order = null;
     var fetch_co_memb_dt_disb = await db_Select(select,table_name,whr,order);
 
