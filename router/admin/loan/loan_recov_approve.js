@@ -226,14 +226,15 @@ loan_recov_approveRouter.post("/checking_outstanding_amt_bf_approve_grp", async 
          if (!data.checkoutstanding || !Array.isArray(data.checkoutstanding)) {
             return res.send({ suc: 0, msg: "Invalid input format" });
         }
-
+        let count = 0;
         for (let dt of data.checkoutstanding) {
              var select = "loan_id",
              table_name = "td_loan",
              whr = `branch_code = '${dt.branch_code}' AND group_code = '${dt.group_code}'`,
              order = null;
              var loan_ids = await db_Select(select, table_name, whr, order); 
-
+            //  console.log(loan_ids,'ids');
+                
               var loan_id_arr = loan_ids.msg.map(ldt => ldt.loan_id)
               
              // Step 1: Get MAX payment_date
@@ -242,38 +243,66 @@ loan_recov_approveRouter.post("/checking_outstanding_amt_bf_approve_grp", async 
             whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}'`;
             order = null;
         var checking_payment_date = await db_Select(select, table_name, whr, order);
+        // console.log(checking_payment_date,'lo');
+        
 
          if (checking_payment_date.suc < 0 || checking_payment_date.msg.length === 0) {
                 return res.send({ suc: 0, msg: "fetch payment date wrong" });
             }
 
          const payment_date = dateFormat(checking_payment_date.msg[0].payment_date, 'yyyy-mm-dd');
-         
+        //  AND payment_date = '${payment_date}'
          // Step 2: Get MAX payment_id for that date
-           var select = "MIN(payment_id) payment_id";
+        //    var select = "MIN(payment_id) payment_id";
+         var select = "payment_id,payment_date,loan_id";
             table_name = "td_loan_transactions";
             whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date = '${payment_date}'`;
             order = null;
         var checking_payment_id = await db_Select(select, table_name, whr, order);
-       
-         if (checking_payment_id.suc < 0 || checking_payment_id.msg.length === 0) {
+         
+            if (checking_payment_id.suc < 0 || checking_payment_id.msg.length === 0) {
                 return res.send({ suc: 0, msg: "fetch payment id wrong" });
             }
 
-         const payment_id = checking_payment_id.msg[0].payment_id;
+            // console.log(checking_payment_id,'payment_id');
+            const withouMinimumDuplicatePayment = Object.values(
+                checking_payment_id.msg.reduce((acc, curr) => {
+                    const existing = acc[curr.loan_id];
+                    if (!existing || curr.payment_id < existing.payment_id) {
+                    acc[curr.loan_id] = curr;
+                    }
+                    return acc;
+                }, {})
+                );
+                // console.log(withouMinimumDuplicatePayment, ' withouMinimumDuplicatePayment');
+        //  console.log(checking_payment_id,'payment_id');
+        //  return res.send({ suc: 0, msg: "fetch payment id wrong" });
+        //  const payment_id = checking_payment_id.msg[0].payment_id;
+         const payment_id = checking_payment_id.msg.map(el => el.payment_id)
+
+        //  console.log(payment_id,'lololo');
+         
 
          // Step 3: Get outstanding amount for that payment_id
             var select = "TRUNCATE((balance + intt_balance),0) outstanding";
             table_name = "td_loan_transactions";
-            whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date = '${payment_date}' AND payment_id = '${payment_id}'`;
-         var outstanding_data = await db_Select(select, table_name, whr, order);
-
+            whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date = '${payment_date}' AND payment_id IN (${payment_id.join(',')})`;
+             var outstanding_data = await db_Select(select, table_name, whr, order);
+         
            if (outstanding_data.suc < 0 || outstanding_data.msg.length === 0) {
                 return res.send({ suc: 0, msg: "fetch outstanding failed" });
             }
 
-            const calculated_outstanding = parseFloat(outstanding_data.msg[0].outstanding || 0);
+            // const calculated_outstanding = parseFloat(outstanding_data.msg[0].outstanding || 0);
+            // console.log(outstanding_data,'ju');
+            
+            const calculated_outstanding = outstanding_data.msg.reduce((sum, item) => {
+             return sum + parseFloat(item.outstanding || 0);
+              }, 0);
+          
             const user_outstanding = parseFloat(dt.outstanding || 0);
+            // console.log(calculated_outstanding,'calcu');
+            
 
 
              if (user_outstanding > calculated_outstanding) { 

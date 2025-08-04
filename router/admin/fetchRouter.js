@@ -620,6 +620,43 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
     res.send(fetch_search_group_web)
 });
 
+// fetch latitude and longtitude based on form no. branch code and group code
+fetchRouter.post("/fetch_member_latlong", async (req, res) => {
+ try{
+    var data = req.body;
+
+     if (!data.branch_code || !data.group_code || !Array.isArray(data.member_code) || data.member_code.length === 0) {
+      return res.send({
+        suc:0, msg: "Invalid input like branch code,group code and non-empty member code array are required."
+     });
+    }
+
+    // Validate that all member codes are valid non-empty strings (e.g., not "0", "1", etc.)
+    const invalidCodes = data.member_code.filter(
+      code => typeof code !== 'string' || !code.trim() || code === "0"
+    );
+
+    if (invalidCodes.length > 0) {
+      return res.send({ suc: 0, msg: 'Invalid member codes'});
+    }
+
+  
+    // Sanitize member_code array (e.g., ['M001', 'M002'] → `'M001','M002'`)
+    const memberCodes = data.member_code.map(code => `'${code}'`).join(",");
+
+    var select = "form_no,prov_grp_code,member_code,co_lat_val,co_long_val,co_gps_address",
+    table_name = "td_grt_basic",
+    whr = `branch_code = '${data.branch_code}' AND prov_grp_code = '${data.group_code}' AND member_code IN (${memberCodes}) AND co_lat_val IS NOT NULL AND co_long_val IS NOT NULL`,
+    order = null;
+    var fetch_lat_long_dt = await db_Select(select,table_name,whr,order);
+    const filtered_data = fetch_lat_long_dt.msg.filter(row => row.co_lat_val && row.co_long_val);
+    res.send({ suc: 1, msg: filtered_data})
+ }catch(err){
+    console.log("Error while fetching member latlong:", err);
+    res.send({ suc: 0, msg: "Error while fetching member latlong" });
+ }
+});
+
 fetchRouter.post("/remove_member_from_group", async (req, res) => {
     var data = req.body;
     
