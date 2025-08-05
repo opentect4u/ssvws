@@ -36,6 +36,8 @@ const DynamicTailwindTable = ({
 		[originalHeaders, colRemove]
 	)
 
+	console.log(originalHeaders, ' originalHeaders');
+
 	const totals = useMemo(() => {
 		const result = {}
 		columnTotal.forEach((origIndex) => {

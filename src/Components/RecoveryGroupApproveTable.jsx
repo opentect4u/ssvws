@@ -28,6 +28,7 @@ import { Toast } from "primereact/toast"
 import { Message } from "./Message"
 import TDInputTemplateBr from "./TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../Utils/formateDate"
+import moment from "moment"
 
 const { Panel } = Collapse
 
@@ -42,6 +43,7 @@ function RecoveryGroupApproveTable({
 	loanType = "G",
 	fetchLoanApplications,
 	fetchLoanApplicationsDate,
+	onRefresh
 }) {
 	const navigate = useNavigate()
 
@@ -98,7 +100,7 @@ function RecoveryGroupApproveTable({
 
 	const onRowExpand = (event) => {
 		setExpandedRows(null)
-		console.log(event.data.group_code, "event.data")
+		// console.log(event.data.group_code, "event.data")
 		// console.log('itemitemitemitem', 'lll', event.data);
 		fetchLoanGroupMember(event?.data?.group_code, event?.data?.transaction_date)
 
@@ -129,8 +131,8 @@ function RecoveryGroupApproveTable({
 
 		// Perform any additional logic here, such as enabling a button or triggering another action
 		setSelectedProducts(e.value)
-		if (e.value.length > 0) {
-			const selectedRows = e.value
+		if (e.value) {
+			const selectedRows = [e.value]
 			// const totalEmi = selectedRows.reduce((sum, item) => sum + parseFloat(item.tot_emi || 0), 0);
 			setTotalEMI(
 				selectedRows
@@ -153,6 +155,7 @@ function RecoveryGroupApproveTable({
 					payment_date: item?.transaction_date,
 					branch_code: item?.branch_code,
 					group_code: item?.group_code,
+					outstanding: item?.outstanding
 				}
 			})
 
@@ -244,18 +247,53 @@ function RecoveryGroupApproveTable({
 				group_code: group_code,
 			})
 			.then((res) => {
-				if (res?.data?.suc === 1) {
-					setLoading(false)
-					setLoanGroupMember(res?.data?.msg)
-					console.log(res?.data?.msg, "res?.data?.msg")
+				if (res?.data?.suc === 1) {	
+					// setLoanGroupMember(res?.data?.msg)
+					// console.log(res?.data?.msg, "res?.data?.msg");
+					const dt = res?.data?.msg;
+					fetch_od_amount(res?.data?.msg.map(el => el.loan_id),dt)
+
 				} else {
+					setLoading(false)
 					Message("error", "No incoming loan applications found.")
 				}
 			})
 			.catch((err) => {
+				setLoading(false)
 				Message("error", "Some error occurred while fetching loans!")
 				console.log("ERRR", err)
 			})
+	}
+
+	const fetch_od_amount = async (loanIds,rawData) =>{
+			try{
+				const creds = {
+					loan_id:loanIds
+				};
+				axios.post(`${url}/fetch_od_amt`,creds).then(res =>{
+					setLoading(false);
+					if(res?.data?.suc == 1){
+						 let data = rawData.map(el =>{
+								const row_dtls = res?.data?.msg.find(ele => ele.loan_id == el.loan_id);
+								el.od_dtls = row_dtls ? `${row_dtls?.od_amt} as on ${moment(row_dtls?.trf_date).format('DD/MM/YYYY')}` : '--';
+								return el;
+						 })
+						 setLoanGroupMember(data)
+					}
+					else{
+ 						setLoanGroupMember(rawData)
+					}
+				}).catch(err =>{
+					Message('error',err.message);
+					setLoading(false);
+					setLoanGroupMember(rawData)
+				})
+			}
+			catch(err){
+				Message('error',err.message);
+				setLoading(false);
+				setLoanGroupMember(rawData)
+			}
 	}
 
 	// const remove = (cachedDateGcode) => {
@@ -283,7 +321,7 @@ function RecoveryGroupApproveTable({
 			.then((res) => {
 				if (res?.data?.suc === 1) {
 					setLoanAppData(res?.data?.msg)
-					setSelectedProducts([])
+					setSelectedProducts(null)
 					setTotalEMI(0)
 					setCreditAmount(0)
 					setOutstanding(0)
@@ -308,26 +346,84 @@ function RecoveryGroupApproveTable({
 	// }
 
 	const approveRecoveryTransaction = async (cachedDateGcode) => {
+		
 		setLoading(true)
-		// removeCachedIds(cachedDateGcode, getloanAppData)
-
-		const creds = {
-			approved_by: userDetails?.emp_id,
-			grpdt: cachedDateGcode,
+		const payLoad = {
+			checkoutstanding:cachedDateGcode
 		}
+		axios.post(`${url}/checking_outstanding_amt_bf_approve_grp`,payLoad)
+		.then(async (res) => {
+				if(res?.data){
+					if(res?.data?.approve_flag == 'S'){
+						const creds = {
+							approved_by: userDetails?.emp_id,
+							grpdt: cachedDateGcode,
+						}
+						await axios
+							.post(`${url}/approve_grpwise_recov`, creds)
+							.then((res) => {
+								setLoading(false);
+								if(res?.data?.suc == 1){
+								   // fetchLoanApplicationsGroup()
+									onRefresh()
+									setCachedDateGcode(() => [])
+									// setSelectedProducts(() => [])
+									setSelectedProducts(null)
+									setTotalEMI(0)
+									setCreditAmount(0)
+									setOutstanding(0)
+									setLoading(false)
+									// console.log("RESSS approveRecoveryTransaction", res?.data)
+								}
+								else{
+									Message('error','We are unable to process your request right now!! Please try again later');
+								}
+						
+							})
+							.catch((err) => {
+									setLoading(false);
+									Message('error',err?.message);
+							})
+					}
+					else{
+						setLoading(false);
+						Message('error',"Amount Miscalculation!!");
+					}
+					
+				}
+				else{
+					setLoading(false);
+					Message('error',"We are unable to process your request right now!! Please try again later");
+				}
 
-		await axios
-			.post(`${url}/approve_grpwise_recov`, creds)
-			.then((res) => {
-				fetchLoanApplicationsGroup()
-				setCachedDateGcode(() => [])
-				setSelectedProducts(() => [])
-				console.log("RESSS approveRecoveryTransaction", res?.data)
-			})
-			.catch((err) => {
-				console.log("ERRR approveRecoveryTransaction", err)
-			})
-		setLoading(false)
+		}).catch(err =>{
+			setLoading(false);
+			Message('error',err.message);
+		})
+		
+		// setLoading(true)
+		// const creds = {
+		// 	approved_by: userDetails?.emp_id,
+		// 	grpdt: cachedDateGcode,
+		// }
+
+		// await axios
+		// 	.post(`${url}/approve_grpwise_recov`, creds)
+		// 	.then((res) => {
+		// 		// fetchLoanApplicationsGroup()
+		// 		onRefresh()
+		// 		setCachedDateGcode(() => [])
+		// 		// setSelectedProducts(() => [])
+		// 		setSelectedProducts(null)
+		// 		setTotalEMI(0)
+		// 		setCreditAmount(0)
+		// 		setOutstanding(0)
+		// 		// console.log("RESSS approveRecoveryTransaction", res?.data)
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log("ERRR approveRecoveryTransaction", err)
+		// 	})
+		// setLoading(false)
 	}
 
 	// const rejectRecoveryTransaction = async (cachedDateGcode) => {
@@ -387,7 +483,7 @@ function RecoveryGroupApproveTable({
 							new Date(rowData?.transaction_date).toLocaleDateString("en-GB")
 						}
 					></Column>
-					<Column field="payment_id" header="Payment ID"></Column>
+					{/* <Column field="payment_id" header="Payment ID"></Column> */}
 					<Column
 						header="Group - Loan ID (Member)"
 						body={(rowData) =>
@@ -400,6 +496,9 @@ function RecoveryGroupApproveTable({
 						body={(rowData) => `${rowData.amt} - (${rowData.tr_mode})`}
 					></Column>
 					<Column field="outstanding" header="Outstanding"></Column>
+
+					<Column field="od_dtls" header="Of Which OD"></Column>
+
 					<Column field="created_by" header="Created By"></Column>
 					{/* <Column headerStyle={{ width: '4rem'}}></Column> */}
 				</DataTable>
@@ -521,6 +620,7 @@ function RecoveryGroupApproveTable({
 					onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}
+					scrollable scrollHeight="400px"
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}
 					onSelectionChange={(e) => handleSelectionChange(e)}
 					tableStyle={{ minWidth: "50rem" }}
@@ -541,7 +641,7 @@ function RecoveryGroupApproveTable({
 					></Column>
 					<Column expander={allowExpansion} style={{ width: "3em" }} />
 					<Column
-						selectionMode="multiple"
+						selectionMode="single"
 						headerStyle={{ width: "3rem" }}
 					></Column>
 					<Column

@@ -691,10 +691,10 @@ const router = createBrowserRouter([
 								path: "searchform",
 								element: <SearchGRTFormCO />,
 							},
-							{
-								path: "searchgroup",
-								element: <SearchGroupCO />,
-							},
+							// {
+							// 	path: "searchgroup",
+							// 	element: <SearchGroupCO />,
+							// },
 
 							{
 								path: "searchgroup",

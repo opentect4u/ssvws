@@ -28,6 +28,7 @@ import { Toast } from "primereact/toast"
 import { Message } from "./Message"
 import TDInputTemplateBr from "./TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../Utils/formateDate"
+import moment from "moment"
 
 const { Panel } = Collapse
 
@@ -53,6 +54,7 @@ function RecoveryMemberApproveTable({
 	loanType = "M",
 	fetchLoanApplications,
 	fetchLoanApplicationsDate,
+	onRefresh
 }) {
 	const navigate = useNavigate()
 
@@ -111,8 +113,8 @@ function RecoveryMemberApproveTable({
 		console.log(e.value, "e.value")
 		// Perform any additional logic here, such as enabling a button or triggering another action
 		setSelectedProducts(e.value)
-		if (e.value.length > 0) {
-			const selectedRows = e.value
+		if (e.value) {
+			const selectedRows = [e.value]
 			// const totalEmi = selectedRows.reduce((sum, item) => sum + parseFloat(item.tot_emi || 0), 0);
 			setTotalEMI(
 				selectedRows
@@ -136,6 +138,7 @@ function RecoveryMemberApproveTable({
 					payment_date: item?.transaction_date,
 					payment_id: item?.payment_id,
 					loan_id: item?.loan_id,
+					outstanding: item?.outstanding
 				}
 			})
 
@@ -243,7 +246,7 @@ function RecoveryMemberApproveTable({
 				if (res?.data?.suc === 1) {
 					console.log(res?.data?.msg, "xxxxxxxxxyyyyyyyyy")
 					setLoanAppData(res?.data?.msg)
-					setSelectedProducts([])
+					setSelectedProducts(null)
 					setTotalEMI(0)
 					setAmountTd_(0)
 					setOutstanding(0)
@@ -260,21 +263,52 @@ function RecoveryMemberApproveTable({
 
 	const approveRecoveryTransaction = async (cachedPaymentId) => {
 		setLoading(true)
-
-		const creds = {
-			approved_by: userDetails?.emp_id,
-			membdt: cachedPaymentId,
+		const payLoad = {
+			checkoutstanding:cachedPaymentId
 		}
-		await axios
-			.post(`${url}/approve_member_recov`, creds)
-			.then((res) => {
-				fetchLoanApplicationsMember()
-				console.log("RESSS approveRecoveryTransaction", res?.data)
-			})
-			.catch((err) => {
-				console.log("ERRR approveRecoveryTransaction", err)
-			})
-		setLoading(false)
+		axios.post(`${url}/checking_outstanding_amt_bf_approve`,payLoad)
+		.then(async (res) => {
+				if(res?.data){
+					if(res?.data?.approve_flag == 'S'){
+						const creds = {
+							approved_by: userDetails?.emp_id,
+							membdt: cachedPaymentId,
+						}
+						await axios
+						.post(`${url}/approve_member_recov`, creds)
+						.then((res) => {
+								onRefresh();
+								setSelectedProducts(null)
+								setTotalEMI(0)
+								setAmountTd_(0)
+								setOutstanding(0)
+								setLoading(false)
+							// fetchLoanApplicationsMember()
+							// console.log("RESSS approveRecoveryTransaction", res?.data)
+						})
+						.catch((err) => {
+							setLoading(false);
+							console.log("ERRR approveRecoveryTransaction", err);
+							Message('error',"Sometning went wrong in approving member recovery");
+						})
+					}
+					else{
+						setLoading(false);
+						Message('error',"Amount Miscalculation!!");
+					}
+					
+				}
+				else{
+					setLoading(false);
+					Message('error',"We are unable to process your request right now!! Please try again later");
+				}
+
+		}).catch(err =>{
+			setLoading(false);
+			Message('error',err.message);
+		})
+		
+		// setLoading(false)
 	}
 
 	const rejectRecoveryTransaction = async (RejectcachedPaymentId) => {
@@ -290,7 +324,12 @@ function RecoveryMemberApproveTable({
 		await axios
 			.post(`${url}/reject_recovery_transaction`, creds)
 			.then((res) => {
-				fetchLoanApplicationsMember()
+				// fetchLoanApplicationsMember()
+				onRefresh();
+				setSelectedProducts(null)
+				setTotalEMI(0)
+				setAmountTd_(0)
+				setOutstanding(0)
 				console.log("RESSS approveRecoveryTransaction", res?.data)
 			})
 			.catch((err) => {
@@ -429,6 +468,9 @@ function RecoveryMemberApproveTable({
 					// onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}
+					
+					// selectAll={false}
+					 scrollable scrollHeight="400px"
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}
 					onSelectionChange={(e) => handleSelectionChange(e)}
 					tableStyle={{ minWidth: "50rem" }}
@@ -448,7 +490,7 @@ function RecoveryMemberApproveTable({
 						)}
 					></Column>
 					<Column
-						selectionMode="multiple"
+						selectionMode="single"
 						headerStyle={{ width: "3rem" }}
 					></Column>
 					<Column
@@ -458,7 +500,7 @@ function RecoveryMemberApproveTable({
 							new Date(rowData?.transaction_date).toLocaleDateString("en-GB")
 						}
 					></Column>
-					<Column field="payment_id" header="Payment ID"></Column>
+					{/* <Column field="payment_id" header="Payment ID"></Column> */}
 					<Column
 						header="Group - Loan ID (Member)"
 						body={(rowData) =>
@@ -480,11 +522,17 @@ function RecoveryMemberApproveTable({
 						header="Total EMI"
 						footer={<span style={{ fontWeight: "bold" }}>{TotalEMI}</span>}
 					></Column>
-					<Column
+						<Column
 						field="outstanding"
 						header="Outstanding"
 						footer={<span style={{ fontWeight: "bold" }}>{Outstanding}</span>}
 					></Column>
+					<Column
+						header="Of Which OD"
+						body={(rowData) => (rowData?.od_amt && rowData?.trf_date) ? `${rowData?.od_amt} As On (${moment(rowData?.trf_date).format('DD/MM/YYYY')})` : '--'}
+						
+					></Column>
+				
 					{/* <Column field="created_by" header="Collected By"></Column> */}
 					<Column
 						header="Collected By"

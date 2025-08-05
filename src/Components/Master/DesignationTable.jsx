@@ -138,7 +138,7 @@ function DesignationTable({
                         </tr>
                     </thead>
                     <tbody>
-                        {loanAppData &&
+                        {(loanAppData && loanAppData.length > 0) ?
                             loanAppData?.slice(first, rows + first).map((item, i) => (
                                 <tr
                                     className={
@@ -184,7 +184,14 @@ function DesignationTable({
                                         )}
                                     </td>
                                 </tr>
-                            ))}
+                            )) : <tr 	className={
+										"bg-white border-b-pink-200 border-2 dark:bg-gray-800 dark:border-gray-700"
+									}>
+										<td colSpan={6} className="text-center p-5">
+												<span className="text-lg">No Data Available</span>
+										</td>
+							</tr>
+                        }
                     </tbody>
                 </table>
                 <Paginator

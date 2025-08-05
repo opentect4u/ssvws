@@ -334,7 +334,7 @@ function HomeScreenMis() {
 								</div>
 							</div>
 
-							{loanApplications.length > 0 && (
+							{/* {loanApplications.length > 0 && (
 								<LoanRecovApplicationsTableViewBr
 									flag="MIS"
 									loanAppData={loanApplications}
@@ -345,7 +345,18 @@ function HomeScreenMis() {
 										selectedEmployeeId,
 									}}
 								/>
-							)}
+							)} */}
+								<LoanRecovApplicationsTableViewBr
+									flag="MIS"
+									loanAppData={loanApplications}
+									loanType={loanType}
+									title="GRT Forms"
+									setSearch={(data) => setSearch(data)}
+									fetchLoanApplicationsDate={{
+										selectedEmployeeId,
+									}}
+								/>
+							
 						</>
 					) : loanType === "R" ? (
 						<>
@@ -375,7 +386,7 @@ function HomeScreenMis() {
 								</div>
 							</div>
 
-							{loanApplications.length > 0 && (
+							{/* {loanApplications.length > 0 && (
 								<LoanApplicationsTableViewBr
 									flag="MIS"
 									loanAppData={loanApplications}
@@ -386,7 +397,18 @@ function HomeScreenMis() {
 										selectedEmployeeId,
 									}}
 								/>
-							)}
+							)} */}
+
+								<LoanApplicationsTableViewBr
+									flag="MIS"
+									loanAppData={loanApplications}
+									loanType={loanType}
+									title="GRT Forms"
+									setSearch={(data) => setSearch(data)}
+									fetchLoanApplicationsDate={{
+										selectedEmployeeId,
+									}}
+								/>
 
 							{/* <LoanApplicationsTableViewBr
 						flag="MIS"
@@ -423,7 +445,7 @@ function HomeScreenMis() {
 								</div>
 							</div>
 
-							{loanApplications.length > 0 && (
+							{/* {loanApplications.length > 0 && (
 								<LoanApprovalApplicationsTableViewBr
 									flag="MIS"
 									loanAppData={loanApplications}
@@ -434,7 +456,18 @@ function HomeScreenMis() {
 										selectedEmployeeId,
 									}}
 								/>
-							)}
+							)} */}
+
+								<LoanApprovalApplicationsTableViewBr
+									flag="MIS"
+									loanAppData={loanApplications}
+									loanType={loanType}
+									title="GRT Forms"
+									setSearch={(data) => setSearch(data)}
+									fetchLoanApplicationsDate={{
+										selectedEmployeeId,
+									}}
+								/>
 
 							{/* <LoanApplicationsTableViewBr
 						flag="MIS"
@@ -471,7 +504,7 @@ function HomeScreenMis() {
 								</div>
 							</div>
 
-							{loanApplications.length > 0 && (
+							{/* {loanApplications.length > 0 && (
 								<LoanApplicationsTableViewBr
 									flag="MIS"
 									loanAppData={loanApplications}
@@ -482,7 +515,18 @@ function HomeScreenMis() {
 										selectedEmployeeId,
 									}}
 								/>
-							)}
+							)} */}
+
+							<LoanApplicationsTableViewBr
+									flag="MIS"
+									loanAppData={loanApplications}
+									loanType={loanType}
+									title="GRT Forms"
+									setSearch={(data) => setSearch(data)}
+									fetchLoanApplicationsDate={{
+										selectedEmployeeId,
+									}}
+								/>
 
 							{/* <LoanApplicationsTableViewBr
 						flag="MIS"

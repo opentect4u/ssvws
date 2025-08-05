@@ -35,6 +35,7 @@ import {
 } from "../../../Utils/Reports/headerMap"
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
+import { MultiSelect } from "primereact/multiselect"
 
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
@@ -74,6 +75,8 @@ const options2 = [
 ]
 
 function DemandVsCollectionMain() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -212,6 +215,8 @@ function DemandVsCollectionMain() {
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Memberwise`)
 				setFetchedReportDate(res?.data?.dateRange)
+				populateColumns(res?.data?.member_demand_collec_data?.msg,memberwiseDemandVsCollectionHeader);	
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -241,6 +246,7 @@ function DemandVsCollectionMain() {
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Groupwise`)
 				setFetchedReportDate(res?.data?.dateRange)
+				populateColumns(res?.data?.groupwise_demand_collec_data?.msg,groupwiseDemandVsCollectionHeader)
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -270,6 +276,7 @@ function DemandVsCollectionMain() {
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Groupwise`)
 				setFetchedReportDate(res?.data?.dateRange)
+				populateColumns(res?.data?.branch_demand_collec_data?.msg,branchwiseDemandVsCollectionHeader);
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -321,6 +328,7 @@ function DemandVsCollectionMain() {
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Groupwise`)
 				setFetchedReportDate(res?.data?.dateRange)
+				populateColumns(res?.data?.fund_demand_collec_data?.msg,fundwiseDemandVsCollectionHeader)
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -385,6 +393,7 @@ function DemandVsCollectionMain() {
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, COwise`)
 				setFetchedReportDate(res?.data?.dateRange)
+				populateColumns(res?.data?.co_demand_collec_data?.msg,cowiseDemandVsCollectionHeader);
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -454,6 +463,7 @@ function DemandVsCollectionMain() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.fund_demand_collec_data_day?.msg)
+				populateColumns(res?.data?.fund_demand_collec_data_day?.msg,fundwiseDemandVsCollectionHeader);
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -581,6 +591,12 @@ function DemandVsCollectionMain() {
 		if (searchType === "C" && choosenMonth && choosenYear) {
 			handleFetchCOwiseReport()
 		}
+	}
+
+	const populateColumns = (main_dt,headerExport) =>{
+				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+				setColumns(columnToBeShown);
+				setSelectedColumns(columnToBeShown.map(el => el.index));
 	}
 
 	const fetchSearchTypeName = (searchType) => {
@@ -1095,6 +1111,15 @@ function DemandVsCollectionMain() {
 					)}
 
 					{/* "Groupwise" */}
+{/* 
+					{
+						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							onChange={(e) => {
+								console.log(e.value)
+								setSelectedColumns(e.value)
+							}} options={md_columns} optionValue="index" optionLabel="header" 
+							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+					} */}
 
 					{reportData.length > 0 && searchType === "G" && (
 						<>
@@ -1105,6 +1130,12 @@ function DemandVsCollectionMain() {
 								// colRemove={[13]}
 								dateTimeExceptionCols={[8, 13, 14, 15]}
 								headersMap={groupwiseDemandVsCollectionHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1119,6 +1150,12 @@ function DemandVsCollectionMain() {
 								columnTotal={[11, 12, 13, 14]}
 								// dateTimeExceptionCols={[8]}
 								headersMap={fundwiseDemandVsCollectionHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1133,6 +1170,12 @@ function DemandVsCollectionMain() {
 								columnTotal={[10, 11, 12, 13]}
 								// dateTimeExceptionCols={[8]}
 								headersMap={cowiseDemandVsCollectionHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1148,6 +1191,12 @@ function DemandVsCollectionMain() {
 								dateTimeExceptionCols={[11, 16, 17, 18, 19]}
 								// colRemove={[16]}
 								headersMap={memberwiseDemandVsCollectionHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1162,6 +1211,12 @@ function DemandVsCollectionMain() {
 								columnTotal={[3, 4,5,6]}
 								dateTimeExceptionCols={[8]}
 								headersMap={branchwiseDemandVsCollectionHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1202,7 +1257,18 @@ function DemandVsCollectionMain() {
 													"demand_amt": tot_demand_amt.toFixed(2),
 													"curr_outstanding": tot_curr_outstanding.toFixed(2)
 										})
-										exportToExcel(exportData, headersToExport, fileName, [0])
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										console.log(dt);
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
+										exportToExcel(exportData, header_export, fileName, [0])
 									}}
 									className="mt-5 justify-center items-center rounded-full text-green-900"
 								>
@@ -1215,7 +1281,7 @@ function DemandVsCollectionMain() {
 							</Tooltip>
 							<Tooltip title="Print">
 								<button
-									onClick={() =>
+									onClick={() =>{
 										// printTableRegular(
 										// 	reportData,
 										// 	"Demand Report",
@@ -1223,13 +1289,52 @@ function DemandVsCollectionMain() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										const exportData = dataToExport;
+											const tot_disb_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.disb_amt) , 0);
+											const tot_emi_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.tot_emi) , 0);
+											const tot_coll_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.coll_amt) , 0);
+											const tot_demand_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.demand_amt) , 0);
+											const tot_curr_outstanding = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.curr_outstanding) , 0);
+											exportData.push({
+													"demand_date": "",
+													"collec between": "",
+													"branch_code": "",
+													"branch_name": "",
+													"group_code": "",
+													"group_name": "",
+													"co_id": "",
+													"emp_name": "",
+													"disb_dt": "",
+													"disb_amt": tot_disb_amt.toFixed(2),
+													"curr_roi": "",
+													"loan_period": "",
+													"period_mode": "",
+													"recovery_day": "",
+													"instl_start_dt": "",
+													"instl_end_dt": "",
+													"tot_emi": tot_emi_amt.toFixed(2),
+													"coll_amt": tot_coll_amt.toFixed(2),
+													"demand_amt": tot_demand_amt.toFixed(2),
+													"curr_outstanding": tot_curr_outstanding.toFixed(2)
+										})
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										console.log(dt);
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										printTableReport(
-											dataToExport,
-											headersToExport,
+											exportData,
+											header_export,
 											fileName?.split(",")[0],
 											[0, 8, 13, 14, 15]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-pink-600"
 								>
 									<PrinterOutlined

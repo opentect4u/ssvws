@@ -589,10 +589,11 @@ function BasicDetailsForm({ memberDetails }) {
 									handleChange={formik.handleChange}
 									handleBlur={formik.handleBlur}
 									mode={1}
-									disabled={disableCondition(
-										userDetails?.id,
-										memberDetails?.approval_status
-									)}
+									// disabled={disableCondition(
+									// 	userDetails?.id,
+									// 	memberDetails?.approval_status
+									// )}
+									disabled={true}
 								/>
 								{formik.errors.b_grtDate && formik.touched.b_grtDate ? (
 									<VError title={formik.errors.b_grtDate} />
@@ -1080,7 +1081,8 @@ function BasicDetailsForm({ memberDetails }) {
 							memberDetails?.approval_status
 						) && (
 							<div className="mt-10">
-								{userDetails.id == 10 ? (
+							
+								{(userDetails.id == 10 || (userDetails.id == 13 && formik.values?.b_groupCode != 0 && memberDetails?.approval_status == 'U')) ? (
 									<BtnComp mode="A" onReset={formik.resetForm} />
 								) : null}
 							</div>

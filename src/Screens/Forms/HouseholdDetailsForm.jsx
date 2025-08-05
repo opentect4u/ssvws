@@ -10,24 +10,27 @@ import axios from "axios"
 import { Message } from "../../Components/Message"
 import { url } from "../../Address/BaseUrl"
 import { Spin } from "antd"
-import { LoadingOutlined } from "@ant-design/icons"
+import { CloseOutlined, LoadingOutlined } from "@ant-design/icons"
 import { useLocation } from "react-router"
 import DialogBox from "../../Components/DialogBox"
 import TDInputTemplateBr from "../../Components/TDInputTemplateBr"
 import { disableCondition } from "./disableCondition"
 import { routePaths } from "../../Assets/Data/Routes"
+import { SaveOutlined } from "@mui/icons-material"
 
 function HouseholdDetailsForm({ memberDetails }) {
 	const params = useParams()
 	const [loading, setLoading] = useState(false)
 	const location = useLocation()
 	const { loanAppData } = location.state || {}
+	const [grp_code,setGroupCode] = useState(0);
 	const navigate = useNavigate()
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 	const [visible, setVisible] = useState(() => false)
 	const [visible2, setVisible2] = useState(() => false)
 	const [visible3, setVisible3] = useState(() => false)
 	const [visible4, setVisible4] = useState(() => false)
+	const [visible5, setVisible5] = useState(() => false)
 
 	const [remarks, setRemarks] = useState(() => "")
 
@@ -94,7 +97,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 			.then((res) => {
 				console.log("++--++--++--", res?.data)
 				setRemarks(res?.data?.msg[0]?.remarks)
-
+				setGroupCode(res?.data?.msg[0]?.prov_grp_code)
 				console.log("memberDetails_______________", 'remark' , res?.data.msg)
 			})
 			.catch((err) => {
@@ -135,6 +138,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 		fetchHouseholdDetails()
 	}, [])
 
+
 	const onSubmit = async (values) => {
 		console.log("onsubmit called")
 		console.log(values, "onsubmit vendor")
@@ -167,7 +171,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 			bike_flag: formik.values.h_bike,
 			fridge_flag: formik.values.h_fridge,
 			wm_flag: formik.values.h_washing_machine,
-			poltical_flag: formik.values.h_politically_active,
+			political_flag: formik.values.h_politically_active,
 			parental_addr: formik.values.h_parental_address,
 			parental_phone: formik.values.h_parental_phone,
 			modified_by: userDetails?.emp_id,
@@ -184,6 +188,104 @@ function HouseholdDetailsForm({ memberDetails }) {
 				console.log("HOUSEEE ERRRR", err)
 			})
 		setLoading(false)
+	}
+
+	const editHouseHoldDtlsByBM  = async () =>{
+			setLoading(true)
+			if (navigator.geolocation) {
+			navigator.geolocation.getCurrentPosition(
+				(position) => {
+					const creds = {
+						form_no: params?.id,
+						house_type: formik.values.h_house_type,
+						own_rent: formik.values.h_own_rent,
+						no_of_rooms: formik.values.h_no_of_rooms,
+						land: formik.values.h_total_land,
+						tv_flag: formik.values.h_tv,
+						bike_flag: formik.values.h_bike,
+						fridge_flag: formik.values.h_fridge,
+						wm_flag: formik.values.h_washing_machine,
+						political_flag: formik.values.h_politically_active,
+						parental_addr: formik.values.h_parental_address,
+						parental_phone: formik.values.h_parental_phone,
+						modified_by: userDetails?.emp_id,
+						// remarks: remarks
+					}
+					axios
+					.post(`${url}/admin/edit_household_dtls_web`, creds)
+					.then((res) => {
+						// console.log("HOUSEE DDTTTTTTD", res?.data)
+						if(res?.data?.suc == 1){
+							forwardHoUser(
+								{
+									latitude: position.coords.latitude,
+									longitude: position.coords.longitude
+								}
+							);
+						}
+						else{
+							Message("error",res?.data?.msg);
+						}
+					})
+					.catch((err) => {
+						setLoading(false)
+						// console.log("HOUSEEE ERRRR", err)
+						// setLoading(false);
+						Message("error", "We are unable to process your request right now!! Please try again later")
+					})
+				},
+				(err) => {
+					setLoading(false)
+					Message('error',err.message);
+				}
+			);
+			} else {
+				setLoading(false)
+				Message('error','Geolocation is not supported by this browser.');
+			}
+			
+			
+	}
+
+	const forwardHoUser = (location) =>{
+		 axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+		 .then(res => {
+            console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0]?.formatted_address)
+			const creds = {
+				modified_by: userDetails?.emp_id,
+				remarks:remarks,
+				form_no: params?.id,
+				member_id:memberDetails?.member_code,
+				bm_lat_val:location?.latitude,
+				bm_long_val:location?.longitude,
+				bm_gps_address:res?.data?.results[0]?.formatted_address
+			}
+			axios
+			.post(`${url}/admin/forward_ho_user`, creds)
+			.then((res) => {
+				setLoading(false)
+				// Message("success", "Updated successfully.")
+				if(res?.data?.suc == 1){
+					Message("success", "Application forwarded to HO User successfully.");
+					setVisible5(false);
+					navigate(-1);
+				}
+				else{
+					Message("error",res?.data?.msg);
+				}
+			})
+			.catch((err) => {
+				console.log("HOUSEEE ERRRR", err)
+				setLoading(false)
+				Message("error", "We are unable to process your request right now!! Please try again later")
+			})
+            // setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
+        }).catch(err =>{
+			setLoading(false)
+			Message("error", err.message)
+		})
+
+			
 	}
 
 	// important Reject Application
@@ -591,7 +693,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 							/>
 						</div>
 
-						{userDetails?.id == 10 && memberDetails?.approval_status === "S" && (   //previously 3
+						{(userDetails?.id == 10 && memberDetails?.approval_status === "S") && (   //previously 3
 							<div className="mt-10">
 								<BtnComp
 									mode="B"
@@ -605,6 +707,32 @@ function HouseholdDetailsForm({ memberDetails }) {
 								/>
 							</div>
 						)}
+
+						{
+							 (userDetails?.id == 13 && grp_code != 0 && memberDetails?.approval_status == 'U') && <div className="flex items-center justify-center">
+								<button
+									type="button"
+									className="inline-flex items-center px-5 py-2.5 mt-4 mr-2 sm:mt-6 text-sm font-medium text-center text-white border border-[#92140C] bg-[#92140C] transition ease-in-out hover:bg-[#a73b34] duration-300 rounded-full  dark:focus:ring-primary-900"
+									onClick={() =>{
+										setVisible2(true);
+									}}
+								>
+									<CloseOutlined className="mr-2" />
+									Reject Application
+								</button>
+								<button
+								type="button"
+								onClick={() =>{
+										// setVisible2(true);
+										console.log('asdsada')
+										setVisible5(true)
+								}}
+								className=" disabled:bg-gray-400 disabled:dark:bg-gray-400 inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-teal-500 transition ease-in-out hover:bg-teal-600 duration-300  rounded-full focus:ring-gray-600  dark:focus:ring-primary-900 dark:bg-[#92140C] dark:hover:bg-gray-600">
+								<SaveOutlined className="mr-2" />
+								Submit
+							</button>
+							</div>
+						}
 						{/* {userDetails?.id == 2 && memberDetails?.approval_status === "R" && (
 							<div className="mt-10">
 								<BtnComp
@@ -696,6 +824,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 				onPress={() => setVisible3(!visible3)}
 				visible={visible3}
 				onPressYes={() => {
+					console.log('Approve Popup');
 					if (!remarks) {
 						Message("error", "Please write remarks!")
 						setVisible3(!visible3)
@@ -718,6 +847,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 				onPress={() => setVisible2(!visible2)}
 				visible={visible2}
 				onPressYes={() => {
+					console.log('Reject Popup');
 					if (!remarks) {
 						Message("error", "Please write remarks!")
 						setVisible2(!visible2)
@@ -734,6 +864,7 @@ function HouseholdDetailsForm({ memberDetails }) {
 				onPress={() => setVisible(!visible)}
 				visible={visible}
 				onPressYes={() => {
+					// console.log('Reject Popup');
 					editHouseholdDetails()
 					setVisible(!visible)
 				}}
@@ -745,11 +876,27 @@ function HouseholdDetailsForm({ memberDetails }) {
 				flag={4}
 				onPress={() => setVisible4(!visible4)}
 				visible={visible4}
+				
 				onPressYes={() => {
 					sendingBackToBM()
 					setVisible4(!visible4)
 				}}
 				onPressNo={() => setVisible4(!visible4)}
+			/>
+			{/* Applicatiion Forward to HO User */}
+			<DialogBox
+				flag={4}
+				loading={loading}
+				onPress={() => setVisible5(!visible5)}
+				visible={visible5}
+				onPressYes={() => {
+					if (!remarks) {
+						Message("error", "Please write remarks!")
+						return;
+					}
+					editHouseHoldDtlsByBM()
+				}}
+				onPressNo={() => setVisible5(!visible5)}
 			/>
 			
 		</>

@@ -19,6 +19,7 @@ import { disableCondition } from "./disableCondition"
 
 function OccupationDetailsForm({ memberDetails }) {
 	const params = useParams()
+	const [grp_code,setGroupCode] = useState(0);
 	const [loading, setLoading] = useState(false)
 	const location = useLocation()
 	const { loanAppData } = location.state || {}
@@ -96,8 +97,25 @@ function OccupationDetailsForm({ memberDetails }) {
 			})
 	}
 
+	const handleFetchBasicDetails = async () => {
+		const creds = {
+			branch_code: userDetails?.brn_code,
+			form_no: params?.id,
+			approval_status: memberDetails?.approval_status,
+		}
+		await axios
+			.post(`${url}/admin/fetch_basic_dtls_web`, creds)
+			.then((res) => {
+				setGroupCode(res?.data?.msg[0]?.prov_grp_code)
+			})
+			.catch((err) => {
+				console.log("--------------", err)
+			})
+	}
+
 	useEffect(() => {
 		fetchOccupDetails()
+		handleFetchBasicDetails();
 	}, [])
 
 	const onSubmit = async (values) => {
@@ -149,6 +167,8 @@ function OccupationDetailsForm({ memberDetails }) {
 			})
 		setLoading(false)
 	}
+
+	
 
 	const getPurposeOfLoan = async () => {
 		await axios
@@ -439,7 +459,7 @@ function OccupationDetailsForm({ memberDetails }) {
 						) && (
 							<div className="mt-10">
 								{/* <BtnComp mode="A" onReset={formik.resetForm} /> */}
-								{userDetails.id == 10 ? (
+								{(userDetails.id == 10  || (userDetails.id == 13 && grp_code != 0 && memberDetails?.approval_status == 'U')) ? (
 									<BtnComp mode="A" onReset={formik.resetForm} />
 								) : null}
 							</div>

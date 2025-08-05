@@ -751,78 +751,96 @@ function DisbursmentForm() {
 	}, [disbursementDetailsData.b_mode])
 
 	const handleSubmitDisbursementForm = async () => {
-		// setLoading(true)
-		console.log(personalDetails)
-		// debugger
-		const creds = {
-			group_code: personalDetails?.group_code,
-			branch_code: personalDetails?.branch_code || "",
-			purpose: personalDetailsData?.b_purposeId || "",
-			sub_purpose: personalDetailsData?.b_subPurposeId || "",
-			scheme_id: disbursementDetailsData?.b_scheme || "",
-			fund_id: disbursementDetailsData?.b_fund || "",
-			period: disbursementDetailsData?.b_period || "",
-			curr_roi: disbursementDetailsData?.b_roi || "",
-			od_roi: "0",
-			old_prn_amt: "0",
-			od_intt_amt: "0",
-			recovery_date: disbursementDetailsData?.b_dayOfRecovery || "",
-			period_mode: disbursementDetailsData?.b_mode || "",
-			created_by: userDetails?.emp_id || "",
-			loan_code: params?.id || "",
-			bank_charge: disbursementDetailsData?.b_bankCharges || "",
-			proc_charge: disbursementDetailsData?.b_processingCharges || "",
-			bank_name: transactionDetailsData?.b_bankName || "",
-			cheque_id: transactionDetailsData?.b_chequeOrRefNo || "",
-			particulars: transactionDetailsData?.b_remarks || "",
-			trans_date: transactionDetailsData?.b_tnxDate || "",
-
-			disbdtls: membersForDisb,
-
-			//   group_code: personalDetails?.prov_grp_code || "",
-			//   member_code: personalDetails?.member_code || "",
-			//   grt_form_no: personalDetails?.form_no || "",
-
-			//   applied_amt: personalDetails?.applied_amt || "",
-
-			// deposit_by: "",
-			// bill_no: "",
-			// trn_lat: "",
-			// trn_long: "",
-
-			///////////////////////////////////////////////////////
+		setLoading(true)
+		const payLoad = {
+			"mode" : disbursementDetailsData?.b_mode,
+			"period" :  disbursementDetailsData?.b_period
 		}
-		// console.log(creds, "creds")
-		// period_mode_cus = creds.period_mode;
-		// setPeriod_mode_valid(creds.period_mode)
+		axios.post(`${url}/admin/checking_factor`,payLoad).then(async (res) =>{
+				if(res?.data?.suc == 1){
+					if(res?.data?.status){
+						const creds = {
+							group_code: personalDetails?.group_code,
+							branch_code: personalDetails?.branch_code || "",
+							purpose: personalDetailsData?.b_purposeId || "",
+							sub_purpose: personalDetailsData?.b_subPurposeId || "",
+							scheme_id: disbursementDetailsData?.b_scheme || "",
+							fund_id: disbursementDetailsData?.b_fund || "",
+							period: disbursementDetailsData?.b_period || "",
+							curr_roi: disbursementDetailsData?.b_roi || "",
+							od_roi: "0",
+							old_prn_amt: "0",
+							od_intt_amt: "0",
+							recovery_date: disbursementDetailsData?.b_dayOfRecovery || "",
+							period_mode: disbursementDetailsData?.b_mode || "",
+							created_by: userDetails?.emp_id || "",
+							loan_code: params?.id || "",
+							bank_charge: disbursementDetailsData?.b_bankCharges || "",
+							proc_charge: disbursementDetailsData?.b_processingCharges || "",
+							bank_name: transactionDetailsData?.b_bankName || "",
+							cheque_id: transactionDetailsData?.b_chequeOrRefNo || "",
+							particulars: transactionDetailsData?.b_remarks || "",
+							trans_date: transactionDetailsData?.b_tnxDate || "",
 
-		console.log(creds, "KKKKKKKKkkkkkKKKKKkkkkKKKK")
+							disbdtls: membersForDisb,
 
-		if (disbursementDetailsData.b_mode.length > 0) {
-			await axios
-				.post(`${url}/admin/save_loan_transaction`, creds)
-				.then((res) => {
-					if (res?.data?.suc === 1) {
-						console.log("Disbursement initiated successfully", res?.data)
-						Message("success", "Submitted successfully.")
-						navigate(-1)
-					} else {
-						console.log("Disbursement disrupted!", res?.data)
-						Message("warning", "Change txn date.")
-						// navigate(-1)
+							//   group_code: personalDetails?.prov_grp_code || "",
+							//   member_code: personalDetails?.member_code || "",
+							//   grt_form_no: personalDetails?.form_no || "",
+
+							//   applied_amt: personalDetails?.applied_amt || "",
+
+							// deposit_by: "",
+							// bill_no: "",
+							// trn_lat: "",
+							// trn_long: "",
+
+							///////////////////////////////////////////////////////
+						}
+						if (disbursementDetailsData.b_mode.length > 0) {
+							await axios
+								.post(`${url}/admin/save_loan_transaction`, creds)
+								.then((res) => {
+									if (res?.data?.suc === 1) {
+										console.log("Disbursement initiated successfully", res?.data)
+										Message("success", "Submitted successfully.")
+										navigate(-1)
+									} else {
+										console.log("Disbursement disrupted!", res?.data)
+										Message("warning", "Change txn date.")
+										// navigate(-1)
+									}
+								})
+								.catch((err) => {
+									Message(
+										"error",
+										"Some error occurred while submitting disbursement form!"
+									)
+									console.log("DDEEERRR", err)
+								})
+							setLoading(false)
+						} else {
+							setLoading(false);
+							Message('error','We are unable to process your request right now!! Please try again later');
+						}
 					}
-				})
-				.catch((err) => {
-					Message(
-						"error",
-						"Some error occurred while submitting disbursement form!"
-					)
-					console.log("DDEEERRR", err)
-				})
-			setLoading(false)
-		} else {
-			setLoading(false)
-		}
+					else{
+						setLoading(false);
+						Message('error',res?.data?.msg);
+					}
+				}
+				else{
+					setLoading(false);
+					Message('error',res?.data?.msg);
+				}
+		}).catch(err=> {
+			console.log(err);
+			setLoading(false);
+			Message('error','We are unable to process your request right now!! Please try again later');
+		})
+		// console.log(personalDetails)
+		// // debugger
+		
 	}
 
 	const handleApproveLoanDisbursement = async () => {

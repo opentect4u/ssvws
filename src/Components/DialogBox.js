@@ -1,12 +1,13 @@
 import { useContext, useEffect, useState } from "react"
 import { Dialog } from "primereact/dialog"
 import { useNavigate } from "react-router-dom"
-import { Tabs } from "antd"
+import { Spin, Tabs } from "antd"
 import PasswordComp from "./PasswordComp"
 import "../Styles/styles.css"
 import UserProfileUpdateForm from "../Screens/Forms/UserProfileUpdateForm"
 import {  loadingContext } from "../Context/Democontext"
 import { routePaths } from "../Assets/Data/Routes"
+import { LoadingOutlined } from "@ant-design/icons"
 
 const DialogBox = ({
 	visible,
@@ -16,6 +17,7 @@ const DialogBox = ({
 	onPressNo,
 	onPressYes,
 	onEditPress,
+	loading=false
 }) => {
 	const { handleLogOut } = useContext(loadingContext)
 	const navigate = useNavigate()
@@ -124,6 +126,12 @@ const DialogBox = ({
 			)}
 			{flag == 3 && <PasswordComp mode={3} onPress={onPress} />}
 			{flag == 4 && (
+				<Spin
+					indicator={<LoadingOutlined spin={true} />}
+					size="large"
+					className="text-blue-800 dark:text-gray-400"
+					spinning={loading}
+				>
 				<p className="m-0">
 					Are you sure? This action cannot be undone.
 					<div className="flex justify-center">
@@ -143,6 +151,7 @@ const DialogBox = ({
 						</button>
 					</div>
 				</p>
+				</Spin>
 			)}
 			{flag == 5 && (
 				<p className="m-0">

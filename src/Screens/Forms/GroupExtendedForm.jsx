@@ -5,7 +5,7 @@ import BtnComp from "../../Components/BtnComp"
 import VError from "../../Components/VError"
 import TDInputTemplate from "../../Components/TDInputTemplate"
 import { useNavigate } from "react-router-dom"
-import { FieldArray, Formik, useFormik } from "formik"
+import { ErrorMessage, Field, FieldArray, Form, Formik, useFormik } from "formik"
 import * as Yup from "yup"
 import axios from "axios"
 import { Message } from "../../Components/Message"
@@ -20,6 +20,7 @@ import {
 	Typography,
 	List,
 	Select,
+	Modal,
 } from "antd"
 import {
 	LoadingOutlined,
@@ -43,6 +44,8 @@ import { DataTable } from "primereact/datatable"
 import Column from "antd/es/table/Column"
 import { Toast } from "primereact/toast"
 import AlertComp from "../../Components/AlertComp"
+import { Map } from "lucide-react"
+import { GoogleMap, LoadScript, Marker } from "@react-google-maps/api"
 // import { format } from "date-fns"
 
 // const members = [
@@ -60,13 +63,47 @@ import AlertComp from "../../Components/AlertComp"
 // 	// { form_no: 202500023, member_code: 120280333, client_name: "Lokesh" },
 // 	// { form_no: 202500024, member_code: 120280334, client_name: "Sayantika" },
 //   ];
+
+const mapOptions = {
+  disableDefaultUI: true,
+  gestureHandling: 'none',
+  zoomControl: false,
+  draggable: false,
+  scrollwheel: false,
+  disableDoubleClickZoom: true,
+};
 const formatINR = (num) =>
 	new Intl.NumberFormat("en-IN", {
 		style: "currency",
 		currency: "INR",
 		minimumFractionDigits: 2,
 	}).format(num || 0)
+
+	const form_validationSchema = Yup.object({
+		member_from: Yup.string().required("** This field is mandatory"),
+		member_to: Yup.string().required("** This field is mandatory").test('not-same', 'From and To cannot be the same', function (value) {
+      		return value !== this.parent.member_from;
+    	}),
+	})
 function GroupExtendedForm({ groupDataArr }) {
+// 	const markers = [
+//   { id: 1, position: { lat: 40.748817, lng: -73.985428 }, title: 'Empire State Building' },
+//   { id: 2, position: { lat: 40.689247, lng: -74.044502 }, title: 'Statue of Liberty' },
+//   { id: 3, position: { lat: 40.706192, lng: -74.009160 }, title: 'Wall Street' },
+// ];
+// const center = {
+//   lat: 40.748817,
+//   lng: -73.985428,
+// };
+const containerStyle = {
+  width: '100%',
+  height: '400px',
+};
+	const [distance, setDistance] = useState('');
+	const [duration, setDuration] = useState('');
+	const [origin,setOrigin] = useState({})
+	const [destination,setDestination] = useState({});
+	 const [isModalOpen, setIsModalOpen] = useState(false);
 	const [isOverdue, setIsOverdue] = useState('N');
 	const [overDueAmt, setOverDueAmt] = useState(0);
 	const params = useParams()
@@ -93,6 +130,7 @@ function GroupExtendedForm({ groupDataArr }) {
 	// const [getloanAppData, setLoanAppData] = useState([])
 	// const [expandedRows, setExpandedRows] = useState(null)
 	const [COMemList_s, setCOMemList_s] = useState(() => [])
+	const [COMemLists_forModal, setCOMemLists_forModal] = useState(() => [])
 	const [COMemList_select, setCOMemList_select] = useState(null)
 	const [COMemList_Store, setCOMemList_Store] = useState([])
 	const toast = useRef(null)
@@ -169,6 +207,18 @@ function GroupExtendedForm({ groupDataArr }) {
 		// g_acc2: Yup.string().optional(),
 	})
 
+	const showModal = () => {
+		setOrigin({});
+		setDestination({});
+		setDuration('')
+		setDistance('')
+		setIsModalOpen(true);
+	};
+
+	const handleCancel = () => {
+		setIsModalOpen(false);
+	};
+
 	const fetchGroupDetails = async () => {
 		const creds = {
 			group_code: params?.id,
@@ -195,7 +245,8 @@ function GroupExtendedForm({ groupDataArr }) {
 					g_acc2: res?.data?.msg[0]?.acc_no2?.toString(),
 					brn_name: res?.data?.msg[0]?.brn_name,
 				})
-				setGroupData(res?.data?.msg)
+				setGroupData(res?.data?.msg);
+				setCOMemLists_forModal(res?.data?.msg.length > 0 ? res?.data?.msg[0]?.memb_dt : [])
 				setBranch(
 					res?.data?.msg[0]?.disctrict + "," + res?.data?.msg[0]?.branch_code
 				)
@@ -261,7 +312,8 @@ function GroupExtendedForm({ groupDataArr }) {
 			.post(`${url}/fetch_member_dtls_cowise`, creds_MemberListCo)
 			.then((res) => {
 				console.log(creds_MemberListCo, "QQQQQrrrrQQQQQQQQQQQ", res?.data?.msg)
-				setCOMemList_s(res?.data?.msg)
+				setCOMemList_s(res?.data?.msg);
+				// setCOMemLists_forModal(res?.data?.msg[0]?.memb_dt)
 			})
 			.catch((err) => {
 				console.log("?????????????????????", err)
@@ -440,6 +492,17 @@ function GroupExtendedForm({ groupDataArr }) {
 		}
 	}
 
+
+	 useEffect(()=>{
+			if(!isModalOpen){
+				setOrigin({});
+				setDestination({});
+				setDuration('')
+				setDistance('')
+			}
+	 },[isModalOpen])
+	
+
 	const formik = useFormik({
 		initialValues: +params.id > 0 ? formValues : initialValues,
 		onSubmit,
@@ -604,7 +667,8 @@ function GroupExtendedForm({ groupDataArr }) {
 				size="large"
 				className="text-blue-800 dark:text-gray-400"
 				spinning={loading}
-			>
+			>	
+				{(userDetails.id == 4 || userDetails.id == 3) && <Button htmlType="button" type="primary" icon={<Map />} onClick={() => showModal()} className="my-3">View Distance</Button>}
 				<form onSubmit={formik.handleSubmit} className={`${isOverdue == 'Y' ? 'mt-5' : ''}`}>
 					<div className="flex justify-start gap-5">
 						<div
@@ -1376,6 +1440,141 @@ function GroupExtendedForm({ groupDataArr }) {
 				}}
 				onPressNo={() => setVisible2(!visible2)}
 			/> */}
+
+			<Modal
+				open={isModalOpen}
+				onCancel={handleCancel}
+				footer={null}
+				width="100vw"
+				title="View Distance	"
+				style={{ top: 0, padding: 0 }}
+				bodyStyle={{ height: '100%', padding: 0 }}
+				closable={true}
+			>
+				<div style={{ height: '100vh', }}>
+
+									<Formik
+										initialValues={{ member_from: '', member_to: '' }}
+										// validate={validate}
+										validationSchema={form_validationSchema}
+										onSubmit={(values, { setSubmitting, resetForm }) => {
+											setOrigin({});
+											setDestination({});
+											setDuration('')
+											setDistance('')
+											const payLoad = {
+												group_code:params?.id,
+												branch_code:userDetails?.brn_code,
+												member_code:[values?.member_from,values?.member_to]
+											}
+											axios.post(`${url}/admin/fetch_member_latlong`,payLoad).then(res =>{
+													if(res?.data?.suc == 1){
+														if(res?.data?.msg.length > 0){
+															
+															setOrigin({ lat: Number(res?.data?.msg[0]?.co_lat_val), lng: Number(res?.data?.msg[0]?.co_long_val) });
+															setDestination({ lat: Number(res?.data?.msg[1]?.co_lat_val), lng: Number(res?.data?.msg[1]?.co_long_val) });
+															if (window.google && window.google.maps) {
+																	const service = new window.google.maps.DistanceMatrixService();
+																	service.getDistanceMatrix(
+																	{
+																		origins: [{ lat: Number(res?.data?.msg[0]?.co_lat_val), lng: Number(res?.data?.msg[0]?.co_long_val) }],
+																		destinations:  res?.data?.msg.length > 1 ? [{ lat: Number(res?.data?.msg[1]?.co_lat_val), lng: Number(res?.data?.msg[1]?.co_long_val) }] : [],
+																		travelMode: window.google.maps.TravelMode.DRIVING,
+																	},
+																	(response, status) => {
+																		if (status === 'OK') {
+																			const result = response.rows[0].elements[0];
+																			setDistance(result.distance.text);
+																			setDuration(result.duration.text);
+																		} else {
+																			console.error('DistanceMatrixService failed:', status);
+																		}
+																	}
+																	);
+															}
+														}
+														else{
+															Message('warning','No Data Available')
+														}
+														setSubmitting(false);
+													}
+													else{
+														setSubmitting(false);
+													}
+											}).catch(err =>{
+														setSubmitting(false);
+														Message('error','We are unable to process your request right now!!')
+											})
+													
+										}}
+									>
+										{({ isSubmitting }) => (
+											<Form id="map_form">
+												<div className="grid grid-cols-12 gap-3">
+													<div className="col-span-3">
+														<div className="grid grid-cols-12 gap-3">
+																<div className="col-span-12  space-y-2">
+																	<label>Member (From Location):</label>
+																	<Field as="select" name="member_from" className="w-full">
+																		<option value="">--Choose--</option>
+																		{
+																			COMemLists_forModal.map(el => {
+																			return <option value={el.member_code}>{el.client_name}</option>
+																		})
+																		}
+																	</Field>
+																	<ErrorMessage name="member_from" component="div" style={{ color: 'red' }} />
+																</div>
+																<div className="col-span-12 space-y-2">
+																	<label>Member (To Location):</label>
+																	<Field as="select" name="member_to" className="w-full">
+																		<option value="">--Choose--</option>
+																		{
+																			COMemLists_forModal.map(el => <option value={el.member_code}>{el.client_name}</option>)
+																		}
+																	</Field>
+																	<ErrorMessage name="member_to" component="div" style={{ color: 'red' }} />
+																</div>
+																<div className="col-span-12">
+																	<Button disabled={isSubmitting} className="w-full" htmlType="submit" form="map_form">View Distance</Button>
+																</div>
+														</div>
+														   
+
+													</div>
+													<div className="col-span-9">
+														<div className="min-w-screen min-h-screen">
+																	{/* <LoadScript googleMapsApiKey="AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg" libraries={['places']}>
+																	<div>
+																		<h3>Distance Matrix Example</h3>
+																		<p>
+																		<strong>Distance:</strong> {distance || 'Loading...'}
+																		</p>
+																		<p>
+																		<strong>Duration:</strong> {duration || 'Loading...'}
+																		</p>
+																	</div>
+																	</LoadScript>		 */}
+
+																	{(origin && destination) && <LoadScript googleMapsApiKey="AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg">
+																		<GoogleMap mapContainerStyle={containerStyle} zoom={12} center={origin} options={mapOptions} >
+																			   <Marker position={origin} label="A" />
+        																		<Marker position={destination} label="B" />
+																		</GoogleMap>
+																		 {(distance && duration) && <div style={{ marginTop: '10px', fontSize: '18px' }}>
+																			<strong>Distance:</strong> {distance || 'Calculating...'}  
+																			<br />
+																			<strong>Duration:</strong> {duration || 'Calculating...'}
+																		</div>}
+																	</LoadScript>}
+														</div>
+													</div>
+												</div>
+											</Form>
+										)}
+									</Formik>
+				</div>
+			</Modal>
 		</>
 	)
 }

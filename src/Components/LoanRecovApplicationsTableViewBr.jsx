@@ -34,7 +34,7 @@ function LoanRecovApplicationsTableViewBr({
 	const navigate = useNavigate()
 
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
-
+ 	const [globalFilter, setGlobalFilter] = useState('');
 	const [first, setFirst] = useState(0)
 	const [rows, setRows] = useState(10)
 	const [expandedRows, setExpandedRows] = useState(({}))
@@ -323,7 +323,7 @@ function LoanRecovApplicationsTableViewBr({
 											/>
 										</svg>
 									</div>
-									<motion.input
+									{/* <motion.input
 										type="text"
 										id="simple-search"
 										initial={{ opacity: 0, width: 0 }}
@@ -334,6 +334,19 @@ function LoanRecovApplicationsTableViewBr({
 										placeholder="Search"
 										required=""
 										onChange={(text) => setSearch(text.target.value)}
+									/> */}
+
+									<motion.input
+										type="text"
+										id="simple-search"
+										initial={{ opacity: 0, width: 0 }}
+										animate={{ opacity: 1, width: "92%" }}
+										transition={{ delay: 1.1, type: "just" }}
+										className={`bg-white border rounded-lg border-slate-700
+										 text-gray-800 block w-full h-12 pl-10 dark:bg-gray-800 md:ml-4 duration-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white text-lg `}
+										placeholder="Search"
+										required=""
+										onChange={(text) => setGlobalFilter(text.target.value)}
 									/>
 								</div>
 							)}
@@ -379,9 +392,11 @@ function LoanRecovApplicationsTableViewBr({
 				)} */}
 
 				{/* <>{JSON.stringify(getloanAppData, null, 2)}</> */}
-				{loanAppData && <DataTable
+				{/* {loanAppData &&  */}
+				<DataTable
 					value={getloanAppData?.map((item, i) => [{ ...item, id: i }]).flat()}
 					expandedRows={expandedRows}
+					globalFilter={globalFilter}
 					onRowToggle={(e) => {
 						// setExpandedRows(e.data)
 						const newExpanded = e.data;
@@ -407,6 +422,7 @@ function LoanRecovApplicationsTableViewBr({
 							}
 						}
 					}}
+					emptyMessage={'NO Data Available'}
 					onRowExpand={onRowExpand}
 					onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
@@ -453,11 +469,8 @@ function LoanRecovApplicationsTableViewBr({
 						field="created_by"
 						header="Created By"
 					></Column>
-
-
-
 				</DataTable>
-}
+{/* } */}
 
 			</motion.section>
 

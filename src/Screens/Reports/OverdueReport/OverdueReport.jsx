@@ -30,6 +30,7 @@ import {
 import Select from "react-select"
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
+import { MultiSelect } from "primereact/multiselect"
 
 const options = [
 	{
@@ -77,6 +78,8 @@ const options3 = [
 ]
 
 function OverdueReport() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -166,7 +169,9 @@ function OverdueReport() {
 			.post(`${url}/loan_overdue_report_groupwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.msg)
+				setReportData(res?.data?.msg);
+				populateColumns(res?.data?.msg,overdueGroupReportHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -219,6 +224,8 @@ function OverdueReport() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
+				populateColumns(res?.data?.msg,overdueFundReportHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -283,7 +290,9 @@ function OverdueReport() {
 			.post(`${url}/loan_overdue_report_cowise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.msg)
+				setReportData(res?.data?.msg);
+				populateColumns(res?.data?.msg,overdueCOReportHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -313,7 +322,10 @@ function OverdueReport() {
 			.post(`${url}/loan_overdue_report_branchwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.msg)
+				setReportData(res?.data?.msg);
+				populateColumns(res?.data?.msg,overdueBranchReportHeader);	
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -348,6 +360,8 @@ function OverdueReport() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.msg)
+				populateColumns(res?.data?.msg,overdueMemberReportHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -631,6 +645,12 @@ function OverdueReport() {
 		} else {
 			setSelectedCOs(selected)
 		}
+	}
+
+	const populateColumns = (main_dt,headerExport) =>{
+			const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+			setColumns(columnToBeShown);
+			setSelectedColumns(columnToBeShown.map(el => el.index));
 	}
 
 	return (
@@ -958,6 +978,15 @@ function OverdueReport() {
 						</div>
 					)}
 
+
+					{/* {
+						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							onChange={(e) => {
+								console.log(e.value)
+								setSelectedColumns(e.value)
+							}} options={md_columns} optionValue="index" optionLabel="header" 
+							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+					} */}
 					{searchType2 === "M" && reportData?.length > 0 && (
 						<>
 							<DynamicTailwindTable
@@ -966,7 +995,13 @@ function OverdueReport() {
 								columnTotal={[23, 24, 25, 26]}
 								dateTimeExceptionCols={[0, 1, 20, 22, 27]}
 								headersMap={overdueMemberReportHeader}
-								colRemove={[16]}
+								// colRemove={[16]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -979,7 +1014,13 @@ function OverdueReport() {
 								columnTotal={[16, 17, 18, 19]}
 								dateTimeExceptionCols={[0, 1, 15]}
 								headersMap={overdueGroupReportHeader}
-								colRemove={[12]}
+								// colRemove={[12]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -992,7 +1033,13 @@ function OverdueReport() {
 								columnTotal={[15, 16, 17, 18]}
 								dateTimeExceptionCols={[0, 1, 14]}
 								headersMap={overdueFundReportHeader}
-								colRemove={[6]}
+								// colRemove={[6]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 
 								// headersMap={fundwiseOutstandingHeader}
 							/>
@@ -1007,7 +1054,13 @@ function OverdueReport() {
 								columnTotal={[13, 14, 15, 16]}
 								dateTimeExceptionCols={[0, 1, 12]}
 								headersMap={overdueCOReportHeader}
-								colRemove={[6]}
+								// colRemove={[6]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1022,6 +1075,12 @@ function OverdueReport() {
 								// dateTimeExceptionCols={[0,1,9,11]}
 								headersMap={overdueBranchReportHeader}
 								// colRemove={[6]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1032,13 +1091,25 @@ function OverdueReport() {
 						<div className="flex gap-4">
 							<Tooltip title="Export to Excel">
 								<button
-									onClick={() =>
+									onClick={() =>{
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										exportToExcel(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName,
 											[0, 1, 9, 11, 14, 15, 20, 22, 27]
 										)
+									}
+										
 									}
 									className="mt-5 justify-center items-center rounded-full text-green-900"
 								>
@@ -1051,7 +1122,7 @@ function OverdueReport() {
 							</Tooltip>
 							<Tooltip title="Print">
 								<button
-									onClick={() =>
+									onClick={() =>{
 										// printTableLoanTransactions(
 										// 	reportData,
 										// 	"Loan Transaction",
@@ -1061,13 +1132,23 @@ function OverdueReport() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										printTableReport(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName?.split(",")[0],
 											[0, 1, 9, 11, 14, 15, 20, 22, 27]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-pink-600"
 								>
 									<PrinterOutlined

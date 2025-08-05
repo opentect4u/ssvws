@@ -67,15 +67,68 @@ function EditGRTFormMis() {
 		fetchMetaData()
 	}, [])
 
+	useEffect(()=>{
+		console.log(memberDetailsData, ' : memberDetailsData');
+		console.log(userDetails, ' : userDetails');
+	},[memberDetailsData])
+
 	return (
 		<>
 			<Sidebar mode={1} />
 			<section className=" dark:bg-[#001529] flex justify-center align-middle p-5">
 				<div className=" p-5 w-4/5 min-h-screen rounded-3xl">
+
+						{(userDetails?.id === 2 ||
+						userDetails?.id === 4 ||
+						userDetails?.id === 10 ||
+						userDetails?.id === 11 ||
+						userDetails?.id === 13 
+					) &&
+						memberDetailsData?.approval_status === "U" && (
+							<div className="flex justify-between">
+								{metadataArray?.map((item, i) => (
+									<div
+										key={i}
+										className="ml-14 mt-5 flex flex-col justify-start align-middle items-start gap-2"
+									>
+										<div className="text-sm text-wrap w-96 italic text-blue-800">
+											CO: {item?.created_by || "Nil"}, AT:{" "}
+											{item?.created_at
+												? new Date(item?.created_at).toLocaleString("en-GB")
+												: "Nil"}
+										</div>
+										<div className="text-sm text-wrap w-96 italic text-blue-800">
+											CO Location: {item?.co_gps_address || "Nil"}
+										</div>
+										{/* <div className="text-sm text-wrap w-96 italic text-blue-800">
+											BM: {item?.modified_by || "Nil"}, AT:{" "}
+											{item?.modified_at
+												? new Date(item?.modified_at).toLocaleString("en-GB")
+												: "Nil"}
+										</div>
+										<div className="text-sm text-wrap w-96 italic text-blue-800">
+											BM Location: {item?.bm_gps_address || "Nil"}
+										</div> */}
+									</div>
+								))}
+
+								<div className="mr-14 mt-5">
+									<div className="text-sm text-wrap w-96 text-right text-green-600 p-2 flex flex-col justify-center items-end align-middle">
+										Approval Status: Unapproved
+										<div className="text-sm text-wrap w-96 italic text-right text-green-600">
+											Forwarded from CO to BM
+										</div>
+									</div>
+								</div>
+							</div>
+						)}
+
 					{(userDetails?.id === 2 ||
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
-						userDetails?.id === 11) &&
+						userDetails?.id === 11 ||
+						userDetails?.id === 13 
+					) &&
 						memberDetailsData?.approval_status === "S" && (
 							<div className="flex justify-between">
 								{metadataArray?.map((item, i) => (
@@ -118,7 +171,9 @@ function EditGRTFormMis() {
 					{(userDetails?.id === 2 ||
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
-						userDetails?.id === 11) &&
+						userDetails?.id === 11 || 
+						userDetails?.id === 13 
+					) &&
 						memberDetailsData?.approval_status === "A" && (
 							<div className="flex justify-between">
 								{metadataArray?.map((item, i) => (
@@ -167,7 +222,9 @@ function EditGRTFormMis() {
 					{(userDetails?.id === 2 ||
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
-						userDetails?.id === 11) &&
+						userDetails?.id === 11 || 
+						userDetails?.id === 13 
+					) &&
 						memberDetailsData?.approval_status === "R" && (
 							<div className="flex justify-between">
 								{metadataArray?.map((item, i) => (

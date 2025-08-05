@@ -155,7 +155,7 @@ function GroupsTableViewBr({
 						</tr>
 					</thead>
 					<tbody>
-						{loanAppData &&
+						{(loanAppData && loanAppData.length > 0 ) ? 
 							loanAppData?.slice(first, rows + first).map((item, i) => (
 								<tr
 									className={
@@ -223,7 +223,14 @@ function GroupsTableViewBr({
 										)}
 									</td>
 								</tr>
-							))}
+							)) : <tr className={
+										"bg-white border-2 border-b-pink-200 dark:bg-gray-800 dark:border-gray-700"
+									}>
+										<td colSpan={4} className="p-5 text-center">
+												<span className="text-lg">No Data Available</span>
+										</td>
+								</tr>
+						}
 					</tbody>
 				</table>
 				<Paginator

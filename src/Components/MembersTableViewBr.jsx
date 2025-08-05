@@ -148,7 +148,7 @@ function MembersTableViewBr({
 						</tr>
 					</thead>
 					<tbody>
-						{loanAppData &&
+						{(loanAppData && loanAppData.length > 0) ?
 							loanAppData?.slice(first, rows + first).map((item, i) => (
 								<tr
 									className={
@@ -214,7 +214,17 @@ function MembersTableViewBr({
 										)}
 									</td>
 								</tr>
-							))}
+							)) : <tr className={
+										"bg-white border-b-pink-200 border-2 dark:bg-gray-800 dark:border-gray-700"
+									}>
+									<td colSpan={3} className="text-center p-5">
+										<p className="text-center text-lg">
+											No Data Found
+										</p>
+									</td>		
+							</tr>
+						
+						}
 					</tbody>
 				</table>
 				<Paginator

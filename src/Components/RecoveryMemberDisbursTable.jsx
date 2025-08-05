@@ -90,8 +90,8 @@ function RecoveryMemberDisbursTable({
 		console.log(e.value, "e.value")
 		// Perform any additional logic here, such as enabling a button or triggering another action
 		setSelectedProducts(e.value)
-		if (e.value.length > 0) {
-			const selectedRows = e.value
+		if (e.value) {
+			const selectedRows = [e.value]
 
 			setDebitAmount(
 				selectedRows
@@ -363,6 +363,7 @@ function RecoveryMemberDisbursTable({
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}
 					onSelectionChange={(e) => handleSelectionChange(e)}
 					tableStyle={{ minWidth: "50rem" }}
+					scrollable scrollHeight="400px"
 					// rowExpansionTemplate={rowExpansionTemplate}
 					dataKey="id"
 					// paginator
@@ -379,7 +380,7 @@ function RecoveryMemberDisbursTable({
 						)}
 					></Column>
 					<Column
-						selectionMode="multiple"
+						selectionMode="single"
 						headerStyle={{ width: "3rem" }}
 					></Column>
 					<Column

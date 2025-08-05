@@ -27,6 +27,7 @@ import { Toast } from "primereact/toast"
 import { Message } from "./Message"
 import TDInputTemplateBr from "./TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../Utils/formateDate"
+import moment from "moment"
 
 const { Panel } = Collapse
 
@@ -41,6 +42,7 @@ function RecoveryCoApproveTable({
 	loanType = "C",
 	fetchLoanApplications,
 	fetchLoanApplicationsDate,
+	onRefresh
 }) {
 	const navigate = useNavigate()
 
@@ -86,7 +88,7 @@ function RecoveryCoApproveTable({
 		// 	// setLoanAppData([]);
 		// }
 		setCachedPaymentId([])
-		setSelectedProducts([])
+		setSelectedProducts(null)
 		// setLoanAppData([])
 		console.log(
 			loanAppData.length > 0,
@@ -118,7 +120,7 @@ function RecoveryCoApproveTable({
 	const onRowExpand = (event) => {
 		setExpandedRows(null)
 		console.log(event.data.transaction_date, "event.data=============")
-		fetchLoanGroupMember(event.data.transaction_date)
+		fetchLoanGroupMember(event?.data)
 
 		// toast.current.show({severity: 'info', summary: 'Product Expanded', detail: event.data.name, life: 3000});
 	}
@@ -146,8 +148,8 @@ function RecoveryCoApproveTable({
 
 		setSelectedProducts(e.value)
 		// Perform any additional logic here, such as enabling a button or triggering another action
-		if (e.value.length > 0) {
-			const selectedRows = e.value
+		if (e.value) {
+			const selectedRows = [e.value]
 			// const totalEmi = selectedRows.reduce((sum, item) => sum + parseFloat(item.tot_emi || 0), 0);
 			// setTotalEMI(selectedRows.reduce((sum, item) => sum + parseFloat(item.tot_emi || 0), 0).toFixed(2))
 			setCreditAmount(
@@ -166,6 +168,7 @@ function RecoveryCoApproveTable({
 					payment_date: item?.transaction_date,
 					branch_code: item?.branch_code,
 					group_code: item?.group_code,
+					outstanding: item?.outstanding
 				}
 			})
 
@@ -244,29 +247,66 @@ function RecoveryCoApproveTable({
 		setLoading(false)
 	}
 
-	const fetchLoanGroupMember = async (payment_date) => {
+	const fetchLoanGroupMember = async (rawData) => {
 		setLoading(true)
 		await axios
 			.post(`${url}/fetch_cowise_recov_member_dtls`, {
 				branch_code: userDetails?.brn_code,
 				// from_dt: fetchLoanApplicationsDate.fromDate,
-				payment_date: payment_date,
+				payment_date: rawData?.transaction_date,
 				co_id: fetchLoanApplicationsDate.selectedEmployeeId,
+				group_code:rawData?.group_code
 			})
 			.then((res) => {
 				if (res?.data?.suc === 1) {
-					setLoanCoMember(res?.data?.msg)
-					setLoading(false)
+					// setLoanCoMember(res?.data?.msg)
+					// setLoading(false)
+					const dt = res?.data?.msg;
+					fetch_od_amount(res?.data?.msg.map(el => el.loan_id),dt)
 				} else {
 					Message("error", "No incoming loan applications found.")
+					setLoading(false);
 				}
 			})
 			.catch((err) => {
 				Message("error", "Some error occurred while fetching loans!")
 				console.log("ERRR", err)
+				setLoading(false);
 			})
 	}
 	// acordian end
+
+	
+		const fetch_od_amount = async (loanIds,rawData) =>{
+		try{
+			const creds = {
+				loan_id:loanIds
+			};
+			axios.post(`${url}/fetch_od_amt`,creds).then(res =>{
+				setLoading(false);
+				if(res?.data?.suc == 1){
+					let data = rawData.map(el =>{
+							const row_dtls = res?.data?.msg.find(ele => ele.loan_id == el.loan_id);
+							el.od_dtls = row_dtls ? `${row_dtls?.od_amt} as on ${moment(row_dtls?.trf_date).format('DD/MM/YYYY')}` : '--';
+							return el;
+					})
+					setLoanCoMember(data)
+				}
+				else{
+					setLoanCoMember(rawData)
+				}
+			}).catch(err =>{
+				Message('error',err.message);
+				setLoading(false);
+				setLoanCoMember(rawData)
+			})
+		}
+		catch(err){
+			Message('error',err.message);
+			setLoading(false);
+			setLoanCoMember(rawData)
+		}
+	}
 
 	const fetchLoanApplicationsCo = async () => {
 		// console.log("setLoanApplicationsCo", userDetails?.brn_code, formatDateToYYYYMMDD(fromDate), formatDateToYYYYMMDD(toDate), selectedEmployeeId)
@@ -282,7 +322,7 @@ function RecoveryCoApproveTable({
 				if (res?.data?.suc === 1) {
 					console.log(res?.data?.msg, "xxxxxxxxxyyyyyyyyy")
 					setLoanAppData(res?.data?.msg)
-					setSelectedProducts([])
+					setSelectedProducts(null)
 					setCreditAmount(0)
 					setOutstanding(0)
 				} else {
@@ -298,25 +338,73 @@ function RecoveryCoApproveTable({
 
 	const approveRecoveryTransaction = async (cachedPaymentId) => {
 		setLoading(true)
-
-		const creds = {
-			approved_by: userDetails?.emp_id,
-			grpdt: cachedPaymentId,
+		const payLoad = {
+			checkoutstanding:cachedPaymentId
 		}
-		console.log(creds, "rejectRecoveryTransaction")
+		axios.post(`${url}/checking_outstanding_amt_bf_approve_grp`,payLoad)
+		.then(async (res) => {
+				if(res?.data){
+					if(res?.data?.approve_flag == 'S'){
+							const creds = {
+								approved_by: userDetails?.emp_id,
+								grpdt: cachedPaymentId,
+							}
+							console.log(creds, "rejectRecoveryTransaction")
+							await axios
+							.post(`${url}/approve_grpwise_recov`, creds)
+							.then((response) => {
+									setLoading(false);
 
-		await axios
-			.post(`${url}/approve_grpwise_recov`, creds)
-			.then((res) => {
-				fetchLoanApplicationsCo()
-				setCachedPaymentId(() => [])
-				setSelectedProducts(() => [])
-				console.log("RESSS approveRecoveryTransaction", res?.data)
-			})
-			.catch((err) => {
-				console.log("ERRR approveRecoveryTransaction", err)
-			})
-		setLoading(false)
+								if(response?.data?.suc == 1){
+									onRefresh();
+									setCachedPaymentId([])
+									setSelectedProducts(null)
+									setCreditAmount(0)
+									setOutstanding(0)
+									Message('success',"");
+								}
+								else{
+									Message('error',"Something went wrong in approving recovery");
+								}	
+							})
+							.catch((err) => {
+									setLoading(false);
+									Message('error',"Something went wrong in approving member recovery");
+							})
+					}
+					else{
+						setLoading(false);
+						Message('error',"Amount Miscalculation!!");
+					}
+				}
+				else{
+					setLoading(false);
+					Message('error',"We are unable to process your request right now!! Please try again later");
+				}
+		}).catch(err =>{
+			setLoading(false);
+			Message('error',err.message);
+		})
+		// setLoading(true)
+
+		// const creds = {
+		// 	approved_by: userDetails?.emp_id,
+		// 	grpdt: cachedPaymentId,
+		// }
+		// console.log(creds, "rejectRecoveryTransaction")
+
+		// await axios
+		// 	.post(`${url}/approve_grpwise_recov`, creds)
+		// 	.then((res) => {
+		// 		fetchLoanApplicationsCo()
+		// 		setCachedPaymentId(() => [])
+		// 		setSelectedProducts(() => [])
+		// 		console.log("RESSS approveRecoveryTransaction", res?.data)
+		// 	})
+		// 	.catch((err) => {
+		// 		console.log("ERRR approveRecoveryTransaction", err)
+		// 	})
+		// setLoading(false)
 	}
 
 	const rejectRecoveryTransaction = async (cachedPaymentId) => {
@@ -334,7 +422,7 @@ function RecoveryCoApproveTable({
 			.then((res) => {
 				fetchLoanApplicationsCo()
 				setCachedPaymentId(() => [])
-				setSelectedProducts(() => [])
+				setSelectedProducts(() => null)
 				console.log("RESSS approveRecoveryTransaction", res?.data)
 			})
 			.catch((err) => {
@@ -376,7 +464,7 @@ function RecoveryCoApproveTable({
 							new Date(rowData?.transaction_date).toLocaleDateString("en-GB")
 						}
 					></Column>
-					<Column field="payment_id" header="Payment ID"></Column>
+					{/* <Column field="payment_id" header="Payment ID"></Column> */}
 					<Column
 						header="Group - Loan ID (Member)"
 						body={(rowData) =>
@@ -389,6 +477,7 @@ function RecoveryCoApproveTable({
 						body={(rowData) => `${rowData.amt} - (${rowData.tr_mode})`}
 					></Column>
 					<Column field="outstanding" header="Outstanding"></Column>
+					<Column field="od_dtls" header="Of Which OD"></Column>
 					<Column field="created_by" header="Created By"></Column>
 					{/* <Column headerStyle={{ width: '4rem'}}></Column> */}
 				</DataTable>
@@ -486,6 +575,7 @@ function RecoveryCoApproveTable({
 					onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}
+					scrollable scrollHeight="400px"
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}
 					onSelectionChange={(e) => handleSelectionChange(e)}
 					tableStyle={{ minWidth: "50rem" }}
@@ -500,7 +590,7 @@ function RecoveryCoApproveTable({
 				>
 					<Column expander={allowExpansion} style={{ width: "3em" }} />
 					<Column
-						selectionMode="multiple"
+						selectionMode="single"
 						headerStyle={{ width: "3rem" }}
 					></Column>
 					<Column

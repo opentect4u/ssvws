@@ -24,6 +24,7 @@ import Select from "react-select"
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
+import { MultiSelect } from "primereact/multiselect"
 
 const options = [
 	{
@@ -64,6 +65,8 @@ const options2 = [
 ]
 
 function LoanTransactionsMain() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -118,6 +121,8 @@ function LoanTransactionsMain() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.transaction_group_data?.msg)
+				populateColumns(res?.data?.transaction_group_data?.msg,txnGrpHeader);	
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -166,6 +171,8 @@ function LoanTransactionsMain() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.transaction_fund_data?.msg)
+				populateColumns(res?.data?.transaction_fund_data?.msg,txnFundHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -229,6 +236,8 @@ function LoanTransactionsMain() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.transaction_co_data?.msg)
+				populateColumns(res?.data?.transaction_co_data?.msg,txnCoHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -255,6 +264,8 @@ function LoanTransactionsMain() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.transaction_branch_data?.msg)
+				populateColumns(res?.data?.transaction_branch_data?.msg,branchwiseTxnReportHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -281,6 +292,8 @@ function LoanTransactionsMain() {
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
 				setReportData(res?.data?.transaction_member_data?.msg)
+				populateColumns(res?.data?.transaction_member_data?.msg,txnMembHeader);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -457,7 +470,11 @@ function LoanTransactionsMain() {
 	}, [dataToExport, headersToExport, fileName, printTableReport])
 
 	useCtrlP(handlePrint)
-
+	const populateColumns = (main_dt,headerExport) =>{
+				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+				setColumns(columnToBeShown);
+				setSelectedColumns(columnToBeShown.map(el => el.index));
+	}
 	return (
 		<div>
 			<Sidebar mode={2} />
@@ -721,7 +738,14 @@ function LoanTransactionsMain() {
 							</button>
 						</div>
 					</div>
-
+					{/* {
+						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							onChange={(e) => {
+								console.log(e.value)
+								setSelectedColumns(e.value)
+							}} options={md_columns} optionValue="index" optionLabel="header" 
+							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+					}			 */}
 					{searchType2 === "M" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable
@@ -731,6 +755,12 @@ function LoanTransactionsMain() {
 								// colRemove={[13, 14]}
 								headersMap={txnMembHeader}
 								dateTimeExceptionCols={[0]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -744,6 +774,12 @@ function LoanTransactionsMain() {
 								columnTotal={[10, 11, 12]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnGrpHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -757,6 +793,12 @@ function LoanTransactionsMain() {
 								columnTotal={[12, 13, 14]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnFundHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -770,6 +812,12 @@ function LoanTransactionsMain() {
 								columnTotal={[9, 10, 11]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnCoHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -782,6 +830,12 @@ function LoanTransactionsMain() {
 								pageSize={50}
 								columnTotal={[2, 3, 4]}
 								headersMap={branchwiseTxnReportHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -795,10 +849,19 @@ function LoanTransactionsMain() {
 									onClick={() =>{
 										// console.log(dataToExport);
 										// console.log(headersToExport);
-										
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										exportToExcel(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName,
 											[0, 2]
 										)
@@ -814,7 +877,7 @@ function LoanTransactionsMain() {
 							</Tooltip>
 							<Tooltip title="Print">
 								<button
-									onClick={() =>
+									onClick={() =>{
 										// printTableLoanTransactions(
 										// 	reportData,
 										// 	"Loan Transaction",
@@ -824,13 +887,23 @@ function LoanTransactionsMain() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										printTableReport(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName?.split(",")[0],
 											[0, 2]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-pink-600"
 								>
 									<PrinterOutlined

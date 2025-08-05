@@ -55,7 +55,10 @@ function DisbursedLoanApproveBM() {
 	// const [value2, setValue2] = useState("S")
 
 	const fetchLoanApplicationsGroup = async () => {
+		console.log('fetchLoanApplicationsGroup')
 		setLoading(true)
+		setLoanApplicationsGroup([])
+		setCopyLoanApplicationsGroup([])
 		await axios
 			.post(`${url}/fetch_groupwise_recovery_admin`, {
 				branch_code: userDetails?.brn_code,
@@ -312,6 +315,7 @@ function DisbursedLoanApproveBM() {
 								loanType={loanType}
 								// fetchLoanApplications={fetchLoanApplications}
 								fetchLoanApplicationsDate={{ fromDate, toDate }}
+								onRefresh={fetchLoanApplicationsGroup}
 							/>
 						</>
 					) : loanType === "C" ? (
@@ -381,6 +385,7 @@ function DisbursedLoanApproveBM() {
 									toDate,
 									selectedEmployeeId,
 								}}
+								onRefresh={fetchLoanApplicationsCo}
 							/>
 						</>
 					) : loanType === "M" ? (
@@ -417,7 +422,7 @@ function DisbursedLoanApproveBM() {
 								title="Approve Transaction"
 								setSearch={(data) => setSearch(data)}
 								loanType={loanType}
-								// fetchLoanApplications={fetchLoanApplications}
+								onRefresh={fetchLoanApplicationsMember}
 							/>
 						</>
 					) : null}

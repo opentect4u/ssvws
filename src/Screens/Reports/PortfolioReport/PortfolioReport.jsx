@@ -24,6 +24,7 @@ import Select from "react-select"
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
+import { MultiSelect } from "primereact/multiselect"
 
 const options = [
 	{
@@ -49,6 +50,8 @@ const options = [
 ]
 
 function PortfolioReport() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 	const [searchType, setSearchType] = useState("G")
@@ -99,6 +102,8 @@ function PortfolioReport() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(data,portfolioReportHeaderMemberwise);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -131,6 +136,8 @@ function PortfolioReport() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(data,portfolioReportHeaderBranchwise);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -167,6 +174,8 @@ function PortfolioReport() {
 				// 	new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				// )
 				setReportData(data)
+				populateColumns(data,portfolioReportHeaderGroupwise);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -220,6 +229,8 @@ function PortfolioReport() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(data,portfolioReportHeaderFundwise);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -286,6 +297,8 @@ function PortfolioReport() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(data,portfolioReportHeaderCOwise);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -460,7 +473,11 @@ function PortfolioReport() {
 
 	console.log("selectedOptions", selectedOptions)
 	console.log("selectedCOs", selectedCOs)
-
+	const populateColumns = (main_dt,headerExport) =>{
+				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+				setColumns(columnToBeShown);
+				setSelectedColumns(columnToBeShown.map(el => el.index));
+	}
 	return (
 		<div>
 			<Sidebar mode={2} />
@@ -710,6 +727,14 @@ function PortfolioReport() {
 							</>
 						)}
 					</div>	
+					{/* {
+						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							onChange={(e) => {
+								console.log(e.value)
+								setSelectedColumns(e.value)
+							}} options={md_columns} optionValue="index" optionLabel="header" 
+							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+					} */}
 					{searchType === "M" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable
@@ -718,6 +743,12 @@ function PortfolioReport() {
 								columnTotal={[31, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45]}
 								dateTimeExceptionCols={[0, 1, 13, 24, 26, 46, 47, 48, 49]}
 								headersMap={portfolioReportHeaderMemberwise}
+									colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -732,6 +763,12 @@ function PortfolioReport() {
 								]}
 								dateTimeExceptionCols={[0, 1, 10, 12, 32, 33, 34, 35]}
 								headersMap={portfolioReportHeaderGroupwise}
+									colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -744,6 +781,12 @@ function PortfolioReport() {
 								columnTotal={[11, 15, 16, 17, 18, 19, 20, 21, 22]}
 								dateTimeExceptionCols={[0, 1, 6, 8, 23, 24, 25, 26]}
 								headersMap={portfolioReportHeaderFundwise}
+									colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -756,6 +799,12 @@ function PortfolioReport() {
 								columnTotal={[11, 14, 15, 16, 17, 18, 19, 20, 21]}
 								dateTimeExceptionCols={[0, 1, 6, 8, 22, 23, 24, 25]}
 								headersMap={portfolioReportHeaderCOwise}
+									colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -768,6 +817,12 @@ function PortfolioReport() {
 								pageSize={50}
 								dateTimeExceptionCols={[0, 1]}
 								headersMap={portfolioReportHeaderBranchwise}
+									colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -776,14 +831,24 @@ function PortfolioReport() {
 						<div className="flex gap-4">
 							<Tooltip title="Export to Excel">
 								<button
-									onClick={() =>
+									onClick={() =>{
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										exportToExcel(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName,
 											[29, 31]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-green-900 disabled:text-green-300"
 								>
 									<FileExcelOutlined style={{ fontSize: 30 }} />
@@ -791,7 +856,7 @@ function PortfolioReport() {
 							</Tooltip>
 							<Tooltip title="Print">
 								<button
-									onClick={() =>
+									onClick={() =>{
 										// printTableOutstandingReport(
 										// 	reportData,
 										// 	"Outstanding Report",
@@ -805,13 +870,23 @@ function PortfolioReport() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										printTableReport(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName?.split(",")[0],
 											[29, 31]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-pink-600 disabled:text-pink-300"
 								>
 									<PrinterOutlined style={{ fontSize: 30 }} />

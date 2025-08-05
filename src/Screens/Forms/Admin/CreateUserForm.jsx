@@ -26,6 +26,10 @@ function CreateUserForm() {
 
 	const [visible, setVisible] = useState(() => false)
 
+	useEffect(()=>{
+		console.log(userMasterDetails, ': DHURR')
+	},[userMasterDetails])
+
 	// const formattedDob = formatDateToYYYYMMDD(memberDetails?.dob)
 	const [selectedBranches, setSelectedBranches] = useState([])
 	const cities = [

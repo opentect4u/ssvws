@@ -147,8 +147,8 @@ function RecoveryCoDisbursTable({
 
 		setSelectedProducts(e.value)
 		// Perform any additional logic here, such as enabling a button or triggering another action
-		if (e.value.length > 0) {
-			const selectedRows = e.value
+		if (e.value) {
+			const selectedRows = [e.value]
 
 			setDebitAmount(
 				selectedRows
@@ -453,6 +453,8 @@ function RecoveryCoDisbursTable({
 					onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}
+					scrollable scrollHeight="400px"
+					
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}
 					onSelectionChange={(e) => handleSelectionChange(e)}
 					tableStyle={{ minWidth: "50rem" }}
@@ -474,7 +476,7 @@ function RecoveryCoDisbursTable({
 
 					<Column expander={allowExpansion} style={{ width: "3em" }} />
 					<Column
-						selectionMode="multiple"
+						selectionMode="single"
 						headerStyle={{ width: "3rem" }}
 					></Column>
 					<Column

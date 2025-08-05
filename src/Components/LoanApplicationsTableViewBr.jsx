@@ -47,7 +47,7 @@ function LoanApplicationsTableViewBr({
 
 	const [loading, setLoading] = useState(() => false)
 	const [LoanGroupMember, setLoanGroupMember] = useState(() => [])
-
+		const [globalFilter, setGlobalFilter] = useState('');
 
 
 	// const fetchLoanApplications = async () => {
@@ -322,7 +322,7 @@ function LoanApplicationsTableViewBr({
 											/>
 										</svg>
 									</div>
-									<motion.input
+									{/* <motion.input
 										type="text"
 										id="simple-search"
 										initial={{ opacity: 0, width: 0 }}
@@ -333,6 +333,18 @@ function LoanApplicationsTableViewBr({
 										placeholder="Search"
 										required=""
 										onChange={(text) => setSearch(text.target.value)}
+									/> */}
+									<motion.input
+										type="text"
+										id="simple-search"
+										initial={{ opacity: 0, width: 0 }}
+										animate={{ opacity: 1, width: "92%" }}
+										transition={{ delay: 1.1, type: "just" }}
+										className={`bg-white border rounded-lg border-slate-700
+										 text-gray-800 block w-full h-12 pl-10 dark:bg-gray-800 md:ml-4 duration-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white text-lg `}
+										placeholder="Search"
+										required=""
+										onChange={(text) => setGlobalFilter(text.target.value)}
 									/>
 								</div>
 							)}
@@ -379,6 +391,7 @@ function LoanApplicationsTableViewBr({
 
 				{/* <>{JSON.stringify(getloanAppData, null, 2)}</> */}
 				<DataTable
+					globalFilter={globalFilter}
 					value={getloanAppData?.map((item, i) => [{ ...item, id: i }]).flat()}
 					expandedRows={expandedRows}
 					onRowToggle={(e) => {
@@ -407,6 +420,7 @@ function LoanApplicationsTableViewBr({
 						 
 					}}
 					onRowExpand={onRowExpand}
+					emptyMessage={'No Data Available'}
 					// onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}

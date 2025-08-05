@@ -562,7 +562,7 @@ function Sidebar({ mode = 0 }) {
 				<div className="flex items-center justify-between">
 					<div className="italic ml-10">
 						⇨{" "}
-						{userDetails?.id == 1
+						{/* {userDetails?.id == 1
 							? `Credit Officer - ${userDetails?.emp_name} `
 							: userDetails?.id == 2
 							? `Branch Manager - ${userDetails?.emp_name} `
@@ -574,7 +574,8 @@ function Sidebar({ mode = 0 }) {
 							? `General User - ${userDetails?.emp_name}`
 							: userDetails?.id == 11
 							? `Admin 2 - ${userDetails?.emp_name}`
-							: `HO User - ${userDetails?.emp_name} `}
+							: `HO User - ${userDetails?.emp_name} `} */}
+							{`${userDetails?.user_type} - ${userDetails?.emp_name}`}
 						({userDetails?.branch_name})
 					</div>
 					{/* <div className="italic mr-10">

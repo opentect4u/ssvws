@@ -30,6 +30,7 @@ import Select from "react-select"
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
+import { MultiSelect } from "primereact/multiselect"
 
 const options = [
 	{
@@ -55,6 +56,8 @@ const options = [
 ]
 
 function OutstaningReportMain() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 	const [searchType, setSearchType] = useState("G")
@@ -101,6 +104,7 @@ function OutstaningReportMain() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(res?.data?.outstanding_member_data?.msg,memberwiseOutstandingHeader);	
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -133,6 +137,7 @@ function OutstaningReportMain() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(res?.data?.outstanding_branch_data?.msg,branchwiseOutstandingHeader)
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -169,6 +174,8 @@ function OutstaningReportMain() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(res?.data?.outstanding_data?.msg,groupwiseOutstandingHeader)
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -222,7 +229,9 @@ function OutstaningReportMain() {
 				setFetchedReportDate(
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
-				setReportData(data)
+				setReportData(data);
+				populateColumns(res?.data?.outstanding_fund_data?.msg,fundwiseOutstandingHeader)
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -290,6 +299,7 @@ function OutstaningReportMain() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
+				populateColumns(res?.data?.outstanding_co_data?.msg,cowiseOutstandingHeader);	
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -471,7 +481,11 @@ function OutstaningReportMain() {
 
 	console.log("selectedOptions", selectedOptions)
 	console.log("selectedCOs", selectedCOs)
-
+	const populateColumns = (main_dt,headerExport) =>{
+				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+				setColumns(columnToBeShown);
+				setSelectedColumns(columnToBeShown.map(el => el.index));
+	}
 	return (
 		<div>
 			<Sidebar mode={2} />
@@ -748,6 +762,16 @@ function OutstaningReportMain() {
 						)}
 					</div>
 
+
+					{
+						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							onChange={(e) => {
+								console.log(e.value)
+								setSelectedColumns(e.value)
+							}} options={md_columns} optionValue="index" optionLabel="header" 
+							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+					}
+
 					{searchType === "M" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable
@@ -756,6 +780,12 @@ function OutstaningReportMain() {
 								columnTotal={[32, 35, 36, 37]}
 								dateTimeExceptionCols={[8, 29, 31]}
 								headersMap={memberwiseOutstandingHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									if(!selectedColumns.includes(el.index)){
+									return el.index
+									}
+								return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -767,6 +797,12 @@ function OutstaningReportMain() {
 								pageSize={50}
 								columnTotal={[9, 10, 11, 12]}
 								headersMap={groupwiseOutstandingHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+										if(!selectedColumns.includes(el.index)){
+										return el.index
+										}
+										return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -778,6 +814,12 @@ function OutstaningReportMain() {
 								pageSize={50}
 								columnTotal={[6, 7, 8, 9]}
 								headersMap={fundwiseOutstandingHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -789,6 +831,12 @@ function OutstaningReportMain() {
 								pageSize={50}
 								columnTotal={[5, 6, 7, 8]}
 								headersMap={cowiseOutstandingHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -801,6 +849,12 @@ function OutstaningReportMain() {
 								pageSize={50}
 								columnTotal={[2, 3, 4, 5]}
 								headersMap={branchwiseOutstandingHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -822,12 +876,26 @@ function OutstaningReportMain() {
 											prn_outstanding: tot_prn_outstanding,
 											branch_code:"TOTAL"
 										})
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										exportToExcel(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName,
 											[29, 31]
 										)
+
+
+									
+									
 									}}
 									className="mt-5 justify-center items-center rounded-full text-green-900 disabled:text-green-300"
 								>
@@ -836,7 +904,7 @@ function OutstaningReportMain() {
 							</Tooltip>
 							<Tooltip title="Print">
 								<button
-									onClick={() =>
+									onClick={() =>{
 										// printTableOutstandingReport(
 										// 	reportData,
 										// 	"Outstanding Report",
@@ -850,13 +918,36 @@ function OutstaningReportMain() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										const exportedDT = dataToExport;
+										const tot_intt_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.intt_outstanding) , 0);
+										const tot_prn_disb_amt =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_disb_amt) , 0);
+										const tot_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.outstanding) , 0);
+										const tot_prn_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_outstanding) , 0);
+										dataToExport.push({
+											intt_outstanding: tot_intt_outstanding,
+											outstanding: tot_outstanding,
+											prn_disb_amt: tot_prn_disb_amt,
+											prn_outstanding: tot_prn_outstanding,
+											branch_code:"TOTAL"
+										})
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
 										printTableReport(
 											dataToExport,
-											headersToExport,
+											header_export,
 											fileName?.split(",")[0],
 											[29, 31]
 										)
-									}
+
+									}}
 									className="mt-5 justify-center items-center rounded-full text-pink-600 disabled:text-pink-300"
 								>
 									<PrinterOutlined style={{ fontSize: 30 }} />

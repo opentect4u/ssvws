@@ -28,6 +28,7 @@ import {
 } from "../../../Utils/Reports/headerMap"
 import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
+import { MultiSelect } from "primereact/multiselect"
 
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
@@ -67,6 +68,8 @@ const options2 = [
 ]
 
 function DemandReportsMain() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -205,12 +208,19 @@ function DemandReportsMain() {
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Memberwise`)
 				setFetchedReportDate(res?.data?.create_date)
+				populateColumns(res?.data?.memberwise_demand_data?.msg,memberwiseDemandReportHeader);	
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
 			})
 
 		setLoading(false)
+	}
+
+	const populateColumns = (main_dt,headerExport) =>{
+				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+				setColumns(columnToBeShown);
+				setSelectedColumns(columnToBeShown.map(el => el.index));
 	}
 
 	// "Groupwise"
@@ -237,6 +247,9 @@ function DemandReportsMain() {
 				// setFetchedReportDate(
 				// 	new Date(res?.data?.demand_date).toLocaleDateString("en-GB")
 				// )
+
+				// for Column Chooser
+				populateColumns(res?.data?.groupwise_demand_data?.msg,groupwiseDemandReportHeader)
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -269,6 +282,10 @@ function DemandReportsMain() {
 				// 	new Date(res?.data?.demand_date).toLocaleDateString("en-GB")
 				// )
 				setFetchedReportDate(res?.data?.create_date)
+				populateColumns(res?.data?.branchwise_demand_data?.msg,branchwiseDemandReportHeader)
+				// const columnToBeShown = Object.keys(res?.data?.branchwise_demand_data?.msg[0]).map((key, index) => ({ header:branchwiseDemandReportHeader[key], index }));
+				// setColumns(columnToBeShown);
+				// setSelectedColumns(columnToBeShown.map(el => el.index));
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -323,6 +340,12 @@ function DemandReportsMain() {
 				// 	new Date(res?.data?.demand_date).toLocaleDateString("en-GB")
 				// )
 				setFetchedReportDate(res?.data?.create_date)
+
+				populateColumns(res?.data?.fundwise_demand_data?.msg,fundwiseDemandReportHeader)
+
+				// const columnToBeShown = Object.keys(res?.data?.fundwise_demand_data?.msg[0]).map((key, index) => ({ header:fundwiseDemandReportHeader[key], index }));
+				// setColumns(columnToBeShown);
+				// setSelectedColumns(columnToBeShown.map(el => el.index));
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -391,7 +414,8 @@ function DemandReportsMain() {
 				// setFetchedReportDate(
 				// 	new Date(res?.data?.demand_date).toLocaleDateString("en-GB")
 				// )
-				setFetchedReportDate(res?.data?.create_date)
+				setFetchedReportDate(res?.data?.create_date);
+				populateColumns(res?.data?.cowise_demand_data?.msg,cowiseDemandReportHeader);	
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -543,6 +567,8 @@ function DemandReportsMain() {
 	}, [selectedOptions])
 
 	const handleSubmit = () => {
+		setColumns([]);
+		setSelectedColumns(null);
 		if (!searchType || !choosenMonth || !choosenYear) {
 			Message("warning", "Please fill all details")
 			return
@@ -1127,7 +1153,14 @@ function DemandReportsMain() {
 					)}
 
 					{/* "Groupwise" */}
-
+					{/* {
+						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							onChange={(e) => {
+								console.log(e.value)
+								setSelectedColumns(e.value)
+							}} options={md_columns} optionValue="index" optionLabel="header" 
+    						filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+					} */}
 					{reportData.length > 0 && searchType === "G" && (
 						<>
 							<DynamicTailwindTable
@@ -1136,7 +1169,12 @@ function DemandReportsMain() {
 								columnTotal={[12]}
 								dateTimeExceptionCols={[0, 11, 12, 7, 12, 13]}
 								headersMap={groupwiseDemandReportHeader}
-								// colRemove={[11]}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1151,6 +1189,12 @@ function DemandReportsMain() {
 								columnTotal={[11]}
 								dateTimeExceptionCols={[0]}
 								headersMap={fundwiseDemandReportHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1165,6 +1209,12 @@ function DemandReportsMain() {
 								columnTotal={[9]}
 								dateTimeExceptionCols={[0]}
 								headersMap={cowiseDemandReportHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1179,6 +1229,12 @@ function DemandReportsMain() {
 								columnTotal={[18]}
 								dateTimeExceptionCols={[0, 10, 16, 17]}
 								headersMap={memberwiseDemandReportHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1193,6 +1249,12 @@ function DemandReportsMain() {
 								columnTotal={[3]}
 								dateTimeExceptionCols={[0]}
 								headersMap={branchwiseDemandReportHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									  if(!selectedColumns.includes(el.index)){
+										return el.index
+									  }
+									  return false
+								}) : []}
 							/>
 						</>
 					)}
@@ -1203,14 +1265,45 @@ function DemandReportsMain() {
 						<div className="flex gap-4">
 							<Tooltip title="Export to Excel">
 								<button
-									onClick={() =>
+									onClick={() =>{
+										// exportToExcel(
+										// 	dataToExport,
+										// 	headersToExport,
+										// 	fileName,
+										// 	[0, 10, 11, 16]
+										// )
+										
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										console.log(dt);
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
+										const data = dataToExport;
+										console.log(header_export);
+										if('dmd_amt' in header_export){
+											const total_demand_amt = data.reduce((accumulator, currentValue) => {
+																		return Number(currentValue?.dmd_amt) + accumulator;
+																	}, 0);
+											data.push({
+												dmd_amt:total_demand_amt
+											})
+										}
 										exportToExcel(
-											dataToExport,
-											headersToExport,
+											data,
+											header_export,
 											fileName,
 											[0, 10, 11, 16]
 										)
-									}
+										// console.log(headersToExport);
+										// console.log(selectedColumns);
+										// console.log(md_columns);
+									}}
 									className="mt-5 justify-center items-center rounded-full text-green-900"
 								>
 									<FileExcelOutlined
@@ -1222,7 +1315,7 @@ function DemandReportsMain() {
 							</Tooltip>
 							<Tooltip title="Print">
 								<button
-									onClick={() =>
+									onClick={() =>{
 										// printTableRegular(
 										// 	reportData,
 										// 	"Demand Report",
@@ -1230,13 +1323,33 @@ function DemandReportsMain() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+										let header_export = {};
+										Object.keys(headersToExport).forEach(key =>{
+											if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+												header_export = {
+													...header_export,
+													[key]:headersToExport[key]
+												}
+											}
+										});
+										const data = dataToExport;
+										console.log(header_export);
+										if('dmd_amt' in header_export){
+											const total_demand_amt = data.reduce((accumulator, currentValue) => {
+																		return Number(currentValue?.dmd_amt) + accumulator;
+																	}, 0);
+											data.push({
+												dmd_amt:total_demand_amt
+											})
+										}
 										printTableReport(
-											dataToExport,
-											headersToExport,
+											data,
+											header_export,
 											fileName?.split(",")[0],
 											[0, 10, 11, 16]
 										)
-									}
+									}}
 									className="mt-5 justify-center items-center rounded-full text-pink-600"
 								>
 									<PrinterOutlined

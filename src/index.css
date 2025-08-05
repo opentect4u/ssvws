@@ -14,3 +14,10 @@
 		scrollbar-width: none; /* Firefox */
 	}
 }
+
+
+.p-radiobutton .p-radiobutton-box {
+	border: 2px solid #e3e3e3;
+    /* background: #ffffff; */
+}
+

@@ -34,7 +34,7 @@ function LoanApprovalApplicationsTableViewBr({
 	const navigate = useNavigate()
 
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
-
+	const [globalFilter, setGlobalFilter] = useState('');
 	const [first, setFirst] = useState(0)
 	const [rows, setRows] = useState(10)
 	const [expandedRows, setExpandedRows] = useState(null)
@@ -332,7 +332,7 @@ function LoanApprovalApplicationsTableViewBr({
 										 text-gray-800 block w-full h-12 pl-10 dark:bg-gray-800 md:ml-4 duration-300 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white text-lg `}
 										placeholder="Search"
 										required=""
-										onChange={(text) => setSearch(text.target.value)}
+										onChange={(text) => setGlobalFilter(text.target.value)}
 									/>
 								</div>
 							)}
@@ -386,6 +386,7 @@ function LoanApprovalApplicationsTableViewBr({
 					onRowCollapse={onRowCollapse}
 					selectionMode="checkbox"
 					selection={selectedProducts}
+					 globalFilter={globalFilter}
 					// onSelectionChange={(e) => setSelectedProducts(e.value)}
 					onSelectionChange={(e) => handleSelectionChange(e)}
 					tableStyle={{ minWidth: "50rem" }}
