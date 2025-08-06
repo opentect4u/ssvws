@@ -185,6 +185,45 @@ loanRouter.post("/fetch_existing_loan", async (req, res) => {
   res.send(loan_dtls);
 });
 
+//checking factor
+loanRouter.post("/checking_factor", async (req, res) => {
+  try{
+    var data = req.body;
+
+    if (!data.period || !data.mode) {
+      return res.send({ suc: 0, msg: "Missing period or mode." });
+    }
+
+    var select = "*",
+    table_name = "md_multiplication_factor",
+    whr = "";
+
+    const periodValue = parseFloat(data.period).toFixed(1);
+    // console.log(periodValue,'perio');
+    
+
+    if (data.mode === "Monthly") {
+      whr = `months = ${periodValue}`;
+    } else if (data.mode === "Weekly") {
+      whr = `weeks = ${periodValue}`;
+    } else {
+      return res.send({ suc: 0, msg: "Invalid payment mode" });
+    }
+    order = null;
+    // console.log("Checking WHERE clause:", whr);
+    var result = await db_Select(select, table_name, whr, order);
+    // console.log("DB result:", result);
+     
+    if (result.suc > 0 && result.msg.length > 0) {
+      res.send({ suc: 1, status: true, msg: "Factor exists." });
+    } else {
+      res.send({ suc: 0, status: false, msg: "Factor not found." });
+    }
+  }catch(err){
+    res.send({ suc: 0, msg:err });
+  }
+})
+
 // loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
 //     var data = req.body;
 

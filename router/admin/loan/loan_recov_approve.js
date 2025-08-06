@@ -28,7 +28,7 @@ loan_recov_approveRouter.post("/fetch_groupwise_recovery_admin", async (req, res
     var data = req.body;
 
     //FETCH GROUPWISE RECOVERY DATA
-    var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,TRUNCATE(SUM(a.balance+a.od_balance+a.intt_balance),0) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
+    var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id",
     whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R'`
     order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,b.branch_code,c.group_name,d.emp_name,a.tr_mode`;
@@ -42,7 +42,7 @@ loan_recov_approveRouter.post("/fetch_grp_member_dtls", async (req, res) => {
     var data = req.body;
 
     //FETCH GROUPWISE RECOVERY DATA OF MEMBER
-    var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,d.emp_name created_by,TRUNCATE((a.balance+a.od_balance+a.intt_balance),0) outstanding",
+    var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
     whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND b.group_code = '${data.group_code}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
     order = null;
@@ -70,7 +70,7 @@ loan_recov_approveRouter.post("/fetch_memberwise_recovery_admin", async (req, re
     var data = req.body;
 
         //FETCH MEMBERWISE RECOVERY DATA
-        var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,b.branch_code,d.emp_name created_by,TRUNCATE((a.balance+a.od_balance+a.intt_balance),0) outstanding",
+        var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,b.branch_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
         whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R'`,
         order = null;
@@ -132,7 +132,7 @@ loan_recov_approveRouter.post("/fetch_cowise_recov_data", async (req, res) => {
     var data = req.body;
 
      //FETCH COWISE RECOVERY DATA
-     var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,TRUNCATE(SUM(a.balance+a.od_balance+a.intt_balance),0) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
+     var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
      table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id",
      whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}'`,
      order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,c.group_name,d.emp_name,a.tr_mode,b.branch_code`;
@@ -145,7 +145,7 @@ loan_recov_approveRouter.post("/fetch_cowise_recov_member_dtls", async (req, res
     var data = req.body;
 
     //FETCH COWISE RECOVERY DATA OF MEMBER
-    var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,d.emp_name created_by,TRUNCATE((a.balance+a.od_balance+a.intt_balance),0) outstanding",
+    var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
     whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}' AND b.group_code = '${data.group_code}'`,
     order = null;
@@ -156,165 +156,176 @@ loan_recov_approveRouter.post("/fetch_cowise_recov_member_dtls", async (req, res
 });
 
 //memberwise outstanding checking
-loan_recov_approveRouter.post("/checking_outstanding_amt_bf_approve", async (req, res) => {
-    try{
-        var data = req.body;
-        let approve_flag = 'S';
+// loan_recov_approveRouter.post("/checking_outstanding_amt_bf_approve", async (req, res) => {
+//     try{
+//         var data = req.body;
+//         let approve_flag = 'S';
 
-         if (!data.checkoutstanding || !Array.isArray(data.checkoutstanding)) {
-            return res.send({ suc: 0, msg: "Invalid input format" });
-        }
+//          if (!data.checkoutstanding || !Array.isArray(data.checkoutstanding)) {
+//             return res.send({ suc: 0, msg: "Invalid input format" });
+//         }
 
-        for (let dt of data.checkoutstanding) {
-             // Step 1: Get MAX payment_date
-            var select = "MAX(payment_date) payment_date";
-            table_name = "td_loan_transactions";
-            whr = `loan_id = '${dt.loan_id}' AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}'`;
-            order = null;
-        var checking_payment_date = await db_Select(select, table_name, whr, order);
+//         for (let dt of data.checkoutstanding) {
+//              // Step 1: Get MAX payment_date
+//             var select = "MAX(payment_date) payment_date";
+//             table_name = "td_loan_transactions";
+//             whr = `loan_id = '${dt.loan_id}' AND payment_date < '${dateFormat(dt.payment_date,'yyyy-mm-dd')}'`;
+//             order = null;
+//         var checking_payment_date = await db_Select(select, table_name, whr, order);
 
-         if (checking_payment_date.suc < 0 || checking_payment_date.msg.length === 0) {
-                return res.send({ suc: 0, msg: "fetch payment date wrong" });
-            }
+//          if (checking_payment_date.suc < 0 || checking_payment_date.msg.length === 0) {
+//                 return res.send({ suc: 0, msg: "fetch payment date wrong" });
+//             }
 
-         const payment_date = dateFormat(checking_payment_date.msg[0].payment_date, 'yyyy-mm-dd');
+//          const payment_date = dateFormat(checking_payment_date.msg[0].payment_date, 'yyyy-mm-dd');
          
-         // Step 2: Get MAX payment_id for that date
-           var select = "MIN(payment_id) payment_id";
-            table_name = "td_loan_transactions";
-            whr = `loan_id = '${dt.loan_id}' AND payment_date = '${payment_date}'`;
-            order = null;
-        var checking_payment_id = await db_Select(select, table_name, whr, order);
+//          // Step 2: Get MAX payment_id for that date
+//            var select = "MAX(payment_id) payment_id";
+//             table_name = "td_loan_transactions";
+//             whr = `loan_id = '${dt.loan_id}' AND payment_date = '${payment_date}'`;
+//             order = null;
+//         var checking_payment_id = await db_Select(select, table_name, whr, order);
        
-         if (checking_payment_id.suc < 0 || checking_payment_id.msg.length === 0) {
-                return res.send({ suc: 0, msg: "fetch payment id wrong" });
-            }
+//          if (checking_payment_id.suc < 0 || checking_payment_id.msg.length === 0) {
+//                 return res.send({ suc: 0, msg: "fetch payment id wrong" });
+//             }
 
-         const payment_id = checking_payment_id.msg[0].payment_id;
+//          const payment_id = checking_payment_id.msg[0].payment_id;
 
-         // Step 3: Get outstanding amount for that payment_id
-            var select = "TRUNCATE((balance + intt_balance),0) outstanding";
-            table_name = "td_loan_transactions";
-            whr = `loan_id = '${dt.loan_id}' AND payment_date = '${payment_date}' AND payment_id = '${payment_id}'`;
-         var outstanding_data = await db_Select(select, table_name, whr, order);
+//          // Step 3: Get outstanding amount for that payment_id
+//             var select = "ROUND(balance + intt_balance, 2) outstanding";
+//             table_name = "td_loan_transactions";
+//             whr = `loan_id = '${dt.loan_id}' AND payment_date = '${payment_date}' AND payment_id = '${payment_id}'`;
+//          var outstanding_data = await db_Select(select, table_name, whr, order);
+//         //  console.log(outstanding_data,'outstanding_data');
+         
 
-           if (outstanding_data.suc < 0 || outstanding_data.msg.length === 0) {
-                return res.send({ suc: 0, msg: "fetch outstanding failed" });
-            }
+//            if (outstanding_data.suc < 0 || outstanding_data.msg.length === 0) {
+//                 return res.send({ suc: 0, msg: "fetch outstanding failed" });
+//             }
 
-            const calculated_outstanding = parseFloat(outstanding_data.msg[0].outstanding || 0);
-            const user_outstanding = parseFloat(dt.outstanding || 0);
+//             const calculated_outstanding = parseFloat(outstanding_data.msg[0].outstanding || 0);
+//             const user_outstanding = parseFloat(dt.outstanding || 0);
+
+//             // console.log(calculated_outstanding,user_outstanding,'KI');
+            
 
 
-             if (user_outstanding > calculated_outstanding) { 
-                approve_flag = 'F'; // Mismatch: user value is not less than system value
-             }
-        }
-         res.json({approve_flag});
-    }catch(err){
-       console.log(err);
-      res.json({ err });
-    }
-});
+//              if (user_outstanding > calculated_outstanding) { 
+//                 approve_flag = 'F'; // Mismatch: user value is not less than system value
+//              }
+//         }
+//         //  console.log(approve_flag, 'APPROVAL FLAG')
+//          res.json({approve_flag});
+//     }catch(err){
+//        console.log(err);
+//       res.json({ err });
+//     }
+// });
 
 //group/co wise outstanding checking
-loan_recov_approveRouter.post("/checking_outstanding_amt_bf_approve_grp", async (req, res) => {
-    try{
-        var data = req.body;
-        let approve_flag = 'S';
+// loan_recov_approveRouter.post("/checking_outstanding_amt_bf_approve_grp", async (req, res) => {
+//     try{
+//         var data = req.body;
+//         let approve_flag = 'S';
 
-         if (!data.checkoutstanding || !Array.isArray(data.checkoutstanding)) {
-            return res.send({ suc: 0, msg: "Invalid input format" });
-        }
-        let count = 0;
-        for (let dt of data.checkoutstanding) {
-             var select = "loan_id",
-             table_name = "td_loan",
-             whr = `branch_code = '${dt.branch_code}' AND group_code = '${dt.group_code}'`,
-             order = null;
-             var loan_ids = await db_Select(select, table_name, whr, order); 
-            //  console.log(loan_ids,'ids');
+//          if (!data.checkoutstanding || !Array.isArray(data.checkoutstanding)) {
+//             return res.send({ suc: 0, msg: "Invalid input format" });
+//         }
+//         let total_calculated_outstanding = 0; 
+//         for (let dt of data.checkoutstanding) {
+             
+//              var select = "loan_id",
+//              table_name = "td_loan",
+//              whr = `branch_code = '${dt.branch_code}' AND group_code = '${dt.group_code}'`,
+//              order = null;
+//              var loan_ids = await db_Select(select, table_name, whr, order); 
+//             //  console.log(loan_ids,'ids');
+
+//             if (!loan_ids.msg || loan_ids.msg.length === 0) {
+//               return res.send({ suc: 0, msg: "No loan found for the group." });
+//             }
+
                 
-              var loan_id_arr = loan_ids.msg.map(ldt => ldt.loan_id)
-              
-             // Step 1: Get MAX payment_date
-            var select = "MAX(payment_date) payment_date";
-            table_name = "td_loan_transactions";
-            whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date <= '${dateFormat(dt.payment_date,'yyyy-mm-dd')}'`;
-            order = null;
-        var checking_payment_date = await db_Select(select, table_name, whr, order);
-        // console.log(checking_payment_date,'lo');
+//            // Loop through each loan ID individually
+//                for (let loan of loan_ids.msg) {
+//                 const loan_id = loan.loan_id;
+
+//                 // Step 1: Get MAX payment_date
+//                 var select = "MAX(payment_date) payment_date";
+//                 table_name = "td_loan_transactions";
+//                 whr = `loan_id = '${loan_id}' AND payment_date < '${dateFormat(dt.payment_date,'yyyy-mm-dd')}'`;
+//                 order = null;
+//             var checking_payment_date = await db_Select(select, table_name, whr, order);
+            
+
+//             if (checking_payment_date.suc < 0 || checking_payment_date.msg.length === 0) {
+//                     return res.send({ suc: 0, msg: "fetch payment date wrong" });
+//                 }
+
+//             const payment_date = dateFormat(checking_payment_date.msg[0].payment_date, 'yyyy-mm-dd');
         
+//             // Step 2: Get MAX payment_id for that date
 
-         if (checking_payment_date.suc < 0 || checking_payment_date.msg.length === 0) {
-                return res.send({ suc: 0, msg: "fetch payment date wrong" });
-            }
-
-         const payment_date = dateFormat(checking_payment_date.msg[0].payment_date, 'yyyy-mm-dd');
-        //  AND payment_date = '${payment_date}'
-         // Step 2: Get MAX payment_id for that date
-        //    var select = "MIN(payment_id) payment_id";
-         var select = "payment_id,payment_date,loan_id";
-            table_name = "td_loan_transactions";
-            whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date = '${payment_date}'`;
-            order = null;
-        var checking_payment_id = await db_Select(select, table_name, whr, order);
-         
-            if (checking_payment_id.suc < 0 || checking_payment_id.msg.length === 0) {
-                return res.send({ suc: 0, msg: "fetch payment id wrong" });
-            }
-
-            // console.log(checking_payment_id,'payment_id');
-            const withouMinimumDuplicatePayment = Object.values(
-                checking_payment_id.msg.reduce((acc, curr) => {
-                    const existing = acc[curr.loan_id];
-                    if (!existing || curr.payment_id < existing.payment_id) {
-                    acc[curr.loan_id] = curr;
-                    }
-                    return acc;
-                }, {})
-                );
-                // console.log(withouMinimumDuplicatePayment, ' withouMinimumDuplicatePayment');
-        //  console.log(checking_payment_id,'payment_id');
-        //  return res.send({ suc: 0, msg: "fetch payment id wrong" });
-        //  const payment_id = checking_payment_id.msg[0].payment_id;
-         const payment_id = checking_payment_id.msg.map(el => el.payment_id)
-
-        //  console.log(payment_id,'lololo');
-         
-
-         // Step 3: Get outstanding amount for that payment_id
-            var select = "TRUNCATE((balance + intt_balance),0) outstanding";
-            table_name = "td_loan_transactions";
-            whr = `loan_id IN (${loan_id_arr.join(',')}) AND payment_date = '${payment_date}' AND payment_id IN (${payment_id.join(',')})`;
-             var outstanding_data = await db_Select(select, table_name, whr, order);
-         
-           if (outstanding_data.suc < 0 || outstanding_data.msg.length === 0) {
-                return res.send({ suc: 0, msg: "fetch outstanding failed" });
-            }
-
-            // const calculated_outstanding = parseFloat(outstanding_data.msg[0].outstanding || 0);
-            // console.log(outstanding_data,'ju');
+//                 var select = "MAX(payment_id) payment_id";
+//                 table_name = "td_loan_transactions";
+//                 whr = `loan_id = '${loan_id}' AND payment_date = '${payment_date}'`;
+//                 order = null;
+//                 var checking_payment_id = await db_Select(select, table_name, whr, order);
             
-            const calculated_outstanding = outstanding_data.msg.reduce((sum, item) => {
-             return sum + parseFloat(item.outstanding || 0);
-              }, 0);
-          
-            const user_outstanding = parseFloat(dt.outstanding || 0);
-            // console.log(calculated_outstanding,'calcu');
+//                 if (checking_payment_id.suc < 0 || checking_payment_id.msg.length === 0) {
+//                     return res.send({ suc: 0, msg: "fetch payment id wrong" });
+//                 }
+
+//                 const payment_id = checking_payment_id.msg[0].payment_id;
             
 
+//             // Step 3: Get outstanding amount for that payment_id
+//                 var select = "ROUND(balance + intt_balance, 2) outstanding";
+//                 table_name = "td_loan_transactions";
+//                 whr = `loan_id = '${loan_id}' AND payment_date = '${payment_date}' AND payment_id = '${payment_id}'`;
+//                 var outstanding_data = await db_Select(select, table_name, whr, order);
+            
+//             if (outstanding_data.suc < 0 || outstanding_data.msg.length === 0) {
+//                     return res.send({ suc: 0, msg: "fetch outstanding failed" });
+//                 }
 
-             if (user_outstanding > calculated_outstanding) { 
-                approve_flag = 'F'; // Mismatch: user value is not less than system value
-             }
-        }
-         res.json({approve_flag});
-    }catch(err){
-       console.log(err);
-      res.json({ err });
-    }
-});
+//                 // console.log(outstanding_data.msg,'outstanding_data');
+                
+                
+//                 //   console.log(outstanding_data,'outstanding_data');
+//                 //  const calculated_outstanding = parseFloat(outstanding_data.msg[0].outstanding || 0);
+//                 //  total_calculated_outstanding += calculated_outstanding;
+
+//                 const calculated_outstanding = outstanding_data.msg.reduce((sum, item) => {
+//                 return sum + parseFloat(item.outstanding || 0);
+//                 }, 0);
+
+//                 total_calculated_outstanding +=calculated_outstanding
+//                 const user_outstanding = parseFloat(dt.outstanding || 0);
+                
+//                 //   console.log(`Total System: ${total_calculated_outstanding}, User Input: ${user_outstanding}`);
+
+//                 // console.log(total_calculated_outstanding,user_outstanding,'KI RE');
+
+//                 // if (user_outstanding > total_calculated_outstanding) { 
+//                 //     approve_flag = 'F'; // Mismatch: user value is not less than system value
+//                 // }
+//                 }
+//         }
+
+//         // console.log(parseFloat(data.checkoutstanding[0].outstanding) > total_calculated_outstanding, ' jiasdjkldsakhnasd')
+//         if (parseFloat(data.checkoutstanding[0].outstanding) > total_calculated_outstanding) { 
+//             approve_flag = 'F'; // Mismatch: user value is not less than system value
+//         }
+//         // console.log(approve_flag, ' APPROVE FLAG GROUP');
+        
+//          res.json({approve_flag});
+//     }catch(err){
+//        console.log(err);
+//       res.json({ err });
+//     }
+// });
 
 loan_recov_approveRouter.post("/checking_before_approve", async (req, res) => {
   try{
