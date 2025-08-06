@@ -668,7 +668,7 @@ const containerStyle = {
 				className="text-blue-800 dark:text-gray-400"
 				spinning={loading}
 			>	
-				{(userDetails.id == 4 || userDetails.id == 3) && <Button htmlType="button" type="primary" icon={<Map />} onClick={() => showModal()} className="my-3">View Distance</Button>}
+				{(userDetails.id == 4 || userDetails.id == 3 || userDetails.id == 2 || userDetails.id == 13) && <Button htmlType="button" type="primary" icon={<Map />} onClick={() => showModal()} className="my-3">View Distance</Button>}
 				<form onSubmit={formik.handleSubmit} className={`${isOverdue == 'Y' ? 'mt-5' : ''}`}>
 					<div className="flex justify-start gap-5">
 						<div

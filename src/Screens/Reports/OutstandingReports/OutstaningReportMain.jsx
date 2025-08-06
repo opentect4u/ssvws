@@ -864,12 +864,13 @@ function OutstaningReportMain() {
 							<Tooltip title="Export to Excel">
 								<button
 									onClick={() =>{
-										const exportedDT = dataToExport;
+
+										let exportedDT = [...dataToExport];
 										const tot_intt_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.intt_outstanding) , 0);
 										const tot_prn_disb_amt =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_disb_amt) , 0);
 										const tot_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.outstanding) , 0);
 										const tot_prn_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_outstanding) , 0);
-										dataToExport.push({
+										exportedDT.push({
 											intt_outstanding: tot_intt_outstanding,
 											outstanding: tot_outstanding,
 											prn_disb_amt: tot_prn_disb_amt,
@@ -887,7 +888,7 @@ function OutstaningReportMain() {
 											}
 										});
 										exportToExcel(
-											dataToExport,
+											exportedDT,
 											header_export,
 											fileName,
 											[29, 31]
@@ -905,25 +906,13 @@ function OutstaningReportMain() {
 							<Tooltip title="Print">
 								<button
 									onClick={() =>{
-										// printTableOutstandingReport(
-										// 	reportData,
-										// 	"Outstanding Report",
-										// 	searchType,
-										// 	(userDetails?.id === 3 ||
-										// 		userDetails?.id === 4 ||
-										// 		userDetails?.id === 11) &&
-										// 		userDetails?.brn_code == 100
-										// 		? selectedOptions?.map((item, _) => `${item?.label}, `)
-										// 		: userDetails?.branch_name,
-										// 	fromDate,
-										// 	toDate
-										// )
-										const exportedDT = dataToExport;
+	
+										let exportedDT = [...dataToExport];
 										const tot_intt_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.intt_outstanding) , 0);
 										const tot_prn_disb_amt =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_disb_amt) , 0);
 										const tot_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.outstanding) , 0);
 										const tot_prn_outstanding =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.prn_outstanding) , 0);
-										dataToExport.push({
+										exportedDT.push({
 											intt_outstanding: tot_intt_outstanding,
 											outstanding: tot_outstanding,
 											prn_disb_amt: tot_prn_disb_amt,
@@ -941,7 +930,7 @@ function OutstaningReportMain() {
 											}
 										});
 										printTableReport(
-											dataToExport,
+											exportedDT,
 											header_export,
 											fileName?.split(",")[0],
 											[29, 31]

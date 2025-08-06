@@ -1111,7 +1111,7 @@ function DemandVsCollectionMain() {
 					)}
 
 					{/* "Groupwise" */}
-{/* 
+					
 					{
 						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
 							onChange={(e) => {
@@ -1119,7 +1119,7 @@ function DemandVsCollectionMain() {
 								setSelectedColumns(e.value)
 							}} options={md_columns} optionValue="index" optionLabel="header" 
 							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
-					} */}
+					}
 
 					{reportData.length > 0 && searchType === "G" && (
 						<>
@@ -1228,15 +1228,14 @@ function DemandVsCollectionMain() {
 							<Tooltip title="Export to Excel">
 								<button
 									onClick={() =>{
-										console.log(dataToExport);
-										const exportData = dataToExport;
+											let exportData = [...dataToExport]
 											const tot_disb_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.disb_amt) , 0);
 											const tot_emi_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.tot_emi) , 0);
 											const tot_coll_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.coll_amt) , 0);
 											const tot_demand_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.demand_amt) , 0);
 											const tot_curr_outstanding = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.curr_outstanding) , 0);
 											exportData.push({
-													"demand_date": "",
+													"demand_date": "TOTAL",
 													"collec between": "",
 													"branch_code": "",
 													"branch_name": "",
@@ -1256,7 +1255,7 @@ function DemandVsCollectionMain() {
 													"coll_amt": tot_coll_amt.toFixed(2),
 													"demand_amt": tot_demand_amt.toFixed(2),
 													"curr_outstanding": tot_curr_outstanding.toFixed(2)
-										})
+											})
 										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
 										console.log(dt);
 										let header_export = {};
@@ -1289,7 +1288,7 @@ function DemandVsCollectionMain() {
 										// 	fromDate,
 										// 	toDate
 										// )
-										const exportData = dataToExport;
+											let exportData = [...dataToExport]
 											const tot_disb_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.disb_amt) , 0);
 											const tot_emi_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.tot_emi) , 0);
 											const tot_coll_amt = dataToExport.reduce( ( sum , cur ) => sum + Number(cur.coll_amt) , 0);

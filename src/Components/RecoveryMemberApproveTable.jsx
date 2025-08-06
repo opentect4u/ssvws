@@ -262,53 +262,86 @@ function RecoveryMemberApproveTable({
 	}
 
 	const approveRecoveryTransaction = async (cachedPaymentId) => {
-		setLoading(true)
-		const payLoad = {
-			checkoutstanding:cachedPaymentId
-		}
-		axios.post(`${url}/checking_outstanding_amt_bf_approve`,payLoad)
-		.then(async (res) => {
-				if(res?.data){
-					if(res?.data?.approve_flag == 'S'){
-						const creds = {
-							approved_by: userDetails?.emp_id,
-							membdt: cachedPaymentId,
-						}
-						await axios
-						.post(`${url}/approve_member_recov`, creds)
-						.then((res) => {
-								onRefresh();
-								setSelectedProducts(null)
-								setTotalEMI(0)
-								setAmountTd_(0)
-								setOutstanding(0)
-								setLoading(false)
-							// fetchLoanApplicationsMember()
-							// console.log("RESSS approveRecoveryTransaction", res?.data)
-						})
-						.catch((err) => {
-							setLoading(false);
-							console.log("ERRR approveRecoveryTransaction", err);
-							Message('error',"Sometning went wrong in approving member recovery");
-						})
-					}
-					else{
-						setLoading(false);
-						Message('error',"Amount Miscalculation!!");
-					}
+		// setLoading(true)
+		// const payLoad = {
+		// 	checkoutstanding:cachedPaymentId
+		// }
+		// axios.post(`${url}/checking_outstanding_amt_bf_approve`,payLoad)
+		// .then(async (res) => {
+		// 	if(res?.data?.suc == 1){
+		// 		if(res?.data){
+		// 			if(res?.data?.approve_flag == 'S'){
+		// 				const creds = {
+		// 					approved_by: userDetails?.emp_id,
+		// 					membdt: cachedPaymentId,
+		// 				}
+		// 				await axios
+		// 				.post(`${url}/approve_member_recov`, creds)
+		// 				.then((res) => {
+		// 						onRefresh();
+		// 						setSelectedProducts(null)
+		// 						setTotalEMI(0)
+		// 						setAmountTd_(0)
+		// 						setOutstanding(0)
+		// 						setLoading(false)
+		// 					// fetchLoanApplicationsMember()
+		// 					// console.log("RESSS approveRecoveryTransaction", res?.data)
+		// 				})
+		// 				.catch((err) => {
+		// 					setLoading(false);
+		// 					console.log("ERRR approveRecoveryTransaction", err);
+		// 					Message('error',"Sometning went wrong in approving member recovery");
+		// 				})
+		// 			}
+		// 			else{
+		// 				setLoading(false);
+		// 				Message('error',"Amount Miscalculation!!");
+		// 			}
 					
-				}
-				else{
-					setLoading(false);
-					Message('error',"We are unable to process your request right now!! Please try again later");
-				}
-
-		}).catch(err =>{
-			setLoading(false);
-			Message('error',err.message);
-		})
+		// 		}
+		// 		else{
+		// 			setLoading(false);
+		// 			Message('error',"We are unable to process your request right now!! Please try again later");
+		// 		}	
+		// 	}
+		// 	else{
+		// 		setLoading(false);
+		// 		Message('error',res?.data?.msg);
+		// 	}
+		// }).catch(err =>{
+		// 	setLoading(false);
+		// 	Message('error',err.message);
+		// })
 		
 		// setLoading(false)
+
+
+		setLoading(true)
+		const creds = {
+			approved_by: userDetails?.emp_id,
+			membdt: cachedPaymentId,
+		}
+
+		await axios
+			.post(`${url}/approve_member_recov`, creds)
+			.then((res) => {
+				if(res?.data?.suc == 1){
+					onRefresh();
+					setSelectedProducts(null)
+					setTotalEMI(0)
+					setAmountTd_(0)
+					setOutstanding(0)
+					setLoading(false)
+				}
+				Message(res?.data?.suc == 1 ? 'success' : 'error',res?.data?.suc == 1 ? 'Approve successfully' : 'We are unable to process your request!!')
+				
+			})
+			.catch((err) => {
+				console.log("ERRR approveRecoveryTransaction", err);
+				setLoading(false);
+				Message('err','Not able to approve transactions')
+			})
+		setLoading(false)
 	}
 
 	const rejectRecoveryTransaction = async (RejectcachedPaymentId) => {

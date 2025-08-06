@@ -727,14 +727,14 @@ function PortfolioReport() {
 							</>
 						)}
 					</div>	
-					{/* {
+					{
 						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
 							onChange={(e) => {
 								console.log(e.value)
 								setSelectedColumns(e.value)
 							}} options={md_columns} optionValue="index" optionLabel="header" 
 							filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
-					} */}
+					}
 					{searchType === "M" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable

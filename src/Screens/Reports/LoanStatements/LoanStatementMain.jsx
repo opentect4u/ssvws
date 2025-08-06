@@ -26,6 +26,7 @@ import { exportToExcel } from "../../../Utils/exportToExcel"
 import DynamicTailwindTable from "../../../Components/Reports/DynamicTailwindTable"
 import { printTableReport } from "../../../Utils/printTableReport"
 import moment from "moment"
+import { MultiSelect } from "primereact/multiselect"
 
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
@@ -42,6 +43,8 @@ const options = [
 ]
 
 function LoanStatementMain() {
+	const [selectedColumns, setSelectedColumns] = useState(null);
+	const [md_columns, setColumns] = useState([]);
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -153,6 +156,8 @@ function LoanStatementMain() {
 			.then((res) => {
 				console.log("RESSSSS XX======>>>>", res?.data)
 				setReportTxnData(res?.data?.msg)
+				populateColumns(res?.data?.msg,loanStatementHeader);	
+				
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 			})
 			.catch((err) => {
@@ -180,6 +185,8 @@ function LoanStatementMain() {
 				console.log("RESSSSS XX======>>>>", res?.data)
 				setReportTxnData(res?.data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
+				populateColumns(res?.data?.msg,loanStatementHeaderGroupwise);	
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>>>>>", err)
@@ -202,6 +209,13 @@ function LoanStatementMain() {
 		} else if (searchType === "G" && search.length > 2) {
 			handleFetchReportGroupwise()
 		}
+	}
+
+
+		const populateColumns = (main_dt,headerExport) =>{
+				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
+				setColumns(columnToBeShown);
+				setSelectedColumns(columnToBeShown.map(el => el.index));
 	}
 
 	useEffect(() => {
@@ -587,6 +601,14 @@ function LoanStatementMain() {
 								</div>
 							</div>
 						)}
+
+						{
+							reportTxnData.length > 0 && 	<MultiSelect value={selectedColumns} 
+								onChange={(e) => {
+									setSelectedColumns(e.value)
+								}} options={md_columns} optionValue="index" optionLabel="header" 
+								filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
+						}
 						{/* For memberwise */}
 
 						{searchType === "M" && reportTxnData.length > 0 && (
@@ -601,6 +623,12 @@ function LoanStatementMain() {
 								columnTotal={[7, 8]}
 								// colRemove={[0,1,2,3,4,6,10,11,13,14,15,16]}
 								headersMap={loanStatementHeader}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									if(!selectedColumns.includes(el.index)){
+									return el.index
+									}
+									return false
+							}) : []}
 								indexing
 							/>
 						)}
@@ -618,6 +646,12 @@ function LoanStatementMain() {
 								columnTotal={[7, 8]}
 								// colRemove={[0,1,2,3,4,6,10,11,13,14,15,16]}
 								headersMap={loanStatementHeaderGroupwise}
+								colRemove={selectedColumns ? md_columns.map(el => {
+									if(!selectedColumns.includes(el.index)){
+									return el.index
+									}
+									return false
+							}) : []}
 								indexing
 							/>
 						)}
@@ -647,7 +681,7 @@ function LoanStatementMain() {
 											// return;
 											console.log(reportTxnData);
 
-											const exportData = reportTxnData
+											const exportData = [...reportTxnData]
 											const tot_debit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
 											const tot_credit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.credit) , 0);
 											if(searchType === "M") {
@@ -665,11 +699,21 @@ function LoanStatementMain() {
 												})
 												
 											}
+											const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+												let header_export = {};
+												Object.keys(headersToExport).forEach(key =>{
+													if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+														header_export = {
+															...header_export,
+															[key]:headersToExport[key]
+														}
+													}
+												});
 											// const mainDT = exportData.map(el => {
 											// 	el.tr_type = el.tr_type == 'D' ? 'Disbursement' : (el.tr_type == 'R' ? 'Recovery' : '');
 											// 	return el;
 											// })
-											exportToExcel(exportData, headersToExport, fileName, [
+											exportToExcel(exportData, header_export, fileName, [
 												0,
 											])
 										}}
@@ -694,13 +738,43 @@ function LoanStatementMain() {
 										// 		toDate
 										// 	)
 										// }
-										onClick={() =>
+										onClick={() =>{
+											const exportData = [...reportTxnData]
+											const tot_debit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
+											const tot_credit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.credit) , 0);
+											if(searchType === "M") {
+												exportData.push({
+													trans_no: "Total",
+													debit: tot_debit_amt,
+													credit: tot_credit_amt,
+												})
+											}	
+											else{
+												exportData.push({
+													trans_no: "Total",
+													debit: tot_debit_amt,
+													credit: tot_credit_amt,
+												})
+												
+											}
+											const dt = md_columns.filter(el => selectedColumns.includes(el.index));
+												let header_export = {};
+												Object.keys(headersToExport).forEach(key =>{
+													if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
+														header_export = {
+															...header_export,
+															[key]:headersToExport[key]
+														}
+													}
+												});
 											printTableReport(
-												dataToExport,
-												headersToExport,
+												exportData,
+												header_export,
 												fileName?.split(",")[0],
 												[0]
 											)
+										
+										}
 										}
 										className="mt-5 justify-center items-center rounded-full text-pink-600"
 									>

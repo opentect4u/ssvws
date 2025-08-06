@@ -1153,14 +1153,14 @@ function DemandReportsMain() {
 					)}
 
 					{/* "Groupwise" */}
-					{/* {
+					{
 						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
 							onChange={(e) => {
 								console.log(e.value)
 								setSelectedColumns(e.value)
 							}} options={md_columns} optionValue="index" optionLabel="header" 
     						filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
-					} */}
+					}
 					{reportData.length > 0 && searchType === "G" && (
 						<>
 							<DynamicTailwindTable
@@ -1284,14 +1284,14 @@ function DemandReportsMain() {
 												}
 											}
 										});
-										const data = dataToExport;
+										let data = [...dataToExport];
 										console.log(header_export);
 										if('dmd_amt' in header_export){
 											const total_demand_amt = data.reduce((accumulator, currentValue) => {
 																		return Number(currentValue?.dmd_amt) + accumulator;
 																	}, 0);
 											data.push({
-												dmd_amt:total_demand_amt
+												dmd_amt:total_demand_amt?.toFixed(2)
 											})
 										}
 										exportToExcel(
@@ -1333,14 +1333,14 @@ function DemandReportsMain() {
 												}
 											}
 										});
-										const data = dataToExport;
+										let data = [...dataToExport];
 										console.log(header_export);
 										if('dmd_amt' in header_export){
 											const total_demand_amt = data.reduce((accumulator, currentValue) => {
 																		return Number(currentValue?.dmd_amt) + accumulator;
 																	}, 0);
 											data.push({
-												dmd_amt:total_demand_amt
+												dmd_amt:total_demand_amt?.toFixed(2)
 											})
 										}
 										printTableReport(

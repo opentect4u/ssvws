@@ -347,83 +347,83 @@ function RecoveryGroupApproveTable({
 
 	const approveRecoveryTransaction = async (cachedDateGcode) => {
 		
-		setLoading(true)
-		const payLoad = {
-			checkoutstanding:cachedDateGcode
-		}
-		axios.post(`${url}/checking_outstanding_amt_bf_approve_grp`,payLoad)
-		.then(async (res) => {
-				if(res?.data){
-					if(res?.data?.approve_flag == 'S'){
-						const creds = {
-							approved_by: userDetails?.emp_id,
-							grpdt: cachedDateGcode,
-						}
-						await axios
-							.post(`${url}/approve_grpwise_recov`, creds)
-							.then((res) => {
-								setLoading(false);
-								if(res?.data?.suc == 1){
-								   // fetchLoanApplicationsGroup()
-									onRefresh()
-									setCachedDateGcode(() => [])
-									// setSelectedProducts(() => [])
-									setSelectedProducts(null)
-									setTotalEMI(0)
-									setCreditAmount(0)
-									setOutstanding(0)
-									setLoading(false)
-									// console.log("RESSS approveRecoveryTransaction", res?.data)
-								}
-								else{
-									Message('error','We are unable to process your request right now!! Please try again later');
-								}
-						
-							})
-							.catch((err) => {
-									setLoading(false);
-									Message('error',err?.message);
-							})
-					}
-					else{
-						setLoading(false);
-						Message('error',"Amount Miscalculation!!");
-					}
-					
-				}
-				else{
-					setLoading(false);
-					Message('error',"We are unable to process your request right now!! Please try again later");
-				}
-
-		}).catch(err =>{
-			setLoading(false);
-			Message('error',err.message);
-		})
-		
 		// setLoading(true)
-		// const creds = {
-		// 	approved_by: userDetails?.emp_id,
-		// 	grpdt: cachedDateGcode,
+		// const payLoad = {
+		// 	checkoutstanding:cachedDateGcode
 		// }
+		// axios.post(`${url}/checking_outstanding_amt_bf_approve_grp`,payLoad)
+		// .then(async (res) => {
+		// 		if(res?.data){
+		// 			if(res?.data?.approve_flag == 'S'){
+		// 				const creds = {
+		// 					approved_by: userDetails?.emp_id,
+		// 					grpdt: cachedDateGcode,
+		// 				}
+		// 				await axios
+		// 					.post(`${url}/approve_grpwise_recov`, creds)
+		// 					.then((res) => {
+		// 						setLoading(false);
+		// 						if(res?.data?.suc == 1){
+		// 						   // fetchLoanApplicationsGroup()
+		// 							onRefresh()
+		// 							setCachedDateGcode(() => [])
+		// 							// setSelectedProducts(() => [])
+		// 							setSelectedProducts(null)
+		// 							setTotalEMI(0)
+		// 							setCreditAmount(0)
+		// 							setOutstanding(0)
+		// 							setLoading(false)
+		// 							// console.log("RESSS approveRecoveryTransaction", res?.data)
+		// 						}
+		// 						else{
+		// 							Message('error','We are unable to process your request right now!! Please try again later');
+		// 						}
+						
+		// 					})
+		// 					.catch((err) => {
+		// 							setLoading(false);
+		// 							Message('error',err?.message);
+		// 					})
+		// 			}
+		// 			else{
+		// 				setLoading(false);
+		// 				Message('error',"Amount Miscalculation!!");
+		// 			}
+					
+		// 		}
+		// 		else{
+		// 			setLoading(false);
+		// 			Message('error',"We are unable to process your request right now!! Please try again later");
+		// 		}
 
-		// await axios
-		// 	.post(`${url}/approve_grpwise_recov`, creds)
-		// 	.then((res) => {
-		// 		// fetchLoanApplicationsGroup()
-		// 		onRefresh()
-		// 		setCachedDateGcode(() => [])
-		// 		// setSelectedProducts(() => [])
-		// 		setSelectedProducts(null)
-		// 		setTotalEMI(0)
-		// 		setCreditAmount(0)
-		// 		setOutstanding(0)
-		// 		// console.log("RESSS approveRecoveryTransaction", res?.data)
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log("ERRR approveRecoveryTransaction", err)
-		// 	})
-		// setLoading(false)
+		// }).catch(err =>{
+		// 	setLoading(false);
+		// 	Message('error',err.message);
+		// })
+		
+		setLoading(true)
+		const creds = {
+			approved_by: userDetails?.emp_id,
+			grpdt: cachedDateGcode,
+		}
+
+		await axios
+			.post(`${url}/approve_grpwise_recov`, creds)
+			.then((res) => {
+				// fetchLoanApplicationsGroup()
+				onRefresh()
+				setCachedDateGcode(() => [])
+				// setSelectedProducts(() => [])
+				setSelectedProducts(null)
+				setTotalEMI(0)
+				setCreditAmount(0)
+				setOutstanding(0)
+				// console.log("RESSS approveRecoveryTransaction", res?.data)
+			})
+			.catch((err) => {
+				console.log("ERRR approveRecoveryTransaction", err)
+			})
+		setLoading(false)
 	}
 
 	// const rejectRecoveryTransaction = async (cachedDateGcode) => {

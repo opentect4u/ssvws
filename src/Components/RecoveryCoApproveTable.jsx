@@ -337,74 +337,74 @@ function RecoveryCoApproveTable({
 	}
 
 	const approveRecoveryTransaction = async (cachedPaymentId) => {
-		setLoading(true)
-		const payLoad = {
-			checkoutstanding:cachedPaymentId
-		}
-		axios.post(`${url}/checking_outstanding_amt_bf_approve_grp`,payLoad)
-		.then(async (res) => {
-				if(res?.data){
-					if(res?.data?.approve_flag == 'S'){
-							const creds = {
-								approved_by: userDetails?.emp_id,
-								grpdt: cachedPaymentId,
-							}
-							console.log(creds, "rejectRecoveryTransaction")
-							await axios
-							.post(`${url}/approve_grpwise_recov`, creds)
-							.then((response) => {
-									setLoading(false);
-
-								if(response?.data?.suc == 1){
-									onRefresh();
-									setCachedPaymentId([])
-									setSelectedProducts(null)
-									setCreditAmount(0)
-									setOutstanding(0)
-									Message('success',"");
-								}
-								else{
-									Message('error',"Something went wrong in approving recovery");
-								}	
-							})
-							.catch((err) => {
-									setLoading(false);
-									Message('error',"Something went wrong in approving member recovery");
-							})
-					}
-					else{
-						setLoading(false);
-						Message('error',"Amount Miscalculation!!");
-					}
-				}
-				else{
-					setLoading(false);
-					Message('error',"We are unable to process your request right now!! Please try again later");
-				}
-		}).catch(err =>{
-			setLoading(false);
-			Message('error',err.message);
-		})
 		// setLoading(true)
-
-		// const creds = {
-		// 	approved_by: userDetails?.emp_id,
-		// 	grpdt: cachedPaymentId,
+		// const payLoad = {
+		// 	checkoutstanding:cachedPaymentId
 		// }
-		// console.log(creds, "rejectRecoveryTransaction")
+		// axios.post(`${url}/checking_outstanding_amt_bf_approve_grp`,payLoad)
+		// .then(async (res) => {
+		// 		if(res?.data){
+		// 			if(res?.data?.approve_flag == 'S'){
+		// 					const creds = {
+		// 						approved_by: userDetails?.emp_id,
+		// 						grpdt: cachedPaymentId,
+		// 					}
+		// 					console.log(creds, "rejectRecoveryTransaction")
+		// 					await axios
+		// 					.post(`${url}/approve_grpwise_recov`, creds)
+		// 					.then((response) => {
+		// 							setLoading(false);
 
-		// await axios
-		// 	.post(`${url}/approve_grpwise_recov`, creds)
-		// 	.then((res) => {
-		// 		fetchLoanApplicationsCo()
-		// 		setCachedPaymentId(() => [])
-		// 		setSelectedProducts(() => [])
-		// 		console.log("RESSS approveRecoveryTransaction", res?.data)
-		// 	})
-		// 	.catch((err) => {
-		// 		console.log("ERRR approveRecoveryTransaction", err)
-		// 	})
-		// setLoading(false)
+		// 						if(response?.data?.suc == 1){
+		// 							onRefresh();
+		// 							setCachedPaymentId([])
+		// 							setSelectedProducts(null)
+		// 							setCreditAmount(0)
+		// 							setOutstanding(0)
+		// 							Message('success',"");
+		// 						}
+		// 						else{
+		// 							Message('error',"Something went wrong in approving recovery");
+		// 						}	
+		// 					})
+		// 					.catch((err) => {
+		// 							setLoading(false);
+		// 							Message('error',"Something went wrong in approving member recovery");
+		// 					})
+		// 			}
+		// 			else{
+		// 				setLoading(false);
+		// 				Message('error',"Amount Miscalculation!!");
+		// 			}
+		// 		}
+		// 		else{
+		// 			setLoading(false);
+		// 			Message('error',"We are unable to process your request right now!! Please try again later");
+		// 		}
+		// }).catch(err =>{
+		// 	setLoading(false);
+		// 	Message('error',err.message);
+		// })
+		setLoading(true)
+
+		const creds = {
+			approved_by: userDetails?.emp_id,
+			grpdt: cachedPaymentId,
+		}
+		console.log(creds, "rejectRecoveryTransaction")
+
+		await axios
+			.post(`${url}/approve_grpwise_recov`, creds)
+			.then((res) => {
+				fetchLoanApplicationsCo()
+				setCachedPaymentId(() => [])
+				setSelectedProducts(() => [])
+				console.log("RESSS approveRecoveryTransaction", res?.data)
+			})
+			.catch((err) => {
+				console.log("ERRR approveRecoveryTransaction", err)
+			})
+		setLoading(false)
 	}
 
 	const rejectRecoveryTransaction = async (cachedPaymentId) => {
