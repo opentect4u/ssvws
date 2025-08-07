@@ -135,6 +135,14 @@ fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     var data = req.query;
 
     //fetch occupation details in web
+    if(data.branch_code == '100'){
+    var select = "a.form_no,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id",
+    table_name = "td_grt_occupation_household a, md_purpose b",
+    whr = `a.loan_purpose = b.purp_id
+    AND a.form_no = '${data.form_no}'`,
+    order = null;
+    var occup_dt = await db_Select(select,table_name,whr,order)
+    }else{
     var select = "a.form_no,a.self_occu,a.self_income,a.spouse_occu,a.spouse_income,a.loan_purpose,a.applied_amt,a.other_loan_flag,a.other_loan_amt,a.other_loan_emi,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id",
     table_name = "td_grt_occupation_household a, md_purpose b",
     whr = `a.loan_purpose = b.purp_id
@@ -142,6 +150,7 @@ fetchRouter.get("/fetch_occup_dt_web", async (req, res) => {
     AND a.form_no = '${data.form_no}'`,
     order = null;
     var occup_dt = await db_Select(select,table_name,whr,order)
+    }
     res.send(occup_dt)
 });
 
@@ -151,7 +160,7 @@ fetchRouter.get("/fetch_household_dt_web", async (req, res) => {
     //fetch household details in web
     var select = "form_no,house_type,own_rent,no_of_rooms,land,tv_flag,bike_flag,fridge_flag,wm_flag,poltical_flag,parental_addr,parental_phone",
     table_name = "td_grt_occupation_household",
-    whr = `branch_code IN (${data.branch_code}) AND form_no = '${data.form_no}'`,
+    whr = data.branch_code == '100' ? `form_no = '${data.form_no}'`: `branch_code IN (${data.branch_code}) AND form_no = '${data.form_no}'`,
     order = null;
     var household_dt = await db_Select(select,table_name,whr,order)
     res.send(household_dt)
