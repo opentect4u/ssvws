@@ -8,11 +8,19 @@ masterRouter.get("/get_group", async (req, res) => {
  var data = req.query;
 
  //get group details
+ if(data.branch_code == '100'){
+var select = "*",
+ table_name = "md_group",
+ whr = null,
+ order = `ORDER BY group_name`;
+ var group_dt = await db_Select(select,table_name,whr,order);
+ }else{
  var select = "*",
  table_name = "md_group",
  whr = `branch_code = '${data.branch_code}'`,
  order = `ORDER BY group_name`;
  var group_dt = await db_Select(select,table_name,whr,order);
+ }
 res.send(group_dt) 
 });
 
