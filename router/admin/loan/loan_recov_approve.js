@@ -44,7 +44,7 @@ loan_recov_approveRouter.post("/fetch_grp_member_dtls", async (req, res) => {
     //FETCH GROUPWISE RECOVERY DATA OF MEMBER
     var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-    whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND b.group_code = '${data.group_code}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
+    whr = data.branch_code == '100' ? `a.status = 'U' AND a.tr_type = 'R' AND b.group_code = '${data.group_code}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'` : `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND b.group_code = '${data.group_code}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}'`,
     order = null;
     var fetch_grp_memb_dt = await db_Select(select,table_name,whr,order);
 
