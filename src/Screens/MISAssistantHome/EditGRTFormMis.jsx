@@ -82,7 +82,8 @@ function EditGRTFormMis() {
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
 						userDetails?.id === 11 ||
-						userDetails?.id === 13 
+						userDetails?.id === 13 ||
+						userDetails?.id === 3
 					) &&
 						memberDetailsData?.approval_status === "U" && (
 							<div className="flex justify-between">
@@ -127,7 +128,8 @@ function EditGRTFormMis() {
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
 						userDetails?.id === 11 ||
-						userDetails?.id === 13 
+						userDetails?.id === 13 ||
+						userDetails?.id === 3
 					) &&
 						memberDetailsData?.approval_status === "S" && (
 							<div className="flex justify-between">
@@ -172,7 +174,8 @@ function EditGRTFormMis() {
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
 						userDetails?.id === 11 || 
-						userDetails?.id === 13 
+						userDetails?.id === 13 ||
+						userDetails?.id === 3
 					) &&
 						memberDetailsData?.approval_status === "A" && (
 							<div className="flex justify-between">
@@ -223,7 +226,8 @@ function EditGRTFormMis() {
 						userDetails?.id === 4 ||
 						userDetails?.id === 10 ||
 						userDetails?.id === 11 || 
-						userDetails?.id === 13 
+						userDetails?.id === 13 ||
+						userDetails?.id === 3
 					) &&
 						memberDetailsData?.approval_status === "R" && (
 							<div className="flex justify-between">

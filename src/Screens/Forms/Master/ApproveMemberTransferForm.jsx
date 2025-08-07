@@ -343,7 +343,7 @@ function ApproveMemberTransferForm({ state }) {
 							/>
 						</div>
 
-						<div className="col-span-2 flex justify-center my-2">
+						{userDetails?.id != 3 && <div className="col-span-2 flex justify-center my-2">
 							<button
 								type="submit"
 								className="inline-flex items-center px-5 py-2.5 mt-4 ml-2 sm:mt-6 text-sm font-medium text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full  dark:focus:ring-primary-900"
@@ -352,7 +352,7 @@ function ApproveMemberTransferForm({ state }) {
 								<CheckOutlined className="mr-2" />
 								Approve
 							</button>
-						</div>
+						</div>}
 					</>
 				</div>
 			</Spin>

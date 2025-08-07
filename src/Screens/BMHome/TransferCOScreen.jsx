@@ -101,7 +101,8 @@ function TransferCOScreen() {
 		await axios
 			.post(`${url}/trans_co_view`, {
 						// branch_code: userDetails?.brn_code,
-						flag: radioType
+						flag: radioType,
+						branch_code: [userDetails?.brn_code]
 						})
 			.then((res) => {
 				if (res?.data?.suc === 1) {

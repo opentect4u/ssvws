@@ -577,7 +577,7 @@ function RecoveryMemberApproveTable({
 				{/* <>{JSON.stringify(cachedPaymentId, null, 2)}</> */}
 
 				<div className="grid-cols-2 h-3 gap-5 mt-3 items-center text-left">
-					{ShowApprov && (
+					{(ShowApprov && userDetails?.id != 3) && (
 						<>
 							<motion.section
 								initial={{ opacity: 0 }}

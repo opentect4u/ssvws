@@ -854,7 +854,7 @@ function ViewLoanForm({ groupDataArr }) {
 									</>
 								)}
 							</div>
-							<div className="sm:col-span-2 text-center">
+							{userDetails?.id != 3 && <div className="sm:col-span-2 text-center">
 								<button
 									className="py-2.5 px-5 bg-teal-500 text-slate-50 rounded-full hover:bg-green-500 active:ring-2 active:ring-slate-500"
 									type="button"
@@ -887,7 +887,7 @@ function ViewLoanForm({ groupDataArr }) {
 								>
 									Save
 								</button>
-							</div>
+							</div>}
 						</div>
 						{/* purpose,scheme name,interest rate,period,period mode,fund name,total applied amount,total disbursement amount,disbursement date,current outstanding */}
 						<div className="text-[#DA4167] text-lg font-bold">Loan Details</div>

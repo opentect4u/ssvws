@@ -447,7 +447,7 @@ function Payroll({ branchCode = 100 }) {
 					</span>
 				</div>
 				{/* Reject Button */}
-				{user.attan_status !== "R" && (
+				{(user.attan_status !== "R" && userDetails?.id != 3) && (
 					<div className="col-span-5 flex justify-center items-center">
 						<Popconfirm
 							title={`Reject Attendance for ${user.emp_name}`}

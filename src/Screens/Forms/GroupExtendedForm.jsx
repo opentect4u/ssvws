@@ -1393,7 +1393,7 @@ const containerStyle = {
 						</>
 					)}
 
-					<BtnComp
+					{userDetails?.id != 3 && <BtnComp
 						mode="A"
 						// rejectBtn={true}
 						// onReject={() => {
@@ -1405,7 +1405,7 @@ const containerStyle = {
 						// condition={fetchedFileDetails?.length > 0}
 						// showSave
 						param={params?.id}
-					/>
+					/>}
 				</form>
 			</Spin>
 

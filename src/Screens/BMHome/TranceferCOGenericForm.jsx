@@ -127,7 +127,7 @@ const TranceferCOGenericForm = (props) => {
 			<div>
 				<label for={GROUP_NAME_CODE.name} className={labelClass}>
 					{GROUP_NAME_CODE.label}
-					{getEditBox(GROUP_NAME_CODE.name)}
+					{userDetails.id != 3 && getEditBox(GROUP_NAME_CODE.name)}
 				</label>
 				{getActualFormFiled(GROUP_NAME_CODE.name)}
 				<Select
@@ -180,7 +180,7 @@ const TranceferCOGenericForm = (props) => {
 				<div title={from_co}>
 					<label className={labelClass}>
 						{FROM_CO.label}
-						{getEditBox(FROM_CO.name)}
+						{userDetails.id != 3 && getEditBox(FROM_CO.name)}
 					</label>
 					<span>{from_co_name}</span>
 				</div>
@@ -207,7 +207,7 @@ const TranceferCOGenericForm = (props) => {
 				<div title={from_brn}>
 					<label className={labelClass}>
 						{FROM_BRANCH.label}
-						{getEditBox(FROM_BRANCH.name)}
+						{userDetails.id != 3 && getEditBox(FROM_BRANCH.name)}
 					</label>
 					<span>{from_brn_name}</span>
 				</div>
@@ -234,7 +234,7 @@ const TranceferCOGenericForm = (props) => {
 				<div title={to_brn}>
 					<label className={labelClass}>
 						{TO_BRANCH.label}
-						{getEditBox(TO_BRANCH.name)}
+						{userDetails.id != 3 && getEditBox(TO_BRANCH.name)}
 					</label>
 					<span
 						style={{
@@ -290,7 +290,7 @@ const TranceferCOGenericForm = (props) => {
 				<div title={to_co}>
 					<label className={labelClass}>
 						{TO_CO.label}
-						{getEditBox(TO_CO.name)}
+						{userDetails.id != 3 && getEditBox(TO_CO.name)}
 					</label>
 					<span
 						style={{
@@ -339,7 +339,7 @@ const TranceferCOGenericForm = (props) => {
 				<div>
 					<label className={labelClass}>
 						{REMARKS.label}
-						{getEditBox(REMARKS.name)}
+						{userDetails.id != 3 && getEditBox(REMARKS.name)}
 					</label>
 					<span>{remarks}</span>
 				</div>
@@ -538,7 +538,7 @@ const TranceferCOGenericForm = (props) => {
 								onForwardApplication={() => setVisible3(true)}
 							/> */}
 
-					<BtnComp
+					{userDetails?.id != 3 && <BtnComp
 						mode="B"
 						showUpdateAndReset={false}
 						showForward={true}
@@ -550,7 +550,7 @@ const TranceferCOGenericForm = (props) => {
 								setVisible3(true) // Open dialog only if no error
 							}
 						}}
-					/>
+					/>}
 
 					<DialogBox
 						flag={4}

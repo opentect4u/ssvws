@@ -21,7 +21,8 @@ function ViewMemberTransfer() {
 		setLoading(true)
 
 		const creds = {
-			flag:"A"
+			flag:"A",
+			branch_code:[userDetails?.brn_code]
 		}
 
 		await axios

@@ -436,7 +436,7 @@ const RejectTransaction = () => {
 										columnTotal={[8]}
 									/>
 								</div>
-								{data?.length > 0 &&
+								{(data?.length > 0 && userDetails?.id != 3) &&
 									selectedRowIndices?.length !== 0 &&
 									searchType == "R" && (
 										<div>
