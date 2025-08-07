@@ -72,7 +72,7 @@ loan_recov_approveRouter.post("/fetch_memberwise_recovery_admin", async (req, re
         //FETCH MEMBERWISE RECOVERY DATA
         var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,b.branch_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-        whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R'`,
+        whr = data.branch_code == '100' ? `a.status = 'U' AND a.tr_type = 'R'` : `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R'`,
         order = null;
         var fetch_recov_memb_dt = await db_Select(select,table_name,whr,order);
 
@@ -121,7 +121,7 @@ loan_recov_approveRouter.post("/fetch_branch_co", async (req, res) => {
      //FETCH BRANCHWISE CO NAME
     var select = "a.emp_id,a.emp_name,b.user_type",
     table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id",
-    whr = `a.branch_id = '${data.branch_code}' AND b.user_type IN ('1','2') AND b.user_status = 'A'`,
+    whr = data.branch_code == '100' ? `b.user_type IN ('1','2') AND b.user_status = 'A'` : `a.branch_id = '${data.branch_code}' AND b.user_type IN ('1','2') AND b.user_status = 'A'`,
     order = null;
     var branch_co_dt = await db_Select(select,table_name,whr,order);
 
@@ -134,7 +134,7 @@ loan_recov_approveRouter.post("/fetch_cowise_recov_data", async (req, res) => {
      //FETCH COWISE RECOVERY DATA
      var select = "a.payment_date transaction_date,SUM(a.credit) credit_amt,b.group_code,SUM(b.tot_emi) tot_emi,a.created_by created_code,a.status,b.branch_code,c.group_name,d.emp_name created_by,SUM(a.balance+a.od_balance+a.intt_balance) outstanding,if(a.tr_mode='C','Cash','UPI')tr_mode",
      table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id",
-     whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}'`,
+     whr = data.branch_code == '100' ? `a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}'` : `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}'`,
      order = `GROUP BY a.payment_date,b.group_code,a.created_by,a.status,c.group_name,d.emp_name,a.tr_mode,b.branch_code`;
      var fetch_grp_dt = await db_Select(select,table_name,whr,order);
  
@@ -147,7 +147,7 @@ loan_recov_approveRouter.post("/fetch_cowise_recov_member_dtls", async (req, res
     //FETCH COWISE RECOVERY DATA OF MEMBER
     var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
     table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
-    whr = `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}' AND b.group_code = '${data.group_code}'`,
+    whr = data.branch_code == '100' ? `a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}' AND b.group_code = '${data.group_code}'` : `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R' AND a.created_by = '${data.co_id}' AND a.payment_date = '${dateFormat(data.payment_date, 'yyyy-mm-dd')}' AND b.group_code = '${data.group_code}'`,
     order = null;
     var fetch_co_memb_dt = await db_Select(select,table_name,whr,order);
 
