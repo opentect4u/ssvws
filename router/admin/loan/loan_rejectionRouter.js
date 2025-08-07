@@ -8,12 +8,20 @@ dateFormat = require('dateformat');
 loan_rejectionRouter.post("/fetch_group_name", async (req, res) => {
   try {
     var data = req.body;
-
+    
+    if(data.branch_code == '100'){
+    var select = "group_name,group_code",
+    table_name = "md_group",
+    whr = `(group_name like '%${data.grps}%' OR group_code like '%${data.grps}%')`,
+    order = null;
+    var group_name = await db_Select(select,table_name,whr,order);
+    }else{
     var select = "group_name,group_code",
     table_name = "md_group",
     whr = `branch_code = '${data.branch_code}' AND (group_name like '%${data.grps}%' OR group_code like '%${data.grps}%')`,
     order = null;
     var group_name = await db_Select(select,table_name,whr,order);
+    }
     res.send(group_name)
   }catch (error){
     console.error("Error fetching loan:", error);
