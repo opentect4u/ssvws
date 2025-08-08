@@ -5,9 +5,10 @@ export async function exportToExcel(
 	data,
 	headerMap,
 	fileName = "report.xlsx",
-	dateTimeColsException = []
+	dateTimeColsException = [],
+	hasElementId = false
 ) {
-	console.log(data);
+	console.log(hasElementId);
 	const workbook = new ExcelJS.Workbook()
 	const worksheet = workbook.addWorksheet("Report")
 	// console.log(tot_disb_amt);

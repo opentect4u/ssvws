@@ -42,6 +42,7 @@ const EMICalculator = () => {
     const total_Interest = ((loanAmount * interestRate) / 100 * loanTenure) / Number(periods);
     let emi = (loanAmount + total_Interest) / loanTenure;
     console.log("EMI Calculation:", {total_Interest, emi});
+    console.log(totalMonths); 
 
     return {
         emi: emi.toFixed(2),
@@ -81,7 +82,7 @@ const EMICalculator = () => {
     const { emi, monthlyRate, totalMonths } = emiDetails;
     let remainingPrincipal = loanAmount;
     const schedule = [];
-
+    console.log(Math.min(totalMonths, 60));
     for (let month = 1; month <= Math.min(totalMonths, 60); month++) { // Show max 60 months for performance
       const interestPayment = remainingPrincipal * monthlyRate;
       const principalPayment = emi - interestPayment;
@@ -107,6 +108,10 @@ const EMICalculator = () => {
     setEmiData(calculatedEMI);
     setAmortizationSchedule(generateAmortizationSchedule(calculatedEMI));
   }, [loanAmount, interestRate, loanTenure]);
+
+  useEffect(()=>{
+      console.log(amortizationSchedule,' amortizationSchedule')
+  },[amortizationSchedule])
 
   // Data for pie chart
   const pieChartData = [
@@ -199,19 +204,19 @@ const EMICalculator = () => {
                     value={loanAmount}
                     onChange={setLoanAmount}
                     formatter={value => `₹ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                    parser={value => value.replace(/₹\s?|(,*)/g, '')}
+                    parser={value => value?.replace(/₹\s?|(,*)/g, '')}
                     min={5000}
-                    max={50000000}
+                    max={500000000}
                     step={50000}
                   />
                   <Slider
                     style={{ marginTop: 16 }}
                     min={100000}
-                    max={5000000}
+                    max={50000000}
                     value={loanAmount}
                     onChange={setLoanAmount}
                     step={50000}
-                    tooltip={{ formatter: value => `₹${value.toLocaleString('en-IN')}` }}
+                    tooltip={{ formatter: value => `₹${value?.toLocaleString('en-IN')}` }}
                   />
                 </div>
                 
@@ -260,16 +265,16 @@ const EMICalculator = () => {
                     value={loanTenure}
                     onChange={setLoanTenure}
                     min={1}
-                    max={30}
+                    max={60}
                     step={1}
                   />
                   <Slider
                     style={{ marginTop: 16 }}
                     min={1}
-                    max={30}
+                    max={60}
                     value={loanTenure}
                     onChange={setLoanTenure}
-                    tooltip={{ formatter: value => `${value} years` }}
+                    tooltip={{ formatter: value => `${value} ${periods == '12' ? ' Month' : " Week"}` }}
                   />
                 </div>
               </Space>
@@ -315,7 +320,7 @@ const EMICalculator = () => {
             </Row>
 
             {/* Progress Bars */}
-            <Card title="Loan Breakdown" style={{ marginTop: 16 }}>
+            {/* <Card title="Loan Breakdown" style={{ marginTop: 16 }}>
               <Row gutter={16}>
                 <Col span={12}>
                   <Text strong>Principal Amount</Text>
@@ -324,19 +329,19 @@ const EMICalculator = () => {
                     strokeColor="#52c41a"
                     format={() => `${principalPercentage.toFixed(1)}%`}
                   />
-                  <Text type="secondary">₹{loanAmount.toLocaleString('en-IN')}</Text>
+                  <Text type="secondary">₹{loanAmount?.toLocaleString('en-IN')}</Text>
                 </Col>
                 <Col span={12}>
-                  <Text strong>EMI</Text>
+                  <Text strong>Monthly EMI</Text>
                   <Progress
                     percent={interestPercentage}
                     strokeColor="#ff4d4f"
-                    format={() => `${interestPercentage.toFixed(1)}%`}
+                    format={() => `${interestPercentage?.toFixed(1)}%`}
                   />
-                  <Text type="secondary">₹{(emiData.totalInterest || 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</Text>
+                  <Text type="secondary">₹{(emiData ? (emiData.emi || 0) : 0).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</Text>
                 </Col>
               </Row>
-            </Card>
+            </Card> */}
           </Col>
         </Row>
         </div>

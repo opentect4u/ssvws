@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Democontext } from "./Context/Democontext"
 import Loader from "./Components/Loader"
 import CircularProgress from "@mui/material/CircularProgress"
+// import LoanCalculatorIndex from "./Screens/BMHome/Loans/LoanCalculator/index copy"
 // import LoanStatementMain from "./Screens/Reports/LoanStatements/LoanStatementMain"
 // import LoanTransactionsMain from "./Screens/Reports/LoanTransactions/LoanTransactionsMain"
 // import DemandReportsMain from "./Screens/Reports/DemandReports/DemandReportsMain"
@@ -382,6 +383,10 @@ const router = createBrowserRouter([
 								path:'loancalculator',
 								element: <LoanCalculator />,
 							},
+							// {
+							// 	path:'loancalculator_copy',
+							// 	element: <LoanCalculatorIndex />,
+							// },
 							// {
 							// 	path: "masterbanks",
 							// 	element: <MasterBanks />,

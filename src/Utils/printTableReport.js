@@ -52,13 +52,19 @@ export function printTableReport(
 	data,
 	headerMap,
 	title = "Report",
-	dateTimeColsException = []
+	dateTimeColsException = [],
+	hasHtmlElement=false
 ) {
 	if (data.length > 10000) {
 		alert(
 			`You are trying to print ${data.length} rows.\n\nPrinting this much data may crash or freeze your browser.\n\nInstead export to excel.`
 		)
 		return
+	}
+	let headerHtml= ''
+	if(hasHtmlElement){
+		const headerContentEl = document.getElementById("loanupperText");
+		headerHtml = headerContentEl ? headerContentEl.innerHTML : "";
 	}
 
 	const keys = Object.keys(headerMap)
@@ -79,6 +85,9 @@ export function printTableReport(
       thead th { background: #ff0; font-weight: bold; }
     </style></head><body>
       <h1>${title}</h1>
+	   <div class="print-header">
+		${headerHtml}
+		</div>
       <table><thead><tr>
         ${keys.map((k) => `<th>${headerMap[k]}</th>`).join("")}
       </tr></thead><tbody>

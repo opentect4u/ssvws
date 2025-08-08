@@ -4,6 +4,7 @@ import axios from "axios"
 import { url } from "../../../Address/BaseUrl"
 import { Message } from "../../../Components/Message"
 import { Spin, Button, Modal, Tooltip, DatePicker } from "antd"
+
 import {
 	LoadingOutlined,
 	SearchOutlined,
@@ -27,7 +28,8 @@ import DynamicTailwindTable from "../../../Components/Reports/DynamicTailwindTab
 import { printTableReport } from "../../../Utils/printTableReport"
 import moment from "moment"
 import { MultiSelect } from "primereact/multiselect"
-
+import ExcelJS from "exceljs"
+// import { saveAs } from "file-saver"
 // const { RangePicker } = DatePicker
 // const dateFormat = "YYYY/MM/DD"
 
@@ -156,8 +158,8 @@ function LoanStatementMain() {
 			.then((res) => {
 				console.log("RESSSSS XX======>>>>", res?.data)
 				setReportTxnData(res?.data?.msg)
-				populateColumns(res?.data?.msg,loanStatementHeader);	
-				
+				populateColumns(res?.data?.msg, loanStatementHeader);
+
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 			})
 			.catch((err) => {
@@ -185,7 +187,7 @@ function LoanStatementMain() {
 				console.log("RESSSSS XX======>>>>", res?.data)
 				setReportTxnData(res?.data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
-				populateColumns(res?.data?.msg,loanStatementHeaderGroupwise);	
+				populateColumns(res?.data?.msg, loanStatementHeaderGroupwise);
 
 			})
 			.catch((err) => {
@@ -212,10 +214,10 @@ function LoanStatementMain() {
 	}
 
 
-		const populateColumns = (main_dt,headerExport) =>{
-				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
-				setColumns(columnToBeShown);
-				setSelectedColumns(columnToBeShown.map(el => el.index));
+	const populateColumns = (main_dt, headerExport) => {
+		const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header: headerExport[key], index }));
+		setColumns(columnToBeShown);
+		setSelectedColumns(columnToBeShown.map(el => el.index));
 	}
 
 	useEffect(() => {
@@ -289,22 +291,22 @@ function LoanStatementMain() {
 									console.log("***********========", e)
 									setBranch(
 										e.target.value +
-											"," +
-											[
-												// { branch_code: "A", branch_name: "All Branches" },
-												...branches,
-											].filter((i) => i.branch_code == e.target.value)[0]
-												?.branch_name
+										"," +
+										[
+											// { branch_code: "A", branch_name: "All Branches" },
+											...branches,
+										].filter((i) => i.branch_code == e.target.value)[0]
+											?.branch_name
 									)
 									console.log(branches)
 									console.log(
 										e.target.value +
-											"," +
-											[
-												// { branch_code: "A", branch_name: "All Branches" },
-												...branches,
-											].filter((i) => i.branch_code == e.target.value)[0]
-												?.branch_name
+										"," +
+										[
+											// { branch_code: "A", branch_name: "All Branches" },
+											...branches,
+										].filter((i) => i.branch_code == e.target.value)[0]
+											?.branch_name
 									)
 								}}
 								mode={2}
@@ -557,56 +559,58 @@ function LoanStatementMain() {
 						// }}
 						okText={"OK"}
 						cancelText={"Cancel"}
-						// cancelButtonProps={{
-						// 	icon: <FileExcelOutlined />,
-						// }}
-						// onClose={() => {
-						// 	setOpenModal(false)
-						// }}
+					// cancelButtonProps={{
+					// 	icon: <FileExcelOutlined />,
+					// }}
+					// onClose={() => {
+					// 	setOpenModal(false)
+					// }}
 					>
-						{searchType === "M" && (
-							<div className="text-sm text-slate-700">
-								<div className="italic">
-									Member: {metadataDtls?.client_name},{" "}
-									{metadataDtls?.member_code}
-								</div>
-								<div className="italic">
-									Branch: {metadataDtls?.branch_name},{" "}
-									{metadataDtls?.branch_code}
-								</div>
-								<div className="italic">
-									Group: {metadataDtls?.group_name}, {metadataDtls?.group_code}
-								</div>
-								<div className="italic">
-									Showing results from{" "}
-									{new Date(fromDate)?.toLocaleDateString("en-GB")} to{" "}
-									{new Date(toDate)?.toLocaleDateString("en-GB")}
-								</div>
-								<div className="italic">Loan ID: {metadataDtls?.loan_id}</div>
-							</div>
-						)}
-						{searchType === "G" && (
-							<div className="text-sm text-slate-700">
-								<div className="italic">
-									Group: {metadataDtls?.group_name}, {metadataDtls?.group_code}
-								</div>
-								<div className="italic">
-									Showing results from{" "}
-									{new Date(fromDate)?.toLocaleDateString("en-GB")} to{" "}
-									{new Date(toDate)?.toLocaleDateString("en-GB")}
-								</div>
-								<div className="italic">
-									Branch: {metadataDtls?.branch_name},{" "}
-									{metadataDtls?.branch_code}
-								</div>
-							</div>
-						)}
+						<div id="loanupperText">
 
+							{searchType === "M" && (
+								<div className="text-sm text-slate-700" id="loanupperText">
+									<div className="italic">
+										Member: {metadataDtls?.client_name},{" "}
+										{metadataDtls?.member_code}
+									</div>
+									<div className="italic">
+										Branch: {metadataDtls?.branch_name},{" "}
+										{metadataDtls?.branch_code}
+									</div>
+									<div className="italic">
+										Group: {metadataDtls?.group_name}, {metadataDtls?.group_code}
+									</div>
+									<div className="italic">
+										Showing results from{" "}
+										{new Date(fromDate)?.toLocaleDateString("en-GB")} to{" "}
+										{new Date(toDate)?.toLocaleDateString("en-GB")}
+									</div>
+									<div className="italic">Loan ID: {metadataDtls?.loan_id}</div>
+								</div>
+							)}
+							{searchType === "G" && (
+								<div className="text-sm text-slate-700" id="loanupperText">
+									<div className="italic">
+										Group: {metadataDtls?.group_name}, {metadataDtls?.group_code}
+									</div>
+									<div className="italic">
+										Showing results from{" "}
+										{new Date(fromDate)?.toLocaleDateString("en-GB")} to{" "}
+										{new Date(toDate)?.toLocaleDateString("en-GB")}
+									</div>
+									<div className="italic">
+										Branch: {metadataDtls?.branch_name},{" "}
+										{metadataDtls?.branch_code}
+									</div>
+								</div>
+							)}
+						</div>
 						{
-							reportTxnData.length > 0 && 	<MultiSelect value={selectedColumns} 
+							reportTxnData.length > 0 && <MultiSelect value={selectedColumns}
 								onChange={(e) => {
 									setSelectedColumns(e.value)
-								}} options={md_columns} optionValue="index" optionLabel="header" 
+								}} options={md_columns} optionValue="index" optionLabel="header"
 								filter placeholder="Choose Columns" maxSelectedLabels={3} className="w-full md:w-20rem mt-5" />
 						}
 						{/* For memberwise */}
@@ -624,11 +628,11 @@ function LoanStatementMain() {
 								// colRemove={[0,1,2,3,4,6,10,11,13,14,15,16]}
 								headersMap={loanStatementHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
-									if(!selectedColumns.includes(el.index)){
-									return el.index
+									if (!selectedColumns.includes(el.index)) {
+										return el.index
 									}
 									return false
-							}) : []}
+								}) : []}
 								indexing
 							/>
 						)}
@@ -647,11 +651,11 @@ function LoanStatementMain() {
 								// colRemove={[0,1,2,3,4,6,10,11,13,14,15,16]}
 								headersMap={loanStatementHeaderGroupwise}
 								colRemove={selectedColumns ? md_columns.map(el => {
-									if(!selectedColumns.includes(el.index)){
-									return el.index
+									if (!selectedColumns.includes(el.index)) {
+										return el.index
 									}
 									return false
-							}) : []}
+								}) : []}
 								indexing
 							/>
 						)}
@@ -659,63 +663,110 @@ function LoanStatementMain() {
 							<div className="flex gap-4 -mt-14">
 								<Tooltip title="Export to Excels">
 									<button
-										onClick={() =>{
-											// console.log(dataToExport);
-											// console.log(headersToExport)
-											// const columnToExport = {
-											// 	...headersToExport,
-											// 	// STATUS:'STATUS',
-											// 	// loan_id: "Loan ID",
-											// 	// member_code: "Member Code",
-											// 	// group_code: "Group Code",
-											// 	// branch_code: "Branch Code",
-											// 	// client_name: "Client Name",
-											// 	// trans_no: "Transaction No.",
-											// 	// created_by: "Created By",
-											// 	// created_at: "Created At",
-											// 	// approved_by: "Approved By",
-											// 	// approved_at: "Approved At",
-											// }
-											// const {status,...rest} = columnToExport;
-											// console.log(dataToExport);
-											// return;
-											console.log(reportTxnData);
-
+										onClick={async () => {
 											const exportData = [...reportTxnData]
-											const tot_debit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
-											const tot_credit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.credit) , 0);
-											if(searchType === "M") {
+											const tot_debit_amt = exportData.reduce((sum, cur) => sum + Number(cur.debit), 0);
+											const tot_credit_amt = exportData.reduce((sum, cur) => sum + Number(cur.credit), 0);
+											if (searchType === "M") {
 												exportData.push({
 													trans_no: "Total",
 													debit: tot_debit_amt,
 													credit: tot_credit_amt,
 												})
-											}	
-											else{
+											}
+											else {
 												exportData.push({
 													trans_no: "Total",
 													debit: tot_debit_amt,
 													credit: tot_credit_amt,
 												})
-												
+
 											}
 											const dt = md_columns.filter(el => selectedColumns.includes(el.index));
-												let header_export = {};
-												Object.keys(headersToExport).forEach(key =>{
-													if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
-														header_export = {
-															...header_export,
-															[key]:headersToExport[key]
+											let header_export = {};
+											Object.keys(headersToExport).forEach(key => {
+												if (dt.filter(ele => ele.header == headersToExport[key]).length > 0) {
+													header_export = {
+														...header_export,
+														[key]: headersToExport[key]
+													}
+												}
+											});
+
+											// exportToExcel(exportData, header_export, fileName, [
+											// 	0,
+											// ],true)
+
+											const el = document.getElementById('loanupperText');
+
+											// Get plain text from the element (ignoring tags, keeping line breaks)
+											const htmlText = el?.innerText || ''; // innerText keeps line breaks from <br>
+
+											const workbook = new ExcelJS.Workbook();
+											const worksheet = workbook.addWorksheet("Report");
+
+											// Add text to A1
+											worksheet.getCell('A1').value = htmlText;
+											worksheet.getCell('A1').alignment = { wrapText: true, vertical: 'top', horizontal: 'left' };
+											worksheet.getCell('A1').font = { bold: true };
+
+											// Merge across A1 to E1 (adjust based on your columns)
+											worksheet.mergeCells('A1:E1');
+
+											// Adjust height to fit content
+											worksheet.getRow(1).height = 100;
+											worksheet.insertRow(2)
+
+											const keys = Object.keys(header_export)
+											// worksheet.columns = keys.map((key) => ({
+											// 	header: header_export[key],
+											// 	key,
+											// 	width: 20,
+											// }))
+											worksheet.getRow(2).values = keys.map(key => header_export[key]);
+											worksheet.getRow(2).eachCell((cell) => {
+												cell.font = { bold: true };
+												cell.fill = {
+													type: "pattern",
+													pattern: "darkGrid",
+													fgColor: { argb: "FFFFFF00" },
+												};
+											});
+											keys.forEach((key, index) => {
+												worksheet.getColumn(index + 1).width = Math.max(header_export[key].length + 5, 15);
+											});
+											const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/
+
+
+											let dataRowIndex = 3;
+											exportData.forEach((rawRow) => {
+												const row = { ...rawRow };
+												keys.forEach((key, idx) => {
+													const val = rawRow[key];
+													if (typeof val === "string" && isoRegex.test(val)) {
+														if ([0].includes(idx)) {
+															row[key] = new Date(val).toLocaleDateString("en-GB");
+														} else {
+															row[key] = new Date(val).toLocaleString("en-GB");
 														}
 													}
 												});
-											// const mainDT = exportData.map(el => {
-											// 	el.tr_type = el.tr_type == 'D' ? 'Disbursement' : (el.tr_type == 'R' ? 'Recovery' : '');
-											// 	return el;
-											// })
-											exportToExcel(exportData, header_export, fileName, [
-												0,
-											])
+
+												worksheet.insertRow(dataRowIndex++, keys.map(k => row[k]));
+											});
+
+											worksheet.getRow(2).eachCell((cell) => {
+												cell.font = { bold: true }
+												cell.fill = {
+													type: "pattern",
+													pattern: "darkGrid",
+													fgColor: { argb: "FFFFFF00" },
+												}
+											})
+
+											// Export
+											const buffer = await workbook.xlsx.writeBuffer();
+											saveAs(new Blob([buffer]), "export.xlsx");
 										}}
 										className="mt-5 justify-center items-center rounded-full text-green-900"
 									>
@@ -738,42 +789,43 @@ function LoanStatementMain() {
 										// 		toDate
 										// 	)
 										// }
-										onClick={() =>{
+										onClick={() => {
 											const exportData = [...reportTxnData]
-											const tot_debit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
-											const tot_credit_amt = exportData.reduce( ( sum , cur ) => sum + Number(cur.credit) , 0);
-											if(searchType === "M") {
+											const tot_debit_amt = exportData.reduce((sum, cur) => sum + Number(cur.debit), 0);
+											const tot_credit_amt = exportData.reduce((sum, cur) => sum + Number(cur.credit), 0);
+											if (searchType === "M") {
 												exportData.push({
 													trans_no: "Total",
 													debit: tot_debit_amt,
 													credit: tot_credit_amt,
 												})
-											}	
-											else{
+											}
+											else {
 												exportData.push({
 													trans_no: "Total",
 													debit: tot_debit_amt,
 													credit: tot_credit_amt,
 												})
-												
+
 											}
 											const dt = md_columns.filter(el => selectedColumns.includes(el.index));
-												let header_export = {};
-												Object.keys(headersToExport).forEach(key =>{
-													if(dt.filter(ele => ele.header == headersToExport[key]).length > 0){
-														header_export = {
-															...header_export,
-															[key]:headersToExport[key]
-														}
+											let header_export = {};
+											Object.keys(headersToExport).forEach(key => {
+												if (dt.filter(ele => ele.header == headersToExport[key]).length > 0) {
+													header_export = {
+														...header_export,
+														[key]: headersToExport[key]
 													}
-												});
+												}
+											});
 											printTableReport(
 												exportData,
 												header_export,
 												fileName?.split(",")[0],
-												[0]
+												[0],
+												true
 											)
-										
+
 										}
 										}
 										className="mt-5 justify-center items-center rounded-full text-pink-600"
