@@ -314,7 +314,17 @@ function DisbursmentForm() {
 		// alert()
 		console.log(membersForDisb)
 		let dt = [...membersForDisb]
-		dt[index][event.target.name] = +event.target.value
+		dt[index][event.target.name] = +event.target.value;
+			if(disbursementDetailsData?.b_mode && disbursementDetailsData?.b_scheme && disbursementDetailsData?.b_roi){
+						const period = disbursementDetailsData?.b_period ? Number(disbursementDetailsData?.b_period) : 0.00;
+						const mode = disbursementDetailsData?.b_mode == 'Monthly' ? 12 : 7;
+						const roi = disbursementDetailsData?.b_roi ? Number(disbursementDetailsData?.b_roi) : 0.00;
+						// console.log(membersForDisb);
+						const tot_interest = (((+event.target.value * roi) / 100)* period) / Number(mode);
+						const total_emi = (+event.target.value + tot_interest) / period;
+						dt[index]['emi'] = total_emi.toFixed(2);
+			}
+				
 		setMembersForDisb(dt)
 		// console.log(dt, 'dttttttttttttt', personalDetailsData.b_appliedAmt);
 		setTotDisb(
@@ -360,6 +370,8 @@ function DisbursmentForm() {
 			.post(`${url}/admin/scheme_dtls`, creds)
 			.then((res) => {
 				console.log("PPP", res?.data)
+				console.log('Mode' , disbursementDetailsData?.b_mode);
+				console.log('Scheme' , disbursementDetailsData?.b_scheme);
 				setDisbursementDetailsData((prevData) => ({
 					...prevData,
 					b_scheme: prevData.b_scheme,
@@ -378,7 +390,27 @@ function DisbursmentForm() {
 					b_bankCharges: prevData.b_bankCharges || "",
 					b_processingCharges: prevData.b_processingCharges || "",
 				}))
-				setMaxDisburseAmountForAScheme(res?.data?.msg[0]?.max_amt)
+				setMaxDisburseAmountForAScheme(res?.data?.msg[0]?.max_amt);
+				if(disbursementDetailsData?.b_mode && disbursementDetailsData?.b_scheme && res?.data?.msg.length > 0){
+					console.log('asdadasdasdad')
+					const period = disbursementDetailsData?.b_mode == 'Monthly' ?  res?.data?.msg[0]?.min_period : res?.data?.msg[0]?.min_period_week;
+					const mode = disbursementDetailsData?.b_mode == 'Monthly' ? 12 : 7;
+					const roi = res?.data?.msg[0]?.roi;
+					console.log(membersForDisb);
+					let dt = membersForDisb?.map(el =>{
+						 	const tot_interest = (((Number(el?.prn_disb_amt) * roi) / 100)* period) / Number(mode);
+							const total_emi = (Number(el?.prn_disb_amt) + tot_interest) / period;
+							el.emi = total_emi.toFixed(2);
+							return el;
+					})	
+					setMembersForDisb(dt);
+					//  const { principal, mode, period, roi } = values;
+					// const tot_interest = (((principal * roi) / 100)* period) / Number(mode);
+					// console.log("Total Interest: ", tot_interest);
+					// formik.setFieldValue("totalInterest", tot_interest.toFixed(2));
+					// const total_emi = (Number(principal) + tot_interest) / period;
+					// formik.setFieldValue("totalEMI", total_emi.toFixed(2));
+				}
 			})
 			.catch((err) => {
 				console.log("errrr", err)
@@ -475,6 +507,7 @@ function DisbursmentForm() {
 						client_name: i.client_name,
 						// prn_disb_amt:+i.applied_amt || 0,
 						prn_disb_amt: i.prn_disb_amt > 0 ? +i.prn_disb_amt : +i.applied_amt,
+						emi:0
 					})
 				}
 				setTotDisb(count)
@@ -1531,7 +1564,12 @@ function DisbursmentForm() {
 										label="Scheme"
 										name="b_scheme"
 										formControlName={disbursementDetailsData.b_scheme}
-										handleChange={handleChangeDisburseDetails}
+										handleChange={(e) => {
+											handleChangeDisburseDetails(e);
+
+
+
+										}}
 										data={schemes?.map((item, _) => ({
 											code: item?.scheme_id,
 											name: item?.scheme_name,
@@ -1576,7 +1614,9 @@ function DisbursmentForm() {
 										label="Mode*"
 										name="b_mode"
 										formControlName={disbursementDetailsData?.b_mode}
-										handleChange={handleChangeDisburseDetails}
+										handleChange={(e) => {
+											handleChangeDisburseDetails(e);
+										}}
 										data={[
 											{
 												code: "Monthly",
@@ -2129,7 +2169,7 @@ function DisbursmentForm() {
 							</div>
 
 							{membersForDisb?.map((item, index) => (
-								<div className="grid gap-4 p-5 my-4 sm:grid-cols-3 bg-slate-200 rounded-md shadow-md sm:gap-6">
+								<div className="grid gap-4 p-5 my-4 sm:grid-cols-4 bg-slate-200 rounded-md shadow-md sm:gap-6">
 									<div>
 										<TDInputTemplateBr
 											placeholder="Member Code"
@@ -2188,6 +2228,22 @@ function DisbursmentForm() {
 											formControlName={item.prn_disb_amt}
 											handleChange={(e) => handleDisbursementChange(index, e)}
 											mode={1}
+											// disabled
+										/>
+									</div>
+
+									<div>
+										<TDInputTemplateBr
+											placeholder="EMI..."
+											type="text"
+											label="EMI"
+											name="emi"
+											// value= {item.prn_disb_amt}
+											// formControlName={item.prn_disb_amt}
+											formControlName={item?.emi}
+											handleChange={(e) => console.log(index, e)}
+											mode={1}
+											disabled
 											// disabled
 										/>
 									</div>
