@@ -2238,6 +2238,7 @@ function DisbursmentForm() {
 											type="text"
 											label="EMI"
 											name="emi"
+											isColor={'text-teal-500'}
 											// value= {item.prn_disb_amt}
 											// formControlName={item.prn_disb_amt}
 											formControlName={item?.emi}

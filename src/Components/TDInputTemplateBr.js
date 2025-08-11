@@ -5,7 +5,7 @@ function TDInputTemplateBr(props) {
 		<>
 			<label
 				htmlFor={props.name}
-				className={`block mb-2 text-sm capitalize font-bold text-slate-800
+				className={`block mb-2 text-sm capitalize font-bold ${props?.isColor ? props?.isColor : 'text-slate-800'}
 				 dark:text-gray-100`}
 			>
 				{/* <div className="relative">
@@ -32,7 +32,7 @@ function TDInputTemplateBr(props) {
 					min={props.min}
 					accept={props.accept}
 					max={props.max}
-					className={`bg-white border-gray-400 text-gray-800 text-sm rounded-md ${
+					className={`bg-white border-gray-400 ${props?.isColor ? `${props?.isColor} font-bold` : 'text-gray-800'} text-sm rounded-md ${
 						userDetails?.id == 3
 							? "focus:border-slate-800 active:border-slate-600 focus:ring-slate-600"
 							: "focus:border-slate-800 active:border-slate-600 focus:ring-slate-600"
