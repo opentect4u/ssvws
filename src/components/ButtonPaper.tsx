@@ -13,6 +13,7 @@ type ButtonPaperProps = {
     style?: {}
     disabled?: boolean
     loading?: boolean
+    contentStyle?:{}
 }
 
 const ButtonPaper = ({
@@ -25,6 +26,7 @@ const ButtonPaper = ({
     style,
     disabled,
     loading,
+    contentStyle
 }: PropsWithChildren<ButtonPaperProps>) => (
     <Button
         loading={loading}
@@ -34,6 +36,7 @@ const ButtonPaper = ({
         onPress={onPress}
         buttonColor={buttonColor}
         textColor={textColor}
+        contentStyle={contentStyle}
         style={style}>
         {children}
     </Button>

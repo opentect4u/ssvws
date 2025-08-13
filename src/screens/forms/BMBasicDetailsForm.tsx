@@ -1360,14 +1360,18 @@ const BMBasicDetailsForm = forwardRef(({
                         gap: 40,
                         marginBottom: 45
                     }}>
-                        {flag === "CO" && <ButtonPaper mode="text" textColor={theme.colors.error} onPress={handleResetForm} icon="backup-restore" disabled={disableCondition(approvalStatus, branchCode)}>
-                            RESET FORM
+                        {flag === "CO" && <ButtonPaper mode="text"
+                        textColor={theme.colors.error} onPress={handleResetForm} icon="backup-restore" disabled={disableCondition(approvalStatus, branchCode)}>
+                            <Text variant='labelMedium' style={{
+                                color:theme.colors.error
+                            }}>RESET FORM</Text>
                         </ButtonPaper>}
                         {/* <ButtonPaper mode='text' icon="cloud-upload-outline" onPress={triggerUpdateButton} disabled={updateDisabled}
                             loading={loading}>{flag === "BM" ? "UPDATE" : "SUBMIT"}</ButtonPaper> */}
 
                         {
-                            flag !== "BM" && <ButtonPaper mode='text' icon="cloud-upload-outline" onPress={triggerUpdateButton} disabled={updateDisabled}
+                            flag !== "BM" && <ButtonPaper mode='outlined' icon="cloud-upload-outline"
+                            onPress={triggerUpdateButton} disabled={updateDisabled}
                                 loading={loading}>SUBMIT</ButtonPaper>
                         }
                     </View>
