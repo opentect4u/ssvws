@@ -1358,7 +1358,7 @@ const BMBasicDetailsForm = forwardRef(({
                         flexDirection: "row",
                         justifyContent: "center",
                         gap: 40,
-                        marginBottom: 10
+                        marginBottom: 45
                     }}>
                         {flag === "CO" && <ButtonPaper mode="text" textColor={theme.colors.error} onPress={handleResetForm} icon="backup-restore" disabled={disableCondition(approvalStatus, branchCode)}>
                             RESET FORM
