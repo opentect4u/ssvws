@@ -894,12 +894,22 @@ function ViewLoanForm({ groupDataArr }) {
 
 						<div>
 							<DynamicTailwindTable
-								data={groupData[0]?.disb_details}
+								data={groupData[0]?.disb_details?.map((el) => {
+									//  console.log(el.loan_cycle, ' Loan Cycle');
+									 const loanCycle = 'Loan Cycle - '+ el.loan_cycle; 
+									 
+									//  el.loan_cycle = loanCycle;
+									//  console.log(el);
+									 return {
+										...el,
+										loan_cycle:loanCycle
+									 };
+								})}
 								pageSize={50}
 								columnTotal={[13, 15, 16]}
 								headersMap={disbursementDetailsHeader}
 								dateTimeExceptionCols={[14]}
-								colRemove={[3, 5, 11, 17]}
+								colRemove={[3, 5, 12, 17]}
 							/>
 						</div>
 

@@ -101,6 +101,7 @@ const disbursementDetailsHeader = {
 	tot_emi: "Total EMI",
 	recovery_day: "Recovery Day",
 	curr_outstanding: "Current Outstanding",
+	loan_cycle:"Loan Cycle"
 }
 
 const branchwiseOutstandingHeader = {
@@ -531,6 +532,8 @@ const txnGrpHeader = {
 	debit: "Debit",
 	credit: "Credit",
 	curr_balance: "Current Balance",
+	bank_name: "Bank",
+	bank_branch_name: "Bank Branch",
 }
 
 const txnFundHeader = {
@@ -549,6 +552,8 @@ const txnFundHeader = {
 	debit: "Debit",
 	credit: "Credit",
 	curr_balance: "Current Balance",
+	bank_name:"Bank",
+	bank_branch_name:"Bank Branch"
 }
 
 const txnCoHeader = {
@@ -585,6 +590,8 @@ const txnMembHeader = {
 	debit: "Debit",
 	credit: "Credit",
 	curr_balance: "Current Balance",
+	bank_name:"Bank",
+	bank_branch_name:"Bank Branch",
 	created_code: "Created Code",
 	created_at: "Created At",
 	created_by: "Created By",
@@ -613,6 +620,7 @@ const txnDetailsHeader = {
 	tr_type: "Transaction Type",
 	tr_mode: "Transaction Mode",
 	status: "Status",
+	approve_details:"Approve Details"
 }
 
 const portfolioReportHeaderGroupwise = {

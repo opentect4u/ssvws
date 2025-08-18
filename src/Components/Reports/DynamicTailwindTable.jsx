@@ -146,6 +146,7 @@ const DynamicTailwindTable = ({
 								</th>
 							)}
 							{filteredHeadersWithIndex.map((item, i) => (
+								console.log(item),
 								<th key={i} className="px-6 py-3 font-semibold">
 									{headersMap
 										? headersMap[item.header] || item.header

@@ -228,8 +228,13 @@ const RejectTransaction = () => {
 
 		try {
 			const res = await axios.post(`${url}/reject_loan_transactions`, creds)
-			console.log("RES", res?.data)
-			Message("success", "Loan Txns rejected.")
+			// console.log("RES", res?.data)
+			if(res?.data?.suc == 1){
+				Message("success", "Loan Txns rejected.")
+			}
+			else{
+				Message("error", res?.data?.msg)
+			}
 		} catch (err) {
 			Message("error", "Some error occurred.")
 			console.log("ERRR", err)
@@ -461,7 +466,7 @@ const RejectTransaction = () => {
 												onConfirm={async () => {
 													await rejectTnx()
 													setData([])
-													Message("success", "Transaction Rejected.")
+													// Message("success", "Transaction Rejected.")
 												}}
 												onCancel={() => null}
 												okText="Reject"

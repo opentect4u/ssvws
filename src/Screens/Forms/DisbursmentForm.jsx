@@ -63,6 +63,14 @@ function DisbursmentForm() {
 
 	const [schemes, setSchemes] = useState(() => [])
 	const [funds, setFunds] = useState(() => [])
+	const [md_loan_cycle, setLoanCycle] = useState(() => [
+		{code: 1,name: "Loan Cycle - 1"},
+		{code: 2,name: "Loan Cycle - 2"},
+		{code: 3,name: "Loan Cycle - 3"},
+		{code: 4,name: "Loan Cycle - 4"},
+		{code: 5,name: "Loan Cycle - 5"},
+		{code: 6,name: "Loan Cycle - 6"}
+	])
 	const [tnxTypes, setTnxTypes] = useState(() => [])
 	const [tnxModes, setTnxModes] = useState(() => [])
 	const [banks, setBanks] = useState(() => [])
@@ -124,6 +132,7 @@ function DisbursmentForm() {
 		b_bankCharges: 0,
 		b_processingCharges: 0,
 		b_dayOfRecovery: "",
+		b_loan_cycle:""
 	})
 
 	const handleChangeDisburseDetails = (e) => {
@@ -582,6 +591,7 @@ function DisbursmentForm() {
 					b_dayOfRecovery: "",
 					b_bankCharges: res?.data?.loan_trans?.bank_charge || 0,
 					b_processingCharges: res?.data?.loan_trans?.proc_charge || 0,
+					b_loan_cycle:""
 				})
 
 				setTransactionDetailsData({
@@ -698,7 +708,9 @@ function DisbursmentForm() {
 			!personalDetailsData.b_purpose ||
 			!transactionDetailsData.b_tnxDate ||
 			!disbursementDetailsData.b_period ||
-			!disbursementDetailsData.b_scheme
+			!disbursementDetailsData.b_scheme ||
+			!disbursementDetailsData.b_loan_cycle
+
 		) {
 			console.log("Not Valid");
 		}
@@ -814,7 +826,7 @@ function DisbursmentForm() {
 							cheque_id: transactionDetailsData?.b_chequeOrRefNo || "",
 							particulars: transactionDetailsData?.b_remarks || "",
 							trans_date: transactionDetailsData?.b_tnxDate || "",
-
+							loan_cycle:	disbursementDetailsData?.b_loan_cycle || "",
 							disbdtls: membersForDisb,
 
 							//   group_code: personalDetails?.prov_grp_code || "",
@@ -1655,8 +1667,20 @@ function DisbursmentForm() {
 										disabled
 									/>
 								</div>
+								<div className="sm:col-span-4">
+											<TDInputTemplateBr
+												placeholder="Select Loan Cycle..."
+												type="text"
+												label="Loan Cycle"
+												name="b_loan_cycle"
+												formControlName={disbursementDetailsData.b_loan_cycle}
+												handleChange={handleChangeDisburseDetails}
+												data={md_loan_cycle}
+												mode={2}
+											/>
+								</div>
 
-								<div className="sm:col-span-6">
+								<div className="sm:col-span-4">
 									{!disbursementDetailsData?.b_fund && (
 										<span
 											style={{ color: "red" }}
@@ -1684,7 +1708,7 @@ function DisbursmentForm() {
 								</div>
 								{disbursementDetailsData.b_mode === "Monthly" ? (
 									<>
-										<div className="sm:col-span-6">
+										<div className="sm:col-span-4">
 											{!disbursementDetailsData?.b_dayOfRecovery && (
 												<span
 													style={{ color: "red" }}
@@ -1721,7 +1745,7 @@ function DisbursmentForm() {
 									</>
 								) : (
 									<>
-										<div className="sm:col-span-6">
+										<div className="sm:col-span-4">
 											{!disbursementDetailsData?.b_dayOfRecovery && (
 												<span
 													style={{ color: "red" }}

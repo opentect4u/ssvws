@@ -83,11 +83,13 @@ function ViewMemberTransferForm({state}) {
     };
     const fetchGroupDtls = () => {
       setLoading(true);
+      console.log(userDetails?.brn_code);
       axios
         .post(`${url}/transfer_member_view_all_details`, {
           member_code: state.member_code,
           from_group: state.from_group_code,
           flag: 'A',
+          from_branch:state?.from_branch
         })
         .then((res) => {
           console.log(res?.data?.msg);
@@ -223,6 +225,33 @@ function ViewMemberTransferForm({state}) {
                 // handleChange={(e) => setTodayDate(e.target.value)}
                 min={"1900-12-31"}
                 disabled
+                mode={1}
+              />
+            </div>
+
+             <div>
+             <TDInputTemplateBr
+                placeholder="Approve Date"
+                type="date"
+                label="Approve Date"
+                name="approv_date"
+                disabled
+                formControlName={mem_dtls[0]?.approved_at ? moment(mem_dtls[0]?.approved_at).format('YYYY-MM-DD') : ''}
+                // handleChange={(e) => setTodayDate(e.target.value)}
+                min={"1900-12-31"}
+                mode={1}
+              />
+            </div>
+
+             <div>
+             <TDInputTemplateBr
+                placeholder="Approve By"
+                type="text"
+                label="Approve By"
+                name="approv_by"
+                disabled
+                formControlName={mem_dtls[0]?.approved_by ? mem_dtls[0]?.approved_by : ''}
+                // handleChange={(e) => setTodayDate(e.target.value)}
                 mode={1}
               />
             </div>

@@ -18,6 +18,8 @@ function Democontext({ children }) {
 			emp_id: userDetails?.emp_id,
 			session_id: localStorage.getItem("session_id"),
 			modified_by: userDetails?.emp_id,
+			in_out_flag:"O",
+			flag:'W'
 		}
 
 		await axios

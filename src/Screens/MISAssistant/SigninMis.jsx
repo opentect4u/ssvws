@@ -100,6 +100,7 @@ function SigninMis() {
 			flag: "W",
 			// brnch:values?.brnch
 			session_id: sessionId,
+			in_out_flag:"I"
 		}
 		if (
 			(user_type_id == 4 || user_type_id == 10 || user_type_id == 11) &&

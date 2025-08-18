@@ -25,6 +25,7 @@ import { getOrdinalSuffix } from "../../Utils/ordinalSuffix"
 import { txnDetailsHeader } from "../../Utils/Reports/headerMap"
 import { exportToExcel } from "../../Utils/exportToExcel"
 import { printTableReport } from "../../Utils/printTableReport"
+import moment from "moment"
 
 function MemberLoanDetailsForm() {
 	const params = useParams()
@@ -429,6 +430,12 @@ function MemberLoanDetailsForm() {
 												<th scope="col" className="px-6 py-3 font-semibold">
 													Status
 												</th>
+												<th scope="col" className="px-6 py-3 font-semibold">
+													Approve Details
+												</th>
+												{/* <th scope="col" className="px-6 py-3 font-semibold">
+													Status
+												</th> */}
 												{/* <th scope="col" className="px-6 py-3 font-semibold">
 													<span className="sr-only">Action</span>
 												</th> */}
@@ -449,12 +456,12 @@ function MemberLoanDetailsForm() {
 															key={i}
 															className={`bg-slate-50 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-slate-50 dark:hover:bg-gray-600`}
 														>
-															<th
+															<td
 																scope="row"
 																className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
 															>
 																{i + 1}
-															</th>
+															</td>
 															<td className="px-6 py-4">
 																{/* {new Date(item?.payment_date).toLocaleDateString(
 																"en-GB"
@@ -559,6 +566,11 @@ function MemberLoanDetailsForm() {
 															Edit
 														</button>
 													</td> */}
+													<td>
+														{item?.approved_by && `${item?.approved_by} - `}
+														{item?.approved_at && `${moment(item?.approved_at).format('DD/MM/YYYY')}`}
+
+													</td>
 														</tr>
 													</>
 												)
@@ -612,8 +624,13 @@ function MemberLoanDetailsForm() {
 				<div className="flex gap-4">
 					<Tooltip title="Export to Excel">
 						<button
-							onClick={() =>
-								exportToExcel(dataToExport, headersToExport, fileName, [0])
+							onClick={() =>{
+								const dt = dataToExport.map(el => {
+									 el.approve_details = `${el.approved_by ? el.approved_by + ' - ' : ''}` +  `${el.approved_at ? moment(el.approved_at).format('DD/MM/YYYY') : ''}`;
+									 return el;
+								});
+								exportToExcel(dt, headersToExport, fileName, [0]);
+							}
 							}
 							className={
 								dataToExport?.length > 0
