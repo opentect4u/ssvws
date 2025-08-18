@@ -333,6 +333,12 @@ userRouter.post("/logout", async (req, res) => {
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
   try{
+
+     // 🔹 Validate required fields
+    if (!data.emp_id || !data.session_id) {
+      return res.send({ suc: 0, msg: "Invalid logout request. Missing emp_id or session_id." });
+    }
+    
   var table_name = "md_user";
   fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
   values = null;
