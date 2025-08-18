@@ -71,5 +71,6 @@ export const ADDRESSES = {
     CHECK_CAN_TXN: `${BASE_URL}/checking_date_before_transaction`,
 
     DUPLICATE_PRINT: `${BASE_URL}/fetch_group_dtls_fr_duplicate_print`,
-    UPLOAD_GRT_IMAGE: `${BASE_URL}/image_grt_save`
+    UPLOAD_GRT_IMAGE: `${BASE_URL}/image_grt_save`,
+    LOGOUT_APP:`${BASE_URL}/logout_app`
 }

@@ -19,8 +19,8 @@ android {
         applicationId "com.ssvwsloan"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "3.9"
+        versionCode 4
+        versionName "4.0"
     }
     signingConfigs {
         release { 

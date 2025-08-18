@@ -25,7 +25,8 @@ const AppContext = ({ children }) => {
             password: password,
             "app_version": appVersion,
             "flag": "A",
-            "session_id": 0
+            "session_id": 0,
+            "in_out_flag":"I"
         }
 
         console.log("LOGIN-----USERNAME-----PASS", creds)
@@ -138,9 +139,29 @@ const AppContext = ({ children }) => {
 
 
     const handleLogout = async () => {
-        loginStorage.clearAll();
-        branchStorage.clearAll();
-        setIsLogin(false)
+        const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
+        const creds = {
+			emp_id: loginStore?.emp_id,
+			modified_by: loginStore?.emp_id,
+			in_out_flag:"O",
+			flag:'A'
+		}
+
+		await axios.post(`${ADDRESSES.LOGOUT_APP}`, creds).then(res => {
+            console.log(res?.data?.suc)
+            if(res?.data?.suc == 1){
+                loginStorage.clearAll();
+                branchStorage.clearAll();
+                setIsLogin(false)
+            }
+            else{
+                 ToastAndroid.show(`Something went wrong while logging in.`, ToastAndroid.SHORT)
+            }
+           
+        }).catch(err=>{
+            ToastAndroid.show(`Something went wrong while logging in.`, ToastAndroid.SHORT)
+        })
+        
     }
 
     const fetchAssignedBranches = async (empId) => {
