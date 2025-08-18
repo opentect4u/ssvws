@@ -197,6 +197,15 @@ userRouter.post("/login_web", async (req, res) => {
               return res.send({ suc: 0, msg: "Token generation failed." });
             }
 
+            // ✅ Insert into td_log_details after successful login
+            await db_Insert(
+              "td_log_details",
+              `(emp_id, operation_dt, in_out_flag, device_type)`,
+              `('${user.emp_id}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`,
+              null,
+              0
+            );
+
             return res.send({
               suc: 1,
               msg: `${user.user_type} Login successfully`,
@@ -230,7 +239,7 @@ userRouter.post("/login_app", async (req, res) => {
   var data = req.body,
     result;
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  // console.log(data, 'Received Data');
+  console.log(data, 'Received Data');
 
   try {
     let requiredVersion = null;
@@ -286,6 +295,14 @@ userRouter.post("/login_app", async (req, res) => {
             `emp_id='${user.emp_id}'`,
             1
           );
+
+          // insert into td_log_details
+          await db_Insert(
+            "td_log_details",
+            `(emp_id, operation_dt, in_out_flag, device_type)`,
+            `('${user.emp_id}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`
+          );
+
         } catch (err) {
           console.error("Error inserting user log:", err);
         }
@@ -315,15 +332,50 @@ userRouter.post("/logout", async (req, res) => {
 
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
+  try{
   var table_name = "md_user";
   fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
   values = null;
   whr = `emp_id = '${data.emp_id}' AND session_id = '${data.session_id}'`;
   flag = 1;
+  var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
 
-  try {
-    var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
-    res.send(del_ref_token);
+  var table_name = "td_log_details";
+  fields = `(emp_id, operation_dt, in_out_flag, device_type)`;
+  values = `('${data.emp_id}','${datetime}','${data.in_out_flag}','${data.flag}')`;
+  whr = null;
+  flag = 0;
+  var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
+
+  res.send(del_ref_token);
+  } catch (error) {
+    console.error("SQL Error:", error);
+    res.send({ error: "Database error. Please try again." });
+  }
+});
+
+userRouter.post("/logout_app", async (req, res) => {
+  var data = req.body;
+  // console.log(data,'logoutdata');
+
+  var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+  try{
+  var table_name = "md_user";
+  fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+  values = null;
+  whr = `emp_id = '${data.emp_id}'`;
+  flag = 1;
+  var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
+
+  var table_name = "td_log_details";
+  fields = `(emp_id, operation_dt, in_out_flag, device_type)`;
+  values = `('${data.emp_id}','${datetime}','${data.in_out_flag}','${data.flag}')`;
+  whr = null;
+  flag = 0;
+  var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
+
+  res.send(del_ref_token);
   } catch (error) {
     console.error("SQL Error:", error);
     res.send({ error: "Database error. Please try again." });

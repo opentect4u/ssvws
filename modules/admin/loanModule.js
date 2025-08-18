@@ -176,7 +176,7 @@ module.exports = {
                         // console.log("End Date:", endDate);
 
                         var table_name = "td_loan",
-                            fields = `(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,period_mode,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,
+                            fields = `(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,period_mode,loan_cycle,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,
                             values = `('${loan_code}','${data.branch_code == "" ? 0 : data.branch_code
                                 }','${data.group_code == "" ? 0 : data.group_code}','${dts.member_code == "" ? 0 : dts.member_code
                                 }','${dts.grt_form_no == "" ? 0 : dts.grt_form_no}','${data.purpose
@@ -189,7 +189,7 @@ module.exports = {
                                 }',NULL,'${intt_cal_amt}','${data.od_intt_amt == "" ? 0 : data.od_intt_amt
                                 }','${outstanding > 0 ? outstanding : 0}','${prn_emi == "" ? 0 : prn_emi
                                 }','${intt_emi == "" ? 0 : intt_emi}','${tot_emi > 0 ? tot_emi : 0
-                                }','${data.recovery_date}','${data.period_mode}', '${dateFormat(
+                                }','${data.recovery_date}','${data.period_mode}','${data.loan_cycle}', '${dateFormat(
                                     startDate,
                                     "yyyy-mm-dd"
                                 )}','${dateFormat(endDate, "yyyy-mm-dd")}','${data.trans_date

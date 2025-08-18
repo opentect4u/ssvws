@@ -680,7 +680,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     // whr = `group_code = '${data.group_code}'`,
     // order = `GROUP BY a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,a.disb_dt`;
     var select =
-        "a.loan_id,a.member_code,e.client_name,a.purpose,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.recovery_day,a.period,a.period_mode,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,a.disb_dt,(a.prn_disb_amt) disburse_amt,(a.tot_emi)tot_emi,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
+        "a.loan_id,a.member_code,e.client_name,a.purpose,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.recovery_day,a.period,a.period_mode,a.loan_cycle,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,a.disb_dt,(a.prn_disb_amt) disburse_amt,(a.tot_emi)tot_emi,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
       table_name =
         "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_member e ON a.member_code = e.member_code",
       whr = `group_code = '${data.group_code}'`,
@@ -747,8 +747,8 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
 
   if (loan_dtls.suc > 0 && loan_dtls.msg.length > 0) {
     var select =
-        "payment_date,payment_id,particulars,credit,debit,(balance + od_balance)prn_bal,intt_balance,(balance + od_balance + intt_balance)outstanding,tr_type,tr_mode,status",
-      table_name = "td_loan_transactions",
+        "a.payment_date,a.payment_id,a.particulars,a.credit,a.debit,(a.balance + a.od_balance)prn_bal,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)outstanding,a.tr_type,a.tr_mode,a.status,a.approved_by approved_code,a.approved_at,b.emp_name approved_by",
+      table_name = "td_loan_transactions a LEFT JOIN md_employee b ON a.approved_by = b.emp_id",
       whr = `loan_id = '${data.loan_id}' AND tr_type != 'I'`,
       // whr = `loan_id = '${data.loan_id}'`,
       order = `ORDER BY payment_id desc,payment_date desc`;
