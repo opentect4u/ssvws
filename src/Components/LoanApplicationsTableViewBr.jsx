@@ -115,14 +115,14 @@ function LoanApplicationsTableViewBr({
 
 
 	useEffect(() => {
-
+		setLoanAppData([])
 		// alert(loanType)
 		if (loanAppData.length > 0) {
 			setLoanAppData(loanAppData)
 		}
 		// console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
 		
-	}, [loanAppData,])
+	}, [loanAppData])
 
 
 	useEffect(()=>{

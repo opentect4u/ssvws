@@ -9,6 +9,7 @@ const useIdleTimer = (timeout = 20 * 60 * 1000) => {
 	const timerRef = useRef(null)
 
 	const logout = useCallback(async () => {
+		console.log('US CALL BACK')
 		// Optionally, you can add more logout logic here (e.g., API calls)
 		await handleLogOut().then(() => {
 			navigate(routePaths.LANDING)

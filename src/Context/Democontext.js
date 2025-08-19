@@ -19,9 +19,10 @@ function Democontext({ children }) {
 			session_id: localStorage.getItem("session_id"),
 			modified_by: userDetails?.emp_id,
 			in_out_flag:"O",
-			flag:'W'
+			flag:'W',
+			branch_code:userDetails?.brn_code
 		}
-
+		console.log(creds);
 		await axios
 			.post(`${url}/logout`, creds)
 			.then((res) => {

@@ -60,7 +60,8 @@ const SignInPage = () => {
 				app_version: "0",
 				flag: "W",
 				session_id: sessionId,
-				in_out_flag:"I"
+				in_out_flag:"I",
+				branch_code:values?.brnch
 			}
 			// if (
 			// 	(userTypeId == 4 || userTypeId == 10 || userTypeId == 11) &&

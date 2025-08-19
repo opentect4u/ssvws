@@ -116,6 +116,7 @@ function LoanApprovalApplicationsTableViewBr({
 
 
 	useEffect(() => {
+		setLoanAppData([])
 
 		// alert(loanType)
 		if (loanAppData.length > 0) {

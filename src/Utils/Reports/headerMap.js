@@ -793,6 +793,48 @@ const portfolioReportHeaderBranchwise = {
 	overdue_amt: "Overdue Amount",
 }
 
+const grtHeader = {
+	form_no:'Form Number',
+	branch_name:"Branch",
+	member_code:'Member Code',
+	client_name:"Member Name",
+	grt_date:"GRT Date",
+	dob:"Date Of Birth",
+	gender:"Gender",
+	client_addr:"Member Address",
+	pin_no:"PIN",
+	client_mobile:"Member Mobile Number",
+	email_id:"Member Email",
+	gurd_name:"Father Name",
+	gurd_mobile:"Husband Mobile Number",
+	husband_name:"Husband Name",
+	aadhar_no:"Aadhar No",
+	pan_no:"Pan No",
+	voter_id:"Voter ID",
+	religion:"Religion",
+	caste:"Caste",
+	education:"Education",
+	self_occu:"Self Occupation",
+	self_income:"Monthly Income",
+	spouse_occu:"Spouse Occupation",
+	spouse_income:"Spouse Monthly Income",
+	loan_purpose:"Purpose Of Loan",
+	applied_amt:"Amount Applied",
+	other_loan_flag:'Other Loans',
+	other_loan_amt:'Other Loan Amount',
+	other_loan_emi:'Other Loan EMI',
+	parental_addr:'Parental Address',
+	house_type:"House Type",
+	own_rent:"Own Or Rent",
+	land:"Total Land",
+	poltical_flag:"Politically Active",
+	tv_flag:"Own A TV",
+	bike_flag:"Own A Bike",
+	fridge_flag:"Own A Fridge",
+	wm_flag:"Own a Washing Machine",
+	remarks:"Remarks"
+}
+
 export {
 	fundwiseOutstandingHeader,
 	cowiseOutstandingHeader,
@@ -832,4 +874,5 @@ export {
 	portfolioReportHeaderFundwise,
 	portfolioReportHeaderCOwise,
 	portfolioReportHeaderBranchwise,
+	grtHeader
 }

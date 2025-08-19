@@ -118,6 +118,7 @@ const CreateUser = lazy(() => import("./Screens/Admin/UserManagement/CreateUser"
 const ManageUser = lazy(() => import("./Screens/Admin/UserManagement/ManageUser"));
 const TransferUserManage = lazy(() => import("./Screens/Admin/UserManagement/TransferUserManage"));
 const TransferUser = lazy(() => import("./Screens/Admin/UserManagement/TransferUser"));
+const AuditReport = lazy(()=> import('./Screens/Admin/UserManagement/AuditReport'))
 const ALoanStatementMain = lazy(() => import("./Screens/Admin/Reports/LoanStatements/ALoanStatementMain"));
 const ALoanTransactionsMain = lazy(() => import("./Screens/Admin/Reports/LoanTransactions/ALoanTransactionsMain"));
 const ADemandReportsMain = lazy(() => import("./Screens/Admin/Reports/DemandReports/ADemandReportsMain"));
@@ -624,6 +625,10 @@ const router = createBrowserRouter([
 							{
 								path: "transferuser/:id",
 								element: <TransferUser />,
+							},
+							{
+								path:'audit_report',
+								element:<AuditReport/>
 							},
 							{
 								path: "monthend",

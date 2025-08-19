@@ -318,6 +318,14 @@ function Sidebar({ mode = 0 }) {
 								// hidden: data?.transfer_user == "Y" ? false : true,
 							},
 							{
+								key: "sub7-5",
+								icon: <FastForwardOutlined />,
+								label: (
+									<Link to={"/homeadmin/audit_report"}>Audit Trail</Link>
+								),
+								// hidden: data?.transfer_user == "Y" ? false : true,
+							},
+							{
 								key: "sub7-4",
 								icon: <TableOutlined />,
 								label: <Link to={"/homeadmin/monthend"}>Month End</Link>,

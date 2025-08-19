@@ -3,13 +3,17 @@ import Sidebar from "../../Components/Sidebar"
 import axios from "axios"
 import { url } from "../../Address/BaseUrl"
 import { Message } from "../../Components/Message"
-import { Spin } from "antd"
+import { Button, Spin } from "antd"
 import { LoadingOutlined } from "@ant-design/icons"
 import LoanApplicationsTableViewBr from "../../Components/LoanApplicationsTableViewBr"
 import Radiobtn from "../../Components/Radiobtn"
 import TDInputTemplateBr from "../../Components/TDInputTemplateBr"
 import LoanRecovApplicationsTableViewBr from "../../Components/LoanRecovApplicationsTableViewBr"
 import LoanApprovalApplicationsTableViewBr from "../../Components/LoanApprovalApplicationsTableViewBr"
+import { Download } from "lucide-react"
+import { grtHeader } from "../../Utils/Reports/headerMap"
+import { exportToExcel } from "../../Utils/exportToExcel"
+import moment from "moment"
 
 const options1 = [
 	{
@@ -50,7 +54,7 @@ function HomeScreenMis() {
 	const [loanApplications, setLoanApplications] = useState(() => [])
 	const [copyLoanApplications, setCopyLoanApplications] = useState(() => [])
 	const options = userDetails.id == 10 ? options2 : options1
-
+	const  [isExcelPending,setExcelPending] =  useState(false);
 	const [loanType, setLoanType] = useState(userDetails.id != 10 ? "U" : "S")
 
 	const [coListData, setCoListData] = useState(() => [])
@@ -109,6 +113,10 @@ function HomeScreenMis() {
 	}
 
 	const fetchCoList_CO_Shorting = async (co_Id) => {
+		console.log(co_Id);
+		setLoanApplications([]);
+		setCopyLoanApplications([]);
+		console.log('asdadasd');
 		console.log(
 			{
 				branch_code: userDetails?.brn_code,
@@ -201,11 +209,19 @@ function HomeScreenMis() {
 
 	const handleEmployeeChange = (e) => {
 		// Save the emp_id of the selected employee
-
-		console.log(e.target.value, "oooooooooooooooo")
+		// console.log('sadasdasdasdasdasdasdasd')
+		// setLoanApplications([]);
+		// setCopyLoanApplications([]);
+		// console.log(e.target.value, "oooooooooooooooo")
 		const selectedId = e.target.value
 		setSelectedEmployeeId(selectedId) // Save to state
-		fetchCoList_CO_Shorting(selectedId)
+		// 
+		if(selectedId){
+			fetchCoList_CO_Shorting(selectedId)
+		}
+		else{
+			fetchLoanApplications_GroupWise(loanType)
+		}
 	}
 
 	// useEffect(() => {
@@ -260,27 +276,90 @@ function HomeScreenMis() {
 	}, [loanType])
 
 	useEffect(() => {
+		// setLoanApplications([]);
+		// setCopyLoanApplications([])
+		console.log(loanType, ' loanType')
 		if (loanType === "S") {
 			fetchLoanApplications_GroupWise("S")
-			setSelectedEmployeeId(() => [])
+			setSelectedEmployeeId(() => "")
 			console.log("fff", "SSSSSSSSSSSSSSS")
 		} else if (loanType === "R") {
 			fetchLoanApplications_GroupWise("R")
-			setSelectedEmployeeId(() => [])
+			setSelectedEmployeeId(() => "")
 
 			console.log("fff", "RRRRRRRRRRRRRRR")
 		} else if (loanType === "A") {
 			fetchLoanApplications_GroupWise("A")
-			setSelectedEmployeeId(() => [])
+			setSelectedEmployeeId(() => "")
 
 			console.log("fff", "AAAAAAAAAAAAAAAAA")
 		} else {
 			fetchLoanApplications_GroupWise("U")
-			setSelectedEmployeeId(() => [])
+			setSelectedEmployeeId(() => "")
 
 			console.log("fff", "AAAAAAAAAAAAAAAAA")
 		}
 	}, [loanType])
+
+	const exportExcelDependOnRadioButton = async () =>{
+		  try{
+				console.log(grtHeader);
+				// console.log(coListData.map(el => el.emp_id));
+				// console.log(selectedEmployeeId)
+				
+				// const apiName = 
+				const creds = {
+					approval_status:loanType,
+					branch_code:userDetails?.brn_code,
+					co_id:!selectedEmployeeId ? coListData.map(el => el.emp_id) : [selectedEmployeeId]
+				}
+				console.log(creds);
+				axios.post(`${url}/admin/excel_download_member_details`,creds)
+				.then(res =>{
+						setExcelPending(false);
+						if(res?.data?.suc == 1 ){
+							 
+							const fileName = options.find(el => el.value == loanType);
+							let header_export = {};
+							const allKeys = [...new Set(res?.data?.msg.flatMap(Object.keys))];
+							allKeys.forEach(el =>{
+								if(el in grtHeader){
+									header_export = {
+										...header_export,
+										[el]:grtHeader[el]
+									}
+								}
+								
+							})
+							const dt = res?.data?.msg.map(el =>{
+								 	el.grt_date = el.grt_date ? moment(el.grt_date).format('DD/MM/YYYY') : '';
+									el.dob = el.dob ? moment(el.dob).format('DD/MM/YYYY') : '';
+									el.gender = el.gender ? (el.gender == 'O' ? 'Others' : (el.gender == 'F' ? 'Female' : 'Male')) : '';
+									el.other_loan_flag = el.other_loan_flag ? (el.other_loan_flag == 'Y' ? 'Yes' : 'No') : '';
+									el.poltical_flag  = el.poltical_flag ? (el.poltical_flag == 'Y' ? 'Yes' : 'No') : '';
+									el.tv_flag = el.tv_flag ? (el.tv_flag == 'Y' ? 'Yes' : 'No') : '';
+									el.bike_flag = el.bike_flag ? (el.bike_flag == 'Y' ? 'Yes' : 'No') : '';
+									el.fridge_flag = el.fridge_flag ? (el.fridge_flag == 'Y' ? 'Yes' : 'No') : '';
+									el.wm_flag = el.wm_flag ? (el.wm_flag == 'Y' ? 'Yes' : 'No') : '';
+									return el;
+							})
+							exportToExcel(dt,header_export,`GRT ${fileName?.label} Report.xlsx`,[0])
+						}
+						else{
+							Message('error',res?.data?.msg);
+						}
+				}).catch(err =>{
+					console.log(err.message);
+					Message('error',err.message);
+					setExcelPending(false);
+				})
+		  }
+		  catch(err){
+			console.log(err);
+			Message('error',err.message);
+			setExcelPending(false);
+		  }
+	}
 
 	return (
 		<div>
@@ -292,6 +371,7 @@ function HomeScreenMis() {
 				spinning={loading}
 			>
 				<main className="px-4 h-auto my-10 mx-32">
+				<div className="flex justify-between items-center flex-row">
 					<Radiobtn
 						data={options}
 						val={loanType}
@@ -299,6 +379,17 @@ function HomeScreenMis() {
 							onChange(value)
 						}}
 					/>
+
+					 {loanType != 'R' &&  <Button  loading={isExcelPending} type="dashed"
+					 onClick={()=> {
+						setExcelPending(true);	
+						exportExcelDependOnRadioButton()
+					}}	 
+					  icon={<Download size={18}/>} iconPosition={'start'}>
+						Export Excel
+					</Button>}
+				</div>
+					
 					{/* <LoanApplicationsTableViewBr
 						flag="MIS"
 						loanAppData={loanApplications}

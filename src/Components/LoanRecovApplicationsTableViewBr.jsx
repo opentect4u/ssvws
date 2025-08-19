@@ -32,7 +32,7 @@ function LoanRecovApplicationsTableViewBr({
 	fetchLoanApplicationsDate,
 }) {
 	const navigate = useNavigate()
-
+	console.log(loanAppData, ' LoanADDasdasd')
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
  	const [globalFilter, setGlobalFilter] = useState('');
 	const [first, setFirst] = useState(0)
@@ -120,14 +120,14 @@ function LoanRecovApplicationsTableViewBr({
 
 
 	useEffect(() => {
-
+		setLoanAppData([]);
 		// alert(loanType)
 		if (loanAppData.length > 0) {
 			setLoanAppData(loanAppData)
 		}
-		console.log(loanAppData, 'fffffffffffffffffffffffffffffffff');
+		console.log('fffffffffffffffffffffffffffffffff');
 		
-	}, [loanAppData,])
+	}, [loanAppData])
 
 
 
