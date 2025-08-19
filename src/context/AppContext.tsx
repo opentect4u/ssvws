@@ -26,7 +26,8 @@ const AppContext = ({ children }) => {
             "app_version": appVersion,
             "flag": "A",
             "session_id": 0,
-            "in_out_flag":"I"
+            "in_out_flag":"I",
+            branch_code:branch
         }
 
         console.log("LOGIN-----USERNAME-----PASS", creds)
@@ -139,16 +140,18 @@ const AppContext = ({ children }) => {
 
 
     const handleLogout = async () => {
-        const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
+        const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "");
+        console.log(loginStore);
         const creds = {
 			emp_id: loginStore?.emp_id,
 			modified_by: loginStore?.emp_id,
 			in_out_flag:"O",
-			flag:'A'
+			flag:'A',
+            branch_code:loginStore?.brn_code
 		}
-
+        console.log(creds)
 		await axios.post(`${ADDRESSES.LOGOUT_APP}`, creds).then(res => {
-            console.log(res?.data?.suc)
+            console.log(res?.data?.msg)
             if(res?.data?.suc == 1){
                 loginStorage.clearAll();
                 branchStorage.clearAll();
