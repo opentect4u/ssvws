@@ -64,8 +64,8 @@ audit_trialRouter.post("/generate_audit_trial_report", async (req, res) => {
       WHEN a.device_type = 'A' THEN 'App'
       ELSE a.device_type
       END AS device_type,
-      b.emp_name`,
-    table_name = "td_log_details a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
+      b.emp_name,c.branch_name`,
+    table_name = "td_log_details a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
     whr = `date(a.operation_dt) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_code != 'A' ? `AND a.branch_code = '${data.branch_code}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''}`,
     order = `ORDER BY a.operation_dt DESC`;
     var generate_data = await db_Select(select,table_name,whr,order);
