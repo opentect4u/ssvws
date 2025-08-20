@@ -1,5 +1,5 @@
 const { db_Select, db_Insert } = require('../../model/mysqlModel');
-const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm, remove_member_dtls, fwd_ho_user } = require('../../modules/admin/fetchModule');
+const { edit_grp_web, edit_basic_dt_web, edit_occup_dt_web, edit_household_dt_web, edit_family_dt_web, fwd_mis_asst, assign_group_to_member, back_dt_to_bm, remove_member_dtls, fwd_ho_user, excel_unapproved_member, excel_member_details } = require('../../modules/admin/fetchModule');
 const { f_getOverdue } = require('../../modules/api/masterModule');
 
 const fetchRouter = require('express').Router();
@@ -844,6 +844,19 @@ fetchRouter.post("/back_to_bm", async (req, res) => {
     //form details back to branch manager
     var back_dt = await back_dt_to_bm(data);
     res.send(back_dt)
+});
+
+fetchRouter.post("/excel_download_member_details", async (req, res) => {
+ var data = req.body, res_data;
+
+    //unapproved member details download in excel
+    excel_member_details(data).then(data => {
+        res_data = data
+    }).catch(err => {
+        res_data = err
+    }).finally(() => {
+    res.send(res_data);
+})
 });
 
 module.exports = {fetchRouter}

@@ -336,5 +336,65 @@ module.exports = {
     });
   },
   
-  
+  excel_member_details: (data) => {
+   return new Promise(async (resolve, reject) => {
+        try{
+        let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+        let result;
+
+        if(data.approval_status === 'U'){
+
+        // unapproved memnber details
+
+         var select = `a.form_no,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
+         CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
+         CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
+         CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education`,
+         table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.prov_grp_code = d.group_code`,
+         whr = data.branch_code == '100' ? `a.approval_status = 'U' AND d.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'U' AND d.co_id IN (${data.co_id})`,
+         order = null;
+         result = await db_Select(select,table_name,whr,order);
+
+        }else if (data.approval_status === 'S'){
+
+         // send to mis member details
+
+          var select = `a.form_no,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
+          CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
+          CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
+          CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education,
+          d.self_occu,d.self_income,d.spouse_occu,d.spouse_income,d.loan_purpose,d.applied_amt,
+         CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_amt ELSE NULL END AS other_loan_amt,
+         CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_emi ELSE NULL END AS other_loan_emi,
+          d.other_loan_flag,
+          d.parental_addr,d.house_type,d.own_rent,d.land,d.poltical_flag,d.tv_flag,d.bike_flag,d.fridge_flag,d.wm_flag,a.remarks,a.prov_grp_code,e.group_name`,
+          table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN td_grt_occupation_household d ON a.form_no = d.form_no LEFT JOIN md_group e ON a.prov_grp_code = e.group_code`,
+          whr = data.branch_code == '100' ? `a.approval_status = 'S' AND e.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'S' AND e.co_id IN (${data.co_id})`,
+          order = null;
+          result = await db_Select(select,table_name,whr,order);
+
+        }else {
+
+          //approved_member details
+
+         var select = `a.form_no,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
+          CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
+          CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
+          CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education,
+          d.self_occu,d.self_income,d.spouse_occu,d.spouse_income,d.loan_purpose,d.applied_amt,
+          CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_amt ELSE NULL END AS other_loan_amt,
+         CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_emi ELSE NULL END AS other_loan_emi,
+          d.other_loan_flag,
+          d.parental_addr,d.house_type,d.own_rent,d.land,d.poltical_flag,d.tv_flag,d.bike_flag,d.fridge_flag,d.wm_flag,a.remarks,a.prov_grp_code,e.group_name`,
+          table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN td_grt_occupation_household d ON a.form_no = d.form_no LEFT JOIN md_group e ON a.prov_grp_code = e.group_code`,
+          whr = data.branch_code == '100' ? `a.approval_status = 'A' AND e.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'A' AND e.co_id IN (${data.co_id})`,
+          order = null;
+          result = await db_Select(select,table_name,whr,order);
+        }
+        resolve(result);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
 }

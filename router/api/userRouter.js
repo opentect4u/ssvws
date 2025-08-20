@@ -200,8 +200,8 @@ userRouter.post("/login_web", async (req, res) => {
             // ✅ Insert into td_log_details after successful login
             await db_Insert(
               "td_log_details",
-              `(emp_id, operation_dt, in_out_flag, device_type)`,
-              `('${user.emp_id}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`,
+              `(emp_id, branch_code,operation_dt, in_out_flag, device_type)`,
+              `('${user.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`,
               null,
               0
             );
@@ -299,8 +299,8 @@ userRouter.post("/login_app", async (req, res) => {
           // insert into td_log_details
           await db_Insert(
             "td_log_details",
-            `(emp_id, operation_dt, in_out_flag, device_type)`,
-            `('${user.emp_id}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`
+            `(emp_id, branch_code, operation_dt, in_out_flag, device_type)`,
+            `('${user.emp_id}', '${data.branch_code == '' ? user.brn_code : data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`
           );
 
         } catch (err) {
@@ -347,16 +347,19 @@ userRouter.post("/logout", async (req, res) => {
   var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
 
   var table_name = "td_log_details";
-  fields = `(emp_id, operation_dt, in_out_flag, device_type)`;
-  values = `('${data.emp_id}','${datetime}','${data.in_out_flag}','${data.flag}')`;
+  fields = `(emp_id, branch_code, operation_dt, in_out_flag, device_type)`;
+  values = `('${data.emp_id}','${data.branch_code}','${datetime}','${data.in_out_flag}','${data.flag}')`;
   whr = null;
   flag = 0;
-  var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
+  var log_insert = await db_Insert(table_name, fields, values, whr, flag);
 
-  res.send(del_ref_token);
+  res.send({
+      suc: 1,
+      msg: "Logout successful",
+    });
   } catch (error) {
     console.error("SQL Error:", error);
-    res.send({ error: "Database error. Please try again." });
+    res.send({ suc: 0, error: "Database error. Please try again." });
   }
 });
 
@@ -365,6 +368,11 @@ userRouter.post("/logout_app", async (req, res) => {
   // console.log(data,'logoutdata');
 
   var datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+   // 🔹 Validate required fields
+    if (!data.emp_id) {
+      return res.send({ suc: 0, msg: "Invalid logout request. Missing emp_id or session_id." });
+    }
 
   try{
   var table_name = "md_user";
@@ -375,16 +383,19 @@ userRouter.post("/logout_app", async (req, res) => {
   var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
 
   var table_name = "td_log_details";
-  fields = `(emp_id, operation_dt, in_out_flag, device_type)`;
-  values = `('${data.emp_id}','${datetime}','${data.in_out_flag}','${data.flag}')`;
+  fields = `(emp_id, branch_code, operation_dt, in_out_flag, device_type)`;
+  values = `('${data.emp_id}', '${data.branch_code}','${datetime}','${data.in_out_flag}','${data.flag}')`;
   whr = null;
   flag = 0;
-  var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
+  var log_insert = await db_Insert(table_name, fields, values, whr, flag);
 
-  res.send(del_ref_token);
+  res.send({
+      suc: 1,
+      msg: "Logout successful",
+    });
   } catch (error) {
     console.error("SQL Error:", error);
-    res.send({ error: "Database error. Please try again." });
+    res.send({ suc: 0, error: "Database error. Please try again." });
   }
 });
 
