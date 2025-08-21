@@ -711,13 +711,13 @@ fetchRouter.post("/search_member_web", async (req, res) => {
 
     //search member in web
     if(data.branch_code == '100'){
-        var select = "a.branch_code,a.member_code,a.client_name,b.branch_name,c.prov_grp_code,d.group_name",
+        var select = "a.branch_code,a.member_code,a.client_name,b.branch_name,c.form_no,c.prov_grp_code,c.approval_status,d.group_name",
         table_name = "md_member a LEFT JOIN md_branch b ON a.branch_code = b.branch_code LEFT JOIN td_grt_basic c ON a.member_code = c.member_code LEFT JOIN md_group d ON c.prov_grp_code = d.group_code",
         whr = `a.client_name like '%${data.client_name}%' OR a.member_code like '%${data.client_name}%'`,
         order = null;
         var search_member_web = await db_Select(select,table_name,whr,order);
     }else {
-        var select = "a.member_code,a.client_name,b.branch_name,c.prov_grp_code,d.group_name",
+        var select = "a.member_code,a.client_name,b.branch_name,c.form_no,c.prov_grp_code,c.approval_status,d.group_name",
         table_name = "md_member a LEFT JOIN md_branch b ON a.branch_code = b.branch_code LEFT JOIN td_grt_basic c ON a.member_code = c.member_code LEFT JOIN md_group d ON c.prov_grp_code = d.group_code",
         whr = `a.branch_code = '${data.branch_code}' AND (a.client_name like '%${data.client_name}%' OR a.member_code like '%${data.client_name}%')`,
         order = null;
