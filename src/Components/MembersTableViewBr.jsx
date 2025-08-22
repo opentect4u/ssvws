@@ -173,12 +173,15 @@ function MembersTableViewBr({
 											// 	}
 											// >
 											<button
-												disabled
+												// disabled
 												// to={routePaths.BM_EDIT_GRT + item?.form_no}
 												onClick={() => {
 													console.log("LLSKSIODFUISFH", item)
 													navigate(
-														`/homemis/editgroupform/${item?.member_code}`,
+														// `/homemis/editgroupform/${item?.member_code}`,
+														// `/homemis/editgroupform/${item?.prov_grp_code}`,
+														`/homemis/editgrtform/${item?.form_no}`,
+
 														{
 															state: item,
 														}
@@ -193,12 +196,13 @@ function MembersTableViewBr({
 										) : (
 											// </Link>
 											<button
-												disabled
+												// disabled
 												// to={routePaths.BM_EDIT_GRT + item?.form_no}
 												onClick={() => {
 													console.log("LLSKSIODFUISFH", item)
 													navigate(
 														`/homebm/editgroupform/${item?.member_code}`,
+														// `/homebm/editgroupform/${item?.prov_grp_code}`,
 														{
 															state: item,
 														}

@@ -119,7 +119,9 @@ const containerStyle = {
 	const [branch, setBranch] = useState(() => "")
 
 	const [CEOData_s, setCEOData_s] = useState(() => [])
-	const [CEOData, setCEOData] = useState(() => [])
+	// const [CEOData, setCEOData] = useState(() => []);
+	const [CEOData, setCEOData] = useState(() => "");
+
 
 	// const [COMemList_Show, setCOMemList_Show] = useState()
 
@@ -302,10 +304,11 @@ const containerStyle = {
 
 	const handleFetchMemberDetailsCowise = async () => {
 		setLoading(true)
+		console.log('CO ID', CEOData)
 		const creds_MemberListCo = {
 			branch_code: userDetails?.brn_code,
 			// co_id: userDetails?.emp_id
-			co_id: CEOData,
+			co_id: [CEOData],
 			// co_id: 10157
 		}
 		await axios
@@ -325,7 +328,10 @@ const containerStyle = {
 	// userDetails?.emp_id
 
 	useEffect(() => {
-		handleFetchMemberDetailsCowise()
+		console.log(CEOData , ' CEOData');
+		if(CEOData){
+			handleFetchMemberDetailsCowise()
+		}
 	}, [CEOData])
 
 	useEffect(() => {

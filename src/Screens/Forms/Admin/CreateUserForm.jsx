@@ -561,7 +561,9 @@ function CreateUserForm() {
 											filter	
 											value={selectedBranches}
 											onChange={(e) => setSelectedBranches(e.value)}
-											options={branches?.filter((i) => i.code != 100)}
+											// options={branches?.filter((i) => i.code != 100)}
+											options={branches}
+
 											optionLabel="name"
 											placeholder="Select branch(es)"
 											maxSelectedLabels={3}

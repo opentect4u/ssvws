@@ -37,7 +37,7 @@ const columns = [
   {
     title: 'Operation Date',
     dataIndex: 'operation_dt',
-    render: (_, record) => ` ${record?.operation_dt ? moment(record?.operation_dt).format('DD/MM/YYYY ') : ''}`,
+    render: (_, record) => ` ${record?.operation_dt ? moment(record?.operation_dt).format('DD/MM/YYYY hh:mm a') : ''}`,
     sorter: (a, b) =>
       dayjs(a.operation_dt).unix() - dayjs(b.operation_dt).unix(), // sorts by date
     sortDirections: ['descend', 'ascend'],
@@ -71,6 +71,7 @@ const AuditReport = () => {
       // fetchEmployee();
       // console.log(userDetails?.brn_code);
       fetchBranch();
+      // console.log(moment('2025-08-20T14:04:23.000Z').format('DD/MM/YYYY hh:mm a'))
   },[])
 
   const fetchEmployeeAccordingToBranch = async (brn_id) =>{
@@ -307,7 +308,7 @@ const AuditReport = () => {
                           icon={<Download/>}
                           onClick={() =>{
                             const dt = md_audit_trial.map(el =>{
-                                el.operation_dt = el.operation_dt ? moment(el.operation_dt).format('DD/MM/YYYY') : '';
+                                el.operation_dt = el.operation_dt ? moment(el.operation_dt).format('DD/MM/YYYY hh:mm a') : '';
                                 // el.in_out_flag = el.in_out_flag == 'Out' ? 'Sign Out' : 'Sign In';
                                 return el;
                             });

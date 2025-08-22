@@ -13,7 +13,10 @@ import LoanApprovalApplicationsTableViewBr from "../../Components/LoanApprovalAp
 import { Download } from "lucide-react"
 import { grtHeader } from "../../Utils/Reports/headerMap"
 import { exportToExcel } from "../../Utils/exportToExcel"
-import moment from "moment"
+import moment from "moment";
+import { DatePicker, Space } from 'antd';
+import dayjs from 'dayjs';
+const { RangePicker } = DatePicker;
 
 const options1 = [
 	{
@@ -49,6 +52,7 @@ const options2 = [
 ]
 
 function HomeScreenMis() {
+	const today = dayjs();
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 	const [loanApplications, setLoanApplications] = useState(() => [])
@@ -56,7 +60,7 @@ function HomeScreenMis() {
 	const options = userDetails.id == 10 ? options2 : options1
 	const  [isExcelPending,setExcelPending] =  useState(false);
 	const [loanType, setLoanType] = useState(userDetails.id != 10 ? "U" : "S")
-
+	const [dates, setDates] = useState([dayjs(), dayjs()]);
 	const [coListData, setCoListData] = useState(() => [])
 	const [selectedEmployeeId, setSelectedEmployeeId] = useState(() => null)
 
@@ -112,7 +116,7 @@ function HomeScreenMis() {
 		setLoading(false)
 	}
 
-	const fetchCoList_CO_Shorting = async (co_Id) => {
+	const fetchCoList_CO_Shorting = async (co_Id,date = []) => {
 		console.log(co_Id);
 		setLoanApplications([]);
 		setCopyLoanApplications([]);
@@ -122,6 +126,7 @@ function HomeScreenMis() {
 				branch_code: userDetails?.brn_code,
 				approval_status: loanType,
 				co_id: co_Id,
+			
 			},
 			"fetchCoList____",
 			co_Id,
@@ -134,6 +139,9 @@ function HomeScreenMis() {
 				branch_code: userDetails?.brn_code,
 				approval_status: loanType,
 				co_id: co_Id,
+				from_dt:(loanType == 'A' && date.length > 0) ? date[0]?.format('YYYY-MM-DD') : '',
+				to_dt:(loanType == 'A' && date.length > 0) ? date[1]?.format('YYYY-MM-DD') : '',
+
 			})
 			.then((res) => {
 				if (res?.data?.suc === 1) {
@@ -152,7 +160,7 @@ function HomeScreenMis() {
 		setLoading(false)
 	}
 
-	const fetchLoanApplications_GroupWise = async (loanType) => {
+	const fetchLoanApplications_GroupWise = async (loanType,date = []) => {
 		setLoading(true)
 		// const creds = {
 		// 	// prov_grp_code: 0,
@@ -169,6 +177,8 @@ function HomeScreenMis() {
 			.post(`${url}/admin/fetch_form_fwd_bm_to_mis_web`, {
 				branch_code: userDetails?.brn_code,
 				approval_status: loanType,
+				from_dt:(loanType == 'A' && date.length > 0) ? date[0]?.format('YYYY-MM-DD') : '',
+				to_dt:(loanType == 'A' && date.length > 0) ? date[1]?.format('YYYY-MM-DD') : '',
 			})
 			.then((res) => {
 				setLoading(false)
@@ -217,10 +227,10 @@ function HomeScreenMis() {
 		setSelectedEmployeeId(selectedId) // Save to state
 		// 
 		if(selectedId){
-			fetchCoList_CO_Shorting(selectedId)
+			fetchCoList_CO_Shorting(selectedId,dates)
 		}
 		else{
-			fetchLoanApplications_GroupWise(loanType)
+			fetchLoanApplications_GroupWise(loanType,dates)
 		}
 	}
 
@@ -289,7 +299,7 @@ function HomeScreenMis() {
 
 			console.log("fff", "RRRRRRRRRRRRRRR")
 		} else if (loanType === "A") {
-			fetchLoanApplications_GroupWise("A")
+			fetchLoanApplications_GroupWise("A",dates)
 			setSelectedEmployeeId(() => "")
 
 			console.log("fff", "AAAAAAAAAAAAAAAAA")
@@ -311,39 +321,45 @@ function HomeScreenMis() {
 				const creds = {
 					approval_status:loanType,
 					branch_code:userDetails?.brn_code,
-					co_id:!selectedEmployeeId ? coListData.map(el => el.emp_id) : [selectedEmployeeId]
+					co_id:!selectedEmployeeId ? coListData.map(el => el.emp_id) : [selectedEmployeeId],
+					from_dt:(loanType == 'A' && dates.length > 0) ? dates[0]?.format('YYYY-MM-DD') : '',
+					to_dt:(loanType == 'A' && dates.length > 0) ? dates[1]?.format('YYYY-MM-DD') : '',
 				}
 				console.log(creds);
 				axios.post(`${url}/admin/excel_download_member_details`,creds)
 				.then(res =>{
 						setExcelPending(false);
 						if(res?.data?.suc == 1 ){
-							 
-							const fileName = options.find(el => el.value == loanType);
-							let header_export = {};
-							const allKeys = [...new Set(res?.data?.msg.flatMap(Object.keys))];
-							allKeys.forEach(el =>{
-								if(el in grtHeader){
-									header_export = {
-										...header_export,
-										[el]:grtHeader[el]
+							if(res?.data?.msg.length > 0){
+								const fileName = options.find(el => el.value == loanType);
+								let header_export = {};
+								const allKeys = [...new Set(res?.data?.msg.flatMap(Object.keys))];
+								allKeys.forEach(el =>{
+									if(el in grtHeader){
+										header_export = {
+											...header_export,
+											[el]:grtHeader[el]
+										}
 									}
-								}
-								
-							})
-							const dt = res?.data?.msg.map(el =>{
-								 	el.grt_date = el.grt_date ? moment(el.grt_date).format('DD/MM/YYYY') : '';
-									el.dob = el.dob ? moment(el.dob).format('DD/MM/YYYY') : '';
-									el.gender = el.gender ? (el.gender == 'O' ? 'Others' : (el.gender == 'F' ? 'Female' : 'Male')) : '';
-									el.other_loan_flag = el.other_loan_flag ? (el.other_loan_flag == 'Y' ? 'Yes' : 'No') : '';
-									el.poltical_flag  = el.poltical_flag ? (el.poltical_flag == 'Y' ? 'Yes' : 'No') : '';
-									el.tv_flag = el.tv_flag ? (el.tv_flag == 'Y' ? 'Yes' : 'No') : '';
-									el.bike_flag = el.bike_flag ? (el.bike_flag == 'Y' ? 'Yes' : 'No') : '';
-									el.fridge_flag = el.fridge_flag ? (el.fridge_flag == 'Y' ? 'Yes' : 'No') : '';
-									el.wm_flag = el.wm_flag ? (el.wm_flag == 'Y' ? 'Yes' : 'No') : '';
-									return el;
-							})
-							exportToExcel(dt,header_export,`GRT ${fileName?.label} Report.xlsx`,[0])
+									
+								})
+								const dt = res?.data?.msg.map(el =>{
+										el.grt_date = el.grt_date ? moment(el.grt_date).format('DD/MM/YYYY') : '';
+										el.dob = el.dob ? moment(el.dob).format('DD/MM/YYYY') : '';
+										el.gender = el.gender ? (el.gender == 'O' ? 'Others' : (el.gender == 'F' ? 'Female' : 'Male')) : '';
+										el.other_loan_flag = el.other_loan_flag ? (el.other_loan_flag == 'Y' ? 'Yes' : 'No') : '';
+										el.poltical_flag  = el.poltical_flag ? (el.poltical_flag == 'Y' ? 'Yes' : 'No') : '';
+										el.tv_flag = el.tv_flag ? (el.tv_flag == 'Y' ? 'Yes' : 'No') : '';
+										el.bike_flag = el.bike_flag ? (el.bike_flag == 'Y' ? 'Yes' : 'No') : '';
+										el.fridge_flag = el.fridge_flag ? (el.fridge_flag == 'Y' ? 'Yes' : 'No') : '';
+										el.wm_flag = el.wm_flag ? (el.wm_flag == 'Y' ? 'Yes' : 'No') : '';
+										return el;
+								})
+								exportToExcel(dt,header_export,`GRT ${fileName?.label} Report.xlsx`,[0])
+							}
+							else{
+								Message('warning',"No Data Available");
+							}
 						}
 						else{
 							Message('error',res?.data?.msg);
@@ -360,6 +376,17 @@ function HomeScreenMis() {
 			setExcelPending(false);
 		  }
 	}
+
+	const onChangeDate = (values, formatString) => {
+		console.log(values);
+		setDates(values ? values : [dayjs(),dayjs()]);
+		if(selectedEmployeeId){
+			fetchCoList_CO_Shorting(selectedEmployeeId,values ? values : [dayjs(),dayjs()])
+		}
+		else{
+			fetchLoanApplications_GroupWise(loanType,values ? values : [dayjs(),dayjs()])
+		}
+	};
 
 	return (
 		<div>
@@ -379,6 +406,13 @@ function HomeScreenMis() {
 							onChange(value)
 						}}
 					/>
+
+
+					{loanType == 'A' && <RangePicker 
+						defaultValue={[today, today]}
+						onChange={onChangeDate}
+						value={dates}
+					/>}
 
 					 {loanType != 'R' &&  <Button  loading={isExcelPending} type="dashed"
 					 onClick={()=> {

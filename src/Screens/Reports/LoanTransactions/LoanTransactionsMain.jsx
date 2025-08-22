@@ -25,6 +25,7 @@ import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
 import { MultiSelect } from "primereact/multiselect"
+import { Message } from "../../../Components/Message"
 
 const options = [
 	{
@@ -119,13 +120,25 @@ function LoanTransactionsMain() {
 		await axios
 			.post(`${url}/transaction_report_groupwise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.transaction_group_data?.msg)
-				populateColumns(res?.data?.transaction_group_data?.msg,txnGrpHeader);	
+				if(res?.data?.transaction_group_data?.suc == 1){
+					if(res?.data?.transaction_group_data?.msg.length > 0){
+						setReportData(res?.data?.transaction_group_data?.msg)
+						populateColumns(res?.data?.transaction_group_data?.msg,txnGrpHeader);	
+					}
+					else{
+						Message('warning','No Data Available')
+					}
+				}
+				else{
+					Message('error','Something went wrong, Please try again later')
+				}
+				
+				
 				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
+				Message('error',err.message)
 			})
 
 		setLoading(false)
@@ -170,12 +183,24 @@ function LoanTransactionsMain() {
 			.post(`${url}/transaction_report_fundwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.transaction_fund_data?.msg)
-				populateColumns(res?.data?.transaction_fund_data?.msg,txnFundHeader);	
+				if(res?.data?.transaction_fund_data?.suc == 1){
+					if(res?.data?.transaction_fund_data?.msg.length > 0){
+						setReportData(res?.data?.transaction_fund_data?.msg)
+						populateColumns(res?.data?.transaction_fund_data?.msg,txnFundHeader);	
+					}
+					else{
+						Message('warning','No Data Available')
+					}
+				}
+				else{
+					Message('error','Something went wrong, Please try again later')
+				}
+			
 
 			})
 			.catch((err) => {
-				console.log("ERRRR>>>", err)
+				console.log("ERRRR>>>", err);
+				Message('error',err.message)
 			})
 
 		setLoading(false)
@@ -235,12 +260,24 @@ function LoanTransactionsMain() {
 			.post(`${url}/transaction_report_cowise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.transaction_co_data?.msg)
-				populateColumns(res?.data?.transaction_co_data?.msg,txnCoHeader);	
+				if(res?.data?.transaction_co_data?.suc == 1){
+					if(res?.data?.transaction_co_data?.msg.length > 0){
+						setReportData(res?.data?.transaction_co_data?.msg)
+						populateColumns(res?.data?.transaction_co_data?.msg,txnCoHeader);	
+					}
+					else{
+						Message('warning','No Data Available')
+					}
+				}
+				else{
+					Message('error','Something went wrong, Please try again later')
+				}
+				
 
 			})
 			.catch((err) => {
-				console.log("ERRRR>>>", err)
+				console.log("ERRRR>>>", err);
+				Message('error',err.message)
 			})
 
 		setLoading(false)
@@ -263,12 +300,24 @@ function LoanTransactionsMain() {
 			.post(`${url}/transaction_report_branchwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.transaction_branch_data?.msg)
-				populateColumns(res?.data?.transaction_branch_data?.msg,branchwiseTxnReportHeader);	
+				if(res?.data?.transaction_branch_data?.suc == 1){
+				if(res?.data?.transaction_branch_data?.msg.length > 0){
+					setReportData(res?.data?.transaction_branch_data?.msg)
+					populateColumns(res?.data?.transaction_branch_data?.msg,branchwiseTxnReportHeader);	
+				}
+				else{
+					Message('warning','No Data Available')
+				}
+				}
+				else{
+					Message('error','Something went wrong, Please try again later')
+				}
 
 			})
 			.catch((err) => {
-				console.log("ERRRR>>>", err)
+				console.log("ERRRR>>>", err);
+				
+				Message('warning',err.message)
 			})
 
 		setLoading(false)
@@ -291,12 +340,24 @@ function LoanTransactionsMain() {
 			.post(`${url}/transaction_report_memberwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.transaction_member_data?.msg)
-				populateColumns(res?.data?.transaction_member_data?.msg,txnMembHeader);	
+				if(res?.data?.transaction_member_data?.suc == 1 ){
+					if(res?.data?.transaction_member_data?.msg.length > 0){
+						setReportData(res?.data?.transaction_member_data?.msg)
+						populateColumns(res?.data?.transaction_member_data?.msg,txnMembHeader);	
+					}
+					else{
+						Message('warning','No Data Available');
+					}
+				}
+				else{
+						Message('error','Something went wrong, Please try again later');
+				}
+				
 
 			})
 			.catch((err) => {
-				console.log("ERRRR>>>", err)
+				console.log("ERRRR>>>", err);
+				Message('error',err.message);
 			})
 
 		setLoading(false)
@@ -751,7 +812,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[15, 16, 17]}
+								columnTotal={[17, 18, 19,20,21]}
 								// colRemove={[13, 14]}
 								headersMap={txnMembHeader}
 								dateTimeExceptionCols={[0]}
@@ -771,7 +832,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[10, 11, 12]}
+								columnTotal={[13, 14, 15,16]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnGrpHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
@@ -790,7 +851,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[12, 13, 14]}
+								columnTotal={[15, 16, 17, 18,19]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnFundHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
@@ -809,7 +870,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[9, 10, 11]}
+								columnTotal={[10, 11, 12,13,14]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnCoHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
@@ -828,7 +889,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[2, 3, 4]}
+								columnTotal={[3, 4,5,6,7]}
 								headersMap={branchwiseTxnReportHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
 									  if(!selectedColumns.includes(el.index)){

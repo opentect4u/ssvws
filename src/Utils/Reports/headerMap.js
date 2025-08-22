@@ -531,6 +531,8 @@ const txnGrpHeader = {
 	co_name: "CO Name",
 	debit: "Debit",
 	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt_recov:"Interest Recovery",
 	curr_balance: "Current Balance",
 	bank_name: "Bank",
 	bank_branch_name: "Bank Branch",
@@ -551,6 +553,8 @@ const txnFundHeader = {
 	co_name: "CO Name",
 	debit: "Debit",
 	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt_recov:"Interest Recovery",
 	curr_balance: "Current Balance",
 	bank_name:"Bank",
 	bank_branch_name:"Bank Branch"
@@ -568,6 +572,8 @@ const txnCoHeader = {
 	fund_name: "Fund Name",
 	debit: "Debit",
 	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt_recov:"Interest Recovery",
 	curr_balance: "Current Balance",
 }
 
@@ -589,6 +595,8 @@ const txnMembHeader = {
 	scheme_name: "Scheme Name",
 	debit: "Debit",
 	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt_recov:"Interest Recovery",
 	curr_balance: "Current Balance",
 	bank_name:"Bank",
 	bank_branch_name:"Bank Branch",
@@ -606,6 +614,8 @@ const branchwiseTxnReportHeader = {
 	debit: "Debit",
 	credit: "Credit",
 	curr_balance: "Current Balance",
+	prn_recov:"principle Recovery",
+	intt_recov:"Interest Recovery",
 }
 
 const txnDetailsHeader = {
