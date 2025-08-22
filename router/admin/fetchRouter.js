@@ -321,7 +321,8 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
     var select = "a.branch_code,a.prov_grp_code,a.approval_status,b.group_name,b.group_type,b.co_id,b.created_by created_code,c.branch_name,d.emp_name co_name,e.emp_name created_by",
     table_name = "td_grt_basic a LEFT JOIN md_group b ON a.prov_grp_code = b.group_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_employee d ON b.co_id = d.emp_id LEFT JOIN md_employee e ON b.created_by = e.emp_id",
     whr = `b.co_id = '${data.co_id}'
-    AND a.approval_status = '${data.approval_status}' AND a.delete_flag = 'N'`,
+    AND a.approval_status = '${data.approval_status}' AND a.delete_flag = 'N'
+    AND a.grt_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'`,
     order = `GROUP BY a.branch_code,a.prov_grp_code,a.approval_status,b.group_name,b.group_type,b.co_id,b.created_by,c.branch_name,d.emp_name,e.emp_name`;
     var mis_fetch_dtls = await db_Select(select,table_name,whr,order);
     }else {
@@ -329,7 +330,8 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
     table_name = "td_grt_basic a LEFT JOIN md_group b ON a.prov_grp_code = b.group_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_employee d ON b.co_id = d.emp_id LEFT JOIN md_employee e ON b.created_by = e.emp_id",
     whr = `a.branch_code = '${data.branch_code}' 
     AND b.co_id = '${data.co_id}'
-    AND a.approval_status = '${data.approval_status}' AND a.delete_flag = 'N'`,
+    AND a.approval_status = '${data.approval_status}' AND a.delete_flag = 'N'
+    AND a.grt_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'`,
     order = `GROUP BY a.branch_code,a.prov_grp_code,a.approval_status,b.group_name,b.group_type,b.co_id,b.created_by,c.branch_name,d.emp_name,e.emp_name`;
     var mis_fetch_dtls = await db_Select(select,table_name,whr,order);
     }
