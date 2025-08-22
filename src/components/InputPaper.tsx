@@ -1,5 +1,5 @@
-import React from 'react'
-import { KeyboardTypeOptions } from "react-native"
+import React, { ReactNode } from 'react'
+import { KeyboardTypeOptions, StyleSheet } from "react-native"
 import { TextInput } from "react-native-paper"
 
 type InputPaperProps = {
@@ -22,9 +22,12 @@ type InputPaperProps = {
     multiline?: boolean
     onFocus?: () => void
     onKeyPress?: () => void
+    rightNode?: ReactNode
+    isInputFieldInUppercase?:boolean
 }
 
 const InputPaper = ({
+    isInputFieldInUppercase=true,
     label,
     value,
     onChangeText,
@@ -44,6 +47,7 @@ const InputPaper = ({
     hideUnderline = false,
     onFocus,
     onKeyPress,
+    rightNode
 }: InputPaperProps) => {
     return (
         <TextInput
@@ -53,11 +57,11 @@ const InputPaper = ({
             mode={mode}
             keyboardType={keyboardType}
             label={label}
-            value={value?.toString()}
+            value={isInputFieldInUppercase ? value?.toString().toUpperCase() : value?.toString()}
             onChangeText={onChangeText}
             onBlur={onBlur}
             secureTextEntry={secureTextEntry}
-            style={customStyle}
+            style={[customStyle,isInputFieldInUppercase && style.textInputStyle]}
             left={leftIcon && <TextInput.Icon icon={leftIcon} />}
             // right={<TextInput.Icon icon={secureTextEntry ? "eye-off" : "eye"} onPress={() => setSecureTextEntry(!secureTextEntry)} />}
             autoFocus={autoFocus}
@@ -74,8 +78,15 @@ const InputPaper = ({
             underlineStyle={{
                 display: !hideUnderline ? "flex" : "none"
             }}
+            right={rightNode}
         />
     )
 }
+
+const style = StyleSheet.create({
+    textInputStyle:{
+            textTransform:'uppercase'
+    }
+})
 
 export default InputPaper

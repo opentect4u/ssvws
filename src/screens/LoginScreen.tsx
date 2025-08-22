@@ -1,5 +1,5 @@
 import { Alert, BackHandler, Dimensions, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native'
-import { ActivityIndicator, MD2Colors, Text } from 'react-native-paper'
+import { ActivityIndicator, IconButton, MD2Colors, Text, TextInput } from 'react-native-paper'
 import React, { useContext, useEffect, useState } from 'react'
 import ButtonPaper from '../components/ButtonPaper'
 import InputPaper from '../components/InputPaper'
@@ -12,11 +12,11 @@ import DropDownPicker from 'react-native-dropdown-picker'
 // import DeviceInfo from "react-native-device-info"
 // import axios from 'axios'
 // import { ADDRESSES } from '../config/api_list'
-
+import Icon from 'react-native-vector-icons/MaterialIcons';
 const LoginScreen = () => {
     const theme = usePaperColorScheme()
     // const appVersion = DeviceInfo.getVersion()
-
+    const [isPasswordVisible,setPasswordVisibility] = useState(false);
     const {
         handleLogin,
         isLoading,
@@ -227,10 +227,17 @@ const LoginScreen = () => {
                             backgroundColor: theme.colors.background
                         }} />
                         <InputPaper label='Password'
+                        isInputFieldInUppercase={false}
                          onChangeText={(e: string) => setPassword(e)} 
-                         value={password} secureTextEntry customStyle={{
+                         value={password} secureTextEntry={isPasswordVisible} customStyle={{
                             backgroundColor: theme.colors.background
-                        }} />
+                        }} 
+                        rightNode={
+                               <TextInput.Icon onPress={() =>{
+                                    setPasswordVisibility(prev => !prev)
+                               }} icon={isPasswordVisible ? 'eye-outline' : 'eye-off-outline'} />
+                        }
+                        />
                          {/* {userId == 2 && <DropDownPicker
                                 open={open}
                                 key={'value'}
