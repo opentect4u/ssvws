@@ -832,7 +832,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[13, 14, 15,16]}
+								columnTotal={[12,13, 14, 15,16]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnGrpHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
@@ -851,7 +851,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[15, 16, 17, 18,19]}
+								columnTotal={[14,15, 16, 17, 18,19]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnFundHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
@@ -870,7 +870,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[10, 11, 12,13,14]}
+								columnTotal={[9,10, 11, 12,13,14]}
 								dateTimeExceptionCols={[0]}
 								headersMap={txnCoHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
@@ -889,7 +889,7 @@ function LoanTransactionsMain() {
 							<DynamicTailwindTable
 								data={reportData}
 								pageSize={50}
-								columnTotal={[3, 4,5,6,7]}
+								columnTotal={[2,3, 4,5,6,7]}
 								headersMap={branchwiseTxnReportHeader}
 								colRemove={selectedColumns ? md_columns.map(el => {
 									  if(!selectedColumns.includes(el.index)){
@@ -908,8 +908,22 @@ function LoanTransactionsMain() {
 							<Tooltip title="Export to Excel">
 								<button
 									onClick={() =>{
-										// console.log(dataToExport);
+										console.log(dataToExport);
 										// console.log(headersToExport);
+										let exportedDT = [...dataToExport];
+										const tot_debit =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
+										const tot_credit= exportedDT.reduce((sum,cur) => sum + Number(cur.credit) ,0)
+										const tot_prn_recov= exportedDT.reduce((sum,cur) => sum + Number(cur.prn_recov) ,0)
+										const tot_intt_recov= exportedDT.reduce((sum,cur) => sum + Number(cur.intt_recov) ,0)
+										const tot_curr_balance= exportedDT.reduce((sum,cur) => sum + Number(cur.curr_balance) ,0)
+										exportedDT.push({
+											branch_code:"TOTAL",
+											debit: tot_debit,
+											credit: tot_credit,
+											prn_recov: tot_prn_recov,
+											intt_recov: tot_intt_recov,
+											curr_balance:tot_curr_balance
+										})
 										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
 										let header_export = {};
 										Object.keys(headersToExport).forEach(key =>{
@@ -921,7 +935,7 @@ function LoanTransactionsMain() {
 											}
 										});
 										exportToExcel(
-											dataToExport,
+											exportedDT,
 											header_export,
 											fileName,
 											[0, 2]
@@ -948,6 +962,19 @@ function LoanTransactionsMain() {
 										// 	fromDate,
 										// 	toDate
 										// )
+										let exportedDT = [...dataToExport];
+										const tot_debit =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
+										const tot_credit= exportedDT.reduce((sum,cur) => sum + Number(cur.credit) ,0)
+										const tot_prn_recov= exportedDT.reduce((sum,cur) => sum + Number(cur.prn_recov) ,0)
+										const tot_intt_recov= exportedDT.reduce((sum,cur) => sum + Number(cur.intt_recov) ,0)
+										const tot_curr_balance= exportedDT.reduce((sum,cur) => sum + Number(cur.curr_balance) ,0)
+										exportedDT.push({
+											debit: tot_debit,
+											credit: tot_credit,
+											prn_recov: tot_prn_recov,
+											intt_recov: tot_intt_recov,
+											curr_balance:tot_curr_balance
+										})
 										const dt = md_columns.filter(el => selectedColumns.includes(el.index));
 										let header_export = {};
 										Object.keys(headersToExport).forEach(key =>{
@@ -959,7 +986,7 @@ function LoanTransactionsMain() {
 											}
 										});
 										printTableReport(
-											dataToExport,
+											exportedDT,
 											header_export,
 											fileName?.split(",")[0],
 											[0, 2]

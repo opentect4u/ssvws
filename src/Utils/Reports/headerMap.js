@@ -400,6 +400,29 @@ const overdueBranchReportHeader = {
 	overdue: "Overdue Amount",
 }
 
+
+const groupReportGroupWiseHeader = {
+  group_code: "Group Code",
+  branch_code: "Branch Code",
+  branch_name: "Branch Name",
+  group_name: "Group Name",
+  co_id: "CO ID",
+  co_name:"CO Name",
+  phone1: "Mobile 1",
+  phone2: "Mobile 2",
+  grp_addr: "Group Address",
+  disctrict: "District",
+  block: "Block",
+  pin_no: "PIN No.",
+  bank_name: "Bank Name",
+  bank_branch: "Bank Branch",
+  ifsc: "IFSC",
+  micr: "MICR",
+  savings_acc: "Savings Account",
+  loan_acc: "Loan Account",
+  grp_open_dt: "Group Open Date",
+}
+
 const transactionFieldNames = {
 	transaction_date: "Transaction Date",
 	transaction_id: "Transaction ID",
@@ -884,5 +907,6 @@ export {
 	portfolioReportHeaderFundwise,
 	portfolioReportHeaderCOwise,
 	portfolioReportHeaderBranchwise,
-	grtHeader
+	grtHeader,
+	groupReportGroupWiseHeader
 }

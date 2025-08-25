@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react"
 import { Radio } from "antd"
 import { motion } from "framer-motion"
 
-function Radiobtn({ data, onChangeVal, val }) {
+function Radiobtn({ data, onChangeVal, val ,className=''}) {
 	console.log(val)
 	const [value, setValue] = useState(val)
 	useEffect(() => {
@@ -21,7 +21,7 @@ function Radiobtn({ data, onChangeVal, val }) {
 		>
 			<Radio.Group
 				onChange={onChange}
-				className=" mt-7 mb-4 bg-white rounded-lg p-2 shadow-lg gap-4"
+				className={` mt-7 mb-4 bg-white rounded-lg p-2 shadow-lg gap-4 ${className}`}
 				value={value}
 			>
 				{data?.map((item) => (

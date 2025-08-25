@@ -15,6 +15,7 @@ const DynamicTailwindTable = ({
 	onRowSelectionChange = () => {},
 	indexing = false,
 	bordered = true,
+	isFooterAvailable=true
 }) => {
 	const [currentPage, setCurrentPage] = useState(1)
 
@@ -195,7 +196,7 @@ const DynamicTailwindTable = ({
 						})}
 					</tbody>
 
-					<tfoot className="sticky bottom-0">
+					{isFooterAvailable && <tfoot className="sticky bottom-0">
 						<tr className="text-slate-50 bg-slate-700">
 							{indexing && <td className="px-6 py-3" />}
 							{showCheckbox && <td className="px-6 py-3" />}
@@ -210,7 +211,7 @@ const DynamicTailwindTable = ({
 								</td>
 							))}
 						</tr>
-					</tfoot>
+					</tfoot>}
 				</table>
 			</div>
 

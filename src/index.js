@@ -92,6 +92,7 @@ const DemandVsCollectionMain = lazy(() => import("./Screens/Reports/DemandVsColl
 const GroupClose =  lazy(() => import("./Screens/Reports/GroupClose/GroupClose"));
 const OutstaningReportMain =  lazy(() => import("./Screens/Reports/OutstandingReports/OutstaningReportMain"));
 const OverdueReport = lazy(() => import("./Screens/Reports/OverdueReport/OverdueReport"));
+const GroupReport = lazy(() => import("./Screens/Reports/GroupReport/GroupReport"));
 const PortfolioReport =  lazy(() => import("./Screens/Reports/PortfolioReport/PortfolioReport"));
 const FundwiseMain = lazy(() => import("./Screens/Reports/SummaryReports/FundwiseReport/FundwiseMain"));
 const SchemewiseMain = lazy(() => import("./Screens/Reports/SummaryReports/SchemewiseReport/SchemewiseMain"));
@@ -479,6 +480,10 @@ const router = createBrowserRouter([
 							{
 								path: "overduereport",
 								element: <OverdueReport />,
+							},
+							{
+								path:"groupreport",
+								element:<GroupReport/>
 							},
 							{
 								path: "portfolioreport",
