@@ -137,7 +137,7 @@ module.exports = {
           var table_name = "td_grt_occupation_household",
             fields = `no_of_rooms = '0', house_type = ${data.house_type ? `'${data.house_type}'` : 'NULL'}, own_rent = ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, land = '${data.land == '' ? 0 : data.land}', tv_flag = ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, 
                     bike_flag = ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, fridge_flag = ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, wm_flag = ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'}, poltical_flag = ${data.political_flag ? `'${data.political_flag}'` : 'NULL'},
-                 parental_addr = '${data.parental_addr ? data.parental_addr.split("'").join("\\'") : ''}', parental_phone = '${data.parental_phone == '' ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                 parental_addr = '${data.parental_addr ? data.parental_addr.split("'").join("\\'") : ''}', parental_phone = '${!data.parental_phone ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}'`,
             flag = 1;
