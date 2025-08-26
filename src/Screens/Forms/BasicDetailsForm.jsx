@@ -1074,19 +1074,23 @@ function BasicDetailsForm({ memberDetails }) {
 								</div>
 							)}
 						</div>
-
+							{userDetails.id}
+							{memberDetails?.approval_status}
 						{/* {loanApproveStatus !== "A" && loanApproveStatus !== "R" ? ( */}
 						{!disableCondition(
 							userDetails?.id,
 							memberDetails?.approval_status
 						) && (
 							<div className="mt-10">
-							
 								{(userDetails.id == 10 || (userDetails.id == 13 && formik.values?.b_groupCode != 0 && memberDetails?.approval_status == 'U')) ? (
 									<BtnComp mode="A" onReset={formik.resetForm} />
 								) : null}
 							</div>
 						)}
+
+						{/* {
+								(userDetails.id  == 2 && formik.values?.b_groupCode != 0 && memberDetails?.approval_status == 'U') && <BtnComp mode="A" onReset={formik.resetForm} />
+						} */}
 						{/* ) : loanApproveStatus === "A" ? (
 							<Tag
 								color="purple"
