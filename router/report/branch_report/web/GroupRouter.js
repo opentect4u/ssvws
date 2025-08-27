@@ -9,7 +9,7 @@ dateFormat = require('dateformat');
 groupRouter.post("/active_inactive_group_report", async (req, res) => {
     try{
         var data = req.body;
-        // console.log(data,'data');
+        console.log(data,'data');
 
             var select = `DISTINCT a.group_code,a.branch_code,c.branch_name,a.group_name,a.co_id,a.phone1,a.phone2,a.grp_addr,a.disctrict,a.block,a.pin_no,a.bank_name,a.branch_name bank_branch,a.ifsc,a.micr,a.acc_no1 savings_acc,a.acc_no2 loan_acc,a.grp_open_dt`;
             table_name = `md_group a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.group_code = b.prov_grp_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code`;
