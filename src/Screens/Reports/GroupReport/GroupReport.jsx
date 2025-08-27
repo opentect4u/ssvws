@@ -8,13 +8,16 @@ import axios from 'axios'
 import { url } from '../../../Address/BaseUrl';
 import Select from "react-select"
 import {
-groupReportGroupWiseHeader
+groupReportGroupWiseHeader,
+memberwiseDemandReportHeader,
+memberwiseReportHeader
 } from "../../../Utils/Reports/headerMap"
 import DynamicTailwindTable from '../../../Components/Reports/DynamicTailwindTable'
 import { Message } from '../../../Components/Message'
 import moment from 'moment'
 import { exportToExcel } from '../../../Utils/exportToExcel'
 import { printTableReport } from '../../../Utils/printTableReport'
+import DynamicTailwindTableGroup from '../../../Components/Reports/DynamicTailwindTableForGroup'
 const options = [
     {
         label: "Groupwise",
@@ -92,8 +95,9 @@ const GroupReport = () => {
                                 if(res?.data?.suc == 1){
                                     if(res?.data?.msg.length > 0){
                                         const dt = res?.data?.msg.map(el => {
-                                            el.grp_open_dt = el.grp_open_dt ? moment(el.grp_open_dt).format('DD/MM/YYYY') : '';
+                                            el.group_open_date = el.group_open_date ? moment(el.group_open_date).format('DD/MM/YYYY') : '';
                                             el.bank_name = el.bank_name ? el.bank_name : '';
+                                            el.other_loan_flag = el.other_loan_flag ? (el.other_loan_flag == 'N' ? "No" : 'Yes') : '';
                                             return el;
                                         })
                                         setReportData(dt)
@@ -141,6 +145,7 @@ const GroupReport = () => {
 	}
 
 	useEffect(() => {
+        console.log(groupReportGroupWiseHeader);
 		getBranches()
 	}, [])
 
@@ -447,12 +452,12 @@ const GroupReport = () => {
                         </div>    
 
                         <>
-                            {reportData.length > 0 && <DynamicTailwindTable
+                            {reportData.length > 0 && <DynamicTailwindTableGroup
                                 data={reportData}
                                 pageSize={50}
-                                columnTotal={[23, 24, 25, 26]}
-                                dateTimeExceptionCols={[0, 1, 20, 22, 27]}
-                                headersMap={groupReportGroupWiseHeader}
+                                columnTotal={[]}
+                                // dateTimeExceptionCols={[0, 1, 20, 22, 27]}
+                                headersMap={searchType == 'M' ? memberwiseReportHeader : groupReportGroupWiseHeader}
                                 colRemove={[]}
                                 isFooterAvailable={false}
                             />}

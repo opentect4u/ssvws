@@ -26,6 +26,8 @@ const DynamicTailwindTable = ({
 		[data, isDataEmpty]
 	)
 
+	console.log(originalHeaders)
+
 	const filteredHeadersWithIndex = useMemo(
 		() =>
 			originalHeaders
