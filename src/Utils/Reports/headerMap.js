@@ -610,6 +610,28 @@ const txnGrpHeader = {
 	bank_branch_name: "Bank Branch",
 }
 
+const txnGrpHeaderForPreviousLoanTrxns = {
+	branch_code: "Branch Code",
+	branch_name: "Branch Name",
+	payment_date: "Payment Date",
+	group_code: "Group Code",
+	group_name: "Group Name",
+	sb_account: "Savings Account",
+	loan_account: "Loan Account",
+	grp_addr: "Group Address",
+	co_id: "CO ID",
+	emp_name: "CO Name",
+	scheme_id:"Scheme ID",
+	scheme_name:"Scheme Name",
+	debit: "Debit",
+	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt:"Interest Recovery",
+	curr_balance: "Current Balance",
+	bank_name: "Bank",
+	bank_branch_name: "Bank Branch",
+}
+
 const txnFundHeader = {
 	branch_code: "Branch Code",
 	branch_name: "Branch Name",
@@ -632,6 +654,30 @@ const txnFundHeader = {
 	bank_branch_name:"Bank Branch"
 }
 
+const txnFundHeaderforPreviousLoanTrxns = {
+	branch_code: "Branch Code",
+	branch_name: "Branch Name",
+	payment_date: "Payment Date",
+	group_code: "Group Code",
+	group_name: "Group Name",
+	fund_id: "Fund ID",
+	fund_name: "Fund Name",
+	sb_account: "Savings Account",
+	loan_account: "Loan Account",
+	grp_addr: "Group Address",
+	co_id: "CO ID",
+	emp_name: "CO Name",
+	scheme_id:"Scheme ID",
+	scheme_name:"Scheme Name",
+	debit: "Debit",
+	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt:"Interest Recovery",
+	curr_balance: "Current Balance",
+	bank_name:"Bank",
+	bank_branch_name:"Bank Branch"
+}
+
 const txnCoHeader = {
 	branch_code: "Branch Code",
 	branch_name: "Branch Name",
@@ -646,6 +692,32 @@ const txnCoHeader = {
 	credit: "Credit",
 	prn_recov:"principle Recovery",
 	intt_recov:"Interest Recovery",
+	curr_balance: "Current Balance",
+}
+
+const txnCoHeaderForPreviousLoanTrxns = {
+	branch_code: "Branch Code",
+	branch_name: "Branch Name",
+	payment_date: "Payment Date",
+	co_id: "CO ID",
+	emp_name: "CO Name",
+	group_code:'Group Code',
+	group_name:"Group Name",
+	
+	bank_name:"Bank Name",
+	sb_account:"SB Account",
+	loan_account:"Loan Account",
+	grp_addr:"Group Address",
+	total_group: "Total Group",
+	total_member: "Total Member",
+	fund_id: "Fund ID",
+	fund_name: "Fund Name",
+	scheme_id:"Scheme ID",
+	scheme_name:"Scheme Name",
+	debit: "Debit",
+	credit: "Credit",
+	prn_recov:"principle Recovery",
+	intt:"Interest Recovery",
 	curr_balance: "Current Balance",
 }
 
@@ -958,5 +1030,8 @@ export {
 	portfolioReportHeaderBranchwise,
 	grtHeader,
 	groupReportGroupWiseHeader,
-	memberwiseReportHeader
+	memberwiseReportHeader,
+	txnGrpHeaderForPreviousLoanTrxns,
+	txnFundHeaderforPreviousLoanTrxns,
+	txnCoHeaderForPreviousLoanTrxns
 }

@@ -85,6 +85,7 @@ import CircularProgress from "@mui/material/CircularProgress"
 // import A_GroupwiseRecoveryReport from "./Screens/Admin/Reports/A_GroupwiseRecoveryReport"
 // import A_MemberwiseRecoveryReport from "./Screens/Admin/Reports/A_MemberwiseRecoveryReport"
 const LoanTransactionsMain = lazy(() => import("./Screens/Reports/LoanTransactions/LoanTransactionsMain"));
+const PreviousLoanTransaction = lazy(()=> import('./Screens/Reports/PreviousLoanTransactions/PreviousLoanTransactions'));
 const TestPage = lazy(() => import("./Screens/Reports/LoanTransactions/testPage"));
 const LoanStatementMain =  lazy(() => import("./Screens/Reports/LoanStatements/LoanStatementMain"));
 const DemandReportsMain = lazy(() => import("./Screens/Reports/DemandReports/DemandReportsMain"));
@@ -460,6 +461,10 @@ const router = createBrowserRouter([
 							{
 								path: "loantxns",
 								element: <LoanTransactionsMain />,
+							},
+							{
+								path:'previous-loantxns',
+								element:<PreviousLoanTransaction/>
 							},
 							{
 								path: "testpage",

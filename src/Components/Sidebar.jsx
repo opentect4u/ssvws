@@ -363,6 +363,14 @@ function Sidebar({ mode = 0 }) {
 							//  label: <Link to={"/homebm/demandreport"}>Demand</Link>,
 							// },
 							{
+								key: "sub6-14",
+								icon: <BarChartOutlined />,
+								label: (
+									<Link to={"/homebm/previous-loantxns"}>Previous Loan Transactions</Link>
+								),
+								
+							},
+							{
 								key: "sub6-5",
 								icon: <BarChartOutlined />,
 								label: <Link to={"/homebm/loantxns"}>Loan Transactions</Link>,
@@ -466,6 +474,7 @@ function Sidebar({ mode = 0 }) {
 								),
 								// hidden: data?.demand_vs_collection == "Y" ? false : true,
 							},
+							
 							// {
 							//   key: "sub6-10",
 							//   icon: <BarChartOutlined />,
