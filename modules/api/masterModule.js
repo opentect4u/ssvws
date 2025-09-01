@@ -16,18 +16,36 @@ const { db_Select, db_Insert } = require("../../model/mysqlModel"),
 //   });
 // };
 
+// const getFormNo = () => {
+//   return new Promise(async (resolve, reject) => {
+//     year = new Date().getFullYear();
+
+//     var select =
+//         `CONCAT(YEAR(NOW()),MAX(SUBSTRING(form_no, 5))+1) max_form`,
+//       table_name = "td_grt_basic",
+//       whr = null,
+//       order = null;
+//     var res_dt = await db_Select(select, table_name, whr, order);
+//     // var newId = `${year}${res_dt.msg[0].max_form}`;
+//     var newId = `${res_dt.msg[0].max_form}`;
+//     resolve(newId);
+//   });
+// };
+
+
 const getFormNo = () => {
   return new Promise(async (resolve, reject) => {
     year = new Date().getFullYear();
 
     var select =
-        `CONCAT(YEAR(NOW()),MAX(SUBSTRING(form_no, 5))+1) max_form`,
+        `Max(form_no)+1 max_form`,
       table_name = "td_grt_basic",
       whr = null,
       order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
     // var newId = `${year}${res_dt.msg[0].max_form}`;
     var newId = `${res_dt.msg[0].max_form}`;
+    console.log(newId);
     resolve(newId);
   });
 };
