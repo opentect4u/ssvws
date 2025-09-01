@@ -21,12 +21,13 @@ const getFormNo = () => {
     year = new Date().getFullYear();
 
     var select =
-        "MAX(SUBSTRING(form_no, 5))+1 max_form",
+        `CONCAT(YEAR(NOW()),MAX(SUBSTRING(form_no, 5))+1)`,
       table_name = "td_grt_basic",
       whr = null,
       order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
-    var newId = `${year}${res_dt.msg[0].max_form}`;
+    // var newId = `${year}${res_dt.msg[0].max_form}`;
+    var newId = `${res_dt.msg[0].max_form}`;
     resolve(newId);
   });
 };
