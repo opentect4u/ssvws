@@ -21,7 +21,7 @@ const getFormNo = () => {
     year = new Date().getFullYear();
 
     var select =
-        `CONCAT(YEAR(NOW()),MAX(SUBSTRING(form_no, 5))+1)`,
+        `CONCAT(YEAR(NOW()),MAX(SUBSTRING(form_no, 5))+1) max_form`,
       table_name = "td_grt_basic",
       whr = null,
       order = null;
