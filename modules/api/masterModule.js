@@ -23,7 +23,7 @@ const getFormNo = () => {
     var select =
         "MAX(SUBSTRING(form_no, 5))+1 max_form",
       table_name = "td_grt_basic",
-      whr = `SUBSTRING(form_no, 1, 4) = YEAR(now())`,
+      whr = null,
       order = null;
     var res_dt = await db_Select(select, table_name, whr, order);
     var newId = `${year}${res_dt.msg[0].max_form}`;
