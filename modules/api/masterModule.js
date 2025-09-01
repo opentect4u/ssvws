@@ -1,12 +1,27 @@
 const { db_Select, db_Insert } = require("../../model/mysqlModel"),
   dateFormat = require("dateformat");
 
+// const getFormNo = () => {
+//   return new Promise(async (resolve, reject) => {
+//     year = new Date().getFullYear();
+
+//     var select =
+//         "IF(MAX(SUBSTRING(form_no, -5)) > 0, LPAD(MAX(cast(SUBSTRING(form_no, -5) as unsigned))+1, 5, '0'), '000001') max_form",
+//       table_name = "td_grt_basic",
+//       whr = `SUBSTRING(form_no, 1, 4) = YEAR(now())`,
+//       order = null;
+//     var res_dt = await db_Select(select, table_name, whr, order);
+//     var newId = `${year}${res_dt.msg[0].max_form}`;
+//     resolve(newId);
+//   });
+// };
+
 const getFormNo = () => {
   return new Promise(async (resolve, reject) => {
     year = new Date().getFullYear();
 
     var select =
-        "IF(MAX(SUBSTRING(form_no, -5)) > 0, LPAD(MAX(cast(SUBSTRING(form_no, -5) as unsigned))+1, 5, '0'), '000001') max_form",
+        "MAX(SUBSTRING(form_no, 5))+1 max_form",
       table_name = "td_grt_basic",
       whr = `SUBSTRING(form_no, 1, 4) = YEAR(now())`,
       order = null;
