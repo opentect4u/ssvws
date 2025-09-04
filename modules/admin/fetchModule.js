@@ -359,7 +359,7 @@ module.exports = {
 
          // send to mis member details
 
-          var select = `a.form_no,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
+          var select = `a.form_no,a.prov_grp_code,e.group_name,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
           CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
           CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
           CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education,
@@ -377,7 +377,7 @@ module.exports = {
 
           //approved_member details
 
-         var select = `a.form_no,a.branch_code,c.branch_name,a.member_code,b.client_name,DATE(a.grt_date)grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
+         var select = `a.form_no,a.prov_grp_code,e.group_name,a.branch_code,c.branch_name,a.member_code,b.client_name,DATE(a.grt_date)grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
           CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
           CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
           CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education,
