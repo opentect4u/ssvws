@@ -352,7 +352,7 @@ module.exports = {
          CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education`,
          table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.prov_grp_code = d.group_code`,
          whr = data.branch_code == '100' ? `a.approval_status = 'U' AND d.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'U' AND d.co_id IN (${data.co_id})`,
-         order = null;
+         order = `ORDER BY a.grt_date DESC`;
          result = await db_Select(select,table_name,whr,order);
 
         }else if (data.approval_status === 'S'){
@@ -370,7 +370,7 @@ module.exports = {
           d.parental_addr,d.house_type,d.own_rent,d.land,d.poltical_flag,d.tv_flag,d.bike_flag,d.fridge_flag,d.wm_flag,a.remarks,a.prov_grp_code,e.group_name`,
           table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN td_grt_occupation_household d ON a.form_no = d.form_no LEFT JOIN md_group e ON a.prov_grp_code = e.group_code`,
           whr = data.branch_code == '100' ? `a.approval_status = 'S' AND e.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'S' AND e.co_id IN (${data.co_id})`,
-          order = null;
+          order = `ORDER BY a.grt_date DESC`;
           result = await db_Select(select,table_name,whr,order);
 
         }else {
@@ -389,7 +389,7 @@ module.exports = {
           table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN td_grt_occupation_household d ON a.form_no = d.form_no LEFT JOIN md_group e ON a.prov_grp_code = e.group_code`,
           //  whr = data.branch_code == '100' ? `a.approval_status = 'A' AND e.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'A' AND e.co_id IN (${data.co_id})`,
           whr = data.branch_code == '100' ? `a.approval_status = 'A' AND e.co_id IN (${data.co_id}) AND a.grt_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'A' AND e.co_id IN (${data.co_id}) AND a.grt_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'`,
-          order = null;
+          order = `ORDER BY a.grt_date DESC`;
           result = await db_Select(select,table_name,whr,order);
         }
         resolve(result);
