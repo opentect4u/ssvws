@@ -949,6 +949,8 @@ const portfolioReportHeaderBranchwise = {
 
 const grtHeader = {
 	form_no:'Form Number',
+	prov_grp_code: 'Group Code',
+	group_name: 'Group Name',
 	branch_name:"Branch",
 	member_code:'Member Code',
 	client_name:"Member Name",

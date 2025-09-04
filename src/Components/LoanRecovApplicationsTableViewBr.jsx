@@ -433,8 +433,10 @@ function LoanRecovApplicationsTableViewBr({
 					rowExpansionTemplate={rowExpansionTemplate}
 					dataKey="id"
 					paginator
-					rows={rowsPerPage}
-					first={currentPage}
+					// rows={rowsPerPage}
+					// first={currentPage}
+					rows={rows}
+					first={first}
 					onPage={onPageChange}
 					rowsPerPageOptions={[5, 10, 20]} // Add options for number of rows per page
 					tableClassName="w-full text-sm text-left rtl:text-right shadow-lg text-green-900dark:text-gray-400 table_Custome table_Custome_1st" // Apply row classes

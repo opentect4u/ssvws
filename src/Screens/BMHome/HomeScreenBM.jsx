@@ -471,6 +471,7 @@ function HomeScreenMis() {
 									}}
 								/>
 							)} */}
+							    {/* Sent to MIS */}
 								<LoanRecovApplicationsTableViewBr
 									flag="MIS"
 									loanAppData={loanApplications}
@@ -641,7 +642,8 @@ function HomeScreenMis() {
 									}}
 								/>
 							)} */}
-
+{/* ddddddddddddd */}
+{/* { JSON.stringify(loanApplications.length, null, 2) } */}
 							<LoanApplicationsTableViewBr
 									flag="MIS"
 									loanAppData={loanApplications}
