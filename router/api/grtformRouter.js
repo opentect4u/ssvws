@@ -474,4 +474,23 @@ grtformRouter.post("/bm_search_pending_form", async (req, res) => {
     }
 });
 
+grtformRouter.post("/bm_show_pending_form", async (req, res) => {
+    var data = req.body;
+    // console.log(data,'data');
+    
+
+    //branch manager login and show pending form
+    var select = "a.branch_code,a.member_code,a.client_name,b.form_no,b.grt_date,b.approval_status,b.prov_grp_code,c.co_id,c.group_name",
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.member_code = b.member_code LEFT JOIN md_group c ON b.prov_grp_code = c.group_code",
+    whr = `a.branch_code = '${data.branch_code}' AND b.approval_status = 'U'   AND b.delete_flag = 'N'`,
+    order = `ORDER BY c.group_name DESC`;
+    var search_bm_pending_form = await db_Select(select,table_name,whr,order);
+
+    if(search_bm_pending_form.suc > 0 && search_bm_pending_form.msg.length > 0){
+        return res.send(search_bm_pending_form);
+    }else {
+        return res.send({ "suc": 0, "msg": "No data found"});
+    }
+});
+
 module.exports = {grtformRouter}
