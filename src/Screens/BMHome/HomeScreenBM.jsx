@@ -307,7 +307,7 @@ function HomeScreenMis() {
 			fetchLoanApplications_GroupWise("U")
 			setSelectedEmployeeId(() => "")
 
-			console.log("fff", "AAAAAAAAAAAAAAAAA")
+			// console.log("fff", "AAAAAAAAAAAAAAAAA")
 		}
 	}, [loanType])
 

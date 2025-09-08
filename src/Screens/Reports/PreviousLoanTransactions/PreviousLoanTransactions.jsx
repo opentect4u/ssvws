@@ -912,7 +912,7 @@ function PreviousLoanTransactions() {
                             <Tooltip title="Export to Excel">
                                 <button
                                     onClick={() =>{
-                                        console.log(dataToExport);
+                                        console.log(dataToExport, 'dataToExport');
                                         // console.log(headersToExport);
                                         let exportedDT = [...dataToExport];
                                         const tot_debit =  exportedDT.reduce( ( sum , cur ) => sum + Number(cur.debit) , 0);
