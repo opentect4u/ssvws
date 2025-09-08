@@ -316,8 +316,8 @@ const LoginScreen = () => {
                         <View>
                             <Text variant='bodyMedium' style={{
                                 position: "absolute",
-                                top: 40,
-                                left: 240,
+                                top: 20, textAlign: "center",
+                                left: 0, width:"100%"
                             }}>App Version: {appVersion}</Text>
                         </View>
                     </View>

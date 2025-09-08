@@ -44,7 +44,7 @@ const AppContext = ({ children }) => {
                             branch_name:branchName
                         };
                         loginStorage.set("login-data", JSON.stringify(dt));
-                        console.log("USER DETAILS", dt);
+                        console.log("USER DETAILS", dt, "USER DETAILS");
                         setIsLogin(true);
                     }
                     else{

@@ -33,6 +33,11 @@ const BMPendingLoansScreen = () => {
 
     // const [AssignGroup, setAssignGroup] = useState(() => "")
 
+    const [visiblePendingList, setVisiblePendingList] = useState(() => true)
+    const [pendingDataList, setPendingDataList] = useState(() => [])
+
+
+
     const [selectedForm, setSelectedForm] = useState({
         formNo: "",
         branchCode: "",
@@ -56,6 +61,8 @@ const BMPendingLoansScreen = () => {
     // }
 
     const searchPendingGRTForms = async () => {
+        
+        setVisiblePendingList(false)
         if(search){
             setLoading(true)
         
@@ -92,13 +99,53 @@ const BMPendingLoansScreen = () => {
 
     }
 
-    // useEffect(() => {
-    //     fetchPendingGRTForms()
-    // }, [])
+    useEffect(() => {
+        console.log(loginStore?.brn_code, 'branchCode' , 'jjjj');
+        fetchPendingList()
+    }, [])
+
+    useEffect(() => {
+        if(search.length < 1) {
+        fetchPendingList()
+        } else {
+        setVisiblePendingList(false)
+        }
+    }, [search])
+
+    
 
     useEffect(() => {
         setFilteredDataArray(formsData)
     }, [formsData])
+
+
+    const fetchPendingList = async () => {
+        setLoading(true)
+        const creds = {
+            "branch_code" : loginStore?.brn_code
+        }
+
+        await axios.post(`${ADDRESSES.PENDING_LIST_DATA}`, creds).then(res => {
+            if (res?.data?.suc === 1) {
+                console.log("ffffffffffffffffff", res?.data?.msg)
+                setPendingDataList(res?.data?.msg)
+                setLoading(false)
+                setVisiblePendingList(true)
+                    
+                
+            } else {
+                ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
+                setLoading(false)
+                setPendingDataList(() => [])
+            }
+        }).catch(err => {
+            console.log(">>>>>", err.message)
+            ToastAndroid.show(`Something went wrong while logging in.`, ToastAndroid.SHORT)
+            setLoading(false)
+        })
+    }
+
+
 
     const handleFormListClick = (formNo: any, brCode: any) => {
         console.log("HIIIII")
@@ -207,7 +254,12 @@ const BMPendingLoansScreen = () => {
                     padding: 20,
                     paddingBottom: 120
                 }}>
-                    {filteredDataArray?.map((item, i) => (
+
+                    {/* <Text> {JSON.stringify(visiblePendingList, null, 2)} </Text> */}
+                    
+                    {visiblePendingList ? (
+                    <>
+                        {pendingDataList?.map((item, i) => (
                         <React.Fragment key={i}>
                             <List.Item
                                 titleStyle={{
@@ -272,6 +324,78 @@ const BMPendingLoansScreen = () => {
                             <Divider />
                         </React.Fragment>
                     ))}
+                        </>
+                    ) : (
+                    <>
+                    {filteredDataArray?.map((item, i) => (
+                    <React.Fragment key={i}>
+                    <List.Item
+                    titleStyle={{
+                    color: theme.colors.primary,
+                    }}
+                    descriptionStyle={{
+                    color: theme.colors.secondary,
+                    }}
+                    key={i}
+                    title={`${item?.client_name}`}
+                    description={
+                    <View>
+                    {item?.prov_grp_code === 0 && (<Text style={{
+                    backgroundColor: theme.colors.errorContainer,
+                    color: theme.colors.onErrorContainer, fontSize: 12, lineHeight: 22, textAlign: 'center', borderRadius: 4
+                    }}>Group Not Assigned</Text>)}
+                    <Text>Form No: {item?.form_no}</Text>
+                    <Text>GRT Date - {item?.grt_date ? new Date(item?.grt_date).toLocaleDateString("en-GB") : "No Date"}</Text>
+                    <Text>Branch Code - {item?.branch_code ? item?.branch_code : "N/A"}</Text>
+                    </View>
+                    }
+                    // onPress={() => handleFormListClick(item?.form_no, item?.branch_code)}
+                    onPress={item?.prov_grp_code === 0 ? null : () => handleFormListClick(item?.form_no, item?.branch_code)}
+                    left={props => <List.Icon {...props} icon="form-select" />}
+                    // console.log("------XXX", item?.branch_code, item?.form_no, item?.member_code)
+
+                    right={props => (
+                    <IconButton
+                    icon="trash-can-outline"
+
+                    onPress={() => {
+                    setSelectedForm({
+                    formNo: item?.form_no,
+                    branchCode: item?.branch_code,
+                    memberCode: item?.member_code
+                    });
+                    setVisible(true);
+                    }}
+
+                    // onPress={
+                    //     item?.prov_grp_code === 0
+                    //         ? null // Disables button (unclickable)
+                    //         : () => {
+                    //             setSelectedForm({
+                    //                 form_no: item?.form_no,
+                    //                 branch_code: item?.branch_code,
+                    //                 member_code: item?.member_code
+                    //             });
+                    //             setVisible(true);
+                    //         }
+                    // }
+
+
+                    size={28}
+                    iconColor={theme.colors.error}
+                    style={{
+                    alignSelf: 'center'
+                    }}
+                    />
+                    )}
+                    />
+                    <Divider />
+                    </React.Fragment>
+                    ))}
+                    </>
+                    )}
+
+                    
                 </View>
                 <DialogBox
                     visible={visible}

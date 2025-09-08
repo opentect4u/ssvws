@@ -72,5 +72,8 @@ export const ADDRESSES = {
 
     DUPLICATE_PRINT: `${BASE_URL}/fetch_group_dtls_fr_duplicate_print`,
     UPLOAD_GRT_IMAGE: `${BASE_URL}/image_grt_save`,
-    LOGOUT_APP:`${BASE_URL}/logout_app`
+    LOGOUT_APP:`${BASE_URL}/logout_app`,
+
+
+    PENDING_LIST_DATA:`${BASE_URL}/bm_show_pending_form`
 }

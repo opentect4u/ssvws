@@ -1,6 +1,6 @@
 {
   "name": "ssvwsloan",
-  "version": "3.7",
+  "version": "4.4",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
