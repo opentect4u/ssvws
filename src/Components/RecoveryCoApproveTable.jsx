@@ -146,24 +146,31 @@ function RecoveryCoApproveTable({
 	const handleSelectionChange = (e) => {
 		// Update the selected products
 
-		setSelectedProducts(e.value)
-		// Perform any additional logic here, such as enabling a button or triggering another action
-		if (e.value) {
-			const selectedRows = [e.value]
-			// const totalEmi = selectedRows.reduce((sum, item) => sum + parseFloat(item.tot_emi || 0), 0);
-			// setTotalEMI(selectedRows.reduce((sum, item) => sum + parseFloat(item.tot_emi || 0), 0).toFixed(2))
-			setCreditAmount(
-				selectedRows
-					.reduce((sum, item) => sum + parseFloat(item.credit_amt || 0), 0)
-					.toFixed(2)
-			)
-			setOutstanding(
-				selectedRows
-					.reduce((sum, item) => sum + parseFloat(item.outstanding || 0), 0)
-					.toFixed(2)
-			)
+		// setSelectedProducts(e.value)
 
-			const group_Data = selectedRows.map((item) => {
+		const rows = e.value || [];
+
+  		setSelectedProducts(rows);
+
+
+		// if (e.value) {
+		if (rows.length > 0) {
+			// const selectedRows = [e.value]
+			// setCreditAmount(
+			// 	selectedRows
+			// 		.reduce((sum, item) => sum + parseFloat(item.credit_amt || 0), 0)
+			// 		.toFixed(2)
+			// )
+			// setOutstanding(
+			// 	selectedRows
+			// 		.reduce((sum, item) => sum + parseFloat(item.outstanding || 0), 0)
+			// 		.toFixed(2)
+			// )
+
+			setCreditAmount(rows.reduce((sum, r) => sum + parseFloat(r.credit_amt || 0), 0).toFixed(2));
+			setOutstanding(rows.reduce((sum, r) => sum + parseFloat(r.outstanding || 0), 0).toFixed(2));
+
+			const group_Data = rows.map((item) => {
 				return {
 					payment_date: item?.transaction_date,
 					branch_code: item?.branch_code,
@@ -179,7 +186,7 @@ function RecoveryCoApproveTable({
 			// 		group_code: item?.group_code
 			// 	}
 			// });
-			const dat = selectedRows.map((item) => {
+			const dat = rows.map((item) => {
 				return {
 					// payment_id: item?.payment_id,
 					// loan_id: item?.loan_id,
@@ -231,6 +238,11 @@ function RecoveryCoApproveTable({
 			flag: "G",
 			chkdt: checkBeforeApproveData,
 		}
+
+		// console.log(creds, "creds checkBeforeApprove");
+
+		// return
+		
 		await axios
 			.post(`${url}/checking_before_approve`, creds)
 			.then(async (res) => {
@@ -590,7 +602,8 @@ function RecoveryCoApproveTable({
 				>
 					<Column expander={allowExpansion} style={{ width: "3em" }} />
 					<Column
-						selectionMode="single"
+						// selectionMode="single"
+						selectionMode="multiple"
 						headerStyle={{ width: "3rem" }}
 					></Column>
 					<Column
