@@ -1074,8 +1074,8 @@ function BasicDetailsForm({ memberDetails }) {
 								</div>
 							)}
 						</div>
-							{userDetails.id}
-							{memberDetails?.approval_status}
+							{/* {userDetails.id} */}
+							{/* {memberDetails?.approval_status} */}
 						{/* {loanApproveStatus !== "A" && loanApproveStatus !== "R" ? ( */}
 						{!disableCondition(
 							userDetails?.id,
