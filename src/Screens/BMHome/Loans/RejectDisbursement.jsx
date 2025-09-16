@@ -18,7 +18,7 @@ import Radiobtn from "../../../Components/Radiobtn"
 import TDInputTemplateBr from "../../../Components/TDInputTemplateBr"
 import { formatDateToYYYYMMDD } from "../../../Utils/formateDate"
 
-const RejectTransaction = () => {
+const RejectDisbursement = () => {
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || {}
 
 	const [loading, setLoading] = useState(false)
@@ -36,11 +36,11 @@ const RejectTransaction = () => {
 
 	const options2 = [
 		{
-			label: "Reject Transaction(s)",
+			label: "Reject Disbursement",
 			value: "R",
 		},
 		{
-			label: "Search Rejected Transaction(s)",
+			label: "Search Rejected Disbursement",
 			value: "S",
 		},
 	]
@@ -79,13 +79,14 @@ const RejectTransaction = () => {
 	}, [data])
 
 	const fetchGroupNames = async (query) => {
+
 		setLoading(true)
 		try {
 			const creds = {
 				branch_code: userDetails?.brn_code,
-				grps: query,
+				grps_name: query,
 			}
-			const res = await axios.post(`${url}/fetch_group_name`, creds)
+			const res = await axios.post(`${url}/fetch_group_name_fr_disb_reject`, creds)
 			if (res?.data?.suc === 1 && Array.isArray(res?.data?.msg)) {
 				setSuggestions(res?.data?.msg)
 				setShowSuggestions(true)
@@ -102,6 +103,11 @@ const RejectTransaction = () => {
 	}
 
 	const search_reject_loan_trans = () => {
+
+		
+
+		// return;
+		
 		if (fromDate && toDate) {
 			setLoading(true)
 
@@ -127,7 +133,11 @@ const RejectTransaction = () => {
 				from_dt: formatDateToYYYYMMDD(fromDate),
 				to_dt: formatDateToYYYYMMDD(toDate),
 			}
-			axios.post(url + "/search_reject_loan_trans", creds).then((res) => {
+
+			// console.log(creds, 'dateeeeeeeeeeeeeeee');
+
+
+			axios.post(url + "/search_reject_disb_trans", creds).then((res) => {
 				console.log(res)
 				if (res?.data?.search_reject_data?.suc > 0)
 					setData(res.data?.search_reject_data?.msg || [])
@@ -183,6 +193,8 @@ const RejectTransaction = () => {
 		}
 	}
 	const fetchSearchedGroups = async () => {
+		console.log("Fetching groups for:", searchKeywords);
+		
 		setLoading(true)
 		const creds = {
 			group_code: searchKeywords,
@@ -191,7 +203,7 @@ const RejectTransaction = () => {
 
 		try {
 			const res = await axios.post(
-				`${url}/fetch_reject_loan_transactions_data`,
+				`${url}/fetch_reject_disb_transactions_data`,
 				creds
 			)
 			if (res.data.suc === 0) {
@@ -217,17 +229,21 @@ const RejectTransaction = () => {
 				payment_date: txn.transaction_date,
 				loan_id: txn.loan_id,
 				payment_id: txn.transaction_id,
-				tr_type: txn.tr_type,
+				// tr_type: txn.tr_type,
 			}))
 
 		const creds = {
-			reject_trans: modifiedArr,
+			reject_disb_trans: modifiedArr,
 			reject_remarks: rej_res,
 			rejected_by: userDetails.emp_id,
 		}
 
+		console.log(creds, "CREDSSS");
+		
+		// return;
+
 		try {
-			const res = await axios.post(`${url}/reject_loan_transactions`, creds)
+			const res = await axios.post(`${url}/reject_disb_transactions`, creds)
 			// console.log("RES", res?.data)
 			if(res?.data?.suc == 1){
 				Message("success", "Loan Txns rejected.")
@@ -421,13 +437,13 @@ const RejectTransaction = () => {
 							<div className="sm:col-span-2">
 								<div className="w-full bg-slate-800 text-slate-50 p-3 pl-5 mt-5 rounded-lg font-bold text-xl">
 									{searchType == "S"
-										? "Search Rejected Transaction"
-										: "Rejected Transactions"}
+										? "Search Rejected Disbursement"
+										: "Rejected Disbursement"}
 								</div>
 
 								{/* Dynamic Table */}
 								<div className="mt-5 p-5 bg-gray-50 rounded-lg shadow-lg">
-									
+									 {/* {JSON.stringify(projects, null, 2)} */}
 									<DynamicTailwindTable
 										data={data}
 										pageSize={50}
@@ -493,4 +509,4 @@ const RejectTransaction = () => {
 	)
 }
 
-export default RejectTransaction
+export default RejectDisbursement

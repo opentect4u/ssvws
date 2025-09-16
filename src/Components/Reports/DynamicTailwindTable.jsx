@@ -88,6 +88,8 @@ const DynamicTailwindTable = ({
 			newSelection = selectedRowIndices.filter(
 				(idx) => !visibleIndices.includes(idx)
 			)
+			console.log(allVisibleSelected, newSelection, visibleIndices, 'kkkkkkkkkkkk');
+			
 		} else {
 			newSelection = Array.from(
 				new Set([...selectedRowIndices, ...visibleIndices])
@@ -102,7 +104,11 @@ const DynamicTailwindTable = ({
 			? selectedRowIndices.filter((idx) => idx !== globalIndex)
 			: [...selectedRowIndices, globalIndex]
 		onRowSelectionChange(newSelection)
+		handleSelectAllChange()
 	}
+
+
+
 
 	const formatCellValue = (value, colIndex) => {
 		const isoRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/

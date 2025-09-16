@@ -204,6 +204,12 @@ function Sidebar({ mode = 0 }) {
 								// hidden: data?.view_loan == "Y" ? false : true,
 							},
 							{
+								key: "sub4-6",
+								icon: <EyeOutlined />,
+								label: <Link to={"/homebm/rejecdisbursement"}>Reject Disbursement</Link>,
+								// hidden: data?.view_loan == "Y" ? false : true,
+							},
+							{
 								key: "sub4-2",
 								icon: <CheckCircleOutlined />,
 								label: "Approve Transaction",

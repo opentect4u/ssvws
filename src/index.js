@@ -10,6 +10,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom"
 import { Democontext } from "./Context/Democontext"
 import Loader from "./Components/Loader"
 import CircularProgress from "@mui/material/CircularProgress"
+import RejectDisbursement from "./Screens/BMHome/Loans/RejectDisbursement"
 // import LoanCalculatorIndex from "./Screens/BMHome/Loans/LoanCalculator/index copy"
 // import LoanStatementMain from "./Screens/Reports/LoanStatements/LoanStatementMain"
 // import LoanTransactionsMain from "./Screens/Reports/LoanTransactions/LoanTransactionsMain"
@@ -409,6 +410,10 @@ const router = createBrowserRouter([
 							{
 								path: "rejecttxn",
 								element: <RejectTransaction />,
+							},
+							{
+								path: "rejecdisbursement",
+								element: <RejectDisbursement />,
 							},
 							{
 								path: "approveloan",
