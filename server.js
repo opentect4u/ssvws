@@ -129,6 +129,7 @@ const { duplicate_printRouter } = require("./router/api/duplicate_printRouter");
 const { portfolioRouter } = require("./router/report/branch_report/web/portfolioRouter");
 const { groupRouter } = require("./router/report/branch_report/web/GroupRouter");
 const { prev_loan_transRouter } = require("./router/report/branch_report/web/previous_loan_transRouter");
+const { disb_rejectRouter } = require("./router/admin/loan/disb_rejectionRouter");
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -182,6 +183,7 @@ app.use(duplicate_printRouter)
 app.use(portfolioRouter)
 app.use(groupRouter)
 app.use(prev_loan_transRouter)
+app.use(disb_rejectRouter)
 
 app.get("/",async (req, res) => {
   // var currentDate = `${dateFormat(new Date(), "yyyy-mm-dd")}`;
