@@ -406,7 +406,8 @@ masterRouter.post("/get_bank", async (req, res) => {
     var data = req.body;
    
     //get bank details
-    var select = "*",
+    // var select = "CONCAT(bank_name, ' ' ,'-',' ' , branch_name, ' ' , '-',' ' , ifsc) AS bank_name",
+    var select = "*,CONCAT(bank_name, ' ' ,'-',' ' , branch_name, ' ' , '-',' ' , ifsc) AS bank_name",
     table_name = "md_bank",
     whr = `dist_code = '${data.dist_code}'`,
     order = null;

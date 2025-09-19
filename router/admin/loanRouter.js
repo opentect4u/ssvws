@@ -84,9 +84,9 @@ loanRouter.post("/fetch_appl_dtls_via_grp", async (req, res) => {
 
   // Fetch group details
   var select =
-    "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name,a.branch_name,a.acc_no1,a.acc_no2,a.grp_open_dt,b.dist_code branch_dist_code,b.branch_name brn_name, 0 loan_exist, '' loan_exist_msg";
+    "a.group_code,a.branch_code,a.group_name,a.group_type,a.bank_name bank_code,a.branch_name,a.acc_no1,a.acc_no2,CONCAT(c.bank_name, ' ' ,'-',' ' , c.branch_name, ' ' , '-',' ' , c.ifsc) AS bank_name,a.grp_open_dt,b.dist_code branch_dist_code,b.branch_name brn_name, 0 loan_exist, '' loan_exist_msg";
   var table_name =
-    "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code";
+    "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code LEFT JOIN md_bank c ON a.bank_name = c.bank_code";
   var whr = `a.branch_code = '${data.branch_code}' AND (a.group_code LIKE '%${data.grp_dt}%' OR a.group_name LIKE '%${data.grp_dt}%')`;
   var order = `ORDER BY a.group_code, a.group_name, a.group_type`;
 

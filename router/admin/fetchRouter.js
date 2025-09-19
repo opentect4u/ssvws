@@ -625,8 +625,8 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
 
     //fetch search group details in web
     if(data.branch_code == '100'){
-    var select = "a.*, b.block_name,c.emp_name,d.branch_name brn_name",
-    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+    var select = "a.*, b.block_name,c.emp_name,d.dist_code,d.branch_name brn_name,e.bank_code,CONCAT(e.bank_name, ' ' ,'-',' ' , e.branch_name, ' ' , '-',' ' , e.ifsc) AS bank_name",
+    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code LEFT JOIN md_bank e ON a.bank_name = e.bank_code",
     whr = `a.group_code = '${data.group_code}'`,
     order = null;
     fetch_search_group_web = await db_Select(select,table_name,whr,order);
@@ -640,8 +640,8 @@ fetchRouter.post("/fetch_search_group_web", async (req, res) => {
         fetch_search_group_web.msg[0]['memb_dt'] = grp_mem_dt.suc > 0 ? (grp_mem_dt.msg.length > 0 ? grp_mem_dt.msg : []) : [];
     }
 }else {
-    var select = "a.*, b.block_name,c.emp_name,d.branch_name brn_name",
-    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code",
+    var select = "a.*, b.block_name,c.emp_name,d.dist_code,d.branch_name brn_name,e.bank_code,CONCAT(e.bank_name, ' ' ,'-',' ' , e.branch_name, ' ' , '-',' ' , e.ifsc) AS bank_name",
+    table_name = "md_group a LEFT JOIN md_block b ON a.block = b.block_id LEFT JOIN md_employee c ON a.co_id = c.emp_id LEFT JOIN md_branch d ON a.branch_code = d.branch_code LEFT JOIN md_bank e ON a.bank_name = e.bank_code",
     whr = `a.group_code = '${data.group_code}' AND a.branch_code = '${data.branch_code}'`,
     order = null;
     fetch_search_group_web = await db_Select(select,table_name,whr,order);

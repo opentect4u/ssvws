@@ -249,6 +249,26 @@ grtformRouter.post("/fetch_member_dtls_cowise", async (req, res) => {
     res.send(fetch_mem_co)
 });
 
+// fetch bank name when create group dist wise
+grtformRouter.post("/fetch_bank_name_grp_create", async (req, res) => {
+    try {
+    var data = req.body;
+    // console.log(data,'data_grp');
+
+    var select = `bank_code,CONCAT(bank_name, ' ' ,'-',' ' , branch_name, ' ' , '-',' ' , ifsc) AS bank_name,branch_name bank_branch,
+                    ifsc`,
+    table_name = "md_bank",
+    whr = `dist_code = '${data.dist_code}'`,
+    order = `ORDER BY bank_name ASC`;
+    var fetch_bank_name = await db_Select(select,table_name,whr,order);
+    res.send(fetch_bank_name)
+
+    } catch (error) {
+    console.error("Error in fetch bank name:", error);
+    res.send({ suc: 0, msg: "Server Error" });
+  }
+});
+
 grtformRouter.post("/save_group", async (req, res) => {
     var data = req.body;
     // console.log(data,'grp_dt');
