@@ -87,6 +87,8 @@ function DisbursmentForm() {
 	// console.log(memberDetails, "memberDetails")
 	console.log("D/R", loanType)
 
+	const [bankCode, setBankCode] = useState('');
+
 	const [personalDetailsData, setPersonalDetailsData] = useState({
 		b_groupcode: "",
 		b_branchcode: "",
@@ -221,7 +223,7 @@ function DisbursmentForm() {
 		},
 	]
 
-	const getBanks = async (input,dist_code) => {
+	const getBanks = async (input, dist_code, bank_code) => {
 		console.log(input)
 		// if(input){
 		await axios
@@ -231,7 +233,11 @@ function DisbursmentForm() {
 				bank: input,
 			})
 			.then((res) => {
-				setBanks(res?.data?.msg)
+				const result = res?.data?.msg.find(item => item.bank_code === Number(bank_code));
+				console.log(result, 'resssssssssssssssssssssss ', res?.data);
+				setBanks(result)
+				// setBanks(res?.data?.msg)
+				
 			})
 			.catch((err) => {
 				Message("error", "Some error while fetching banks.")
@@ -497,11 +503,9 @@ function DisbursmentForm() {
 			// .post(`${url}/admin/fetch_loan_application_dtls`, creds)
 			.post(`${url}/admin/fetch_appl_dtls_via_grp`, creds)
 			.then((res) => {
-				// console.log(
-				// 	"KKKKKKKKkkkkk8888KKKKKkkkkKKKK",
-				// 	res?.data?.msg[0]?.mem_dt_grp
-				// )
-				getBanks("",res?.data?.msg[0]?.branch_dist_code);
+				// console.log(res?.data?.msg[0], 'resssssssssssssssssssssss gg');
+				
+				getBanks("", res?.data?.msg[0]?.branch_dist_code, res?.data?.msg[0]?.bank_code);
 				setMembers(res?.data?.msg[0]?.mem_dt_grp)
 				membersForDisb.length = 0
 				var count = 0
@@ -527,7 +531,10 @@ function DisbursmentForm() {
 				// 	"fetchSearchedApplication ===========>>>>>>>>>>>>>>>>>",
 				// 	 res?.data?.msg[0]
 				// )
-				console.log("BRANCH" + res?.data?.msg[0]?.branch_name);
+				console.log("BRANCH________________" , res?.data?.msg[0]?.bank_code);
+
+				setPersonalDetailsData(res?.data?.msg[0]?.bank_code)
+
 				setPersonalDetailsData({
 					// b_memCode: res?.data?.msg[0]?.member_code,
 					b_clientName: res?.data?.msg[0]?.client_name,
@@ -600,6 +607,7 @@ function DisbursmentForm() {
 						: formatDateToYYYYMMDD(new Date()),
 					// b_tnxDate: formatDateToYYYYMMDD(new Date()),
 					b_bankName: res?.data?.loan_trans?.bank_name || "",
+					// b_bankName: banks?.bank_code || "",
 					b_chequeOrRefNo: res?.data?.loan_trans?.cheque_id || "",
 					b_chequeOrRefDate: res?.data?.loan_trans?.chq_dt
 						? formatDateToYYYYMMDD(new Date(res?.data?.loan_trans?.chq_dt))
@@ -695,6 +703,21 @@ function DisbursmentForm() {
 	const onSubmit = (e) => {
 		e.preventDefault();
 		// console.log(personalDetailsData?.b_acc2);
+		console.log(!personalDetailsData?.b_acc2 ,
+			!personalDetailsData?.b_bank_name  ,
+			!personalDetailsData?.b_bank_branch ,
+			!disbursementDetailsData.b_fund ,
+			!disbursementDetailsData.b_mode ,
+			!disbursementDetailsData.b_period ,
+			!disbursementDetailsData.b_dayOfRecovery ,
+			// !transactionDetailsData.b_bankName ,
+			!transactionDetailsData.b_remarks ,
+			!personalDetailsData.b_purpose ,
+			!transactionDetailsData.b_tnxDate ,
+			!disbursementDetailsData.b_period ,
+			!disbursementDetailsData.b_scheme ,
+			!disbursementDetailsData.b_loan_cycle, 'personalDetailsData');
+		
 		if (
 			!personalDetailsData?.b_acc2 ||
 			!personalDetailsData?.b_bank_name  ||
@@ -703,7 +726,7 @@ function DisbursmentForm() {
 			!disbursementDetailsData.b_mode ||
 			!disbursementDetailsData.b_period ||
 			!disbursementDetailsData.b_dayOfRecovery ||
-			!transactionDetailsData.b_bankName ||
+			// !transactionDetailsData.b_bankName ||
 			!transactionDetailsData.b_remarks ||
 			!personalDetailsData.b_purpose ||
 			!transactionDetailsData.b_tnxDate ||
@@ -822,7 +845,8 @@ function DisbursmentForm() {
 							loan_code: params?.id || "",
 							bank_charge: disbursementDetailsData?.b_bankCharges || "",
 							proc_charge: disbursementDetailsData?.b_processingCharges || "",
-							bank_name: transactionDetailsData?.b_bankName || "",
+							// bank_name: transactionDetailsData?.b_bankName || "",
+							bank_name: banks?.bank_code || "",
 							cheque_id: transactionDetailsData?.b_chequeOrRefNo || "",
 							particulars: transactionDetailsData?.b_remarks || "",
 							trans_date: transactionDetailsData?.b_tnxDate || "",
@@ -842,6 +866,12 @@ function DisbursmentForm() {
 
 							///////////////////////////////////////////////////////
 						}
+
+						console.log(creds, "finalcredssssssssssssss");
+						
+
+						// return;
+
 						if (disbursementDetailsData.b_mode.length > 0) {
 							await axios
 								.post(`${url}/admin/save_loan_transaction`, creds)
@@ -2040,22 +2070,35 @@ function DisbursmentForm() {
                   /> */}
 
 									<>
-										{!transactionDetailsData.b_bankName && (
+										{/* {!transactionDetailsData.b_bankName && (
 											<span
 												style={{ color: "red" }}
 												className="right-0 ant-tag ant-tag-error ant-tag-borderless text-[12.6px] my-0 css-dev-only-do-not-override-1tse2sn absolute"
 											>
 												Required!
 											</span>
-										)}
-										<label
+										)} */}
+
+										<TDInputTemplateBr
+										placeholder="Banks..."
+										type="text"
+										label="Banks"
+										name="b_bankName"
+										formControlName={`${banks?.bank_name}`}
+										// handleChange={handleChangeDisburseDetails}
+										mode={1}
+										disabled
+										/>
+
+										{/* <label
 											for="frm_co"
 											className="block mb-2 text-sm capitalize font-bold text-slate-800
 				 dark:text-gray-100"
 										>
 											Bank
-										</label>
-										<Select
+										</label> */}
+
+										{/* <Select
 											showSearch
 											placeholder={"Banks"}
 											 filterOption={(input, option) =>
@@ -2068,7 +2111,8 @@ function DisbursmentForm() {
 											notFoundContent={
 												loading ? <Spin size="small" /> : "No results found"
 											}
-											formControlName={transactionDetailsData.b_bankName}
+											// formControlName={transactionDetailsData.b_bankName}
+											formControlName={banks?.bank_code}
 											// formControlName={formValues.Grp_wit_Co ? formValues.Grp_wit_Co : COPickup}
 											//   handleChange={(e) => {
 											// 	// setCOPickup(e.target.value)
@@ -2076,23 +2120,38 @@ function DisbursmentForm() {
 											// 	console.log(e.target.value,'valuevaluevaluevaluevalue')
 											// }}
 											// value={formValues.Grp_wit_Co ? formValues.Grp_wit_Co : COPickup} // Controlled value
-											onChange={(value) => {
-												console.log(value)
-												// handleChangeTnxDetailsDetails(value)
-												setTransactionDetailsData((prevData) => ({
-													...prevData,
-													b_bankName: value,
-												}))
-												// formik.setFieldValue("Grp_wit_Co", value);
-											}}
-											options={banks?.map((item, _) => ({
-												value: item?.bank_code,
-												label: `${item?.bank_name} - ${item?.branch_name} - ${item?.ifsc}`,
-											}))}
+
+											// onChange={(value) => {
+											// 	console.log(value)
+											// 	// handleChangeTnxDetailsDetails(value)
+											// 	setTransactionDetailsData((prevData) => ({
+											// 		...prevData,
+											// 		b_bankName: value,
+											// 	}))
+											// 	// formik.setFieldValue("Grp_wit_Co", value);
+											// }}
+
+											// options={banks?.map((item, _) => ({
+											// 	value: item?.bank_code,
+											// 	label: `${item?.bank_name} - ${item?.branch_name} - ${item?.ifsc}`,
+											// }))}
+
+											value={banks?.bank_code} 
+
+											options={[
+											{
+											value: banks?.bank_code,
+											label: `${banks?.bank_name} - ${banks?.branch_name} - ${banks?.ifsc}`,
+											},
+											]}
+											disabled
+
 											//   style={{ width: 250 }}
 											// mode={2}
 											// disabled={location?.state.approval_status == "A" ? true : false} //location?.state.approval_status == null ? '': location?.state.approval_status
-										/>
+										/> */}
+
+										{/* {JSON.stringify(banks, 2)} */}
 									</>
 								</div>
 

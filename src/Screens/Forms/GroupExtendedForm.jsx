@@ -119,8 +119,11 @@ const containerStyle = {
 	const [branch, setBranch] = useState(() => "")
 
 	const [CEOData_s, setCEOData_s] = useState(() => [])
+	
 	// const [CEOData, setCEOData] = useState(() => []);
 	const [CEOData, setCEOData] = useState(() => "");
+
+	// const [DisCode, setDisCode] = useState(() => "");
 
 
 	// const [COMemList_Show, setCOMemList_Show] = useState()
@@ -144,6 +147,9 @@ const containerStyle = {
 
 	const [blocks, setBlocks] = useState(() => [])
 	const [block, setBlock] = useState("")
+
+	const [bankName, setBankName] = useState(() => [])
+	// const [bankNameCode, setBankNameCode] = useState("")
 
 	const [groupDetails, setGroupDetails] = useState(() => [])
 	const [memberDetails, setMemberDetails] = useState(() => [])
@@ -183,6 +189,8 @@ const containerStyle = {
 	const validationSchema = Yup.object({
 		g_group_name: Yup.string().required("Group name is required"),
 		g_group_type: Yup.string().required("Group type is required"),
+		g_bank_name: Yup.string().required("Bank Name is required"),
+		g_micr: Yup.string().required("MICR Code is required"),
 
 		g_branch:
 			params?.id > 0
@@ -229,7 +237,16 @@ const containerStyle = {
 		await axios
 			.post(`${url}/admin/fetch_search_group_web`, creds)
 			.then((res) => {
-				console.log("fetch_search_group_web", res?.data?.msg[0].brn_name)
+				console.log("fetch_search_group_web", res?.data?.msg[0]?.dist_code, 'resresresresresres', res?.data?.suc);
+				// setDisCode(res?.data?.msg[0]?.dist_code)
+
+
+				if (params?.id > 0) {
+				fetchBankName(res?.data?.msg[0]?.dist_code)
+				
+				// console.log(Number(DisCode), 'fetch_search_group_web ');
+				}
+
 				setValues({
 					g_group_name: res?.data?.msg[0]?.group_name,
 					g_group_type: res?.data?.msg[0]?.group_type,
@@ -247,6 +264,10 @@ const containerStyle = {
 					g_acc2: res?.data?.msg[0]?.acc_no2?.toString(),
 					brn_name: res?.data?.msg[0]?.brn_name,
 				})
+				// setDisCode(res?.data?.msg[0]?.disctrict)
+				// console.log(res?.data?.msg[0], 'branchbranchbranchbranchbranch');
+				
+
 				setGroupData(res?.data?.msg);
 				setCOMemLists_forModal(res?.data?.msg.length > 0 ? res?.data?.msg[0]?.memb_dt : [])
 				setBranch(
@@ -262,10 +283,45 @@ const containerStyle = {
 			})
 	}
 
+
+	const fetchBankName = async (brn) => {
+		// console.log(userDetails?.dist_code, "branchbranchbranchbranchbranch", brn.split(',')[0]);
+		// console.log('testttttt 2');
+		
+		setLoading(true)
+		const creds_Dis = {
+			dist_code: brn,
+		}
+		await axios
+			.post(`${url}/fetch_bank_name_grp_create`, creds_Dis)
+			.then((res) => {
+				// setCEOData_s(res?.data?.msg)
+				setBankName(res?.data?.msg)
+				console.log(res?.data?.msg, 'branchbranchbranchbranchbranch', 'bank');
+				
+			})
+			.catch((err) => {
+				console.log("error", err)
+			})
+
+		setLoading(false)
+	}
+
+	const searchBank_branch_IFSC = async (bank_code) => {
+	const result = bankName.find(item => item.bank_code === bank_code);
+	formik.setFieldValue('g_bank_branch', result?.bank_branch);
+	formik.setFieldValue('g_ifsc', result?.ifsc);
+	}
+
+	
+
 	useEffect(() => {
 		if (params?.id > 0) {
 			fetchGroupDetails()
 		}
+
+		// brn.split(',')[0]
+		// branch
 	}, [])
 
 	const handleFetchBranches = async () => {
@@ -334,27 +390,27 @@ const containerStyle = {
 		}
 	}, [CEOData])
 
-	useEffect(() => {
-		// const loanAppData = [{
-		// 	"transaction_date": "2025-02-05T18:30:00.000Z",
-		// 	"debit_amt": 10000,
-		// 	"group_code": 12027176,
-		// 	"created_code": "10228",
-		// 	"status": "U",
-		// 	"branch_code": 120,
-		// 	"purpose": 10002,
-		// 	"scheme_id": 10011,
-		// 	"fund_id": 10009,
-		// 	"period": 12,
-		// 	"period_mode": "Monthly",
-		// 	"curr_roi": 13.6,
-		// 	"group_name": "test_thursday",
-		// 	"created_by": "BABAI DAS",
-		// 	"purpose_id": "Agriculture",
-		// 	"scheme_name": "UB Loan (48 Week @13.60%)"
-		//   }]
-		// setLoanAppData(loanAppData)
-	}, [])
+	// useEffect(() => {
+	// 	// const loanAppData = [{
+	// 	// 	"transaction_date": "2025-02-05T18:30:00.000Z",
+	// 	// 	"debit_amt": 10000,
+	// 	// 	"group_code": 12027176,
+	// 	// 	"created_code": "10228",
+	// 	// 	"status": "U",
+	// 	// 	"branch_code": 120,
+	// 	// 	"purpose": 10002,
+	// 	// 	"scheme_id": 10011,
+	// 	// 	"fund_id": 10009,
+	// 	// 	"period": 12,
+	// 	// 	"period_mode": "Monthly",
+	// 	// 	"curr_roi": 13.6,
+	// 	// 	"group_name": "test_thursday",
+	// 	// 	"created_by": "BABAI DAS",
+	// 	// 	"purpose_id": "Agriculture",
+	// 	// 	"scheme_name": "UB Loan (48 Week @13.60%)"
+	// 	//   }]
+	// 	// setLoanAppData(loanAppData)
+	// }, [])
 
 	const handleSelectionChange = (e) => {
 		if (e.value.length <= groupMemberRequirList) {
@@ -421,10 +477,17 @@ const containerStyle = {
 	}
 
 	useEffect(() => {
-		console.log(branch);
+		// console.log(branch, 'branchbranchbranchbranchbranch', 'ggg', DisCode);
 		if(branch){
 			handleFetchBlocks(branch)
+			
 		}
+
+		if (params?.id < 1) {
+			fetchBankName(branch.split(',')[0])
+		}
+
+
 	}, [branch])
 
 	const onSubmit = async (values) => {
@@ -805,7 +868,7 @@ const containerStyle = {
 												// handleChange={formik.handleChange}
 												data={branches?.map((item, i) => ({
 													code: item?.dist_code + "," + item?.branch_code,
-													name: item?.branch_name,
+													name: item?.branch_name
 												}))}
 												mode={2}
 												disabled={params.id > 0 ? true : false}
@@ -984,7 +1047,44 @@ const containerStyle = {
 							</div>
 
 							<div>
-								<TDInputTemplateBr
+									<label
+										htmlFor="g_block"
+										className={`block mb-2 text-sm capitalize font-bold text-slate-800
+										dark:text-gray-100`}
+									>
+										Bank Name
+									</label>
+									<Select
+										showSearch
+										placeholder={"Choose Bank Name"}
+											filterOption={(input, option) =>
+												(option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+										}
+										id="g_bank_name"
+										label="Bank Name"
+										name="g_bank_name"
+										notFoundContent={
+											loading ? <Spin size="small" /> : "No results found"
+										}
+										value={formik.values.g_bank_name}
+										// value={block}
+										onChange={(value) => {
+											console.log(value, 'bankName')
+											// setBankNameCode(value)
+											searchBank_branch_IFSC(value)
+											formik.setFieldValue("g_bank_name", value)
+										}}
+										options={bankName?.map((item, _) => ({
+											value: item?.bank_code,
+											label: `${item?.bank_name}`,
+										}))}
+									/>
+									{formik.errors.g_bank_name && formik.touched.g_bank_name ? (
+									<VError title={formik.errors.g_bank_name} />
+								) : null}
+								
+								{/* {JSON.stringify(formik.values.g_bank_name, null, 2)} */}
+								{/* <TDInputTemplateBr
 									placeholder="Bank Name"
 									type="text"
 									label="Bank Name"
@@ -998,10 +1098,10 @@ const containerStyle = {
 									}
 									mode={1}
 								/>
-								{/* {JSON.stringify(formik.values.g_bank_name, null, 2)} */}
+								
 								{formik.errors.g_bank_name && formik.touched.g_bank_name ? (
 									<VError title={formik.errors.g_bank_name} />
-								) : null}
+								) : null} */}
 							</div>
 
 							<div>
@@ -1017,6 +1117,7 @@ const containerStyle = {
 											? ""
 											: formik.values.g_bank_branch
 									}
+									disabled = {true}
 									mode={1}
 								/>
 								{formik.errors.g_bank_branch && formik.touched.g_bank_branch ? (
@@ -1028,13 +1129,14 @@ const containerStyle = {
 								<TDInputTemplateBr
 									placeholder="IFSC"
 									type="text"
-									label="IFSC Code"
+									label="IFSC"
 									name="g_ifsc"
 									handleChange={formik.handleChange}
 									handleBlur={formik.handleBlur}
 									formControlName={
 										formik.values.g_ifsc == "0" ? "" : formik.values.g_ifsc
 									}
+									disabled = {true}
 									mode={1}
 								/>
 								{formik.errors.g_ifsc && formik.touched.g_ifsc ? (
