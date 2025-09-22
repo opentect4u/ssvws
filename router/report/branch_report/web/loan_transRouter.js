@@ -150,29 +150,29 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
     var data = req.body;
  
     if(data.tr_type === 'D'){
-      var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,c.bank_name,c.branch_name  bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.debit) AS debit,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+      var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,f.bank_name,f.branch_name  bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.debit) AS debit,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code LEFT JOIN md_bank f ON c.bank_name = f.bank_code",
     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND a.tr_type = '${data.tr_type}'`,
     order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
              ORDER BY a.payment_date`;
     var transaction_group_data = await db_Select(select,table_name,whr,order);
     }else if (data.tr_type === 'R'){
-      var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,c.bank_name,c.branch_name bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+      var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,f.bank_name,f.branch_name bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code LEFT JOIN md_bank f ON c.bank_name = f.bank_code",
     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND a.tr_type = '${data.tr_type}'`,
     order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,c.bank_name,c.branch_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
              ORDER BY a.payment_date`;
     var transaction_group_data = await db_Select(select,table_name,whr,order);
     }else {
-      var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,c.bank_name,c.branch_name bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,
+      var select = `a.payment_date,b.branch_code,e.branch_name,b.group_code,c.group_name,f.bank_name,f.branch_name bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,c.grp_addr,c.co_id,d.emp_name co_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,
       (
                 SELECT SUM(prn_amt + od_prn_amt + intt_amt)
                 FROM td_loan a
                 WHERE a.group_code = b.group_code
               ) AS curr_balance`
-    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code",
+    table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code LEFT JOIN md_bank f ON c.bank_name = f.bank_code",
     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type IN ('D','R')`,
     order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,c.bank_name,c.branch_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
              ORDER BY a.payment_date`;
