@@ -206,6 +206,8 @@ userRouter.post("/login_web", async (req, res) => {
               0
             );
 
+            user.password = "********"; 
+
             return res.send({
               suc: 1,
               msg: `${user.user_type} Login successfully`,
