@@ -5,6 +5,7 @@ const express = require("express");
     expressLayouts = require("express-ejs-layouts"),
     path = require("path"),
     https = require('https'),
+    http = require("http"),
     fs = require('fs'),
     cors = require('cors'),
     port = process.env.PORT || 3014;
@@ -29,6 +30,8 @@ app.set("layout", "templates/layout");
 
 // SET ASSETS AS A STATIC PATH //
 app.use(express.static(path.join(__dirname, "assets/")));
+
+const server = http.createServer(app);
 
 const fileUpload = require("express-fileupload");
 
@@ -130,6 +133,8 @@ const { portfolioRouter } = require("./router/report/branch_report/web/portfolio
 const { groupRouter } = require("./router/report/branch_report/web/GroupRouter");
 const { prev_loan_transRouter } = require("./router/report/branch_report/web/previous_loan_transRouter");
 const { disb_rejectRouter } = require("./router/admin/loan/disb_rejectionRouter");
+const { initSocket } = require("./model/socketModel");
+
 
 // app.use(authCheckForLogin);
 app.use(LoginRouter)
@@ -247,8 +252,10 @@ app.get('*', function(req, res){
   res.redirect('404')
 })
 
+initSocket(server);
 
-app.listen(port, (err) => {
+// app.listen(port, (err) => {
+server.listen(port, (err) => {
     if (err) throw new Error(err);
     else console.log(`App is running at http://localhost:${port}`);
 });

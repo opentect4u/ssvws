@@ -1,4 +1,5 @@
 const { db_Select, db_Insert } = require("../../../model/mysqlModel");
+const { publishMonthEndJob } = require("../../../model/queue/producer");
 
 const express = require("express"),
   monthEndRouter = express.Router(),
@@ -52,6 +53,7 @@ monthEndRouter.post("/update_month_end_data", async (req, res) => {
           flag
         );
       }
+      await publishMonthEndJob(data)
       res.send({ suc: 1, msg: "Month end done successfully" });
     } else {
       res.send({ suc: 0, msg: "No details provided" });
