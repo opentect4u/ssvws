@@ -10,11 +10,13 @@ import { LoadingOutlined, SaveOutlined } from "@ant-design/icons"
 import DialogBox from "../../../Components/DialogBox"
 import { formatDateToYYYYMMDD } from "../../../Utils/formateDate"
 import DynamicTailwindTable from "../../../Components/Reports/DynamicTailwindTable"
+import { useSocket } from "../../../Context/SocketContext"
 
 function MonthEndForm() {
 	const params = useParams()
 	const location = useLocation()
 	const navigate = useNavigate()
+	const { socket, connectSocket } = useSocket()
 	const userMasterDetails = location.state || {}
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 	const [loading, setLoading] = useState(false)
@@ -23,6 +25,19 @@ function MonthEndForm() {
 	const [visible, setVisible] = useState(false)
 	const [topAlertMessage, setTopAlertMessage] = useState("")
 	const [selectedRowIndices, setSelectedRowIndices] = useState([])
+
+	// Add effect to ensure socket connection
+	useEffect(() => {
+		if (!socket && userDetails?.emp_id) {
+			console.log("Initializing socket connection...")
+			connectSocket(userDetails.emp_id)
+		}
+	}, [socket, userDetails, connectSocket])
+
+	// Debug socket status changes
+	useEffect(() => {
+		console.log("Socket connection status:", socket ? "Connected" : "Disconnected")
+	}, [socket])
 
 	const handleFetchMonthEnd = async () => {
 		setLoading(true)
@@ -43,8 +58,10 @@ function MonthEndForm() {
 		handleFetchMonthEnd()
 	}, [])
 
-	const filteredData = data.filter((item) =>
-		item.branch_name.toLowerCase().includes(searchQuery.toLowerCase())
+	const filteredData = data.filter((item) =>{
+			item['checkOnce'] = true
+			return item.branch_name.toLowerCase().includes(searchQuery.toLowerCase())
+		}
 	)
 
 	useEffect(() => {
@@ -118,11 +135,36 @@ function MonthEndForm() {
 				`${url}/admin/update_month_end_data`,
 				payload
 			)
-			Message("success", "Month end details updated successfully")
-			handleFetchMonthEnd()
+			
+			if(res?.data?.suc > 0){
+				if (!socket) {
+					console.warn("Socket not connected, attempting to reconnect...")
+					const newSocket = connectSocket(userDetails?.emp_id)
+					if (newSocket) {
+						newSocket.emit('month_end_process', {
+							data: res?.data?.req_data
+						})
+					} else {
+						console.error("Failed to establish socket connection")
+					}
+				} else {
+					socket.emit('month_end_process', {
+						data: res?.data?.req_data
+					})
+				}
+				Message("success", "Month end details updated successfully")
+				handleFetchMonthEnd()
+	
+				setSelectedRowIndices([])
+				setTopAlertMessage("")
+			}else{
+				Message("error", "Some error occurred while updating Month End Details")
+			}
+			// Message("success", "Month end details updated successfully")
+			// handleFetchMonthEnd()
 
-			setSelectedRowIndices([])
-			setTopAlertMessage("")
+			// setSelectedRowIndices([])
+			// setTopAlertMessage("")
 		} catch (err) {
 			console.error(err)
 			Message("error", "Some error occurred while updating Month End Details")

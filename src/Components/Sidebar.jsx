@@ -31,6 +31,10 @@ import {
 	EyeFilled,
 	TableOutlined,
 } from "@ant-design/icons"
+
+import { useSocket } from "../Context/SocketContext"
+import { Message, MessageWithLink } from "./Message"
+
 import { SwapCallsRounded } from "@mui/icons-material"
 function Sidebar({ mode = 0 }) {
 	const location = useLocation()
@@ -40,12 +44,36 @@ function Sidebar({ mode = 0 }) {
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 	const [open, setOpen] = useState(false)
 	const [permissions, setPermissions] = useState()
+	const { socket, connectSocket } = useSocket()
 	// useState(() => {
 	// 	setTheme(localStorage.getItem("col"))
 	// }, [localStorage.getItem("col")])
 	useEffect(() => {
 		setOpen(false)
 	}, [location.pathname])
+
+	// Add effect to ensure socket connection
+	useEffect(() => {
+		if (!socket && userDetails?.emp_id) {
+			console.log("Initializing socket connection...")
+			const newSocket = connectSocket(userDetails?.emp_id)
+			if (newSocket) {
+				newSocket.on('receive_notification', (data) => {
+				console.log("Received month end process update:", data)
+				// Message("success", "Month end details updated successfully")
+				MessageWithLink("success", "Your month end process is complete. To view the report,", "/homebm/overduereport", 'Click Here')
+			})
+			} else {
+				console.error("Failed to establish socket connection")
+			}
+		}
+	}, [socket, userDetails, connectSocket])
+
+	// Debug socket status changes
+	useEffect(() => {
+		console.log("Socket connection status:", socket ? "Connected" : "Disconnected")
+	}, [socket])
+	
 	useEffect(() => {
 		// axios.post(url + "/menu/fetch_menu_permission_dtls", { user_type: userDetails?.id }).then((res) => {
 		// 	console.log(res?.data?.msg[0])

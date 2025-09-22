@@ -98,13 +98,14 @@ const DynamicTailwindTable = ({
 		onRowSelectionChange(newSelection)
 	}
 
-	const handleCheckboxChange = (globalIndex) => {
+	const handleCheckboxChange = (globalIndex, handleAllSelect = false) => {
 		const isAlready = selectedRowIndices.includes(globalIndex)
+		console.log(selectedRowIndices, globalIndex, '-------------------------------')
 		const newSelection = isAlready
 			? selectedRowIndices.filter((idx) => idx !== globalIndex)
 			: [...selectedRowIndices, globalIndex]
 		onRowSelectionChange(newSelection)
-		handleSelectAllChange()
+		if(!handleAllSelect) handleSelectAllChange()
 	}
 
 
@@ -170,6 +171,9 @@ const DynamicTailwindTable = ({
 							const globalIndex = (currentPage - 1) * pageSize + rowIndex
 							const isChecked = selectedRowIndices.includes(globalIndex)
 
+							console.log(row, '===========');
+							
+
 							return (
 								<tr
 									key={rowIndex}
@@ -183,7 +187,7 @@ const DynamicTailwindTable = ({
 												className="rounded-sm checked:bg-pink-600"
 												type="checkbox"
 												checked={isChecked}
-												onChange={() => handleCheckboxChange(globalIndex)}
+												onChange={() => handleCheckboxChange(globalIndex, row['checkOnce'] ? row['checkOnce'] : false)}
 											/>
 										</td>
 									)}

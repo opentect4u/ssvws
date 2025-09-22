@@ -10,6 +10,7 @@ import { url } from "../../Address/BaseUrl"
 import { Message } from "../../Components/Message"
 import { generateRandomAlphanumeric } from "../../Utils/generateRandomAlphanumeric"
 import { routePaths } from "../../Assets/Data/Routes"
+import { useSocket } from "../../Context/SocketContext"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import Visibility from "@mui/icons-material/Visibility"
 import VisibilityOff from "@mui/icons-material/VisibilityOff"
@@ -17,6 +18,7 @@ import coverPhoto from "../../Assets/Images/ssvws_cover_1.jpg"
 const DialogBox = React.lazy(() => import("../../Components/DialogBox"))
 const SignInPage = () => {
 	const navigate = useNavigate()
+	const { connectSocket } = useSocket()
 	const [loading, setLoading] = useState(false)
 	const [userTypeId, setUserTypeId] = useState(0)
 	const [branches, setBranches] = useState([])
@@ -160,6 +162,10 @@ const SignInPage = () => {
 					localStorage.setItem("server_token", res?.data?.token)
 					localStorage.setItem("refresh_token", res?.data?.refresh_token)
 					localStorage.setItem("user_details", JSON.stringify(userDtls))
+					
+					// Initialize socket connection with employee ID
+					connectSocket(userDtls.emp_id)
+					
 					navigate(routePaths.BM_HOME)
 				} else {
 					Message("error", "No user found!")

@@ -190,7 +190,8 @@ const containerStyle = {
 		g_group_name: Yup.string().required("Group name is required"),
 		g_group_type: Yup.string().required("Group type is required"),
 		g_bank_name: Yup.string().required("Bank Name is required"),
-		g_micr: Yup.string().required("MICR Code is required"),
+		// g_micr: Yup.string().required("MICR Code is required"),
+		g_micr: Yup.string(),
 
 		g_branch:
 			params?.id > 0
@@ -247,6 +248,7 @@ const containerStyle = {
 				// console.log(Number(DisCode), 'fetch_search_group_web ');
 				}
 
+				console.log(res?.data?.msg[0], 'hhhhhhhhhhhhhhhhhhhhhhh');
 				setValues({
 					g_group_name: res?.data?.msg[0]?.group_name,
 					g_group_type: res?.data?.msg[0]?.group_type,
@@ -256,7 +258,7 @@ const containerStyle = {
 					g_phone1: res?.data?.msg[0]?.phone1,
 					g_phone2: res?.data?.msg[0]?.phone2,
 					g_email: res?.data?.msg[0]?.email_id,
-					g_bank_name: res?.data?.msg[0]?.bank_name,
+					g_bank_name: res?.data?.msg[0]?.bank_code,
 					g_bank_branch: res?.data?.msg[0]?.branch_name,
 					g_ifsc: res?.data?.msg[0]?.ifsc,
 					g_micr: res?.data?.msg[0]?.micr,
@@ -1069,7 +1071,7 @@ const containerStyle = {
 										value={formik.values.g_bank_name}
 										// value={block}
 										onChange={(value) => {
-											console.log(value, 'bankName')
+											console.log(value, 'bankName____')
 											// setBankNameCode(value)
 											searchBank_branch_IFSC(value)
 											formik.setFieldValue("g_bank_name", value)
