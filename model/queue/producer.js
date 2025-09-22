@@ -1,7 +1,8 @@
 const amqp = require("amqplib");
 
 async function publishReportJob(data) {
-    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://localhost");
+    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
     const channel = await conn.createChannel();
     await channel.assertQueue("report_jobs", { durable: true });
     channel.sendToQueue("report_jobs", Buffer.from(JSON.stringify(data)), {
@@ -11,7 +12,8 @@ async function publishReportJob(data) {
 }
 
 async function publishMonthEndJob(data) {
-    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://localhost");
+    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
     const channel = await conn.createChannel();
     await channel.assertQueue("month_end_jobs", { durable: true });
     channel.sendToQueue("month_end_jobs", Buffer.from(JSON.stringify(data)), {
