@@ -154,7 +154,7 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON  b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON b.branch_code = e.branch_code LEFT JOIN md_bank f ON c.bank_name = f.bank_code",
     whr = `a.branch_id IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND a.tr_type = '${data.tr_type}'`,
-    order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,f.bank_name,f.branch_name  bank_branch_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
+    order = `GROUP BY b.branch_code,e.branch_name,a.payment_date,b.group_code,c.group_name,f.bank_name,f.branch_name,c.acc_no1,c.acc_no2,c.grp_addr,c.co_id,d.emp_name
              ORDER BY a.payment_date`;
     var transaction_group_data = await db_Select(select,table_name,whr,order);
     }else if (data.tr_type === 'R'){
