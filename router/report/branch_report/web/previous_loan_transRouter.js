@@ -38,7 +38,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.payment_date,a.branch_code,b.branch_name code,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
+    var select = `a.payment_date,a.branch_code,b.branch_name code,c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
     table_name = `(SELECT a.payment_date,a.payment_id,b.branch_code,a.loan_id,a.debit,a.credit,0 intt
                    FROM td_loan_transactions a,td_loan b
                    WHERE a.loan_id = b.loan_id
@@ -76,7 +76,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
         var data = req.body;
 
         var select = `a.payment_date,a.branch_code,b.branch_name code,a.loan_id,c.member_code,d.client_name,
-       c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1 sb_account,e.acc_no2 loan_account,
+       c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,
        e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,
        SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
        table_name = `(SELECT a.payment_date,
@@ -125,7 +125,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.payment_date,a.branch_code,b.branch_name code,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
+    var select = `a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
     table_name = `(SELECT a.payment_date,a.payment_id,b.branch_code,a.loan_id,a.debit,a.credit,0 intt
                    FROM td_loan_transactions a,td_loan b
                    WHERE a.loan_id = b.loan_id
