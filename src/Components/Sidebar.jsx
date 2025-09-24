@@ -58,11 +58,23 @@ function Sidebar({ mode = 0 }) {
 			console.log("Initializing socket connection...")
 			const newSocket = connectSocket(userDetails?.emp_id)
 			if (newSocket) {
+				console.log(newSocket, 'newSocketnewSocketnewSocket');
+				
 				newSocket.on('receive_notification', (data) => {
 				console.log("Received month end process update:", data)
 				// Message("success", "Month end details updated successfully")
 				MessageWithLink("success", "Your month end process is complete. To view the report,", "/homebm/overduereport", 'Click Here')
-			})
+				})
+
+
+				newSocket.on('loan_tns_repo_notification', (data) => {
+				console.log(data?.req_data?.page_url, "Received month end process update: report", data)
+				localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
+				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
+				MessageWithLink("success", "Your Loan Transactions Reports process is complete. To view the report,", `${data?.req_data?.page_url}`, 'Click Here')
+				})
+
+
 			} else {
 				console.error("Failed to establish socket connection")
 			}

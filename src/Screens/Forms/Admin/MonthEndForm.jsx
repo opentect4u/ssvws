@@ -137,10 +137,12 @@ function MonthEndForm() {
 			)
 			
 			if(res?.data?.suc > 0){
+				// console.log(res?.data?.req_data, 'RESSSSS======>>>> ////');
+				
 				if (!socket) {
 					console.warn("Socket not connected, attempting to reconnect...")
 					const newSocket = connectSocket(userDetails?.emp_id)
-					if (newSocket) {
+					if (newSocket) {					
 						newSocket.emit('month_end_process', {
 							data: res?.data?.req_data
 						})
@@ -148,6 +150,7 @@ function MonthEndForm() {
 						console.error("Failed to establish socket connection")
 					}
 				} else {
+					console.log(res?.data, 'RESSSSS======>>>>');
 					socket.emit('month_end_process', {
 						data: res?.data?.req_data
 					})

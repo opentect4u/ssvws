@@ -25,7 +25,8 @@ import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
 import { MultiSelect } from "primereact/multiselect"
-import { Message } from "../../../Components/Message"
+import { Message, MessageWithLink } from "../../../Components/Message"
+import { useSocket } from "../../../Context/SocketContext"
 
 const options = [
 	{
@@ -68,6 +69,7 @@ const options2 = [
 function LoanTransactionsMain() {
 	const [selectedColumns, setSelectedColumns] = useState(null);
 	const [md_columns, setColumns] = useState([]);
+	const { socket, connectSocket } = useSocket();
 	const userDetails = JSON.parse(localStorage.getItem("user_details")) || ""
 	const [loading, setLoading] = useState(false)
 
@@ -94,6 +96,69 @@ function LoanTransactionsMain() {
 			: userDetails?.branch_name
 	)
 
+	// Add effect to ensure socket connection
+	useEffect(() => {
+		if (!socket && userDetails?.emp_id) {
+			console.log("Initializing socket connection...")
+			connectSocket(userDetails.emp_id)
+
+				console.log("Initializing socket connection...")
+				const newSocket = connectSocket(userDetails?.emp_id)
+				if (newSocket) {
+				console.log(newSocket, 'newSocketnewSocketnewSocket');
+
+				newSocket.on('loan_tns_repo_notification', (data) => {
+				console.log("Received month end process update: reportoooooo", data?.msg?.msg)
+
+				localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
+				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
+					
+				setReportData(data?.msg?.msg)
+				populateColumns(data?.msg?.msg,txnGrpHeader);
+
+				Message("success", "Your Loan Transactions Reports process is complete")
+				
+				})
+
+
+				} else {
+				console.error("Failed to establish socket connection")
+				}
+		}
+
+	}, [socket, userDetails, connectSocket])
+
+	useEffect(() => {
+    const reportData_Url = localStorage.getItem("reportData_Url");
+
+	if(reportData_Url != null){
+	if(JSON.parse(reportData_Url) === '/homebm/loantxns'){
+
+		// console.log(reportData_Url, 'lllllllllllllllllllllll',  'true');
+		const storedData = localStorage.getItem("reportData");
+	
+		if (storedData) {
+		  // If you stored as JSON earlier, parse it
+		  try {
+			const parsedData = JSON.parse(storedData);
+			console.log("Report Data loaded: ifffff", storedData);
+
+			setReportData(parsedData)
+			populateColumns(parsedData,txnGrpHeader);
+	
+			localStorage.removeItem("reportData");
+			localStorage.removeItem("reportData_Url");
+		  } catch {
+			console.log("Report Data loaded: else", storedData);
+		  }
+	
+		  // ✅ Run your function here because reportData exists
+		//   myFunctionOnLoad();
+		}
+	}
+	}
+  }, []); // Runs once on page load
+
 	const onChange = (e) => {
 		console.log("radio1 checked", e)
 		setSearchType(e)
@@ -115,19 +180,51 @@ function LoanTransactionsMain() {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			tr_type: searchType,
+			page_url: '/homebm/loantxns',
+			flag: 'G'
 		}
 
 		await axios
 			.post(`${url}/transaction_report_groupwise`, creds)
 			.then((res) => {
-				if(res?.data?.transaction_group_data?.suc == 1){
-					if(res?.data?.transaction_group_data?.msg.length > 0){
-						setReportData(res?.data?.transaction_group_data?.msg)
-						populateColumns(res?.data?.transaction_group_data?.msg,txnGrpHeader);	
+				
+				console.log(res?.data, 'testttttttttttttttt');
+				// localStorage.setItem("reportData", res?.data?.transaction_group_data?.msg)
+				console.log(res?.data, 'testttttttttttttttt');
+				// if(res?.data?.transaction_group_data?.suc == 1){
+				if(res?.data?.suc == 1){
+
+					
+
+					if (!socket) {
+					console.warn("Socket not connected, attempting to reconnect...")
+					const newSocket = connectSocket(userDetails?.emp_id)
+					if (newSocket) {					
+						newSocket.emit('loan_trns_repo_process', {
+							data: res?.data?.req_data
+						})
+						localStorage.removeItem("reportData");
+						localStorage.removeItem("reportData_Url");
+					} else {
+						console.error("Failed to establish socket connection")
 					}
-					else{
-						Message('warning','No Data Available')
-					}
+				} else {
+					console.log(res?.data, 'RESSSSS======>>>>');
+					socket.emit('loan_trns_repo_process', {
+						data: res?.data?.req_data
+					})
+				}
+				Message("success", "Loan Transactions Reports updated successfully")
+					
+				
+				
+					// if(res?.data?.transaction_group_data?.msg.length > 0){
+					// 	setReportData(res?.data?.transaction_group_data?.msg)
+					// 	populateColumns(res?.data?.transaction_group_data?.msg,txnGrpHeader);	
+					// }
+					// else{
+					// 	Message('warning','No Data Available')
+					// }
 				}
 				else{
 					Message('error','Something went wrong, Please try again later')
@@ -401,7 +498,7 @@ function LoanTransactionsMain() {
 	}
 
 	useEffect(() => {
-		setReportData([])
+		// setReportData([])
 		// setSelectedOptions([])
 		// setMetadataDtls(null)
 		if (searchType2 === "F") {
@@ -827,6 +924,7 @@ function LoanTransactionsMain() {
 					)}
 
 					{/* Groupwise Results with Pagination */}
+					{/* {JSON.stringify(reportData, 2)} */}
 					{searchType2 === "G" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable

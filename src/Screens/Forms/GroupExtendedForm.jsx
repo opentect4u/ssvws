@@ -191,7 +191,7 @@ const containerStyle = {
 		g_group_type: Yup.string().required("Group type is required"),
 		g_bank_name: Yup.string().required("Bank Name is required"),
 		// g_micr: Yup.string().required("MICR Code is required"),
-		g_micr: Yup.string(),
+		// g_micr: Yup.string(),
 
 		g_branch:
 			params?.id > 0
