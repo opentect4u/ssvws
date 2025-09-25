@@ -8,6 +8,7 @@ const express = require("express");
     http = require("http"),
     fs = require('fs'),
     cors = require('cors'),
+    bodyParser = require('body-parser');
     port = process.env.PORT || 3014;
 
    
@@ -19,6 +20,8 @@ const express = require("express");
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: false }));
+
+app.use(bodyParser.json());
 
 // SET VIEW ENGINE AND PATH //
 app.set("view engine", "ejs");

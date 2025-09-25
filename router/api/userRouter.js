@@ -2,6 +2,7 @@ const userRouter = require("express").Router();
 dateFormat = require("dateformat");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
+const { decrypt } = require('../../model/decryption');
 const {
   app_login_data,
   bm_login_data,
@@ -83,8 +84,10 @@ userRouter.get("/fetch_app_version", async (req, res) => {
 userRouter.post("/login_web", async (req, res) => {
   var data = req.body,
     result;
+    
+    data.password = decrypt(data.password)
   const pattern = /^\d+$/;
-  console.log();
+  console.log(data,'data');
   if(pattern.test(data.emp_id)){
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     // console.log(data, 'Received Data');
@@ -110,6 +113,9 @@ userRouter.post("/login_web", async (req, res) => {
 
       // Proceed with login after version check
       var log_dt = await app_login_data_web(data);
+
+      // const encrypted = encrypt(data.password);
+      // const decrypted = decrypt(encrypted);
 
       if (log_dt.suc > 0 && log_dt.msg.length > 0) {
         let user = log_dt.msg[0];
@@ -200,8 +206,8 @@ userRouter.post("/login_web", async (req, res) => {
             // ✅ Insert into td_log_details after successful login
             await db_Insert(
               "td_log_details",
-              `(emp_id, branch_code,operation_dt, in_out_flag, device_type)`,
-              `('${user.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`,
+              `(emp_id, branch_code,operation_dt, in_out_flag, device_type, remarks, ip_address)`,
+              `('${user.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Login', '${data.myIP}')`,
               null,
               0
             );
@@ -240,7 +246,7 @@ userRouter.post("/login_app", async (req, res) => {
   var data = req.body,
     result;
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  console.log(data, 'Received Data');
+  // console.log(data, 'Received Data');
 
   try {
     let requiredVersion = null;
@@ -249,7 +255,7 @@ userRouter.post("/login_app", async (req, res) => {
     // Fetch app version if flag is 'A'
     if (data.flag === "A" && session_id) {
       let app_data = await db_Select("version", "md_app_version", null, null);
-      console.log(app_data, "poii");
+      // console.log(app_data, "poii");
 
       if (app_data.suc > 0 && app_data.msg.length > 0) {
         requiredVersion = app_data.msg[0].version; // Extract version
@@ -261,12 +267,12 @@ userRouter.post("/login_app", async (req, res) => {
         });
       }
 
-      console.log(
-        "Required Version:",
-        requiredVersion,
-        "User App Version:",
-        data.app_version
-      );
+      // console.log(
+      //   "Required Version:",
+      //   requiredVersion,
+      //   "User App Version:",
+      //   data.app_version
+      // );
 
       // Check app version
       if (data.app_version != requiredVersion) {
@@ -300,8 +306,8 @@ userRouter.post("/login_app", async (req, res) => {
           // insert into td_log_details
           await db_Insert(
             "td_log_details",
-            `(emp_id, branch_code, operation_dt, in_out_flag, device_type)`,
-            `('${user.emp_id}', '${data.branch_code == '' ? user.brn_code : data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}')`
+            `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks)`,
+            `('${user.emp_id}', '${data.branch_code == '' ? user.brn_code : data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Logout')`
           );
 
         } catch (err) {
@@ -341,15 +347,16 @@ userRouter.post("/logout", async (req, res) => {
     }
     
   var table_name = "md_user";
-  fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+  // fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+  fields = `refresh_token = NULL, session_id = NULL`;
   values = null;
   whr = `emp_id = '${data.emp_id}' AND session_id = '${data.session_id}'`;
   flag = 1;
   var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
 
   var table_name = "td_log_details";
-  fields = `(emp_id, branch_code, operation_dt, in_out_flag, device_type)`;
-  values = `('${data.emp_id}','${data.branch_code}','${datetime}','${data.in_out_flag}','${data.flag}')`;
+  fields = `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks, ip_address)`;
+  values = `('${data.emp_id}','${data.branch_code}','${datetime}','${data.in_out_flag}','${data.flag}', 'Logout', '${data.myIP}')`;
   whr = null;
   flag = 0;
   var log_insert = await db_Insert(table_name, fields, values, whr, flag);
@@ -377,15 +384,15 @@ userRouter.post("/logout_app", async (req, res) => {
 
   try{
   var table_name = "md_user";
-  fields = `refresh_token = NULL, session_id = NULL, modified_by = '${data.modified_by}', modified_at = '${datetime}'`;
+  fields = `refresh_token = NULL, session_id = NULL`;
   values = null;
   whr = `emp_id = '${data.emp_id}'`;
   flag = 1;
   var del_ref_token = await db_Insert(table_name, fields, values, whr, flag);
 
   var table_name = "td_log_details";
-  fields = `(emp_id, branch_code, operation_dt, in_out_flag, device_type)`;
-  values = `('${data.emp_id}', '${data.branch_code}','${datetime}','${data.in_out_flag}','${data.flag}')`;
+  fields = `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks)`;
+  values = `('${data.emp_id}', '${data.branch_code}','${datetime}','${data.in_out_flag}','${data.flag}', 'Logout')`;
   whr = null;
   flag = 0;
   var log_insert = await db_Insert(table_name, fields, values, whr, flag);

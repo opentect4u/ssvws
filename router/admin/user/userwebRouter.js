@@ -376,7 +376,7 @@ userwebRouter.post("/user_profile_details", async (req, res) => {
 
 userwebRouter.post("/change_password", async (req, res) => {
     var data = req.body, result;
-//   console.log(data);
+  console.log(data);
 
 //change password
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -395,6 +395,14 @@ userwebRouter.post("/change_password", async (req, res) => {
         where = `emp_id = '${data.emp_id}'`,
         flag = 1;
         var change_pass = await db_Insert(table_name,fields,null,where,flag)
+
+       // insert into td_log_details
+          await db_Insert(
+            "td_log_details",
+            `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks, ip_address)`,
+            `('${data.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Password Changed', '${data.myIP}')`
+          );
+
         result = change_pass
         result = {
           suc: 1,

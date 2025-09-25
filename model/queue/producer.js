@@ -22,4 +22,26 @@ async function publishMonthEndJob(data) {
     setTimeout(() => conn.close(), 500);
 }
 
-module.exports = { publishReportJob, publishMonthEndJob };
+async function publishLoanTrnsRepoJob(data) {
+    // const conn = await amqp.connect("amqp://localhost");
+    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const channel = await conn.createChannel();
+    await channel.assertQueue("loan_trns_jobs", { durable: true });
+    channel.sendToQueue("loan_trns_jobs", Buffer.from(JSON.stringify(data)), {
+        persistent: true
+    });
+    setTimeout(() => conn.close(), 500);
+}
+
+async function publishOverdueRepoJob(data) {
+    // const conn = await amqp.connect("amqp://localhost");
+    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const channel = await conn.createChannel();
+    await channel.assertQueue("loan_overdue_jobs", { durable: true });
+    channel.sendToQueue("loan_overdue_jobs", Buffer.from(JSON.stringify(data)), {
+        persistent: true
+    });
+    setTimeout(() => conn.close(), 500);
+}
+
+module.exports = { publishReportJob, publishMonthEndJob, publishLoanTrnsRepoJob, publishOverdueRepoJob };

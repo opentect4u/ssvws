@@ -82,14 +82,14 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
   
       let select = "a.user_type, b.branch_assign_id, c.branch_name";
       let table_name = "md_user a LEFT JOIN td_assign_branch_user b ON a.user_type = b.user_type LEFT JOIN md_branch c ON b.branch_assign_id = c.branch_code";
-      let whr = `a.emp_id = '${data.emp_id}' AND a.user_type = '${data.user_type}'`;
+      let whr = `a.emp_id = '${data.emp_id}' AND a.user_type = '${data.user_type}' AND c.brn_status = 'O'`;
       let order = null;
   
       // If user_type is 4, fetch all branches
       if (data.user_type == 4) {
         select = "branch_code AS branch_assign_id, branch_name";
         table_name = "md_branch";
-        whr = `branch_code != '100'`; // This fetches all branches
+        whr = `branch_code != '100' AND brn_status = 'O'`; // This fetches all branches
       }
   
       var branch_dtls_user = await db_Select(select, table_name, whr, order);

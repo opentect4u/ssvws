@@ -33,14 +33,14 @@ module.exports = {
         } catch (err) {
           if (err.name === 'TokenExpiredError') {
             console.error("Token has expired!");
-            return res.status(401).json({ error: 'Session expired, please log in again.' });
+            return res.json({ error: 'Session expired, please log in again.' });
           } else {
             console.error("Invalid token:", err.message);
-            return res.status(403).json({ error: 'Invalid token, please log in again.' });
+            return res.json({ error: 'Invalid token, please log in again.' });
           }
         }
       }else {
-        return res.status(401).json({ error: 'No token found, please log in.' });
+        return res.json({ error: 'No token found, please log in.' });
       }
     next()
   },
