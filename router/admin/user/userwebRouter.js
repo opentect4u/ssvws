@@ -376,7 +376,7 @@ userwebRouter.post("/user_profile_details", async (req, res) => {
 
 userwebRouter.post("/change_password", async (req, res) => {
     var data = req.body, result;
-  console.log(data);
+  // console.log(data);
 
 //change password
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");

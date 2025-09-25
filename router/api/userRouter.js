@@ -87,7 +87,7 @@ userRouter.post("/login_web", async (req, res) => {
     
     data.password = decrypt(data.password)
   const pattern = /^\d+$/;
-  console.log(data,'data');
+  // console.log(data,'data');
   if(pattern.test(data.emp_id)){
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     // console.log(data, 'Received Data');
@@ -199,7 +199,7 @@ userRouter.post("/login_web", async (req, res) => {
               // );
               await db_Insert(
               "md_user",
-              `refresh_token = '${refresh_token}', session_id = '${data.session_id}', created_by = '${data.emp_id}', created_at='${datetime}'`,
+              `refresh_token = '${refresh_token}', session_id = '${data.session_id}'`,
               null,
               `emp_id='${user.emp_id}'`,
               1   // ✅ do not auto-update modified_by
