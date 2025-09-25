@@ -190,12 +190,19 @@ userRouter.post("/login_web", async (req, res) => {
                   msg: "Refresh Token generation failed.",
                 });
               }
+              // await db_Insert(
+              //   "md_user",
+              //   `refresh_token = '${refresh_token}', session_id = '${data.session_id}', created_by = '${data.emp_id}', created_at='${datetime}'`,
+              //   null,
+              //   `emp_id='${user.emp_id}'`,
+              //   1
+              // );
               await db_Insert(
-                "md_user",
-                `refresh_token = '${refresh_token}', session_id = '${data.session_id}', created_by = '${data.emp_id}', created_at='${datetime}'`,
-                null,
-                `emp_id='${user.emp_id}'`,
-                1
+              "md_user",
+              `refresh_token = '${refresh_token}', session_id = '${data.session_id}', created_by = '${data.emp_id}', created_at='${datetime}'`,
+              null,
+              `emp_id='${user.emp_id}'`,
+              1   // ✅ do not auto-update modified_by
               );
             }
             if (!token) {
