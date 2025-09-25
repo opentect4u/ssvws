@@ -400,7 +400,9 @@ userwebRouter.post("/change_password", async (req, res) => {
           await db_Insert(
             "td_log_details",
             `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks, ip_address)`,
-            `('${data.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Password Changed', '${data.myIP}')`
+            `('${data.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Password Changed', '${data.myIP}')`,
+            null,
+            0
           );
 
         result = change_pass
