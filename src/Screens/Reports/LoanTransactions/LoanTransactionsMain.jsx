@@ -98,6 +98,7 @@ function LoanTransactionsMain() {
 
 	// Add effect to ensure socket connection
 	useEffect(() => {
+		console.log(socket, userDetails, connectSocket, 'load data from Socket__TOP', 'check__');
 		if (!socket && userDetails?.emp_id) {
 			console.log("Initializing socket connection...")
 			connectSocket(userDetails.emp_id)
@@ -108,16 +109,22 @@ function LoanTransactionsMain() {
 				console.log(newSocket, 'newSocketnewSocketnewSocket');
 
 				newSocket.on('loan_tns_repo_notification', (data) => {
-				console.log("Received month end process update: reportoooooo", data?.msg?.msg)
+				// console.log("Received month end process update: reportoooooo", data?.msg?.msg)
+				const msgData = data?.msg?.msg;
+        		const pageUrl = data?.req_data?.page_url;
 
-				localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
-				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
-					
-				setReportData(data?.msg?.msg)
-				populateColumns(data?.msg?.msg,txnGrpHeader);
+				localStorage.setItem("reportData", JSON.stringify(msgData))
+				localStorage.setItem("reportData_Url", JSON.stringify(pageUrl))
+				console.log(JSON.stringify(msgData), 'load data from Socket', 'check__', msgData);
+				
+				// setReportData(data?.msg?.msg)
+				// populateColumns(data?.msg?.msg,txnGrpHeader);
+
+				setReportData(msgData)
+				populateColumns(msgData,txnGrpHeader);
+				
 
 				Message("success", "Your Loan Transactions Reports process is complete")
-				
 				})
 
 
@@ -129,6 +136,8 @@ function LoanTransactionsMain() {
 	}, [socket, userDetails, connectSocket])
 
 	useEffect(() => {
+	console.log('load data from local storage', 'check__');
+	
     const reportData_Url = localStorage.getItem("reportData_Url");
 
 	if(reportData_Url != null){
@@ -157,7 +166,7 @@ function LoanTransactionsMain() {
 		}
 	}
 	}
-  }, []); // Runs once on page load
+  }, [reportData]); // Runs once on page load
 
 	const onChange = (e) => {
 		console.log("radio1 checked", e)
@@ -895,6 +904,7 @@ function LoanTransactionsMain() {
 								<SearchOutlined /> <span className={`ml-2`}>Search</span>
 							</button>
 						</div>
+						
 					</div>
 					{
 						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
@@ -924,7 +934,7 @@ function LoanTransactionsMain() {
 					)}
 
 					{/* Groupwise Results with Pagination */}
-					{/* {JSON.stringify(reportData, 2)} */}
+					{/* {JSON.stringify(reportData, 2)}  */}
 					{searchType2 === "G" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable

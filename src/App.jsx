@@ -3,7 +3,7 @@ import { Outlet } from "react-router-dom"
 import { PrimeReactProvider } from "primereact/api"
 import "primereact/resources/themes/lara-light-cyan/theme.css"
 import { ConfigProvider } from "antd"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { routePaths } from "./Assets/Data/Routes"
 import useIdleTimer from "./Hooks/useIdleTimer"
@@ -17,6 +17,7 @@ function AppContent() {
 	const location = useLocation()
 	const sessionId = localStorage.getItem("session_id")
 	const { socket, disconnectSocket } = useSocket()
+	const [machineIP, setMachineIP] = useState("")
 
 	useIdleTimer()
 
@@ -27,6 +28,32 @@ function AppContent() {
 	// }, [location, navigate])
 
 	useEffect(() => {
+	const user_details = JSON.parse(localStorage.getItem("user_details"));
+
+	
+	
+
+	if (!user_details) {
+		// navigation.replace("Login"); // redirect to login
+		console.log(user_details, 'user_detailsuser_detailsuser_details');
+		navigate("/")
+	}
+
+	}, []);
+
+	const getPublicIP = async () => {
+	try {
+	const res = await axios.get("https://api.ipify.org?format=json");
+	setMachineIP(res?.data?.ip)
+	// console.log("Public IP: ", res.data.ip);
+	} catch (err) {
+	console.error(err);
+	}
+	};
+
+
+	useEffect(() => {
+		getPublicIP()
 		// Handle logout cleanup
 		const handleLogout = async () => {
 			const userDetails = JSON.parse(localStorage.getItem("user_details") || "{}")
@@ -37,6 +64,7 @@ function AppContent() {
 						session_id: sessionId,
 						branch_code: userDetails.brn_code,
 						modified_by: userDetails.emp_id,
+						myIP: machineIP,
 						in_out_flag: "O",
 						flag: "W",
 					})

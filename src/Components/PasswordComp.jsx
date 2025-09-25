@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { routePaths } from "../Assets/Data/Routes"
 import { useNavigate } from "react-router-dom"
 import TDInputTemplateBr from "./TDInputTemplateBr"
@@ -13,6 +13,23 @@ const PasswordComp = ({ mode }) => {
 	const [oldPassword, setOldPassword] = useState(() => "")
 	const [newPassword, setNewPassword] = useState(() => "")
 	const [confirmPassword, setConfirmPassword] = useState(() => "")
+	const [machineIP, setMachineIP] = useState("")
+
+
+		useEffect(() => {
+		console.log(userDetails, 'userDetails');
+		getPublicIP()
+		}, []);
+
+
+		const getPublicIP = async () => {
+		try {
+		const res = await axios.get("https://api.ipify.org?format=json");
+		setMachineIP(res?.data?.ip)
+		} catch (err) {
+		console.error(err);
+		}
+		};
 
 	const handlePasswordUpdate = async () => {
 		const creds = {
@@ -20,7 +37,13 @@ const PasswordComp = ({ mode }) => {
 			old_pwd: oldPassword,
 			new_pwd: newPassword,
 			modified_by: userDetails?.emp_id,
+			branch_code: userDetails?.brn_code,
+            in_out_flag: "P",
+            flag : "W",
+            myIP: machineIP
 		}
+
+		// console.log("credscreds ", creds);
 
 		await axios
 			.post(`${url}/change_password`, creds)

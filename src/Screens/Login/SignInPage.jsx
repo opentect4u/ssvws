@@ -15,6 +15,10 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import Visibility from "@mui/icons-material/Visibility"
 import VisibilityOff from "@mui/icons-material/VisibilityOff"
 import coverPhoto from "../../Assets/Images/ssvws_cover_1.jpg"
+
+
+import CryptoJS from "crypto-js";
+
 const DialogBox = React.lazy(() => import("../../Components/DialogBox"))
 const SignInPage = () => {
 	const navigate = useNavigate()
@@ -25,17 +29,58 @@ const SignInPage = () => {
 	const [sessionId, setSessionId] = useState("")
 	const [visible, setVisible] = useState(false)
 	const [showPassword, setShowPassword] = useState(false);
+	const [machineIP, setMachineIP] = useState("")
+
+	// const [captchaAnswer, setCaptchaAnswer] = useState("");
+	// const [inputAnswer, setInputAnswer] = useState("");
+
+	// const num1 = Math.floor(Math.random() * 10);
+  	// const num2 = Math.floor(Math.random() * 10);
+
+	const [num1, setNum1] = useState(0);
+	const [num2, setNum2] = useState(0);
+	const [inputAnswer, setInputAnswer] = useState("");
+	const [loginMessage, setLoginMessage] = useState("");
 
 	// Store controller persistently
 	const abortControllerRef = useRef(null);
 
+	const SECRET_KEY = 'S!YSN@ESR#GAI$CSS%OYF^TVE&KAS&OWL*UNT(ISO)NTS_PSR+IIT=ESL/IKM*IST!EAD@'
+
 	useEffect(()=>{
-		console.log("Loading state changed:", loading)
+		// setCaptchaAnswer(num1 + num2);
+		setNum1(Math.floor(Math.random() * 10) + 1);
+    	setNum2(Math.floor(Math.random() * 10) + 1);
+	},[])
+
+
+	useEffect(()=>{
+		getPublicIP();
 	},[loading])
+
+	const getPublicIP = async () => {
+	try {
+	const res = await axios.get("https://api.ipify.org?format=json");
+	setMachineIP(res.data.ip)
+	console.log("Public IP: ", res.data.ip);
+	} catch (err) {
+	console.error(err);
+	}
+	};
 
 	useEffect(() => {
 		setSessionId(generateRandomAlphanumeric(15))
 	}, [])
+
+	// const encryptPassword = (password) => {
+	// return CryptoJS.SHA256(password).toString(CryptoJS.enc.Hex);
+	// };
+
+	const encryptText = (text) => {
+	return CryptoJS.AES.encrypt(text, SECRET_KEY).toString();
+	};
+
+
 
 	const formik = useFormik({
 		initialValues: { user_id: "", password: "", brnch: "" },
@@ -53,12 +98,18 @@ const SignInPage = () => {
 		}),
 		validateOnMount: true,
 		onSubmit: async (values) => {
+
+			const hashedPassword = encryptText(values?.password);
+			console.log(hashedPassword , 'hashedPassword');
+			
 			setLoading(true)
 			// console.log(values)
 			// console.log(userTypeId == 4, formik.values.brnch != "")
 			const creds = {
 				emp_id: values?.user_id,
-				password: values?.password,
+				// password: values?.password,
+				password: hashedPassword,
+				myIP: machineIP,
 				app_version: "0",
 				flag: "W",
 				session_id: sessionId,
@@ -139,13 +190,20 @@ const SignInPage = () => {
 			// 			Message("error", "Some error on server while logging in...")
 			// 		})
 			// }
+			if (parseInt(inputAnswer) === num1 + num2) {
 			handleSignIn(creds, "login_web")
+			} else {
+			Message("error", "CAPTCHA incorrect, try again.")
+			}
+			
 
 			setLoading(false)
 		},
 	})
 
-	const handleSignIn = async (creds,api_name) =>{
+	const handleSignIn = async (creds, api_name) =>{
+		
+		
 			await axios
 			.post(`${url}/${api_name}`, creds)
 			.then((res) => {
@@ -430,6 +488,24 @@ const SignInPage = () => {
 								)}
 							</div>
 						)}
+
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+						<div style={{display:'flex', alignItems:'center'}}>
+						<label>
+						CAPTCHA: {num1} + {num2} =
+						</label>
+						</div>
+						<div>
+						<input
+						type="number"
+						value={inputAnswer}
+						onChange={(e) => setInputAnswer(e.target.value)}
+						required
+						className="w-full px-4 py-2 pr-10 bg-slate-100 border border-slate-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+						/>
+						</div>
+						</div>
+
 
 						<Spin indicator={<LoadingOutlined spin />} spinning={loading}>
 							<button
