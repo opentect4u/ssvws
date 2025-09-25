@@ -216,10 +216,21 @@ const SignInPage = () => {
 				userDtls["brn_code"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 || userTypeId == 2 ? formik.values.brnch : res?.data?.user_dtls?.brn_code
 				userDtls["branch_name"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 || userTypeId == 2 ? branches.filter((item) => item.code == formik.values.brnch)[0]?.name : res?.data?.user_dtls?.branch_name
 				if (res?.data?.suc === 1) {
+
 					localStorage.setItem("session_id", sessionId)
 					localStorage.setItem("server_token", res?.data?.token)
 					localStorage.setItem("refresh_token", res?.data?.refresh_token)
 					localStorage.setItem("user_details", JSON.stringify(userDtls))
+
+
+					// localforage.setItem('tokenDetails', {
+					// 'token': response?.token,
+					// 'expires_at': response?.expires_at,
+					// }).then(() => {
+					// console.log('Value saved!', response);
+					// }).catch((err) => {
+					// console.error('Save error:', err);
+					// });
 					
 					// Initialize socket connection with employee ID
 					connectSocket(userDtls.emp_id)
@@ -237,7 +248,7 @@ const SignInPage = () => {
 	const forceClearSession = async () => {
 		const creds = {
 			emp_id: formik.values.user_id,
-			modified_by: formik.values.password,
+			modified_by: formik.values.user_id,
 		}
 		try {
 			const res = await axios.post(`${url}/clear_session`, creds)

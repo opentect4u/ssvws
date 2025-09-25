@@ -70,7 +70,8 @@ function Sidebar({ mode = 0 }) {
 				newSocket.on('loan_tns_repo_notification', (data) => {
 				console.log(data?.req_data?.page_url, "Received month end process update: report", data)
 				localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
-				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
+				// localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
+				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data))
 				MessageWithLink("success", "Your Loan Transactions Reports process is complete. To view the report,", `${data?.req_data?.page_url}`, 'Click Here')
 				})
 

@@ -79,6 +79,7 @@ function LoanTransactionsMain() {
 	const [fromDate, setFromDate] = useState()
 	const [toDate, setToDate] = useState()
 	const [reportData, setReportData] = useState(() => [])
+	const [reportRelated, setReportRelated] = useState(() => [])
 
 	const [funds, setFunds] = useState([])
 	const [selectedFund, setSelectedFund] = useState("")
@@ -109,20 +110,18 @@ function LoanTransactionsMain() {
 				console.log(newSocket, 'newSocketnewSocketnewSocket');
 
 				newSocket.on('loan_tns_repo_notification', (data) => {
-				// console.log("Received month end process update: reportoooooo", data?.msg?.msg)
+
 				const msgData = data?.msg?.msg;
-        		const pageUrl = data?.req_data?.page_url;
+        		// const pageUrl = data?.req_data?.page_url;
+				const pageUrl = data?.req_data;
 
 				localStorage.setItem("reportData", JSON.stringify(msgData))
 				localStorage.setItem("reportData_Url", JSON.stringify(pageUrl))
-				console.log(JSON.stringify(msgData), 'load data from Socket', 'check__', msgData);
+				// console.log('load data from Socket', 'check__ooooooooooooooo', JSON.stringify(pageUrl));
 				
-				// setReportData(data?.msg?.msg)
-				// populateColumns(data?.msg?.msg,txnGrpHeader);
-
 				setReportData(msgData)
+				setReportRelated(pageUrl)
 				populateColumns(msgData,txnGrpHeader);
-				
 
 				Message("success", "Your Loan Transactions Reports process is complete")
 				})
@@ -136,14 +135,15 @@ function LoanTransactionsMain() {
 	}, [socket, userDetails, connectSocket])
 
 	useEffect(() => {
-	console.log('load data from local storage', 'check__');
 	
     const reportData_Url = localStorage.getItem("reportData_Url");
 
 	if(reportData_Url != null){
-	if(JSON.parse(reportData_Url) === '/homebm/loantxns'){
 
-		// console.log(reportData_Url, 'lllllllllllllllllllllll',  'true');
+		console.log(JSON.parse(reportData_Url)?.page_url === '/homebm/loantxns', 'check__ooooooooooooooo', JSON.parse(reportData_Url));
+		
+	if(JSON.parse(reportData_Url)?.page_url === '/homebm/loantxns'){
+
 		const storedData = localStorage.getItem("reportData");
 	
 		if (storedData) {
@@ -153,7 +153,8 @@ function LoanTransactionsMain() {
 			console.log("Report Data loaded: ifffff", storedData);
 
 			setReportData(parsedData)
-			populateColumns(parsedData,txnGrpHeader);
+			setReportRelated(JSON.parse(reportData_Url))
+			populateColumns(parsedData, txnGrpHeader);
 	
 			localStorage.removeItem("reportData");
 			localStorage.removeItem("reportData_Url");
@@ -166,7 +167,7 @@ function LoanTransactionsMain() {
 		}
 	}
 	}
-  }, [reportData]); // Runs once on page load
+  }, []); // Runs once on page load
 
 	const onChange = (e) => {
 		console.log("radio1 checked", e)
@@ -279,8 +280,7 @@ function LoanTransactionsMain() {
 		const creds = {
 			from_dt: formatDateToYYYYMMDD(fromDate),
 			to_dt: formatDateToYYYYMMDD(toDate),
-			branch_code:
-				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
 			tr_type: searchType,
 		}
@@ -659,14 +659,16 @@ function LoanTransactionsMain() {
 					</div>
 
 					<div className="text-slate-800 italic">
-						Branch:{" "}
+						Branch:{" "} 
 						{(userDetails?.id === 3 ||
 							userDetails?.id === 4 ||
 							userDetails?.id === 11) &&
 						userDetails?.brn_code == 100
 							? displayedOptions?.map((item, _) => `${item?.label}, `)
 							: userDetails?.branch_name}{" "}
-						from {fromDate} to {toDate}
+							
+						from {fromDate}  to {toDate} 
+						{/* from {fromDate} {reportRelated?.from_dt} to {toDate} {reportRelated?.to_dt} */}
 					</div>
 
 					<div className="mb-2 flex justify-start gap-5 items-center">
@@ -906,6 +908,8 @@ function LoanTransactionsMain() {
 						</div>
 						
 					</div>
+
+					
 					{
 						reportData.length > 0 && 	<MultiSelect value={selectedColumns} 
 							onChange={(e) => {
