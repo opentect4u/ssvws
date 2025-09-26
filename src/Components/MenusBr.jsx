@@ -21,15 +21,16 @@ import {
 	FastForwardOutlined,
 	SubnodeOutlined,
 	SendOutlined,
+	LoadingOutlined,
 } from "@ant-design/icons"
-import { Menu } from "antd"
+import { Menu, Spin } from "antd"
 import { Link } from "react-router-dom"
 import IMG from "../Assets/Images/ssvws_crop-round.jpg"
 import Tooltip from "@mui/material/Tooltip"
 import { useNavigate } from "react-router-dom"
 import DialogBox from "./DialogBox"
 
-function MenusBr({ theme, data }) {
+function MenusBr({ theme, data, reportProgress}) {
 	console.log(data, "-------")
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 	const [current, setCurrent] = React.useState("sub1")
@@ -61,6 +62,11 @@ function MenusBr({ theme, data }) {
 	//   SubnodeOutlined: <SubnodeOutlined />,
 	//   BarChartOutlined: <BarChartOutlined />,
 	// };
+
+	useEffect(() => {
+		console.log(localStorage.getItem("reportDataProgress"), 'localllllllll');
+		
+	}, [])
 
 	var items_all_user1 = [
 		{
@@ -2262,6 +2268,51 @@ function MenusBr({ theme, data }) {
 				}}
 				className="rounded-full items-center justify-center"
 			/>
+			{/* Progress Report */}
+			
+			{/* {localStorage.getItem("reportDataProgress") !== null ? (
+			localStorage.getItem("reportDataProgress") === "loading" ? (
+			<p>loading // {reportProgress}</p>
+			) : (
+			<p>done // {reportProgress}</p>
+			)
+			) : null} */}
+	{/* {reportProgress} // {localStorage.getItem("reportDataProgress")} */}
+			<div style={{alignItems:'center', display:'flex'}}>
+			{reportProgress
+			? reportProgress === "loading"
+			? <>
+			<span style={{fontSize:12, color:'white'}}>Report Generating...</span> <Spin
+			indicator={<LoadingOutlined spin />}
+			size="small"
+			className="text-white"
+			spinning={true}
+			></Spin>
+			</>
+			: <p></p>
+			: localStorage.getItem("reportDataProgress") !== null
+			? localStorage.getItem("reportDataProgress") === "loading"
+			? <>
+			<span style={{fontSize:12, color:'white'}}>Report Generating...  </span> <Spin
+			indicator={<LoadingOutlined spin />}
+			size="small"
+			className="text-white"
+			spinning={true}
+			></Spin>
+			</>
+			: <p></p>
+			: null}
+
+			{/* <span style={{fontSize:12, color:'white'}}>Report Generating...</span> <Spin
+			indicator={<LoadingOutlined spin />}
+			size="small"
+			className="text-white"
+			spinning={true}
+			></Spin> */}
+
+			</div>
+
+
 			<div className="flex">
 				<Tooltip title="Profile" placement="bottom">
 					<button

@@ -36,7 +36,7 @@ import { useSocket } from "../Context/SocketContext"
 import { Message, MessageWithLink } from "./Message"
 
 import { SwapCallsRounded } from "@mui/icons-material"
-function Sidebar({ mode = 0 }) {
+function Sidebar({ mode = 0, reportProgress }) {
 	const location = useLocation()
 	const [current, setCurrent] = React.useState("mail")
 	const [theme, setTheme] = useState(localStorage.getItem("col"))
@@ -68,10 +68,12 @@ function Sidebar({ mode = 0 }) {
 
 
 				newSocket.on('loan_tns_repo_notification', (data) => {
-				console.log(data?.req_data?.page_url, "Received month end process update: report", data)
+				// console.log(JSON.stringify(data?.msg?.msg), "check__ooooooooooooooo", 'data')
 				localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
 				// localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
 				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data))
+				localStorage.setItem("reportDataProgress", 'done')
+				// setReportProgress('done')
 				MessageWithLink("success", "Your Loan Transactions Reports process is complete. To view the report,", `${data?.req_data?.page_url}`, 'Click Here')
 				})
 
@@ -620,7 +622,7 @@ function Sidebar({ mode = 0 }) {
 							alt="Flowbite Logo"
 						/>
 					</div> */}
-					<MenusBr data={permissions} />
+					<MenusBr data={permissions} reportProgress={reportProgress} /> 
 					{/* <img className='absolute bottom-0 h-40 blur-1' src={sidebar2} alt="Flowbite Logo" /> */}
 				</div>
 				{/* <motion.img initial={{opacity:0}} animate={{opacity:1}} transition={{delay:0.5, type:'spring'

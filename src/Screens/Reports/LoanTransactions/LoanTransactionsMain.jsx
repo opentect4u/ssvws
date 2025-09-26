@@ -97,19 +97,24 @@ function LoanTransactionsMain() {
 			: userDetails?.branch_name
 	)
 
+	const [selectedShoketBranch, setSelectedShoketBranch] = useState("")
+	const [reportProgress, setReportProgress] = useState("")
+
 	// Add effect to ensure socket connection
 	useEffect(() => {
-		console.log(socket, userDetails, connectSocket, 'load data from Socket__TOP', 'check__');
+		// setLoading(true)
+		console.log('useeffect__', 'enter');
+		
 		if (!socket && userDetails?.emp_id) {
+			
 			console.log("Initializing socket connection...")
 			connectSocket(userDetails.emp_id)
 
-				console.log("Initializing socket connection...")
+				// console.log("Initializing socket connection...")
 				const newSocket = connectSocket(userDetails?.emp_id)
 				if (newSocket) {
-				console.log(newSocket, 'newSocketnewSocketnewSocket');
-
 				newSocket.on('loan_tns_repo_notification', (data) => {
+				
 
 				const msgData = data?.msg?.msg;
         		// const pageUrl = data?.req_data?.page_url;
@@ -117,13 +122,28 @@ function LoanTransactionsMain() {
 
 				localStorage.setItem("reportData", JSON.stringify(msgData))
 				localStorage.setItem("reportData_Url", JSON.stringify(pageUrl))
-				// console.log('load data from Socket', 'check__ooooooooooooooo', JSON.stringify(pageUrl));
+				localStorage.setItem("reportDataProgress", 'done')
+				setReportProgress('done')
+				// console.log('useeffect__', 'shoket');
+				setLoading(false)
 				
 				setReportData(msgData)
 				setReportRelated(pageUrl)
-				populateColumns(msgData,txnGrpHeader);
+				// populateColumns(msgData, txnGrpHeader)
+				populateColumns(
+					msgData, 
+					searchType2 === "G"
+					? txnGrpHeader
+					: searchType2 === "F"
+					? txnFundHeader
+					: searchType2 === "C"
+					? txnCoHeader
+					: searchType2 === "M"
+					? txnMembHeader
+					: branchwiseTxnReportHeader);
 
 				Message("success", "Your Loan Transactions Reports process is complete")
+				
 				})
 
 
@@ -135,7 +155,7 @@ function LoanTransactionsMain() {
 	}, [socket, userDetails, connectSocket])
 
 	useEffect(() => {
-	
+	// setLoading(true)
     const reportData_Url = localStorage.getItem("reportData_Url");
 
 	if(reportData_Url != null){
@@ -149,15 +169,30 @@ function LoanTransactionsMain() {
 		if (storedData) {
 		  // If you stored as JSON earlier, parse it
 		  try {
+			// setLoading(false)
 			const parsedData = JSON.parse(storedData);
 			console.log("Report Data loaded: ifffff", storedData);
 
 			setReportData(parsedData)
 			setReportRelated(JSON.parse(reportData_Url))
-			populateColumns(parsedData, txnGrpHeader);
-	
+			// populateColumns(parsedData, txnGrpHeader);
+
+			populateColumns(
+					parsedData, 
+					searchType2 === "G"
+					? txnGrpHeader
+					: searchType2 === "F"
+					? txnFundHeader
+					: searchType2 === "C"
+					? txnCoHeader
+					: searchType2 === "M"
+					? txnMembHeader
+					: branchwiseTxnReportHeader);
+
 			localStorage.removeItem("reportData");
 			localStorage.removeItem("reportData_Url");
+			// localStorage.removeItem("reportDataProgress")
+			
 		  } catch {
 			console.log("Report Data loaded: else", storedData);
 		  }
@@ -181,7 +216,8 @@ function LoanTransactionsMain() {
 
 	const handleFetchTxnReportGroupwise = async () => {
 		setLoading(true)
-
+		// console.log(searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both", 'searchType');
+		
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 
 		const creds = {
@@ -191,40 +227,44 @@ function LoanTransactionsMain() {
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			tr_type: searchType,
 			page_url: '/homebm/loantxns',
-			flag: 'G'
+			flag: 'G',
+			searchFor: 'Groupwise',
+			searchDataFilter: selectedShoketBranch,
+			searchFilterSub: searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both"
 		}
 
 		await axios
 			.post(`${url}/transaction_report_groupwise`, creds)
 			.then((res) => {
 				
-				console.log(res?.data, 'testttttttttttttttt');
+				// console.log(res?.data, 'testttttttttttttttt');
 				// localStorage.setItem("reportData", res?.data?.transaction_group_data?.msg)
-				console.log(res?.data, 'testttttttttttttttt');
+				// console.log(res?.data, 'testttttttttttttttt');
 				// if(res?.data?.transaction_group_data?.suc == 1){
 				if(res?.data?.suc == 1){
 
-					
+				localStorage.setItem("reportDataProgress", 'loading')
+				setReportProgress('loading')
 
-					if (!socket) {
-					console.warn("Socket not connected, attempting to reconnect...")
-					const newSocket = connectSocket(userDetails?.emp_id)
-					if (newSocket) {					
-						newSocket.emit('loan_trns_repo_process', {
-							data: res?.data?.req_data
-						})
-						localStorage.removeItem("reportData");
-						localStorage.removeItem("reportData_Url");
-					} else {
-						console.error("Failed to establish socket connection")
-					}
+				if (!socket) {
+				console.warn("Socket not connected, attempting to reconnect...")
+				const newSocket = connectSocket(userDetails?.emp_id)
+				if (newSocket) {					
+				newSocket.emit('loan_trns_repo_process', {
+				data: res?.data?.req_data
+				})
+				localStorage.removeItem("reportData");
+				localStorage.removeItem("reportData_Url");
 				} else {
-					console.log(res?.data, 'RESSSSS======>>>>');
-					socket.emit('loan_trns_repo_process', {
-						data: res?.data?.req_data
-					})
+				console.error("Failed to establish socket connection")
 				}
-				Message("success", "Loan Transactions Reports updated successfully")
+				} else {
+				console.log(res?.data, 'RESSSSS======>>>>');
+				socket.emit('loan_trns_repo_process', {
+				data: res?.data?.req_data
+				})
+				}
+				// Message("success", "Loan Transactions Reports updated successfully")
 					
 				
 				
@@ -248,7 +288,7 @@ function LoanTransactionsMain() {
 				Message('error',err.message)
 			})
 
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	const getFunds = () => {
@@ -283,22 +323,49 @@ function LoanTransactionsMain() {
 			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
 			tr_type: searchType,
+			page_url: '/homebm/loantxns',
+			flag: 'F',
+			searchFor: 'Fundwise',
+			searchDataFilter: selectedShoketBranch,
+			searchFilterSub: searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both"
 		}
 
 		await axios
 			.post(`${url}/transaction_report_fundwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				if(res?.data?.transaction_fund_data?.suc == 1){
-					if(res?.data?.transaction_fund_data?.msg.length > 0){
-						setReportData(res?.data?.transaction_fund_data?.msg)
-						populateColumns(res?.data?.transaction_fund_data?.msg,txnFundHeader);	
+				// if(res?.data?.transaction_fund_data?.suc == 1){
+				if(res?.data?.suc == 1){
+					// if(res?.data?.transaction_fund_data?.msg.length > 0){
+						// setReportData(res?.data?.transaction_fund_data?.msg)
+						// populateColumns(res?.data?.transaction_fund_data?.msg,txnFundHeader);	
+
+						
+					// }
+					// else{
+					// 	Message('warning','No Data Available')
+					// }
+
+					if (!socket) {
+					console.warn("Socket not connected, attempting to reconnect...")
+					const newSocket = connectSocket(userDetails?.emp_id)
+					if (newSocket) {					
+					newSocket.emit('loan_trns_repo_process', {
+					data: res?.data?.req_data
+					})
+					localStorage.removeItem("reportData");
+					localStorage.removeItem("reportData_Url");
+					} else {
+					console.error("Failed to establish socket connection")
 					}
-					else{
-						Message('warning','No Data Available')
+					} else {
+					// console.log(res?.data, 'RESSSSS======>>>>');
+					socket.emit('loan_trns_repo_process', {
+					data: res?.data?.req_data
+					})
 					}
-				}
-				else{
+
+				} else{
 					Message('error','Something went wrong, Please try again later')
 				}
 			
@@ -309,7 +376,7 @@ function LoanTransactionsMain() {
 				Message('error',err.message)
 			})
 
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	const getCOs = () => {
@@ -358,6 +425,12 @@ function LoanTransactionsMain() {
 						: [selectedCO]
 					: coCodes,
 			tr_type: searchType,
+
+			page_url: '/homebm/loantxns',
+			flag: 'C',
+			searchFor: 'CO-wise',
+			searchDataFilter: selectedShoketBranch,
+			searchFilterSub: searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both"
 		}
 
 		console.log("CREDSS", creds)
@@ -366,14 +439,35 @@ function LoanTransactionsMain() {
 			.post(`${url}/transaction_report_cowise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				if(res?.data?.transaction_co_data?.suc == 1){
-					if(res?.data?.transaction_co_data?.msg.length > 0){
-						setReportData(res?.data?.transaction_co_data?.msg)
-						populateColumns(res?.data?.transaction_co_data?.msg,txnCoHeader);	
+				// if(res?.data?.transaction_co_data?.suc == 1){
+				if(res?.data?.suc == 1){
+					// if(res?.data?.transaction_co_data?.msg.length > 0){
+						// setReportData(res?.data?.transaction_co_data?.msg)
+						// populateColumns(res?.data?.transaction_co_data?.msg,txnCoHeader);	
+					// }
+					// else{
+					// 	Message('warning','No Data Available')
+					// }
+
+					if (!socket) {
+					console.warn("Socket not connected, attempting to reconnect...")
+					const newSocket = connectSocket(userDetails?.emp_id)
+					if (newSocket) {					
+					newSocket.emit('loan_trns_repo_process', {
+					data: res?.data?.req_data
+					})
+					localStorage.removeItem("reportData");
+					localStorage.removeItem("reportData_Url");
+					} else {
+					console.error("Failed to establish socket connection")
 					}
-					else{
-						Message('warning','No Data Available')
+					} else {
+					console.log(res?.data, 'RESSSSS======>>>>');
+					socket.emit('loan_trns_repo_process', {
+					data: res?.data?.req_data
+					})
 					}
+
 				}
 				else{
 					Message('error','Something went wrong, Please try again later')
@@ -386,7 +480,7 @@ function LoanTransactionsMain() {
 				Message('error',err.message)
 			})
 
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	const handleFetchTxnReportBranchwise = async () => {
@@ -400,22 +494,48 @@ function LoanTransactionsMain() {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			tr_type: searchType,
+
+			page_url: '/homebm/loantxns',
+			flag: 'B',
+			searchFor: 'Branchwise',
+			searchDataFilter: selectedShoketBranch,
+			searchFilterSub: searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both"
 		}
 
 		await axios
 			.post(`${url}/transaction_report_branchwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
-				if(res?.data?.transaction_branch_data?.suc == 1){
-				if(res?.data?.transaction_branch_data?.msg.length > 0){
-					setReportData(res?.data?.transaction_branch_data?.msg)
-					populateColumns(res?.data?.transaction_branch_data?.msg,branchwiseTxnReportHeader);	
+				// if(res?.data?.transaction_branch_data?.suc == 1){
+				if(res?.data?.suc == 1){
+				// if(res?.data?.transaction_branch_data?.msg.length > 0){
+				// 	setReportData(res?.data?.transaction_branch_data?.msg)
+				// 	populateColumns(res?.data?.transaction_branch_data?.msg,branchwiseTxnReportHeader);	
+				// }
+				// else{
+				// 	Message('warning','No Data Available')
+				// }
+
+				if (!socket) {
+				console.warn("Socket not connected, attempting to reconnect...")
+				const newSocket = connectSocket(userDetails?.emp_id)
+				if (newSocket) {					
+				newSocket.emit('loan_trns_repo_process', {
+				data: res?.data?.req_data
+				})
+				localStorage.removeItem("reportData");
+				localStorage.removeItem("reportData_Url");
+				} else {
+				console.error("Failed to establish socket connection")
 				}
-				else{
-					Message('warning','No Data Available')
+				} else {
+				console.log(res?.data, 'RESSSSS======>>>>');
+				socket.emit('loan_trns_repo_process', {
+				data: res?.data?.req_data
+				})
 				}
-				}
-				else{
+
+				} else{
 					Message('error','Something went wrong, Please try again later')
 				}
 
@@ -426,7 +546,7 @@ function LoanTransactionsMain() {
 				Message('warning',err.message)
 			})
 
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	const handleFetchTxnReportMemberwise = async () => {
@@ -440,20 +560,47 @@ function LoanTransactionsMain() {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			tr_type: searchType,
+
+			page_url: '/homebm/loantxns',
+			flag: 'M',
+			searchFor: 'Memberwise',
+			searchDataFilter: selectedShoketBranch,
+			searchFilterSub: searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both"
 		}
 
 		await axios
 			.post(`${url}/transaction_report_memberwise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
-				if(res?.data?.transaction_member_data?.suc == 1 ){
-					if(res?.data?.transaction_member_data?.msg.length > 0){
-						setReportData(res?.data?.transaction_member_data?.msg)
-						populateColumns(res?.data?.transaction_member_data?.msg,txnMembHeader);	
+				// console.log("RESSSSS======>>>>", res?.data)
+				// if(res?.data?.transaction_member_data?.suc == 1 ){
+				if(res?.data?.suc == 1){
+					// if(res?.data?.transaction_member_data?.msg.length > 0){
+					// 	setReportData(res?.data?.transaction_member_data?.msg)
+					// 	populateColumns(res?.data?.transaction_member_data?.msg,txnMembHeader);	
+					// }
+					// else{
+					// 	Message('warning','No Data Available');
+					// }
+
+					if (!socket) {
+					console.warn("Socket not connected, attempting to reconnect...")
+					const newSocket = connectSocket(userDetails?.emp_id)
+					if (newSocket) {					
+					newSocket.emit('loan_trns_repo_process', {
+					data: res?.data?.req_data
+					})
+					localStorage.removeItem("reportData");
+					localStorage.removeItem("reportData_Url");
+					} else {
+					console.error("Failed to establish socket connection")
 					}
-					else{
-						Message('warning','No Data Available');
+					} else {
+					console.log(res?.data, 'RESSSSS======>>>>');
+					socket.emit('loan_trns_repo_process', {
+					data: res?.data?.req_data
+					})
 					}
+
 				}
 				else{
 						Message('error','Something went wrong, Please try again later');
@@ -466,7 +613,7 @@ function LoanTransactionsMain() {
 				Message('error',err.message);
 			})
 
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	const getBranches = () => {
@@ -601,13 +748,34 @@ function LoanTransactionsMain() {
 			? [{ value: "all", label: "All" }]
 			: selectedOptions
 
-	const handleMultiSelectChange = (selected) => {
+	// const handleMultiSelectChange = (selected) => {
+	// 	console.log(selected, 'selected', dropdownOptions);
+		
+	// 	if (selected.some((option) => option.value === "all")) {
+	// 		setSelectedOptions(dropdownOptions)
+	// 	} else {
+	// 		setSelectedOptions(selected)
+	// 	}
+	// }
+
+		const handleMultiSelectChange = (selected) => {
+		let finalSelected = [];
+		
 		if (selected.some((option) => option.value === "all")) {
+			// finalSelected = dropdownOptions;
 			setSelectedOptions(dropdownOptions)
+			// console.log('ALL', 'selected');
+			setSelectedShoketBranch('All')
 		} else {
+			finalSelected = selected || [];
 			setSelectedOptions(selected)
+
+			const labelsString = finalSelected.map((item) => item.label).join(", ");
+			// console.log(selected, 'Single', 'selected', labelsString);
+			setSelectedShoketBranch(labelsString)
 		}
-	}
+
+		}
 
 	const dropdownCOs = cos?.map((branch) => ({
 		value: branch.co_id,
@@ -638,13 +806,21 @@ function LoanTransactionsMain() {
 
 	useCtrlP(handlePrint)
 	const populateColumns = (main_dt,headerExport) =>{
+		// console.log(main_dt, 'check__ooooooooooooooo');
+				if (!main_dt || main_dt.length === 0) {
+				// No data case
+				setColumns([]);
+				setSelectedColumns([]);
+				return;
+				}
+		
 				const columnToBeShown = Object.keys(main_dt[0]).map((key, index) => ({ header:headerExport[key], index }));
 				setColumns(columnToBeShown);
 				setSelectedColumns(columnToBeShown.map(el => el.index));
 	}
 	return (
 		<div>
-			<Sidebar mode={2} />
+			<Sidebar mode={2} reportProgress={reportProgress} />
 			<Spin
 				indicator={<LoadingOutlined spin />}
 				size="large"
@@ -654,21 +830,31 @@ function LoanTransactionsMain() {
 				<main className="px-4 pb-5 bg-slate-50 rounded-lg shadow-lg h-auto my-10 mx-32">
 					<div className="flex flex-row gap-3 mt-20  py-3 rounded-xl">
 						<div className="text-3xl text-slate-700 font-bold">
-							LOAN TRANSACTIONS
+							LOAN TRANSACTIONS {reportRelated?.searchFor ? `(${reportRelated.searchFor} - ${reportRelated.searchFilterSub})` : ''}
 						</div>
 					</div>
 
 					<div className="text-slate-800 italic">
 						Branch:{" "} 
-						{(userDetails?.id === 3 ||
+						{/* {(userDetails?.id === 3 ||
 							userDetails?.id === 4 ||
 							userDetails?.id === 11) &&
 						userDetails?.brn_code == 100
-							? displayedOptions?.map((item, _) => `${item?.label}, `)
-							: userDetails?.branch_name}{" "}
+							? displayedOptions?.map((item, _) => `${item?.label},`)
+							: userDetails?.branch_name}{" "} */}
+						{(userDetails?.id === 3 ||
+						userDetails?.id === 4 ||
+						userDetails?.id === 11) &&
+						userDetails?.brn_code == 100 ? (
+						displayedOptions?.length > 0
+						? displayedOptions.map((item, _) => `${item?.label}, `)
+						: reportRelated?.searchDataFilter 
+						) : (
+						userDetails?.branch_name
+						)}
 							
-						from {fromDate}  to {toDate} 
-						{/* from {fromDate} {reportRelated?.from_dt} to {toDate} {reportRelated?.to_dt} */}
+						{/* from {fromDate}  to {toDate}  */}
+						{" "} from {fromDate ? fromDate : reportRelated?.from_dt} to {toDate ? toDate : reportRelated?.to_dt}
 					</div>
 
 					<div className="mb-2 flex justify-start gap-5 items-center">
@@ -958,6 +1144,7 @@ function LoanTransactionsMain() {
 					)}
 
 					{/* Fundwise Results with Pagination */}
+					{/* {JSON.stringify(reportData, 2)}  */}
 					{searchType2 === "F" && reportData.length > 0 && (
 						<>
 							<DynamicTailwindTable
