@@ -29,7 +29,7 @@ export const MessageWithLink = (type, msg, url, linkText) => {
 				</a>
 			</span>
 		),
-		duration: 4, // Increased duration to give users more time to click
+		duration: 60, // Increased duration to give users more time to click
 	})
 }
 // export default Message

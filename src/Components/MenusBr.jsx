@@ -2278,7 +2278,9 @@ function MenusBr({ theme, data, reportProgress}) {
 			)
 			) : null} */}
 	{/* {reportProgress} // {localStorage.getItem("reportDataProgress")} */}
-			<div style={{alignItems:'center', display:'flex'}}>
+
+	
+			{/* <div style={{alignItems:'center', display:'flex'}}>
 			{reportProgress
 			? reportProgress === "loading"
 			? <>
@@ -2303,14 +2305,9 @@ function MenusBr({ theme, data, reportProgress}) {
 			: <p></p>
 			: null}
 
-			{/* <span style={{fontSize:12, color:'white'}}>Report Generating...</span> <Spin
-			indicator={<LoadingOutlined spin />}
-			size="small"
-			className="text-white"
-			spinning={true}
-			></Spin> */}
+			
 
-			</div>
+			</div> */}
 
 
 			<div className="flex">
