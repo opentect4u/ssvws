@@ -3,8 +3,9 @@ const { db_Delete, db_Select } = require("../mysqlModel"),
 dateFormat = require("dateformat");
 
 async function startOutStandRepoConsumer(io) {
-    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://localhost");
     // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
     const channel = await conn.createChannel();
     // set prefetch
     await channel.prefetch(1);
@@ -59,8 +60,9 @@ async function startOutStandRepoConsumer(io) {
 }
 
 async function startMonthEndProcessConsumer(io, userId) {
-    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://localhost");
     // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
     const channel = await conn.createChannel();
     // set prefetch
     await channel.prefetch(1);
@@ -291,8 +293,9 @@ async function getbranchwiseReport(data) {
 
 
 async function startLoanTrnsRepoProcessConsumer(io, userId) {
-    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://localhost");
     // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
     const channel = await conn.createChannel();
     // set prefetch
     await channel.prefetch(1);
@@ -357,8 +360,9 @@ async function startLoanTrnsRepoProcessConsumer(io, userId) {
 }
 
 async function startOverdueRepoProcessConsumer(io, userId) {
-    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://localhost");
     // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
     const channel = await conn.createChannel();
     // set prefetch
     await channel.prefetch(1);
