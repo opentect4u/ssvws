@@ -215,7 +215,7 @@ function LoanTransactionsMain() {
 	}
 
 	const handleFetchTxnReportGroupwise = async () => {
-		setLoading(true)
+		// setLoading(true)
 		// console.log(searchType === "B" ? "Both" : searchType === "D" ? "Disbursement" : searchType === "R" ? "Recovery" : "Both", 'searchType');
 		
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
@@ -312,7 +312,7 @@ function LoanTransactionsMain() {
 	}
 
 	const handleFetchTxnReportFundwise = async () => {
-		setLoading(true)
+		// setLoading(true)
 
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 		const selectedFunds = funds?.map((item, i) => item?.fund_id)
@@ -407,7 +407,7 @@ function LoanTransactionsMain() {
 	}
 
 	const handleFetchTxnReportCOwise = async () => {
-		setLoading(true)
+		// setLoading(true)
 
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 		const coCodes = selectedCOs?.map((item, i) => item?.value)
@@ -484,7 +484,7 @@ function LoanTransactionsMain() {
 	}
 
 	const handleFetchTxnReportBranchwise = async () => {
-		setLoading(true)
+		// setLoading(true)
 
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 
@@ -550,7 +550,7 @@ function LoanTransactionsMain() {
 	}
 
 	const handleFetchTxnReportMemberwise = async () => {
-		setLoading(true)
+		// setLoading(true)
 
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 
