@@ -3,9 +3,11 @@ const { db_Delete, db_Select } = require("../mysqlModel"),
 dateFormat = require("dateformat");
 
 async function startOutStandRepoConsumer(io) {
-    // const conn = await amqp.connect("amqp://localhost");
-    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
     const channel = await conn.createChannel();
+    // set prefetch
+    await channel.prefetch(1);
     await channel.assertQueue("report_jobs", { durable: true });
     // console.log("Consumer is waiting for messages...");
 
@@ -53,13 +55,15 @@ async function startOutStandRepoConsumer(io) {
                 });
             }
         }
-    });
+    }, { noAck: false });
 }
 
 async function startMonthEndProcessConsumer(io, userId) {
-    // const conn = await amqp.connect("amqp://localhost");
-    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
     const channel = await conn.createChannel();
+    // set prefetch
+    await channel.prefetch(1);
     await channel.assertQueue("month_end_jobs", { durable: true });
     // console.log("Consumer is waiting for messages...");
 
@@ -114,7 +118,7 @@ async function startMonthEndProcessConsumer(io, userId) {
                 });
             }
         }
-    });
+    }, { noAck: false });
 }
 
 async function getgroupwiseReport(data) {
@@ -177,7 +181,7 @@ async function getmemberwiseReport(data) {
       transaction_member_data = await db_Select(select,table_name,whr,order);
       }
 
-    return transaction_group_data;
+    return transaction_member_data;
 }
 
 
@@ -288,14 +292,17 @@ async function getbranchwiseReport(data) {
 
 async function startLoanTrnsRepoProcessConsumer(io, userId) {
     const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
     const channel = await conn.createChannel();
+    // set prefetch
+    await channel.prefetch(1);
     await channel.assertQueue("loan_trns_jobs", { durable: true });
     // console.log("Consumer is waiting for messages...");
 
     channel.consume("loan_trns_jobs", async (msg) => {
         if (msg !== null) {
             const job = JSON.parse(msg.content.toString());
-            // console.log("Received job:", job);
+            console.log("Received job:", job);
 
             try {
                 // await runReportProcedure(job.userId, job.dateRange);
@@ -346,13 +353,15 @@ async function startLoanTrnsRepoProcessConsumer(io, userId) {
                 });
             }
         }
-    });
+    }, { noAck: false });
 }
 
 async function startOverdueRepoProcessConsumer(io, userId) {
-    // const conn = await amqp.connect("amqp://localhost");
-    const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
     const channel = await conn.createChannel();
+    // set prefetch
+    await channel.prefetch(1);
     await channel.assertQueue("loan_overdue_jobs", { durable: true });
     // console.log("Consumer is waiting for messages...");
 
@@ -410,7 +419,7 @@ async function startOverdueRepoProcessConsumer(io, userId) {
                 });
             }
         }
-    });
+    }, { noAck: false });
 }
 
 module.exports = { startOutStandRepoConsumer, startMonthEndProcessConsumer, startLoanTrnsRepoProcessConsumer, getgroupwiseReport, getmemberwiseReport, getfundwiseReport, getcowiseReport, getbranchwiseReport, startOverdueRepoProcessConsumer };
