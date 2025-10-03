@@ -26,6 +26,7 @@
 		"framer-motion": "^11.3.2",
 		"html2canvas": "^1.4.1",
 		"html2pdf.js": "^0.9.0",
+		"idb": "^8.0.3",
 		"localforage": "^1.10.0",
 		"lucide-react": "^0.503.0",
 		"moment": "^2.30.1",
