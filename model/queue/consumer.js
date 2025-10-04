@@ -124,6 +124,9 @@ async function startMonthEndProcessConsumer(io, userId) {
 }
 
 async function getgroupwiseReport(data) {
+     if (!data.branch_code || !data.from_dt || !data.to_dt) {
+     return { suc: 0, msg: "Branch code, From Date and To Date are required!" };
+     }
   let select, table_name, whr, order, transaction_group_data;
 
   if(data.tr_type === 'D'){
@@ -161,6 +164,9 @@ async function getgroupwiseReport(data) {
 
 
 async function getmemberwiseReport(data) {
+     if (!data.branch_code || !data.from_dt || !data.to_dt) {
+    return { suc: 0, msg: "Branch code, From Date and To Date are required!" };
+  }
   let select, table_name, whr, order, transaction_member_data;
 
   if(data.tr_type === 'D'){
@@ -188,6 +194,9 @@ async function getmemberwiseReport(data) {
 
 
 async function getfundwiseReport(data) {
+     if (!data.branch_code || !data.from_dt || !data.to_dt || !data.fund_id) {
+    return { suc: 0, msg: "Branch code, From Date, To Date and Fund Id are required!" };
+  }
   let select, table_name, whr, order, transaction_fund_data;
 
   if(data.tr_type === 'D'){
@@ -225,6 +234,9 @@ async function getfundwiseReport(data) {
 
 
 async function getcowiseReport(data) {
+     if (!data.branch_code || !data.from_dt || !data.to_dt || !data.co_id) {
+    return { suc: 0, msg: "Branch code, From Date, To Date and Co Id are required!" };
+  }
   let select, table_name, whr, order, transaction_co_data;
 
   if(data.tr_type === 'D'){
@@ -261,6 +273,9 @@ async function getcowiseReport(data) {
 }
 
 async function getbranchwiseReport(data) {
+     if (!data.branch_code || !data.from_dt || !data.to_dt) {
+    return { suc: 0, msg: "Branch code, From Date and To Date are required!" };
+  }
   let select, table_name, whr, order, transaction_branch_data;
 
  if(data.tr_type === 'D'){
