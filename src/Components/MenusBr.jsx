@@ -30,7 +30,7 @@ import Tooltip from "@mui/material/Tooltip"
 import { useNavigate } from "react-router-dom"
 import DialogBox from "./DialogBox"
 
-function MenusBr({ theme, data, reportProgress}) {
+function MenusBr({ theme, data}) {
 	console.log(data, "-------")
 	const userDetails = JSON.parse(localStorage.getItem("user_details"))
 	const [current, setCurrent] = React.useState("sub1")
@@ -2284,9 +2284,10 @@ function MenusBr({ theme, data, reportProgress}) {
 			{reportProgress
 			? reportProgress === "loading"
 			? <>
-			<span style={{fontSize:12, color:'white'}}>Report Generating...</span> <Spin
-			indicator={<LoadingOutlined spin />}
+			<span style={{fontSize:11, color:'#76c90d'}}>Report Generating...</span> <Spin
+			indicator={<LoadingOutlined style={{ fontSize: 12, color:'#76c90d' }} spin />}
 			size="small"
+			style={{color:'#76c90d', marginLeft:5}}
 			className="text-white"
 			spinning={true}
 			></Spin>
@@ -2295,9 +2296,10 @@ function MenusBr({ theme, data, reportProgress}) {
 			: localStorage.getItem("reportDataProgress") !== null
 			? localStorage.getItem("reportDataProgress") === "loading"
 			? <>
-			<span style={{fontSize:12, color:'white'}}>Report Generating...  </span> <Spin
-			indicator={<LoadingOutlined spin />}
+			<span style={{fontSize:11, color:'#76c90d'}}>Report Generating...  </span> <Spin
+			indicator={<LoadingOutlined style={{ fontSize: 12, color:'#76c90d' }} spin />}
 			size="small"
+			style={{color:'#76c90d', marginLeft:5}}
 			className="text-white"
 			spinning={true}
 			></Spin>

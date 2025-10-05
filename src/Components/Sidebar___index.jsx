@@ -34,7 +34,7 @@ import {
 
 import { useSocket } from "../Context/SocketContext"
 import { Message, MessageWithLink } from "./Message"
-
+import { setItem } from "./indexedDB";
 
 import { SwapCallsRounded } from "@mui/icons-material"
 function Sidebar({ mode = 0, reportProgress }) {
@@ -66,17 +66,32 @@ function Sidebar({ mode = 0, reportProgress }) {
 				// Message("success", "Month end details updated successfully")
 				MessageWithLink("success", "Your month end process is complete. To view the report,", "/homebm/overduereport", 'Click Here')
 				})
+				
 
+				// OLD use LocalStorage
+				// newSocket.on('loan_tns_repo_notification', async (data) => {
+				// localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
+				// localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data))
+				// localStorage.setItem("reportDataProgress", 'done')
+				// MessageWithLink("success", "Your Loan Transactions Reports process is complete. To view the report,", `${data?.req_data?.page_url}`, 'Click Here')
+				// })
 
-				newSocket.on('loan_tns_repo_notification', (data) => {
-				// console.log(JSON.stringify(data?.msg?.msg), "check__ooooooooooooooo", 'data')
-				localStorage.setItem("reportData", JSON.stringify(data?.msg?.msg))
-				// localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data?.page_url))
-				localStorage.setItem("reportData_Url", JSON.stringify(data?.req_data))
-				localStorage.setItem("reportDataProgress", 'done')
-				// setReportProgress('done')
-				MessageWithLink("success", "Your Loan Transactions Reports process is complete. To view the report,", `${data?.req_data?.page_url}`, 'Click Here')
-				})
+				newSocket.on("loan_tns_repo_notification", async (data) => {
+				try {
+				await setItem("reportData", data?.msg?.msg);
+				await setItem("reportData_Url", data?.req_data);
+				await setItem("reportDataProgress", "done");
+
+				MessageWithLink(
+				"success",
+				"Your Loan Transactions Reports process is complete. To view the report,",
+				`${data?.req_data?.page_url}`,
+				"Click Here"
+				);
+				} catch (err) {
+				console.error("Failed saving to IndexedDB", err);
+				}
+				});
 
 
 			} else {

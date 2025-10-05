@@ -9,9 +9,16 @@ export const Message = (type, msg) => {
 }
 
 export const MessageWithLink = (type, msg, url, linkText) => {
+	const key = `message_${Date.now()}`;
+	const handleClose = () => {
+    message.destroy(key);
+  };
+
 	message.open({
+		key,
 		type: type,
 		content: (
+			<span style={{ display: "flex", alignItems: "center", gap: "50px", fontWeight:700 }}>
 			<span>
 				{msg}{" "}
 				<a
@@ -28,8 +35,22 @@ export const MessageWithLink = (type, msg, url, linkText) => {
 					{linkText || "Click here"}
 				</a>
 			</span>
+
+
+			<Button
+			size="small"
+			type="text"
+			onClick={handleClose}
+			style={{ color: "#000", marginLeft: "auto" }}
+			>
+		✖
+			</Button>
+
+			</span>
 		),
-		duration: 60, // Increased duration to give users more time to click
+		duration: 0, // Increased duration to give users more time to click
+// style: { width: "1000px",margin: "0 auto" },
+className: "message_cus_link" // <-- add this
 	})
 }
 // export default Message

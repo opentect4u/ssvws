@@ -99,83 +99,249 @@ function LoanTransactionsMain() {
 	)
 
 	const [selectedShoketBranch, setSelectedShoketBranch] = useState("")
-	const [reportProgress, setReportProgress] = useState("")
+
+	const [reportProgress_G, setReportProgress_G] = useState("")
+	const [reportProgress_F, setReportProgress_F] = useState("")
+	const [reportProgress_CO, setReportProgress_CO] = useState("")
+	const [reportProgress_M, setReportProgress_M] = useState("")
+	const [reportProgress_B, setReportProgress_B] = useState("")
+
+	
+	useEffect(() => {
+	const loadData = async () => {
+	const data = await getItem("reportData");
+	const url = await getItem("reportData_Url");
+	// const progress = await getItem("reportDataProgress");
+
+	// console.log("IndexedDB values:", { data, url, progress });
+	};
+	loadData();
+	}, []);
+
+	// Add effect to ensure socket connection
+
+	// useEffect(() => {
+	// 	// setLoading(true)
+	// 	console.log('useeffect__', 'enter');
+		
+	// 	if (!socket && userDetails?.emp_id) {
+			
+	// 		console.log("Initializing socket connection...")
+	// 		connectSocket(userDetails.emp_id)
+
+	// 			// console.log("Initializing socket connection...")
+	// 			const newSocket = connectSocket(userDetails?.emp_id)
+	// 			if (newSocket) {
+	// 			newSocket.on('loan_tns_repo_notification', (data) => {
+				
+
+	// 			const msgData = data?.msg?.msg;
+    //     		// const pageUrl = data?.req_data?.page_url;
+	// 			const pageUrl = data?.req_data;
+
+	// 			localStorage.setItem("reportData", JSON.stringify(msgData))
+	// 			localStorage.setItem("reportData_Url", JSON.stringify(pageUrl))
+	// 			if(data?.req_data?.searchFor == 'Groupwise'){
+	// 			localStorage.setItem("reportDataProgress_G", 'done')
+	// 			setReportProgress_G('done')
+	// 			}
+
+	// 			if(data?.req_data?.searchFor == 'Fundwise'){
+	// 			localStorage.setItem("reportDataProgress_F", 'done')
+	// 			setReportProgress_F('done')
+	// 			}
+				
+	// 			if(data?.req_data?.searchFor == 'CO-wise'){
+	// 			localStorage.setItem("reportDataProgress_CO", 'done')
+	// 			setReportProgress_CO('done')
+	// 			}
+	// 			if(data?.req_data?.searchFor == 'Memberwise'){
+	// 			localStorage.setItem("reportDataProgress_M", 'done')
+	// 			setReportProgress_M('done')
+	// 			}
+	// 			if(data?.req_data?.searchFor == 'Branchwise'){
+	// 			localStorage.setItem("reportDataProgress_B", 'done')
+	// 			setReportProgress_B('done')
+	// 			}
+				
+				
+	// 			// console.log('useeffect__', 'shoket');
+	// 			setLoading(false)
+				
+	// 			setReportData(msgData)
+	// 			setReportRelated(pageUrl)
+	// 			// populateColumns(msgData, txnGrpHeader)
+	// 			populateColumns(
+	// 				msgData, 
+	// 				searchType2 === "G"
+	// 				? txnGrpHeader
+	// 				: searchType2 === "F"
+	// 				? txnFundHeader
+	// 				: searchType2 === "C"
+	// 				? txnCoHeader
+	// 				: searchType2 === "M"
+	// 				? txnMembHeader
+	// 				: branchwiseTxnReportHeader);
+
+	// 			// Message("success", "Your Loan Transactions Reports process is complete")
+				
+	// 			})
+
+
+	// 			} else {
+	// 			console.error("Failed to establish socket connection")
+	// 			}
+	// 	}
+
+	// }, [socket, userDetails, connectSocket])
+
 
 	useEffect(() => {
-  const loadData = async () => {
-    const data = await getItem("reportData");
-    const url = await getItem("reportData_Url");
-    const progress = await getItem("reportDataProgress");
+  if (!socket && userDetails?.emp_id) {
+    const newSocket = connectSocket(userDetails.emp_id);
 
-    console.log("IndexedDB values:", { data, url, progress });
-  };
-  loadData();
-}, []);
+    if (newSocket) {
+      newSocket.on("loan_tns_repo_notification", async (data) => {
+		console.log('socket_____', data?.msg?.msg);
+        const msgData = data?.msg?.msg;
+        const pageUrl = data?.req_data;
 
-// Add effect to ensure socket connection // OLD use LocalStorage
-// useEffect(() => {
+		console.log("Report Data loaded: ifffff", data?.msg?.msg);
 
-// 	if (!socket && userDetails?.emp_id) {
-// 		connectSocket(userDetails.emp_id)
+        try {
+          // Save report data and URL into IndexedDB
+          await setItem("reportData", msgData);
+          await setItem("reportData_Url", pageUrl);
 
-// 			const newSocket = connectSocket(userDetails?.emp_id)
-// 			if (newSocket) {
-// 			newSocket.on('loan_tns_repo_notification', (data) => {
+          // Update progress flags based on searchFor
+			if(data?.req_data?.searchFor == 'Groupwise'){
+			localStorage.setItem("reportDataProgress_G", 'done')
+			setReportProgress_G('done')
+			}
+
+			if(data?.req_data?.searchFor == 'Fundwise'){
+			localStorage.setItem("reportDataProgress_F", 'done')
+			setReportProgress_F('done')
+			}
+
+			if(data?.req_data?.searchFor == 'CO-wise'){
+			localStorage.setItem("reportDataProgress_CO", 'done')
+			setReportProgress_CO('done')
+			}
+			if(data?.req_data?.searchFor == 'Memberwise'){
+			localStorage.setItem("reportDataProgress_M", 'done')
+			setReportProgress_M('done')
+			}
+			if(data?.req_data?.searchFor == 'Branchwise'){
+			localStorage.setItem("reportDataProgress_B", 'done')
+			setReportProgress_B('done')
+			}
+
+          // Update loading and states for UI
+          setLoading(false);
+          setReportData(msgData);
+          setReportRelated(pageUrl);
+
+          // Populate columns based on search type
+          populateColumns(
+            msgData,
+            searchType2 === "G"
+              ? txnGrpHeader
+              : searchType2 === "F"
+              ? txnFundHeader
+              : searchType2 === "C"
+              ? txnCoHeader
+              : searchType2 === "M"
+              ? txnMembHeader
+              : branchwiseTxnReportHeader
+          );
+
+        //   Message("success", "Your Loan Transactions Reports process is complete");
+        } catch (err) {
+          console.error("Failed saving report data to IndexedDB", err);
+        }
+      });
+    } else {
+      console.error("Failed to establish socket connection");
+    }
+  }
+}, [socket, userDetails, connectSocket]);
 
 
-// 			const msgData = data?.msg?.msg;
-// 			const pageUrl = data?.req_data;
+	useEffect(() => {
+	const loadReportData = async () => {
+	try {
+		const reportData_Url = await getItem("reportData_Url");
 
-// 			localStorage.setItem("reportData", JSON.stringify(msgData))
-// 			localStorage.setItem("reportData_Url", JSON.stringify(pageUrl))
-// 			localStorage.setItem("reportDataProgress", 'done')
-// 			setReportProgress('done')
-// 			setLoading(false)
+		if (reportData_Url != null) {
+		if (reportData_Url?.page_url === "/homebm/loantxns") {
+			const storedData = await getItem("reportData");
 
-// 			setReportData(msgData)
-// 			setReportRelated(pageUrl)
-// 			populateColumns(
-// 				msgData, 
-// 				searchType2 === "G"
-// 				? txnGrpHeader
-// 				: searchType2 === "F"
-// 				? txnFundHeader
-// 				: searchType2 === "C"
-// 				? txnCoHeader
-// 				: searchType2 === "M"
-// 				? txnMembHeader
-// 				: branchwiseTxnReportHeader);
+			if (storedData) {
+			try {
+			  console.log("Report Data loaded: ifffff", storedData);
 
-// 			Message("success", "Your Loan Transactions Reports process is complete")
+				setReportData(storedData);
+				setReportRelated(reportData_Url);
 
-// 			})
+				populateColumns(
+				storedData,
+				searchType2 === "G"
+					? txnGrpHeader
+					: searchType2 === "F"
+					? txnFundHeader
+					: searchType2 === "C"
+					? txnCoHeader
+					: searchType2 === "M"
+					? txnMembHeader
+					: branchwiseTxnReportHeader
+				);
 
+				// cleanup after use
+				await removeItem("reportData");
+				await removeItem("reportData_Url");
+				// await removeItem("reportDataProgress");
+				// localStorage.removeItem("reportDataProgress_G");
+				// localStorage.removeItem("reportDataProgress_F");
+				// localStorage.removeItem("reportDataProgress_CO");
+				// localStorage.removeItem("reportDataProgress_M");
+				// localStorage.removeItem("reportDataProgress_B");
+			} catch (err) {
+				console.log("Error parsing stored data:", err);
+			}
+			}
+		}
+		}
+	} catch (err) {
+		console.error("Error loading from IndexedDB", err);
+	}
+	};
 
-// 			} else {
-// 			console.error("Failed to establish socket connection")
-// 			}
-// 	}
+	loadReportData();
+	}, []); // runs once on page load
 
-// }, [socket, userDetails, connectSocket])
-
-// OLD use LocalStorage
 // 	useEffect(() => {
+// 	// setLoading(true)
 //     const reportData_Url = localStorage.getItem("reportData_Url");
 
 // 	if(reportData_Url != null){
 
-
+// 		// console.log(JSON.parse(reportData_Url)?.page_url === '/homebm/loantxns', 'check__ooooooooooooooo', JSON.parse(reportData_Url));
+		
 // 	if(JSON.parse(reportData_Url)?.page_url === '/homebm/loantxns'){
 
 // 		const storedData = localStorage.getItem("reportData");
-
+	
 // 		if (storedData) {
+// 		  // If you stored as JSON earlier, parse it
 // 		  try {
+// 			// setLoading(false)
 // 			const parsedData = JSON.parse(storedData);
 // 			console.log("Report Data loaded: ifffff", storedData);
 
 // 			setReportData(parsedData)
 // 			setReportRelated(JSON.parse(reportData_Url))
+// 			// populateColumns(parsedData, txnGrpHeader);
 
 // 			populateColumns(
 // 					parsedData, 
@@ -191,111 +357,18 @@ function LoanTransactionsMain() {
 
 // 			localStorage.removeItem("reportData");
 // 			localStorage.removeItem("reportData_Url");
-
+// 			// localStorage.removeItem("reportDataProgress")
+			
 // 		  } catch {
 // 			console.log("Report Data loaded: else", storedData);
 // 		  }
-
+	
+// 		  // ✅ Run your function here because reportData exists
+// 		//   myFunctionOnLoad();
 // 		}
 // 	}
 // 	}
 //   }, []); // Runs once on page load
-
-
-useEffect(() => {
-  if (!socket && userDetails?.emp_id) {
-    const newSocket = connectSocket(userDetails.emp_id);
-
-    if (newSocket) {
-      newSocket.on("loan_tns_repo_notification", async (data) => {
-        const msgData = data?.msg?.msg;
-        const pageUrl = data?.req_data;
-
-        try {
-          // ✅ Save into IndexedDB instead of localStorage
-          await setItem("reportData", msgData);
-          await setItem("reportData_Url", pageUrl);
-          await setItem("reportDataProgress", "done");
-
-          setReportProgress("done");
-          setLoading(false);
-
-          // ✅ Also update state directly so UI refreshes immediately
-          setReportData(msgData);
-          setReportRelated(pageUrl);
-
-          populateColumns(
-            msgData,
-            searchType2 === "G"
-              ? txnGrpHeader
-              : searchType2 === "F"
-              ? txnFundHeader
-              : searchType2 === "C"
-              ? txnCoHeader
-              : searchType2 === "M"
-              ? txnMembHeader
-              : branchwiseTxnReportHeader
-          );
-
-          Message("success", "Your Loan Transactions Reports process is complete");
-        } catch (err) {
-          console.error("Failed saving report data to IndexedDB", err);
-        }
-      });
-    } else {
-      console.error("Failed to establish socket connection");
-    }
-  }
-}, [socket, userDetails, connectSocket]);
-
-
-  useEffect(() => {
-  const loadReportData = async () => {
-    try {
-      const reportData_Url = await getItem("reportData_Url");
-
-      if (reportData_Url != null) {
-        if (reportData_Url?.page_url === "/homebm/loantxns") {
-          const storedData = await getItem("reportData");
-
-          if (storedData) {
-            try {
-            //   console.log("Report Data loaded: ifffff", storedData);
-
-              setReportData(storedData);
-              setReportRelated(reportData_Url);
-
-              populateColumns(
-                storedData,
-                searchType2 === "G"
-                  ? txnGrpHeader
-                  : searchType2 === "F"
-                  ? txnFundHeader
-                  : searchType2 === "C"
-                  ? txnCoHeader
-                  : searchType2 === "M"
-                  ? txnMembHeader
-                  : branchwiseTxnReportHeader
-              );
-
-              // cleanup after use
-              await removeItem("reportData");
-              await removeItem("reportData_Url");
-              // await removeItem("reportDataProgress");
-            } catch (err) {
-              console.log("Error parsing stored data:", err);
-            }
-          }
-        }
-      }
-    } catch (err) {
-      console.error("Error loading from IndexedDB", err);
-    }
-  };
-
-  loadReportData();
-}, []); // runs once on page load
-
 
 	const onChange = (e) => {
 		console.log("radio1 checked", e)
@@ -336,8 +409,8 @@ useEffect(() => {
 				// if(res?.data?.transaction_group_data?.suc == 1){
 				if(res?.data?.suc == 1){
 
-				// localStorage.setItem("reportDataProgress", 'loading')
-				setReportProgress('loading')
+				localStorage.setItem("reportDataProgress_G", 'loading')
+				setReportProgress_G('loading')
 
 				if (!socket) {
 				console.warn("Socket not connected, attempting to reconnect...")
@@ -438,6 +511,9 @@ useEffect(() => {
 					// else{
 					// 	Message('warning','No Data Available')
 					// }
+
+					localStorage.setItem("reportDataProgress_F", 'loading')
+					setReportProgress_F('loading')
 
 					if (!socket) {
 					console.warn("Socket not connected, attempting to reconnect...")
@@ -542,6 +618,9 @@ useEffect(() => {
 					// 	Message('warning','No Data Available')
 					// }
 
+					localStorage.setItem("reportDataProgress_CO", 'loading')
+					setReportProgress_CO('loading')
+
 					if (!socket) {
 					console.warn("Socket not connected, attempting to reconnect...")
 					const newSocket = connectSocket(userDetails?.emp_id)
@@ -609,6 +688,9 @@ useEffect(() => {
 				// 	Message('warning','No Data Available')
 				// }
 
+				localStorage.setItem("reportDataProgress_B", 'loading')
+				setReportProgress_B('loading')
+
 				if (!socket) {
 				console.warn("Socket not connected, attempting to reconnect...")
 				const newSocket = connectSocket(userDetails?.emp_id)
@@ -674,6 +756,9 @@ useEffect(() => {
 					// else{
 					// 	Message('warning','No Data Available');
 					// }
+
+					localStorage.setItem("reportDataProgress_M", 'loading')
+					setReportProgress_M('loading')
 
 					if (!socket) {
 					console.warn("Socket not connected, attempting to reconnect...")
@@ -913,7 +998,11 @@ useEffect(() => {
 	}
 	return (
 		<div>
-			<Sidebar mode={2} reportProgress={reportProgress} />
+			<Sidebar mode={2} reportProgress_G_={reportProgress_G}  
+			reportProgress_F_={reportProgress_F}
+			reportProgress_CO_={reportProgress_CO}
+			reportProgress_M_={reportProgress_M}
+			reportProgress_B_={reportProgress_B} />
 			<Spin
 				indicator={<LoadingOutlined spin />}
 				size="large"
