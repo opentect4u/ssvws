@@ -40,7 +40,7 @@ import { Message, MessageWithLink } from "./Message"
 import { SwapCallsRounded } from "@mui/icons-material"
 import { setItem } from "./indexedDB";
 
-function Sidebar({ mode = 0 }) {
+function Sidebar({ mode = 0, reportProgress_G_, reportProgress_F_, reportProgress_CO_, reportProgress_M_, reportProgress_B_ }) {
 	const location = useLocation()
 	const [current, setCurrent] = React.useState("mail")
 	const [theme, setTheme] = useState(localStorage.getItem("col"))
@@ -49,7 +49,12 @@ function Sidebar({ mode = 0 }) {
 	const [open, setOpen] = useState(false)
 	const [permissions, setPermissions] = useState()
 	const { socket, connectSocket } = useSocket()
-	
+	// const [reportProgress, setReportProgress] = useState(reportProgress_)
+	const [reportProgress_G, setReportProgress_G] = useState(reportProgress_G_)
+	const [reportProgress_F, setReportProgress_F] = useState(reportProgress_F_)
+	const [reportProgress_CO, setReportProgress_CO] = useState(reportProgress_CO_)
+	const [reportProgress_M, setReportProgress_M] = useState(reportProgress_M_)
+	const [reportProgress_B, setReportProgress_B] = useState(reportProgress_B_)
 	// useState(() => {
 	// 	setTheme(localStorage.getItem("col"))
 	// }, [localStorage.getItem("col")])
@@ -70,6 +75,46 @@ function Sidebar({ mode = 0 }) {
 				// Message("success", "Month end details updated successfully")
 				MessageWithLink("success", "Your month end process is complete. To view the report,", "/homebm/overduereport", 'Click Here')
 				})
+
+				newSocket.on("loan_tns_repo_notification", async (data) => {
+				try {
+				await setItem("reportData", data?.msg?.msg);
+				await setItem("reportData_Url", data?.req_data);
+				await setItem("reportDataProgress", "done");
+
+				if(data?.req_data?.searchFor == 'Groupwise'){
+				localStorage.setItem("reportDataProgress_G", 'done')
+				setReportProgress_G('done')
+				}
+
+				if(data?.req_data?.searchFor == 'Fundwise'){
+				localStorage.setItem("reportDataProgress_F", 'done')
+				setReportProgress_F('done')
+				}
+				
+				if(data?.req_data?.searchFor == 'CO-wise'){
+				localStorage.setItem("reportDataProgress_CO", 'done')
+				setReportProgress_CO('done')
+				}
+				if(data?.req_data?.searchFor == 'Memberwise'){
+				localStorage.setItem("reportDataProgress_M", 'done')
+				setReportProgress_M('done')
+				}
+				if(data?.req_data?.searchFor == 'Branchwise'){
+				localStorage.setItem("reportDataProgress_B", 'done')
+				setReportProgress_B('done')
+				}
+
+				MessageWithLink(
+				"success",
+				"Your Loan Transactions Reports process is complete. To view the report,",
+				`${data?.req_data?.page_url}`,
+				"Click Here"
+				);
+				} catch (err) {
+				console.error("Failed saving to IndexedDB", err);
+				}
+				});
 
 
 			} else {
@@ -732,6 +777,54 @@ function Sidebar({ mode = 0 }) {
 					
 								</div> */}
 
+
+
+<div style={{alignItems:'center', display:'flex'}} className="mr-10">
+{reportProgress_G || reportProgress_F || reportProgress_CO || reportProgress_M || reportProgress_B
+  ? reportProgress_G === "loading" || reportProgress_F === "loading" || reportProgress_CO === "loading" || reportProgress_M === "loading" || reportProgress_B === "loading" ? (
+      <>
+        <span style={{ fontSize: 12, color: "#76c90d" }}>Report Generating...</span>
+        <Spin
+          indicator={<LoadingOutlined style={{ color: "#76c90d" }} spin />}
+          size="small"
+          style={{ color: "#76c90d", marginLeft: 5 }}
+          className="text-white"
+          spinning={true}
+        />
+      </>
+    ) : (
+      <p></p>
+    )
+  : (() => {
+      const keys = [
+        "reportDataProgress_G",
+        "reportDataProgress_F",
+        "reportDataProgress_CO",
+        "reportDataProgress_M",
+        "reportDataProgress_B",
+        "reportDataProgress", // keep your existing key too
+      ];
+
+      const isAnyLoading = keys.some(
+        (key) => localStorage.getItem(key) === "loading"
+      );
+
+      return isAnyLoading ? (
+        <>
+          <span style={{ fontSize: 12, color: "#76c90d" }}>Report Generating...</span>
+          <Spin
+            indicator={<LoadingOutlined style={{ color: "#76c90d" }} spin />}
+            size="small"
+            style={{ color: "#76c90d", marginLeft: 5 }}
+            className="text-white"
+            spinning={true}
+          />
+        </>
+      ) : (
+        <p></p>
+      );
+    })()}
+</div>
 
 					{/* <div className="italic mr-10">
 						⇨ Date of Operation : {new Date().toLocaleDateString("en-GB")}

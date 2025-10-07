@@ -190,6 +190,9 @@ const SignInPage = () => {
 			// 			Message("error", "Some error on server while logging in...")
 			// 		})
 			// }
+
+			console.log(creds, 'credscreds');
+			
 			if (parseInt(inputAnswer) === num1 + num2) {
 			handleSignIn(creds, "login_web")
 			} else {
@@ -202,14 +205,17 @@ const SignInPage = () => {
 	})
 
 	const handleSignIn = async (creds, api_name) =>{
-		
+
+			// forceClearSession()
 		
 			await axios
 			.post(`${url}/${api_name}`, creds)
 			.then((res) => {
 				if (res?.data?.suc === 0) {
-					Message("error", res?.data?.msg)
-					setVisible(true)
+					// Message("error", res?.data?.msg)
+					// setVisible(true)
+					
+					forceClearSession()
 					return
 				}
 				var userDtls = res?.data?.user_dtls
@@ -253,9 +259,11 @@ const SignInPage = () => {
 		try {
 			const res = await axios.post(`${url}/clear_session`, creds)
 			if (res.data.suc === 1) {
-				Message("success", "Active sessions cleared successfully!")
+				// Message("success", "Active sessions cleared successfully!")
 				formik.handleSubmit()
-			} else console.error("Session clearing failed", res.data.msg)
+			} else {
+				// console.error("Session clearing failed", res.data.msg)
+			}
 		} catch (err) {
 			console.error(err)
 		}

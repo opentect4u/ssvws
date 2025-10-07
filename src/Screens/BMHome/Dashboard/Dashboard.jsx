@@ -404,6 +404,8 @@ export default function Dashboard() {
 		try {
 			const creds = { branch_code: getBranchCodes()[0] }
 			const res = await axios.post(`${url}/admin/date_of_operation`, creds)
+			console.log(res?.data?.data?.date_of_operation, 'dataaaaaaaa');
+			
 			setDateOfOperation(res?.data?.data?.date_of_operation)
 		} catch {
 		} finally {
@@ -635,6 +637,8 @@ export default function Dashboard() {
 			const res = await axios.post(`${url}/admin/dashboard_overdue_dtls`, creds);
 			console.log(res);
 			console.log(odFlags.flag, "OD FLAG");
+			console.log(res?.data?.data?.total_loan_od, 'll', moment().format("DD-MM-YYYY"), 'dataaaaaaaa');
+			
 			setOdDetails(
 				odFlags.flag === "M"
 					? {
@@ -662,6 +666,7 @@ export default function Dashboard() {
 					data: res?.data?.data?.total_loan_od,
 					noOfGroups: res?.data?.data?.total_overdue_groups,
 					date: moment().subtract(1, 'M').format("MMM YYYY"),
+					// date: dateOfOperation,
 				})
 			}
 			
@@ -683,6 +688,9 @@ export default function Dashboard() {
 				`${url}/admin/dashboard_overdue_amt_fr_allbrn`,
 				creds
 			)
+
+			console.log(res?.data?.data?.total_loan_od, 'll', res?.data?.data?.total_overdue_groups, 'lll', moment().subtract(1, 'M').format("MMM YYYY"), 'dataaaaaaaa');
+			
 			setOdDetails(
 				odFlags.flag === "M"
 					? {
@@ -710,6 +718,7 @@ export default function Dashboard() {
 					data: res?.data?.data?.total_loan_od,
 					noOfGroups: res?.data?.data?.total_overdue_groups,
 					date: moment().subtract(1, 'M').format("MMM YYYY"),
+					// date: dateOfOperation,
 				})
 			}
 		} catch {
@@ -851,7 +860,10 @@ export default function Dashboard() {
 		<div className="p-8 space-y-6 bg-slate-50 min-h-screen rounded-3xl">
 			{
 				(odDtls && odDtls?.noOfGroups > 0) && <AlertComp
-					msg={<p className="text-3xl font-normal"><span className="text-lg ">Total OD as on {odDtls?.date} for {odDtls?.noOfGroups} group is </span>{formatINR(odDtls?.data)}</p>}
+					msg={<p className="text-3xl font-normal"><span className="text-lg ">Total OD as on 
+					{/* {odDtls?.date}  */}
+					{' '+ dateOfOperation + ' '} 
+					for {odDtls?.noOfGroups} group is </span>{formatINR(odDtls?.data)}</p>}
 				/>
 			}
 			<div className="flex flex-col md:flex-row justify-between items-center">

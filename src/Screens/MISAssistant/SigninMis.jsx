@@ -110,8 +110,9 @@ function SigninMis() {
 				.post(`${url}/login_web`, creds)
 				.then((res) => {
 					if (res?.data?.suc === 0) {
-						Message("error", res?.data?.msg)
-						setVisible(true)
+						// Message("error", res?.data?.msg)
+						forceClearSession(formik.values.user_id, formik.values.password)
+						// setVisible(true)
 
 						return
 					}

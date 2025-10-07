@@ -27,6 +27,45 @@ function AppContent() {
 	// 	}
 	// }, [location, navigate])
 
+	const publicPaths = new Set([
+	routePaths.LANDING, // "/"
+	routePaths.LANDING_LOAN,
+	"/loan",
+	"/loan/",
+
+	"/payroll",
+	"/payroll/",
+
+	"/ssvws_fin",
+	"/ssvws_fin/",
+	])
+
+
+	const checkSessionId = async () => {
+		try {
+			const userDetails = JSON.parse(localStorage.getItem("user_details")) || {}
+			const { data } = await axios.post(`${url}/check_session_id`, {
+				emp_id: userDetails.emp_id,
+				session_id: sessionId,
+			})
+			if (!data.match) {
+				// Message("error", "Session expired. Please login again.")
+				localStorage.clear()
+				navigate(routePaths.LANDING, { replace: true })
+			}
+		} catch (err) {
+			console.error("Session-check error:", err)
+		}
+	}
+
+	useEffect(() => {
+		// if we have a session and we land on a non-public path, validate it
+		if (sessionId && !publicPaths.has(location.pathname)) {
+			checkSessionId()
+		}
+	}, [location.pathname])
+
+
 	useEffect(() => {
 	const user_details = JSON.parse(localStorage.getItem("user_details"));
 
