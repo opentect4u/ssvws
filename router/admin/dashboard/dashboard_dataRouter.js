@@ -927,28 +927,59 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
 
 
       if (data.flag === 'M') {
+      // totalLoanDmd = await db_Select(
+      //   "IFNULL(SUM(a.dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT b.group_code) AS tot_demand_grp",
+      //   "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+      //   `a.branch_code IN (${data.branch_code})`,
+      //   null
+      // );
       totalLoanDmd = await db_Select(
-        "IFNULL(SUM(a.dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT b.group_code) AS tot_demand_grp",
-        "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-        `a.branch_code IN (${data.branch_code})`,
+        "IFNULL(SUM(dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT group_cd) AS tot_demand_grp",
+        "td_loan_month_demand",
+        `branch_code IN (${data.branch_code})
+         AND demand_date = (SELECT MAX(demand_date)
+                     FROM td_loan_month_demand
+                     WHERE branch_code IN (${data.branch_code}))`,
         null
       );
     } else if (data.flag === 'W') {
+      // weeklyLoanDmd = await db_Select(
+      //   "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
+      //   "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+      //    `a.branch_code IN (${data.branch_code})
+      //     AND b.period_mode = 'Weekly' 
+      //     AND b.recovery_day = '${data.recov_day}'`,
+      //   null
+      // );
       weeklyLoanDmd = await db_Select(
-        "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT b.group_code) AS weekly_demand_grp",
-        "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+        "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT a.group_cd) AS weekly_demand_grp",
+        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
          `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Weekly' 
-          AND b.recovery_day = '${data.recov_day}'`,
+          AND b.recovery_day = '${data.recov_day}'
+          AND a.demand_date = (SELECT MAX(demand_date)
+                            FROM td_loan_month_demand
+                            WHERE branch_code IN (${data.branch_code}))`,
         null
       );
     } else {
+      // monthlyLoanDmd = await db_Select(
+      //   "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
+      //   "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+      //    `a.branch_code IN (${data.branch_code})
+      //     AND b.period_mode = 'Monthly' 
+      //     AND b.recovery_day = '${data.recov_day}'`,
+      //   null
+      // );
       monthlyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
-        "tt_loan_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
          `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Monthly' 
-          AND b.recovery_day = '${data.recov_day}'`,
+          AND b.recovery_day = '${data.recov_day}'
+          AND a.demand_date = (SELECT MAX(demand_date)
+                           FROM td_loan_month_demand
+                           WHERE IN (${data.branch_code}))`,
         null
       );
     }
@@ -970,6 +1001,86 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
     console.error("Error fetching dshboard total loan demand details:", error);
     res.send({ suc: 0, msg: "An error occurred" });
  }
+});
+
+// for all branch demand
+dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) => {
+  try {
+    var data = req.body;
+    // console.log(data,'datas');
+    
+
+    const result = {
+      total_loan_demand: 0,
+      total_demand_groups: 0,
+      weekly_loan_demand: 0,
+      weekly_demand_groups: 0,
+      monthly_loan_demand: 0,
+      monthly_demand_groups: 0,
+    };
+    
+    const branchDateMap = {};
+
+    for (let branchCode of data.branch_code) {
+      // let rawDate = branchDateMap[branchCode];
+      // console.log(rawDate,'hyt');
+
+
+      if (data.flag === 'M') {
+        totalLoanDmd = await db_Select(
+        "IFNULL(SUM(dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT group_cd) AS tot_demand_grp",
+        "td_loan_month_demand",
+        `branch_code = '${branchCode}'
+         AND demand_date = (SELECT MAX(demand_date)
+                     FROM td_loan_month_demand
+                     WHERE branch_code = '${branchCode}')`,
+        null
+      );
+
+        result.total_loan_demand += Number(totalLoanDmd.msg[0].tot_loan_Dmd) || 0;
+        result.total_demand_groups += Number(totalLoanDmd.msg[0].tot_demand_grp) || 0;
+
+      } else if (data.flag === 'W') {
+       weeklyLoanDmd = await db_Select(
+        "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT a.group_cd) AS weekly_demand_grp",
+        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+         `a.branch_code = '${branchCode}'
+          AND b.period_mode = 'Weekly' 
+          AND b.recovery_day = '${data.recov_day}'
+          AND a.demand_date = (SELECT MAX(demand_date)
+                            FROM td_loan_month_demand
+                            WHERE branch_code = '${branchCode}')`,
+        null
+      );
+
+        result.weekly_loan_demand += Number(weeklyLoanDmd.msg[0].weekly_Dmd) || 0;
+        result.weekly_demand_groups += Number(weeklyLoanDmd.msg[0].weekly_demand_grp) || 0;
+
+      } else {
+         monthlyLoanDmd = await db_Select(
+        "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
+        "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
+         `a.branch_code = '${branchCode}'
+          AND b.period_mode = 'Monthly' 
+          AND b.recovery_day = '${data.recov_day}'
+          AND a.demand_date = (SELECT MAX(demand_date)
+                           FROM td_loan_month_demand
+                           WHERE branch_code = '${branchCode}')`,
+        null
+      );
+        result.monthly_loan_demand += Number(monthlyLoanDmd.msg[0].monthly_Dmd) || 0;
+        result.monthly_demand_groups += Number(monthlyLoanDmd.msg[0].monthly_demand_grp) || 0;
+
+      }
+
+    }
+    // console.log("Final Aggregated Result:", result);
+    res.send({ suc: 1, data: result });
+
+  } catch (error) {
+    console.error("Error fetching dashboard overdue amounts:", error);
+    res.send({ suc: 0, msg: "An error occurred" });
+  }
 });
 
 //Dashboard  total overdue details today and this month
