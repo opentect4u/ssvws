@@ -1011,12 +1011,12 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
     
 
     const result = {
-      total_loan_demand: 0,
-      total_demand_groups: 0,
-      weekly_loan_demand: 0,
-      weekly_demand_groups: 0,
-      monthly_loan_demand: 0,
-      monthly_demand_groups: 0,
+      total_loan_dmd: 0,
+      total_dmd_groups: 0,
+      weekly_loan_dmd: 0,
+      weekly_dmd_groups: 0,
+      monthly_loan_dmd: 0,
+      monthly_dmd_groups: 0,
     };
     
     const branchDateMap = {};
@@ -1037,8 +1037,8 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         null
       );
 
-        result.total_loan_demand += Number(totalLoanDmd.msg[0].tot_loan_Dmd) || 0;
-        result.total_demand_groups += Number(totalLoanDmd.msg[0].tot_demand_grp) || 0;
+        result.total_loan_dmd += Number(totalLoanDmd.msg[0].tot_loan_Dmd) || 0;
+        result.total_dmd_groups += Number(totalLoanDmd.msg[0].tot_demand_grp) || 0;
 
       } else if (data.flag === 'W') {
        weeklyLoanDmd = await db_Select(
@@ -1053,8 +1053,8 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         null
       );
 
-        result.weekly_loan_demand += Number(weeklyLoanDmd.msg[0].weekly_Dmd) || 0;
-        result.weekly_demand_groups += Number(weeklyLoanDmd.msg[0].weekly_demand_grp) || 0;
+        result.weekly_loan_dmd += Number(weeklyLoanDmd.msg[0].weekly_Dmd) || 0;
+        result.weekly_dmd_groups += Number(weeklyLoanDmd.msg[0].weekly_demand_grp) || 0;
 
       } else {
          monthlyLoanDmd = await db_Select(
@@ -1068,8 +1068,8 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
                            WHERE branch_code = '${branchCode}')`,
         null
       );
-        result.monthly_loan_demand += Number(monthlyLoanDmd.msg[0].monthly_Dmd) || 0;
-        result.monthly_demand_groups += Number(monthlyLoanDmd.msg[0].monthly_demand_grp) || 0;
+        result.monthly_loan_dmd += Number(monthlyLoanDmd.msg[0].monthly_Dmd) || 0;
+        result.monthly_dmd_groups += Number(monthlyLoanDmd.msg[0].monthly_demand_grp) || 0;
 
       }
 
