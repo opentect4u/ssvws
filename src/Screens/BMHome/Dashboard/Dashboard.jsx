@@ -1602,16 +1602,16 @@ export default function Dashboard() {
 						value: formatINR(dmdDetails_w?.data),
 					}}
 					right1Data={{
-						label: "Month - Groups",
-						value: formatINR(dmdDetails_m.noOfGroups),
+						label: "Number Of Groups",
+						value: formatNumber(dmdDetails_m.noOfGroups),
 					}}
 					right2Data={{
-						label: `${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode) - Groups`,
-						value: formatINR(dmdDetails_d.noOfGroups),
+						label: `Number Of Groups`,
+						value: formatNumber(dmdDetails_d.noOfGroups),
 					}}
 					right3Data={{
-						label: `${new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date())}\n(Weekly Mode) - Groups`,
-						value: formatINR(dmdDetails_w.noOfGroups),
+						label: `Number Of Groups`,
+						value: formatNumber(dmdDetails_w.noOfGroups),
 					}}
 					leftColor="#2563EB"
 					rightColor="#334155"
@@ -1651,7 +1651,7 @@ export default function Dashboard() {
 						<h3 className="text-lg font-medium text-slate-900 rounded-full">
 							Overdue Demand
 						</h3>
-						{/* <div className="space-x-2">
+						<div className="space-x-2">
 							{[
 								"Month",
 								`${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode)`,
@@ -1697,7 +1697,7 @@ export default function Dashboard() {
 									{option}
 								</button>
 							))}
-						</div> */}
+						</div>
 					</div>
 					{/* <div className="grid grid-cols-2 align-middle bg-white p-6 mt-5 overflow-hidden"> */}
 
@@ -1719,16 +1719,16 @@ export default function Dashboard() {
 						value: formatINR(odDetails_w?.data),
 					}}
 					right1Data={{
-						label: "Month - Groups",
-						value: formatINR(odDetails_m.noOfGroups),
+						label: "Number Of Groups",
+						value: formatNumber(odDetails_m.noOfGroups),
 					}}
 					right2Data={{
-						label: `${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode) - Groups`,
-						value: formatINR(odDetails_d.noOfGroups),
+						label: `Number Of Groups`,
+						value: formatNumber(odDetails_d.noOfGroups),
 					}}
 					right3Data={{
-						label: `${new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date())}\n(Weekly Mode) - Groups`,
-						value: formatINR(odDetails_w.noOfGroups),
+						label: `Number Of Groups`,
+						value: formatNumber(odDetails_w.noOfGroups),
 					}}
 					leftColor="#2563EB"
 					rightColor="#334155"
