@@ -97,6 +97,9 @@ export default function Dashboard() {
 	const [loadingLong, setLoadingLong] = useState(() => false)
 	const [loadingOd, setLoadingOd] = useState(() => false)
 	const [loadingDmd, setLoadingDmd] = useState(() => false)
+
+	const [loadingDmd_m_d_w, setLoadingDmd_m_d_w] = useState(() => false)
+	
 	const [branches, setBranches] = useState(() => [])
 	const [choosenBranch, setChoosenBranch] = useState(() =>
 		+branchId === 100 ? "100" : branchId
@@ -180,6 +183,43 @@ export default function Dashboard() {
 		data: "",
 		noOfGroups: "",
 	})
+
+
+	const [odDetails_m, setOdDetails_m] = useState({
+		data: "",
+		noOfGroups: "",
+	})
+
+	const [odDetails_d, setOdDetails_d] = useState({
+		data: "",
+		noOfGroups: "",
+	})
+
+	const [odDetails_w, setOdDetails_w] = useState({
+		data: "",
+		noOfGroups: "",
+	})
+
+
+	const [dmdDetails_m, setDmdDetails_m] = useState({
+		data: "",
+		noOfGroups: "",
+	})
+	const [dmdDetails_d, setDmdDetails_d] = useState({
+		data: "",
+		noOfGroups: "",
+	})
+	const [dmdDetails_w, setDmdDetails_w] = useState({
+		data: "",
+		noOfGroups: "",
+	})
+
+
+
+
+
+
+
 	const [demandFlag, setDemandFlag] = useState(() => 0)
 
 	const activeGrtData = grtPeriod === "Today" ? grtDataToday : grtDataMonth
@@ -676,7 +716,7 @@ export default function Dashboard() {
 		}
 	}
 
-	const fetchOverdueDetailsForAllBranches = async () => {
+	const fetchOverdueDetailsForAllBranches = async (para) => {
 		setLoadingOd(true)
 		try {
 			const creds = {
@@ -684,12 +724,12 @@ export default function Dashboard() {
 				branch_code: getBranchCodes(),
 				recov_day: odFlags.recovDay,
 			}
-			const res = await axios.post(
-				`${url}/admin/dashboard_overdue_amt_fr_allbrn`,
-				creds
-			)
 
-			console.log(res?.data?.data?.total_loan_od, 'll', res?.data?.data?.total_overdue_groups, 'lll', moment().subtract(1, 'M').format("MMM YYYY"), 'dataaaaaaaa');
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_overdue_dtls` : `${url}/admin/dashboard_overdue_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
 			
 			setOdDetails(
 				odFlags.flag === "M"
@@ -727,15 +767,162 @@ export default function Dashboard() {
 		}
 	}
 
-	const generateDemandData = async () => {
-		setLoadingDmd(true)
+	const fetchOverdueDetailsForAllBranches__m = async (para) => {
+		setLoadingOd(true)
 		try {
 			const creds = {
+				flag: "M",
+				branch_code: getBranchCodes(),
+				recov_day: "",
+			}
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_overdue_dtls` : `${url}/admin/dashboard_overdue_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
+			// const res = await axios.post(
+			// 	`${url}/admin/dashboard_overdue_amt_fr_allbrn`,
+			// 	creds
+			// )
+
+			// console.log(res?.data?.data?.total_loan_od, 'll', res?.data?.data?.total_overdue_groups, 'lll', moment().subtract(1, 'M').format("MMM YYYY"), 'dataaaaaaaa');
+			
+			setOdDetails_m(
+					{
+					data: res?.data?.data?.total_loan_od,
+					noOfGroups: res?.data?.data?.total_overdue_groups,
+					}
+					  
+			)
+			if(odFlags.flag == 'M'){
+				setOdDtls({
+					data: res?.data?.data?.total_loan_od,
+					noOfGroups: res?.data?.data?.total_overdue_groups,
+					date: moment().subtract(1, 'M').format("MMM YYYY"),
+					// date: dateOfOperation,
+				})
+			}
+		} catch {
+		} finally {
+			setLoadingOd(false)
+		}
+	}
+
+	const fetchOverdueDetailsForAllBranches__d = async (para) => {
+		setLoadingOd(true)
+		try {
+			const creds = {
+				flag: "D",
+				branch_code: getBranchCodes(),
+				recov_day: new Date().getDate(),
+			}
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_overdue_dtls` : `${url}/admin/dashboard_overdue_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
+
+			// const res = await axios.post(
+			// 	`${url}/admin/dashboard_overdue_amt_fr_allbrn`,
+			// 	creds
+			// )
+
+			console.log(res?.data?.data?.total_loan_od, 'll', res?.data?.data?.total_overdue_groups, 'lll', moment().subtract(1, 'M').format("MMM YYYY"), 'dataaaaaaaa');
+			
+			setOdDetails_d(
+				{
+				data: res?.data?.data?.monthly_loan_od,
+				noOfGroups: res?.data?.data?.monthly_overdue_groups,
+				}
+					  
+			)
+			if(odFlags.flag == 'M'){
+				setOdDtls({
+					data: res?.data?.data?.total_loan_od,
+					noOfGroups: res?.data?.data?.total_overdue_groups,
+					date: moment().subtract(1, 'M').format("MMM YYYY"),
+					// date: dateOfOperation,
+				})
+			}
+		} catch {
+		} finally {
+			setLoadingOd(false)
+		}
+	}
+
+	const fetchOverdueDetailsForAllBranches__w = async (para) => {
+		setLoadingOd(true)
+		try {
+			const creds = {
+				flag: "W",
+				branch_code: getBranchCodes(),
+				recov_day: new Date().getDay() + 1,
+			}
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_overdue_dtls` : `${url}/admin/dashboard_overdue_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
+			// const res = await axios.post(
+			// 	`${url}/admin/dashboard_overdue_amt_fr_allbrn`,
+			// 	creds
+			// )
+
+			console.log(res?.data?.data?.total_loan_od, 'll', res?.data?.data?.total_overdue_groups, 'lll', moment().subtract(1, 'M').format("MMM YYYY"), 'dataaaaaaaa');
+			
+			setOdDetails_w(
+			{
+			data: res?.data?.data?.weekly_loan_od,
+			noOfGroups: res?.data?.data?.weekly_overdue_groups,
+			}
+			)
+			if(odFlags.flag == 'M'){
+				setOdDtls({
+					data: res?.data?.data?.total_loan_od,
+					noOfGroups: res?.data?.data?.total_overdue_groups,
+					date: moment().subtract(1, 'M').format("MMM YYYY"),
+					// date: dateOfOperation,
+				})
+			}
+		} catch {
+		} finally {
+			setLoadingOd(false)
+		}
+	}
+
+	const generateDemandData = async (para) => {
+
+		// console.log(getBranchCodes()[0], 'branch changed', 'llll', getBranchCodes(), para);
+		
+		setLoadingDmd(true)
+		setLoadingDmd_m_d_w(true)
+		try {
+			const creds_sub = {
 				branch_code: getBranchCodes()[0],
 			}
-			const res = await axios.post(`${url}/admin/dashboard_generate_dmd`, creds)
-			console.log("DEMAND GEN", res?.data)
+
+			const creds_main = {
+				branch_code: getBranchCodes(),
+			}
+
+			let res;
+
+			// ✅ Conditional API call based on 'para'
+			if (para === 'sub') {
+			res = await axios.post(`${url}/admin/dashboard_generate_dmd`, creds_sub);
+			} else {
+			res = await axios.post(`${url}/admin/dashboard_demand_amt_fr_allbrn`, creds_main);
+			}
+
 			setDemandFlag(res?.data?.data[0]?.result?.suc)
+
+			if (res?.data?.data[0]?.result?.suc === 1){
+				
+				fetchDemandDetails__m()
+				fetchDemandDetails__d()
+				fetchDemandDetails__w()
+			}
+			
 		} catch {
 		} finally {
 			setLoadingDmd(false)
@@ -744,6 +931,9 @@ export default function Dashboard() {
 
 	const fetchDemandDetails = async () => {
 		setLoadingDmd(true)
+		// alert(dmdFlags?.flag, dmdFlags?.recovDay)
+		console.log(dmdFlags?.flag, 'DEMAND GEN', dmdFlags);
+		
 		try {
 			const creds = {
 				flag: dmdFlags.flag,
@@ -778,8 +968,100 @@ export default function Dashboard() {
 		}
 	}
 
+
+	const fetchDemandDetails__m = async (para) => {
+		setLoadingDmd_m_d_w(true)
+		
+		try {
+			const creds = {
+				flag: "M",
+				branch_code: getBranchCodes(),
+				recov_day: "",
+			}
+
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_demand_dtls` : `${url}/admin/dashboard_demand_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
+			console.log(res?.data?.data, 'll', res?.data?.data?.total_demand_groups, 'ttttttttttttttttttttt');
+			
+
+			setDmdDetails_m(
+				      {
+							data: res?.data?.data?.total_loan_dmd,
+							noOfGroups: res?.data?.data?.total_demand_groups,
+					  }
+			);
+			// fetchDemandDetails__d()
+		} catch {
+		} finally {
+			setLoadingDmd_m_d_w(false)
+		}
+	}
+
+	const fetchDemandDetails__d = async (para) => {
+		setLoadingDmd_m_d_w(true)
+		
+		try {
+			const creds = {
+				// flag: dmdFlags.flag,
+				flag: "D",
+				branch_code: getBranchCodes(),
+				// recov_day: dmdFlags.recovDay,
+				recov_day: new Date().getDate(),
+			}
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_demand_dtls` : `${url}/admin/dashboard_demand_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
+			console.log(res?.data?.data, 'll', res?.data?.data?.total_demand_groups, 'ttttttttttttttttttttt');
+			
+			setDmdDetails_d(
+				      {
+							data: res?.data?.data?.monthly_loan_dmd,
+							noOfGroups: res?.data?.data?.monthly_demand_groups
+					  }
+			);
+			// fetchDemandDetails__w()
+		} catch {
+		} finally {
+			setLoadingDmd_m_d_w(false)
+		}
+	}
+
+	const fetchDemandDetails__w = async (para) => {
+		setLoadingDmd_m_d_w(true)
+		
+		try {
+			const creds = {
+				flag: "W",
+				branch_code: getBranchCodes(),
+				recov_day: new Date().getDay() + 1,
+			}
+
+			const endpoint = para === 'sub' ? `${url}/admin/dashboard_demand_dtls` : `${url}/admin/dashboard_demand_amt_fr_allbrn`;
+
+			const res = await axios.post(endpoint, creds)
+
+			console.log(res?.data?.data, 'll', res?.data?.data?.total_demand_groups, 'ttttttttttttttttttttt');
+
+			setDmdDetails_w(
+				      {
+							data: res?.data?.data?.weekly_loan_dmd,
+							noOfGroups: res?.data?.data?.weekly_demand_groups,
+					  }
+			);
+		} catch {
+		} finally {
+			setLoadingDmd_m_d_w(false)
+		}
+	}
+
 	useEffect(() => {
 		fetchBranches()
+
 	}, [])
 
 	useEffect(() => {
@@ -814,9 +1096,30 @@ export default function Dashboard() {
 				console.log(choosenBranch)
 
 			if (+choosenBranch !== 100) {
-				fetchOverdueDetails()
+				// fetchOverdueDetails()
+				fetchOverdueDetailsForAllBranches('sub')
+				fetchOverdueDetailsForAllBranches__m('sub')
+				fetchOverdueDetailsForAllBranches__d('sub')
+				fetchOverdueDetailsForAllBranches__w('sub')
+
+				// generateDemandData('sub')
+
+				fetchDemandDetails__m('sub')
+				fetchDemandDetails__d('sub')
+				fetchDemandDetails__w('sub')
+
 			} else {
-				fetchOverdueDetailsForAllBranches()
+				fetchOverdueDetailsForAllBranches('main')
+
+				fetchOverdueDetailsForAllBranches__m('main')
+				fetchOverdueDetailsForAllBranches__d('main')
+				fetchOverdueDetailsForAllBranches__w('main')
+
+				// generateDemandData('main')
+
+				fetchDemandDetails__m('main')
+				fetchDemandDetails__d('main')
+				fetchDemandDetails__w('main')
 			}
 		}
 	}, [odFlags, choosenBranch, branches])
@@ -824,12 +1127,19 @@ export default function Dashboard() {
 	useEffect(() => {
 		if (branches.length) {
 			if (demandFlag === 1) {
-				fetchDemandDetails()
+				// fetchDemandDetails()
 			}
 		}
+
 	}, [dmdFlags])
 
-	const handleBranchChange = (e) => setChoosenBranch(e.target.value)
+
+
+
+	const handleBranchChange = (e) => {
+		// console.log(e.target.value, 'branch changed');
+		setChoosenBranch(e.target.value)
+	}
 	const handleGraphYearChange = (e) => setChoosenGraphYear(e.target.value)
 	const showCoWiseBreadkup = () =>{
 			try{
@@ -1201,12 +1511,15 @@ export default function Dashboard() {
 					</div>
 				</div> */}
 
-				<div className="md:col-span-3 rounded-3xl bg-white shadow-md p-6 overflow-hidden">
+				<div className="md:col-span-3 rounded-3xl bg-white shadow-md pt-3 overflow-hidden">
 					{/* <h3 className="text-lg font-medium text-slate-900 py-2 rounded-full">
 						Generate Demand
 					</h3> */}
-					<div className="flex justify-between flex-row pb-5">
-						<div className="space-x-2">
+					<div className="flex justify-between flex-row pl-5">
+						<h3 className="text-lg font-medium text-slate-900 rounded-full">
+							Total Demand
+						</h3>
+						{/* <div className="space-x-2">
 							<button
 								onClick={() => {
 									if (+choosenBranch === 100) {
@@ -1220,8 +1533,8 @@ export default function Dashboard() {
 							>
 								<AutoAwesomeOutlinedIcon fontSize="small" /> Generate Demand
 							</button>
-						</div>
-						<div className="space-x-2">
+						</div> */}
+						{/* <div className="space-x-2">
 							{[
 								"Month",
 								`${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode)`,
@@ -1268,13 +1581,52 @@ export default function Dashboard() {
 									{option}
 								</button>
 							))}
-						</div>
+						</div> */}
 					</div>
-					<div className="grid grid-cols-2 align-middle bg-white p-6 mt-5 overflow-hidden">
-						<div className="flex flex-col items-center gap-2">
+					{/* <div className="grid grid-cols-2 align-middle bg-white p-6 mt-5 overflow-hidden"> */}
+					<div className="grid grid-cols-2 align-middle p-0 bg-white mt-0 overflow-hidden">
+					
+
+						<DashboardCard
+					// titleLeft="Loan Disbursed"
+					left1Data={{
+						label: "Month - Demand Amount",
+						value: formatINR(dmdDetails_m?.data),
+					}}
+					left2Data={{
+						label: `${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode) - Demand Amount`,
+						value: formatINR(dmdDetails_d?.data),
+					}}
+					left3Data={{
+						label: `${new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date())}\n(Weekly Mode) - Demand Amount`,
+						value: formatINR(dmdDetails_w?.data),
+					}}
+					right1Data={{
+						label: "Month - Groups",
+						value: formatINR(dmdDetails_m.noOfGroups),
+					}}
+					right2Data={{
+						label: `${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode) - Groups`,
+						value: formatINR(dmdDetails_d.noOfGroups),
+					}}
+					right3Data={{
+						label: `${new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date())}\n(Weekly Mode) - Groups`,
+						value: formatINR(dmdDetails_w.noOfGroups),
+					}}
+					leftColor="#2563EB"
+					rightColor="#334155"
+					loading={loadingDmd_m_d_w}
+				/>
+				
+
+						{/* <div className="flex flex-col items-center gap-2">
 							<Spin spinning={loadingDmd}>
 								<span className="text-3xl font-bold text-emerald-600 mt-4">
 									{formatINR(dmdDetails.data)}
+									<br />
+									month: {formatINR(dmdDetails_m?.data)}<br />
+									Day: {formatINR(dmdDetails_d?.data)} <br />
+									weekly: {formatINR(dmdDetails_w.data)}
 								</span>
 							</Spin>
 							<span className="text-sm text-slate-600">Demand Amount</span>
@@ -1283,18 +1635,23 @@ export default function Dashboard() {
 							<Spin spinning={loadingDmd}>
 								<span className="text-3xl font-bold text-blue-600 mt-4">
 									{formatNumber(dmdDetails.noOfGroups)}
+									<br />
+									month: {formatINR(dmdDetails_m.noOfGroups)}<br />
+									Day: {formatINR(dmdDetails_d.noOfGroups)} <br />
+									weekly: {formatINR(dmdDetails_w.noOfGroups)}
 								</span>
 							</Spin>
 							<span className="text-sm text-slate-600">Groups</span>
-						</div>
+						</div> */}
+
 					</div>
 				</div>
 				<div className="md:col-span-3 rounded-3xl bg-white shadow-md p-6 overflow-hidden">
-					<div className="flex justify-between pb-5 flex-row">
+					<div className="flex justify-between pl-5 flex-row">
 						<h3 className="text-lg font-medium text-slate-900 rounded-full">
 							Overdue Demand
 						</h3>
-						<div className="space-x-2">
+						{/* <div className="space-x-2">
 							{[
 								"Month",
 								`${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode)`,
@@ -1340,13 +1697,52 @@ export default function Dashboard() {
 									{option}
 								</button>
 							))}
-						</div>
+						</div> */}
 					</div>
-					<div className="grid grid-cols-2 align-middle bg-white p-6 mt-5 overflow-hidden">
-						<div className="flex flex-col items-center gap-2">
+					{/* <div className="grid grid-cols-2 align-middle bg-white p-6 mt-5 overflow-hidden"> */}
+
+					<div className="grid grid-cols-2 align-middle p-0 bg-white mt-0 overflow-hidden">
+					
+
+						<DashboardCard
+					// titleLeft="Loan Disbursed"
+					left1Data={{
+						label: "Month - Overdue Amount",
+						value: formatINR(odDetails_m?.data),
+					}}
+					left2Data={{
+						label: `${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode) - Overdue Amount`,
+						value: formatINR(odDetails_d?.data),
+					}}
+					left3Data={{
+						label: `${new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date())}\n(Weekly Mode) - Overdue Amount`,
+						value: formatINR(odDetails_w?.data),
+					}}
+					right1Data={{
+						label: "Month - Groups",
+						value: formatINR(odDetails_m.noOfGroups),
+					}}
+					right2Data={{
+						label: `${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode) - Groups`,
+						value: formatINR(odDetails_d.noOfGroups),
+					}}
+					right3Data={{
+						label: `${new Intl.DateTimeFormat("en-US", { weekday: "long" }).format(new Date())}\n(Weekly Mode) - Groups`,
+						value: formatINR(odDetails_w.noOfGroups),
+					}}
+					leftColor="#2563EB"
+					rightColor="#334155"
+					loading={loadingDmd_m_d_w}
+				/>
+
+
+						{/* <div className="flex flex-col items-center gap-2">
 							<Spin spinning={loadingOd}>
 								<span className="text-3xl font-bold text-emerald-600 mt-4">
-									{formatINR(odDetails.data)}
+									{formatINR(odDetails.data)} <br />
+									month: {formatINR(odDetails_m?.data)} <br />
+									Day: {formatINR(odDetails_d?.data)} <br />
+									weekly: {formatINR(odDetails_w?.data)}
 								</span>
 							</Spin>
 							<span className="text-sm text-slate-600">Overdue Amount</span>
@@ -1354,11 +1750,14 @@ export default function Dashboard() {
 						<div className="flex flex-col items-center gap-2">
 							<Spin spinning={loadingOd}>
 								<span className="text-3xl font-bold text-blue-600 mt-4">
-									{formatNumber(odDetails.noOfGroups)}
+									{formatNumber(odDetails.noOfGroups)} <br />
+									month: {formatINR(odDetails_m.noOfGroups)} <br />
+									Day: {formatINR(odDetails_d.noOfGroups)} <br />
+									weekly: {formatINR(odDetails_w.noOfGroups)}
 								</span>
 							</Spin>
 							<span className="text-sm text-slate-600">Groups</span>
-						</div>
+						</div> */}
 					</div>
 					<div className="flex justify-end items-center border-t pt-2">
 								  <Button type="text" size="large"

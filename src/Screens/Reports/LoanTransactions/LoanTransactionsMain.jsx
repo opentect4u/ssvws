@@ -26,6 +26,7 @@ import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
 import { MultiSelect } from "primereact/multiselect"
 import { Message } from "../../../Components/Message"
+import { use } from "react"
 
 const options = [
 	{
@@ -388,6 +389,7 @@ function LoanTransactionsMain() {
 	}, [])
 
 	const searchData = async () => {
+		
 
 		const date1 = new Date(fromDate);
 		const date2 = new Date(toDate);
@@ -398,6 +400,8 @@ function LoanTransactionsMain() {
 		// Define thresholds
 		const ONE_MONTH_DAYS = 31;
 		const ONE_YEAR_DAYS = 365;
+
+		console.log(Math.abs(date1 - date2), 'lll', diffDays, '<=', ONE_MONTH_DAYS, 'selectedselectedselected', selectedOptionsCondition, date1, 'l', date2);
 
 		// if (diffDays === ONE_YEAR_DAYS) {
 		// console.log("Exactly 1 year difference", 'selectedselectedselected');
@@ -414,7 +418,7 @@ function LoanTransactionsMain() {
 		
 		if(selectedOptionsCondition === 'all'){
 
-		if (diffDays < ONE_MONTH_DAYS) {
+		if (diffDays <= ONE_MONTH_DAYS) {
 		if (searchType2 === "G" && fromDate && toDate) {
 			await handleFetchTxnReportGroupwise()
 		} else if (searchType2 === "F" && fromDate && toDate) {
@@ -434,7 +438,8 @@ function LoanTransactionsMain() {
 		}
 
 		if(selectedOptionsCondition === 'single'){
-		if (diffDays <= ONE_YEAR_DAYS && diffDays >= ONE_MONTH_DAYS) {
+		// if (diffDays <= ONE_YEAR_DAYS && diffDays >= ONE_MONTH_DAYS) {
+		if (diffDays <= ONE_YEAR_DAYS) {
 
 		if (searchType2 === "G" && fromDate && toDate) {
 			await handleFetchTxnReportGroupwise()
@@ -567,9 +572,11 @@ function LoanTransactionsMain() {
 			: selectedOptions
 
 	const handleMultiSelectChange = (selected) => {
+		console.log(selected, 'selectedselectedselected', selectedOptionsCondition);
+		
 		if (selected.some((option) => option.value === "all")) {
 			setSelectedOptions(dropdownOptions)
-			console.log(selected, 'selectedselectedselected', 'all', selected.length);
+			// console.log(selected, 'selectedselectedselected', 'all', selected.length);
 			setSelectedOptionsCondition('all')
 			
 		} else {
@@ -589,6 +596,24 @@ function LoanTransactionsMain() {
 			}
 		}
 	}
+
+
+
+	useEffect(() => {
+
+	if (
+	// userDetails &&
+	(userDetails.id != 3 ||
+	userDetails.id != 4 ||
+	userDetails.id != 11) &&
+	userDetails.brn_code != 100
+	) {
+	console.log('selectedselectedselected' , 'unick single');
+	setSelectedOptionsCondition('single');
+
+
+	}
+	}, [userDetails]);
 
 	const dropdownCOs = cos?.map((branch) => ({
 		value: branch.co_id,
@@ -670,6 +695,7 @@ function LoanTransactionsMain() {
 							/>
 						</div>
 					</div>
+
 
 					{(userDetails?.id === 3 ||
 						userDetails?.id === 4 ||
