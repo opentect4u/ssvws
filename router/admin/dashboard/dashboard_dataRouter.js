@@ -972,7 +972,7 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
       //   null
       // );
       monthlyLoanDmd = await db_Select(
-        "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
+        "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT a.group_cd) AS monthly_demand_grp",
         "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
          `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Monthly' 
