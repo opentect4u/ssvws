@@ -266,8 +266,8 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
         ELSE 'N/A'
         END AS recovery_day,b.instl_end_dt,SUM(a.dmd_amt)dmd_amt,SUM(b.prn_amt + b.intt_amt) outstanding,d.emp_name co_name`,
             table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON a.group_cd = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON a.branch_code = e.branch_code",
-            whr = `a.branch_code IN (${data.branch_code}),
-                   AND a.demand_date = '${create_date}'`
+            whr = `a.branch_code IN (${data.branch_code})
+                   AND a.demand_date = '${create_date}'`,
             order = `GROUP BY a.demand_date,a.branch_code,e.branch_name,a.group_cd,c.group_name,b.curr_roi,b.period,b.period_mode,b.instl_end_dt,c.co_id,d.emp_name
             ORDER BY a.branch_code,a.group_cd`;
             var groupwise_demand_data = await db_Select(select,table_name,whr,order);
