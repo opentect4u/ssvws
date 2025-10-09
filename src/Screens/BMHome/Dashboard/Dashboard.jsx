@@ -1651,7 +1651,7 @@ export default function Dashboard() {
 						<h3 className="text-lg font-medium text-slate-900 rounded-full">
 							Overdue Demand
 						</h3>
-						<div className="space-x-2">
+						{/* <div className="space-x-2">
 							{[
 								"Month",
 								`${getOrdinalSuffix(new Date().getDate())}\n(Monthly Mode)`,
@@ -1697,7 +1697,7 @@ export default function Dashboard() {
 									{option}
 								</button>
 							))}
-						</div>
+						</div> */}
 					</div>
 					{/* <div className="grid grid-cols-2 align-middle bg-white p-6 mt-5 overflow-hidden"> */}
 

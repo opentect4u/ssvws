@@ -80,6 +80,7 @@ function DemandReportsMain() {
 	const [searchType2, setSearchType2] = useState(() => "Monthly")
 	const [choosenMonth, setChoosenMonth] = useState(() => "")
 	const [choosenYear, setChoosenYear] = useState(() => "")
+	// const [selectBranchCodes, setSelectBranchCodes] = useState(() => [])
 	const [funds, setFunds] = useState([])
 	const [selectedFund, setSelectedFund] = useState("")
 	const [co, setCo] = useState(() => "")
@@ -157,6 +158,33 @@ function DemandReportsMain() {
 	// 		handleFetchCO()
 	// 	}
 	// }, [searchType])
+
+	
+
+	useEffect(() => {
+
+	// const branchCodes = selectedOptions?.map((item, i) => ({
+	// 		branch_code: item?.value,
+	// 	}))
+
+	
+
+		
+	// setSelectBranchCodes(branchCodes)
+
+	console.log([userDetails?.brn_code], 'selectBranchCodes', '||', choosenMonth, '||', choosenYear, 'vvvvvvvvvvvvvvvvvv');
+	
+	if(userDetails?.brn_code != 100 && choosenMonth && choosenYear){
+		// console.log(selectedOptions.length, '||', choosenMonth, '||', choosenYear, 'vvvvvvvvvvvvvvvvvv', userDetails?.brn_code, 'sub branch');
+		runProcedureReport()
+	}
+
+	if(userDetails?.brn_code == 100 && selectedOptions.length > 0 && choosenMonth && choosenYear){
+		// console.log(selectedOptions.length, '||', choosenMonth, '||', choosenYear, 'vvvvvvvvvvvvvvvvvv', userDetails?.brn_code, 'head office');
+		runProcedureReport()
+	}
+
+	}, [selectedOptions, choosenMonth, choosenYear])
 
 	const runProcedureReport = async () => {
 		setLoading(true)
@@ -445,7 +473,12 @@ function DemandReportsMain() {
 
 	const handleFetchGroupwiseDayReport = async () => {
 		setLoading(true)
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+		
 		const creds = {
+			send_year: choosenYear,
+			send_month: choosenMonth,
+			branch_code: branchCodes,
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
 			from_day: fromDay,
@@ -465,7 +498,13 @@ function DemandReportsMain() {
 
 	const handleFetchFundwiseDayReport = async () => {
 		setLoading(true)
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+
 		const creds = {
+			send_year: choosenYear,
+			send_month: choosenMonth,
+			branch_code: branchCodes,
+			
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
 			from_day: fromDay,
@@ -485,7 +524,14 @@ function DemandReportsMain() {
 
 	const handleFetchCOwiseDayReport = async () => {
 		setLoading(true)
+
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+
 		const creds = {
+			send_year: choosenYear,
+			send_month: choosenMonth,
+			branch_code: branchCodes,
+
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
 			from_day: fromDay,
@@ -505,7 +551,14 @@ function DemandReportsMain() {
 
 	const handleFetchMemberwiseDayReport = async () => {
 		setLoading(true)
+
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+		
 		const creds = {
+			send_year: choosenYear,
+			send_month: choosenMonth,
+			branch_code: branchCodes,
+
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
 			from_day: fromDay,
@@ -805,14 +858,14 @@ function DemandReportsMain() {
 							/>
 						</div>
 					</div>
-					<div className="flex justify-center my-3">
+					{/* <div className="flex justify-center my-3">
 						<button
 							className={`inline-flex items-center px-4 py-2 mt-0 ml-0 sm:mt-0 text-sm font-small text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full  dark:focus:ring-primary-900`}
 							onClick={runProcedureReport}
 						>
 							<RefreshOutlined /> <span className={`ml-2`}>Process Report</span>
 						</button>
-					</div>
+					</div> */}
 
 					<div>
 						{/* {(userDetails?.id === 3 ||
