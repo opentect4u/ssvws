@@ -1007,7 +1007,7 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
 dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) => {
   try {
     var data = req.body;
-    // console.log(data,'datas');
+    console.log(data,'datas');
     
 
     const result = {
@@ -1023,7 +1023,7 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
 
     for (let branchCode of data.branch_code) {
       // let rawDate = branchDateMap[branchCode];
-      // console.log(rawDate,'hyt');
+      console.log(branchCode,'hyt');
 
 
       if (data.flag === 'M') {
