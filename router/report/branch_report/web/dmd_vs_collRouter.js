@@ -454,6 +454,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_groupwise", async (req, res
     }
 
     res.send({
+      suc: 1,
       groupwise_demand_collec_data_day,
       dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
     });
@@ -601,6 +602,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res)
     }
 
      res.send({
+      suc: 1,
        member_demand_collec_data_day,
        dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
      });
