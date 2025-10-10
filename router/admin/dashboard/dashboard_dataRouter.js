@@ -1040,6 +1040,9 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         result.total_loan_dmd = Number(totalLoanDmd.msg[0].tot_loan_Dmd) || 0;
         result.total_demand_groups = Number(totalLoanDmd.msg[0].tot_demand_grp) || 0;
 
+        console.log(result.total_loan_dmd,result.total_demand_groups,'month');
+        
+
       } else if (data.flag === 'W') {
        weeklyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT a.group_cd) AS weekly_demand_grp",
@@ -1056,6 +1059,9 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         result.weekly_loan_dmd = Number(weeklyLoanDmd.msg[0].weekly_Dmd) || 0;
         result.weekly_demand_groups = Number(weeklyLoanDmd.msg[0].weekly_demand_grp) || 0;
 
+        console.log(result.weekly_loan_dmd,result.weekly_demand_groups,'week');
+
+
       } else {
          monthlyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
@@ -1071,10 +1077,13 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         result.monthly_loan_dmd = Number(monthlyLoanDmd.msg[0].monthly_Dmd) || 0;
         result.monthly_demand_groups = Number(monthlyLoanDmd.msg[0].monthly_demand_grp) || 0;
 
+        console.log(result.monthly_loan_dmd,result.monthly_demand_groups,'day');
+
+
       }
 
     }
-    // console.log("Final Aggregated Result:", result);
+    console.log("Final Aggregated Result:", result);
     res.send({ suc: 1, data: result });
 
   } catch (error) {
