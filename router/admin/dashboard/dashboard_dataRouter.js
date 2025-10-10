@@ -1030,10 +1030,10 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         totalLoanDmd = await db_Select(
         "IFNULL(SUM(dmd_amt), 0) AS tot_loan_Dmd, COUNT(DISTINCT group_cd) AS tot_demand_grp",
         "td_loan_month_demand",
-        `branch_code = '${branchCode}'
+        `branch_code IN (${data.branch_code})
          AND demand_date = (SELECT MAX(demand_date)
                      FROM td_loan_month_demand
-                     WHERE branch_code = '${branchCode}')`,
+                     WHERE branch_code IN (${data.branch_code})`,
         null
       );
 
@@ -1047,12 +1047,12 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
        weeklyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS weekly_Dmd, COUNT(DISTINCT a.group_cd) AS weekly_demand_grp",
         "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-         `a.branch_code = '${branchCode}'
+         `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Weekly' 
           AND b.recovery_day = '${data.recov_day}'
           AND a.demand_date = (SELECT MAX(demand_date)
                             FROM td_loan_month_demand
-                            WHERE branch_code = '${branchCode}')`,
+                            WHERE branch_code IN (${data.branch_code})`,
         null
       );
 
@@ -1066,12 +1066,12 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
          monthlyLoanDmd = await db_Select(
         "IFNULL(SUM(a.dmd_amt), 0) AS monthly_Dmd, COUNT(DISTINCT b.group_code) AS monthly_demand_grp",
         "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id",
-         `a.branch_code = '${branchCode}'
+         `a.branch_code IN (${data.branch_code})
           AND b.period_mode = 'Monthly' 
           AND b.recovery_day = '${data.recov_day}'
           AND a.demand_date = (SELECT MAX(demand_date)
                            FROM td_loan_month_demand
-                           WHERE branch_code = '${branchCode}')`,
+                           WHERE branch_code IN (${data.branch_code}))`,
         null
       );
         result.monthly_loan_dmd = Number(monthlyLoanDmd.msg[0].monthly_Dmd) || 0;
