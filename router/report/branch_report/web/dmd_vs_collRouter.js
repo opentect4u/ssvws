@@ -212,7 +212,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
     //    AND d.co_id IN (${data.co_id})`,
     //  order = `GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,
     //      b.period_mode,b.recovery_day`;
-     var select = `demand_date,branch_code,branch_name,group_cd,group_name,co_id,emp_name,period_mode,recovery_day
+     var select = `demand_date,branch_code,branch_name,group_cd,group_name,co_id,emp_name,period_mode,recovery_day,
                   SUM(tot_emi) AS tot_emi, SUM(demand_amt) AS demand_amt,
                   SUM(coll_amt) AS coll_amt, SUM(curr_outstanding) AS curr_outstanding 
                   FROM(
