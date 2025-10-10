@@ -1033,7 +1033,7 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         `branch_code IN (${data.branch_code})
          AND demand_date = (SELECT MAX(demand_date)
                      FROM td_loan_month_demand
-                     WHERE branch_code IN (${data.branch_code})`,
+                     WHERE branch_code IN (${data.branch_code}))`,
         null
       );
 
@@ -1052,7 +1052,7 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
           AND b.recovery_day = '${data.recov_day}'
           AND a.demand_date = (SELECT MAX(demand_date)
                             FROM td_loan_month_demand
-                            WHERE branch_code IN (${data.branch_code})`,
+                            WHERE branch_code IN (${data.branch_code}))`,
         null
       );
 
