@@ -291,6 +291,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
     }
 
      res.send({
+       suc: 1,
        member_demand_collec_data,
        dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
      });
@@ -360,6 +361,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_branchwise", async (req, res) => {
     }
 
     res.send({
+      suc: 1,
       branch_demand_collec_data,
       dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
     });
