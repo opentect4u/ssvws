@@ -147,7 +147,7 @@ userRouter.post("/login_web", async (req, res) => {
                 }
               } else {
                 console.log("Session IDs Do Not Match!");
-                return res.send({ suc: 0, msg: "Session id not matched" });
+                return res.send({ suc: 3, msg: "Session id not matched" });
               }
             } else {
               checkUserToken = true;
