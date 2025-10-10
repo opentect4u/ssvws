@@ -231,7 +231,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,
 				b.period_mode,b.recovery_day
 		   UNION
-		        DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,
+		        SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,
            a.branch_code, c.branch_name, a.group_cd, d.group_name, 
            d.co_id, e.emp_name, b.period_mode, b.recovery_day AS recovery_day,
            0 AS tot_emi, 0 AS demand_amt, SUM(f.credit) AS coll_amt, 0 AS curr_outstanding
