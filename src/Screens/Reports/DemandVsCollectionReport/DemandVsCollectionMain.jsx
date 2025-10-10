@@ -166,6 +166,27 @@ function DemandVsCollectionMain() {
 	// 		handleFetchCO()
 	// 	}
 	// }, [searchType])
+
+	useEffect(() => {
+		// setLoading(true)
+	
+		setProcedureSuccessFlag("0")
+		
+		if(userDetails?.brn_code != 100 && choosenMonth && choosenYear){
+			// runProcedureReport()
+			setProcedureSuccessFlag("1")
+			// setLoading(false)
+		}
+	
+		if(userDetails?.brn_code == 100 && selectedOptions.length > 0 && choosenMonth && choosenYear){
+			// runProcedureReport()
+			setProcedureSuccessFlag("1")
+			// setLoading(false)
+		}
+	
+		}, [selectedOptions, choosenMonth, choosenYear])
+
+
 	const runProcedureReport = async () => {
 		setLoading(true)
 
@@ -203,19 +224,31 @@ function DemandVsCollectionMain() {
 		const creds = {
 			send_month: choosenMonth,
 			send_year: choosenYear,
-			branch_code:
-				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 		}
 
 		await axios
 			.post(`${url}/dmd_vs_collec_report_memberwise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
-				setReportData(res?.data?.member_demand_collec_data?.msg)
-				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
-				setMetadataDtls(`${userDetails?.brn_code}, Memberwise`)
-				setFetchedReportDate(res?.data?.dateRange)
-				populateColumns(res?.data?.member_demand_collec_data?.msg,memberwiseDemandVsCollectionHeader);	
+
+			console.log("RESSSSS======>>>>", res?.data, 'kkkk')
+
+			if(res?.data?.suc > 0){
+			
+			setReportData(res?.data?.member_demand_collec_data?.msg)
+			// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
+			setMetadataDtls(`${userDetails?.brn_code}, Memberwise`)
+			setFetchedReportDate(res?.data?.dateRange)
+			populateColumns(res?.data?.member_demand_collec_data?.msg, memberwiseDemandVsCollectionHeader);
+			} else {
+				
+			Message("error", res?.data?.msg)
+
+			setReportData([])
+			populateColumns([], memberwiseDemandVsCollectionHeader)
+
+			}
+
 				
 			})
 			.catch((err) => {
@@ -241,12 +274,25 @@ function DemandVsCollectionMain() {
 		await axios
 			.post(`${url}/dmd_vs_collec_report_groupwise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
+
+				console.log(res?.data?.msg, "RESSSSS======>>>>", res?.data?.groupwise_demand_collec_data?.msg)
+
+				if(res?.data?.suc > 0){
 				setReportData(res?.data?.groupwise_demand_collec_data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Groupwise`)
 				setFetchedReportDate(res?.data?.dateRange)
 				populateColumns(res?.data?.groupwise_demand_collec_data?.msg,groupwiseDemandVsCollectionHeader)
+				} else {
+					
+				Message("error", res?.data?.msg)
+
+				setReportData([])
+				// setMetadataDtls('')
+				// setFetchedReportDate('')
+				populateColumns([],groupwiseDemandVsCollectionHeader)
+				}
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -272,11 +318,23 @@ function DemandVsCollectionMain() {
 			.post(`${url}/dmd_vs_collec_report_branchwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
+
+				if(res?.data?.suc > 0){
 				setReportData(res?.data?.branch_demand_collec_data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Groupwise`)
 				setFetchedReportDate(res?.data?.dateRange)
 				populateColumns(res?.data?.branch_demand_collec_data?.msg,branchwiseDemandVsCollectionHeader);
+				} else {
+					
+				Message("error", res?.data?.msg)
+
+				setReportData([])
+				populateColumns([], branchwiseDemandVsCollectionHeader)
+
+				}
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -324,11 +382,24 @@ function DemandVsCollectionMain() {
 			.post(`${url}/dmd_vs_collec_report_fundwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
+
+				if(res?.data?.suc > 0){
+
 				setReportData(res?.data?.fund_demand_collec_data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, Groupwise`)
 				setFetchedReportDate(res?.data?.dateRange)
-				populateColumns(res?.data?.fund_demand_collec_data?.msg,fundwiseDemandVsCollectionHeader)
+				populateColumns(res?.data?.fund_demand_collec_data?.msg, fundwiseDemandVsCollectionHeader)
+
+				} else {
+					
+				Message("error", res?.data?.msg)
+				setReportData([])
+				populateColumns([], fundwiseDemandVsCollectionHeader)
+
+				}
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -377,23 +448,38 @@ function DemandVsCollectionMain() {
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			send_month: choosenMonth,
 			send_year: choosenYear,
-			co_id:
-				coCodes?.length === 0
-					? selectedCO === "AC"
-						? allCos
-						: [selectedCO]
-					: coCodes,
+			// co_id:
+			// 	coCodes?.length === 0
+			// 		? selectedCO === "AC"
+			// 			? allCos
+			// 			: [selectedCO]
+			// 		: coCodes,
+			co_id: coCodes?.length === 0 ? (co?.split(",")[0] === "AC" ? allCos : co?.split(",")[0] ? [co?.split(",")[0]] : ["0"]) : coCodes
+
+					
 		}
 
 		await axios
 			.post(`${url}/dmd_vs_collec_report_cowise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
+
+				if(res?.data?.suc > 0){
 				setReportData(res?.data?.co_demand_collec_data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, COwise`)
 				setFetchedReportDate(res?.data?.dateRange)
-				populateColumns(res?.data?.co_demand_collec_data?.msg,cowiseDemandVsCollectionHeader);
+				populateColumns(res?.data?.co_demand_collec_data?.msg, cowiseDemandVsCollectionHeader);
+				} else {
+
+				Message("error", res?.data?.msg)
+
+				setReportData([])
+				populateColumns([], cowiseDemandVsCollectionHeader)
+
+				}
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -423,6 +509,9 @@ function DemandVsCollectionMain() {
 
 	const handleFetchGroupwiseDayReport = async () => {
 		setLoading(true)
+
+		const branchCodes = selectedOptions?.map((item, i) => item?.value)
+
 		const creds = {
 			// demand_date: fetchedReportDate,
 			send_year: choosenYear,
@@ -430,13 +519,28 @@ function DemandVsCollectionMain() {
 			period_mode: searchType2,
 			from_day: fromDay,
 			to_day: toDay,
-			branch_code: userDetails?.brn_code,
+			// branch_code: userDetails?.brn_code,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_groupwise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
+
+
+				console.log(res?.data, "RESSSSS======>>>>", 'ppp');
+				
+				if(res?.data?.suc > 0){
+				
 				setReportData(res?.data?.groupwise_demand_collec_data_day?.msg)
+				} else {
+					
+				Message("error", res?.data?.msg)
+				
+				setReportData([])
+
+				}
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -455,15 +559,27 @@ function DemandVsCollectionMain() {
 			period_mode: searchType2,
 			from_day: fromDay,
 			to_day: toDay,
-			branch_code:branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_fundwise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
+
+				if(res?.data?.suc > 0){
 				setReportData(res?.data?.fund_demand_collec_data_day?.msg)
 				populateColumns(res?.data?.fund_demand_collec_data_day?.msg,fundwiseDemandVsCollectionHeader);
+				} else {
+					
+				Message("error", res?.data?.msg)
+
+				setReportData([])
+				populateColumns([],fundwiseDemandVsCollectionHeader)
+
+				}
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -496,7 +612,18 @@ function DemandVsCollectionMain() {
 			.post(`${url}/filter_dayawise_coll_report_cowise`, creds)
 			.then((res) => {
 				console.log("RESSSSS======>>>>", res?.data)
+
+				if(res?.data?.suc > 0){
 				setReportData(res?.data?.co_demand_collec_data_day?.msg)
+				} else {
+					
+				Message("error", res?.data?.msg)
+
+				setReportData([])
+
+				}
+
+				
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -515,13 +642,23 @@ function DemandVsCollectionMain() {
 			from_day: fromDay,
 			to_day: toDay,
 			// branch_code: branchCodes
-			branch_code:branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 		}
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_membwise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
+				
+				console.log("RESSSSS======>>>>", res?.data, 'lll')
+
+				if(res?.data?.suc > 0){
+				
 				setReportData(res?.data?.member_demand_collec_data_day?.msg)
+				} else {
+				Message("error", res?.data?.msg)
+				setReportData([])
+
+				}
+
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
@@ -886,7 +1023,7 @@ function DemandVsCollectionMain() {
 						</div>
 					</div>
 					<div className="flex justify-center my-3">
-						<button
+						{/* <button
 							className={`inline-flex items-center px-4 py-2 mt-0 ml-0 sm:mt-0 text-sm font-small text-center text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full dark:focus:ring-primary-900`}
 							onClick={() => {
 								// handleSubmit()
@@ -894,7 +1031,7 @@ function DemandVsCollectionMain() {
 							}}
 						>
 							<SearchOutlined /> <span className={`ml-2`}>Process Report</span>
-						</button>
+						</button> */}
 					</div>
 					{searchType === "F" && (
 						<div className="pt-4">

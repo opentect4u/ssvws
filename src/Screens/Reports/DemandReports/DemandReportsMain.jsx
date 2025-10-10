@@ -162,26 +162,20 @@ function DemandReportsMain() {
 	
 
 	useEffect(() => {
+	// setLoading(true)
 
-	// const branchCodes = selectedOptions?.map((item, i) => ({
-	// 		branch_code: item?.value,
-	// 	}))
-
-	
-
-		
-	// setSelectBranchCodes(branchCodes)
-
-	console.log([userDetails?.brn_code], 'selectBranchCodes', '||', choosenMonth, '||', choosenYear, 'vvvvvvvvvvvvvvvvvv');
+	setProcedureSuccessFlag("0")
 	
 	if(userDetails?.brn_code != 100 && choosenMonth && choosenYear){
-		// console.log(selectedOptions.length, '||', choosenMonth, '||', choosenYear, 'vvvvvvvvvvvvvvvvvv', userDetails?.brn_code, 'sub branch');
-		runProcedureReport()
+		// runProcedureReport()
+		setProcedureSuccessFlag("1")
+		// setLoading(false)
 	}
 
 	if(userDetails?.brn_code == 100 && selectedOptions.length > 0 && choosenMonth && choosenYear){
-		// console.log(selectedOptions.length, '||', choosenMonth, '||', choosenYear, 'vvvvvvvvvvvvvvvvvv', userDetails?.brn_code, 'head office');
-		runProcedureReport()
+		// runProcedureReport()
+		setProcedureSuccessFlag("1")
+		// setLoading(false)
 	}
 
 	}, [selectedOptions, choosenMonth, choosenYear])
@@ -412,22 +406,28 @@ function DemandReportsMain() {
 	// "COwise"
 	const handleFetchCOwiseReport = async () => {
 		setLoading(true)
-
+		
+		
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 		const coCodes = selectedCOs?.map((item, i) => item?.value)
 		const allCos = cos?.map((item, i) => item?.co_id)
+
+		console.log(coCodes, '|||', allCos,  'CREDS==', coCodes?.length === 0 
+  ? (co?.split(",")[0] === "AC" 
+      ? allCos 
+      : co?.split(",")[0] 
+        ? [co?.split(",")[0]] 
+        : ["0"]) 
+  : coCodes, 'coCodes');
 
 		const creds = {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			send_month: choosenMonth,
 			send_year: choosenYear,
-			co_id:
-				coCodes?.length === 0
-					? co?.split(",")[0] === "AC"
-						? allCos
-						: [co?.split(",")[0]]
-					: coCodes,
+			// co_id: coCodes?.length === 0 ? co?.split(",")[0] === "AC" ? allCos : [co?.split(",")[0]] : coCodes,
+			co_id: coCodes?.length === 0 ? (co?.split(",")[0] === "AC" ? allCos : co?.split(",")[0] ? [co?.split(",")[0]] : ["0"]) : coCodes,
+			
 		}
 
 		console.log("CREDS==", creds)
@@ -435,7 +435,8 @@ function DemandReportsMain() {
 		await axios
 			.post(`${url}/loan_demand_report_cowise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
+				// console.log("RESSSSS======>>>>", res?.data)
+
 				setReportData(res?.data?.cowise_demand_data?.msg)
 				// setTotSum(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
 				setMetadataDtls(`${userDetails?.brn_code}, COwise`)
@@ -478,7 +479,8 @@ function DemandReportsMain() {
 		const creds = {
 			send_year: choosenYear,
 			send_month: choosenMonth,
-			branch_code: branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
 			from_day: fromDay,
@@ -498,12 +500,13 @@ function DemandReportsMain() {
 
 	const handleFetchFundwiseDayReport = async () => {
 		setLoading(true)
+		
 		const branchCodes = selectedOptions?.map((item, i) => item?.value)
 
 		const creds = {
 			send_year: choosenYear,
 			send_month: choosenMonth,
-			branch_code: branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
@@ -530,7 +533,7 @@ function DemandReportsMain() {
 		const creds = {
 			send_year: choosenYear,
 			send_month: choosenMonth,
-			branch_code: branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
@@ -557,7 +560,7 @@ function DemandReportsMain() {
 		const creds = {
 			send_year: choosenYear,
 			send_month: choosenMonth,
-			branch_code: branchCodes,
+			branch_code: branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 
 			demand_date: fetchedReportDate,
 			period_mode: searchType2,
@@ -1028,7 +1031,7 @@ function DemandReportsMain() {
 								</div>
 							) : (
 								searchType === "C" && (
-									<div className="w-full">
+									<div className="w-full pt-4">
 										<TDInputTemplateBr
 											placeholder="Choose CO..."
 											type="text"

@@ -97,6 +97,8 @@ const SignInPage = () => {
 			),
 		}),
 		validateOnMount: true,
+		
+		
 		onSubmit: async (values) => {
 
 			const hashedPassword = encryptText(values?.password);
@@ -191,9 +193,10 @@ const SignInPage = () => {
 			// 		})
 			// }
 
-			console.log(creds, 'credscreds');
+			
 			
 			if (parseInt(inputAnswer) === num1 + num2) {
+			// console.log(creds, 'credscreds');
 			handleSignIn(creds, "login_web")
 			} else {
 			Message("error", "CAPTCHA incorrect, try again.")
@@ -207,22 +210,32 @@ const SignInPage = () => {
 	const handleSignIn = async (creds, api_name) =>{
 
 			// forceClearSession()
-		
+			
 			await axios
 			.post(`${url}/${api_name}`, creds)
 			.then((res) => {
+
+
+				// console.log(res?.data?.suc, 'credscreds');
+				
 				if (res?.data?.suc === 0) {
+					Message("error", res?.data?.msg)
+					// setVisible(true)
+					// formik.handleSubmit()
+				}
+
+				if (res?.data?.suc === 3) {
 					// Message("error", res?.data?.msg)
 					// setVisible(true)
-					
-					forceClearSession()
-					return
+					return forceClearSession()
 				}
+
 				var userDtls = res?.data?.user_dtls
 				userDtls["brn_code"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 || userTypeId == 2 ? formik.values.brnch : res?.data?.user_dtls?.brn_code
 				userDtls["branch_name"] = userTypeId == 4 || userTypeId == 11 || userTypeId == 10 || userTypeId == 2 ? branches.filter((item) => item.code == formik.values.brnch)[0]?.name : res?.data?.user_dtls?.branch_name
+				
 				if (res?.data?.suc === 1) {
-
+					// console.log(creds, 'credscreds', res?.data);
 					localStorage.setItem("session_id", sessionId)
 					localStorage.setItem("server_token", res?.data?.token)
 					localStorage.setItem("refresh_token", res?.data?.refresh_token)
@@ -239,6 +252,7 @@ const SignInPage = () => {
 					// });
 					
 					// Initialize socket connection with employee ID
+					Message("success", res?.data?.msg)
 					connectSocket(userDtls.emp_id)
 					
 					navigate(routePaths.BM_HOME)
@@ -247,7 +261,7 @@ const SignInPage = () => {
 				}
 			})
 			.catch((err) => {
-				Message("error", "Some error on server while logging in...")
+				// Message("error", "Some error on server while logging in...")
 			})
 	}
 

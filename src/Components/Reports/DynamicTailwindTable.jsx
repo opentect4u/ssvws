@@ -171,7 +171,7 @@ const DynamicTailwindTable = ({
 							const globalIndex = (currentPage - 1) * pageSize + rowIndex
 							const isChecked = selectedRowIndices.includes(globalIndex)
 
-							console.log(row, '===========');
+							// console.log(row, '===========');
 							
 
 							return (

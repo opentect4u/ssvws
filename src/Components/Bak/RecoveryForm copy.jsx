@@ -245,7 +245,7 @@ function RecoveryForm() {
 		await axios
 			.get(`${url}/get_scheme`)
 			.then((res) => {
-				console.log("==============", res?.data)
+				// console.log("==============", res?.data)
 				setSchemes(res?.data?.msg)
 			})
 			.catch((err) => {
