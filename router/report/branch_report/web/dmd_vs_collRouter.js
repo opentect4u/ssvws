@@ -623,16 +623,68 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_cowise", async (req, res) =
      var create_date = dateFormat(dateResult.msg[0].month_last_date, 'yyyy-mm-dd');
      var first_create_date = dateFormat(first_dateResult.msg[0].first_day_of_month, 'yyyy-mm-dd');
      
-      var select = `a.demand_date,a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode,b.recovery_day AS recovery_day,SUM(b.tot_emi) tot_emi,SUM(a.dmd_amt) AS demand_amt,
-         SUM(a.coll_amt) AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding`,
-     table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
-     whr = `a.branch_code IN (${data.branch_code})
-       AND d.co_id IN (${data.co_id}) AND b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
-     order = `GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,
-         b.period_mode,b.recovery_day`;
+    //   var select = `a.demand_date,a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,
+    //      b.period_mode,b.recovery_day AS recovery_day,SUM(b.tot_emi) tot_emi,SUM(a.dmd_amt) AS demand_amt,
+    //      SUM(a.coll_amt) AS coll_amt, SUM(a.prn_amt + a.intt_amt) AS curr_outstanding`,
+    //  table_name = "tt_loan_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
+    //  whr = `a.branch_code IN (${data.branch_code})
+    //    AND d.co_id IN (${data.co_id}) AND b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
+    //  order = `GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,
+    //      b.period_mode,b.recovery_day`;
+    var select = `demand_date,branch_code,branch_name,group_cd,group_name,co_id,emp_name,period_mode,recovery_day,
+                  SUM(tot_emi) AS tot_emi, SUM(demand_amt) AS demand_amt,
+                  SUM(coll_amt) AS coll_amt, SUM(curr_outstanding) AS curr_outstanding 
+                  FROM(
+		       SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code, c.branch_name,a.group_cd, d.group_name, 
+		       d.co_id, e.emp_name,b.period_mode,b.recovery_day AS recovery_day,SUM(b.tot_emi) tot_emi,
+		       SUM(a.dmd_amt) AS demand_amt,0 AS coll_amt, SUM(b.prn_amt + b.intt_amt) AS curr_outstanding
+		       FROM td_loan_month_demand a, td_loan b,md_branch c, md_group d, md_employee e
+		       WHERE a.branch_code = b.branch_code
+		       AND a.loan_id = b.loan_id
+		       AND a.branch_code = c.branch_code
+		       AND a.group_cd = d.group_code
+		       AND d.co_id = e.emp_id
+		       AND a.branch_code IN (${data.branch_code})  
+		       AND a.demand_date = '${create_date}'
+		       AND d.co_id IN (${data.co_id})
+           AND b.period_mode = '${data.period_mode}' 
+           AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
+		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,
+				b.period_mode,b.recovery_day
+		   UNION
+		        SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,
+           a.branch_code, c.branch_name, a.group_cd, d.group_name, 
+           d.co_id, e.emp_name, b.period_mode, b.recovery_day AS recovery_day,
+           0 AS tot_emi, 0 AS demand_amt, SUM(f.credit) AS coll_amt, 0 AS curr_outstanding
+		       FROM td_loan_month_demand a, td_loan b,md_branch c, md_group d, md_employee e, td_loan_transactions f
+		       WHERE a.branch_code = b.branch_code
+		       AND a.loan_id = b.loan_id
+		       AND a.loan_id = f.loan_id
+		       AND a.branch_code = c.branch_code
+		       AND a.group_cd = d.group_code
+		       AND d.co_id = e.emp_id
+		       AND a.branch_code IN (${data.branch_code})  
+		       AND a.demand_date = '${create_date}'
+		       AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+		       AND d.co_id IN (${data.co_id})
+           AND b.period_mode = '${data.period_mode}' 
+           AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
+		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,
+				b.period_mode,b.recovery_day
+		                  )a	
+	          GROUP BY demand_date,branch_code,branch_name,group_cd,group_name,co_id,emp_name,period_mode,recovery_day
+            ORDER BY group_cd`,
+     table_name = null,
+     whr = null,
+     order = null;
      var co_demand_collec_data_day = await db_Select(select,table_name,whr,order);
+
+     if (!co_demand_collec_data_day.msg || co_demand_collec_data_day.msg.length === 0) {
+      return res.send({ suc: 0, msg: "No data found", dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'` });
+    }
+
      res.send({
+      suc: 1,
        co_demand_collec_data_day,
        dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
      });
