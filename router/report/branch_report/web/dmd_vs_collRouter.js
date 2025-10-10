@@ -597,9 +597,30 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res)
     order = null;       
      var member_demand_collec_data_day = await db_Select(select,table_name,whr,order);
 
-       if (!member_demand_collec_data_day.msg || member_demand_collec_data_day.msg.length === 0) {
-      return res.send({ suc: 0, msg: "No data found", dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'` });
-    }
+    //    if (!member_demand_collec_data_day.msg || member_demand_collec_data_day.msg.length === 0) {
+    //   return res.send({ suc: 0, msg: "No data found", dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'` });
+    // }
+
+    let noData = false;
+
+if (!member_demand_collec_data_day.msg || member_demand_collec_data_day.msg.length === 0) {
+  noData = true;
+} else if (
+  member_demand_collec_data_day.msg.length === 1 &&
+  member_demand_collec_data_day.msg[0].loan_id === null &&
+  member_demand_collec_data_day.msg[0].member_code === null &&
+  parseFloat(member_demand_collec_data_day.msg[0].disb_amt) === 0 &&
+  parseFloat(member_demand_collec_data_day.msg[0].tot_emi) === 0 &&
+  parseFloat(member_demand_collec_data_day.msg[0].demand_amt) === 0 &&
+  (member_demand_collec_data_day.msg[0].coll_amt === null || parseFloat(member_demand_collec_data_day.msg[0].coll_amt) === 0) &&
+  parseFloat(member_demand_collec_data_day.msg[0].curr_outstanding) === 0
+) {
+  noData = true;
+}
+
+if (noData) {
+  return res.send({ suc: 0, msg: "No data found", dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'` });
+}
 
      res.send({
       suc: 1,
