@@ -1007,7 +1007,7 @@ dashboard_dataRouter.post("/dashboard_demand_dtls", async (req, res) => {
 dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) => {
   try {
     var data = req.body;
-    console.log(data,'datas');
+    // console.log(data,'datas');
     
 
     const result = {
@@ -1023,7 +1023,7 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
 
     for (let branchCode of data.branch_code) {
       // let rawDate = branchDateMap[branchCode];
-      console.log(branchCode,'hyt');
+      // console.log(branchCode,'hyt');
 
 
       if (data.flag === 'M') {
@@ -1040,7 +1040,7 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         result.total_loan_dmd = Number(totalLoanDmd.msg[0].tot_loan_Dmd) || 0;
         result.total_demand_groups = Number(totalLoanDmd.msg[0].tot_demand_grp) || 0;
 
-        console.log(result.total_loan_dmd,result.total_demand_groups,'month');
+        // console.log(result.total_loan_dmd,result.total_demand_groups,'month');
         
 
       } else if (data.flag === 'W') {
@@ -1059,7 +1059,7 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         result.weekly_loan_dmd = Number(weeklyLoanDmd.msg[0].weekly_Dmd) || 0;
         result.weekly_demand_groups = Number(weeklyLoanDmd.msg[0].weekly_demand_grp) || 0;
 
-        console.log(result.weekly_loan_dmd,result.weekly_demand_groups,'week');
+        // console.log(result.weekly_loan_dmd,result.weekly_demand_groups,'week');
 
 
       } else {
@@ -1077,13 +1077,13 @@ dashboard_dataRouter.post("/dashboard_demand_amt_fr_allbrn", async (req, res) =>
         result.monthly_loan_dmd = Number(monthlyLoanDmd.msg[0].monthly_Dmd) || 0;
         result.monthly_demand_groups = Number(monthlyLoanDmd.msg[0].monthly_demand_grp) || 0;
 
-        console.log(result.monthly_loan_dmd,result.monthly_demand_groups,'day');
+        // console.log(result.monthly_loan_dmd,result.monthly_demand_groups,'day');
 
 
       }
 
     }
-    console.log("Final Aggregated Result:", result);
+    // console.log("Final Aggregated Result:", result);
     res.send({ suc: 1, data: result });
 
   } catch (error) {
