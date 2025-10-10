@@ -160,7 +160,13 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
      whr = null,
      order = null;
      var fund_demand_collec_data = await db_Select(select,table_name,whr,order);
+
+      if (!fund_demand_collec_data.msg || fund_demand_collec_data.msg.length === 0) {
+      return res.send({ suc: 0, msg: "No data found", dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'` });
+    }
+
      res.send({
+       suc: 1,
        fund_demand_collec_data,
        dateRange: `BETWEEN '${first_create_date}' AND '${create_date}'`
      });
