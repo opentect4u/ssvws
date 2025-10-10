@@ -539,8 +539,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_fundwise", async (req, res)
                   recovery_day
             ORDER BY group_cd`,
      table_name = null,
-     whr = `a.branch_code IN (${data.branch_code})
-       AND b.fund_id IN (${data.fund_id}) AND b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'`,
+     whr = null,
      order = null;
      var fund_demand_collec_data_day = await db_Select(select,table_name,whr,order);
 
