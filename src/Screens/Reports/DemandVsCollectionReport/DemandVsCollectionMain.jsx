@@ -453,16 +453,24 @@ function DemandVsCollectionMain() {
 			// 		? selectedCO === "AC"
 			// 			? allCos
 			// 			: [selectedCO]
-			// 		: coCodes,
-			co_id: coCodes?.length === 0 ? (co?.split(",")[0] === "AC" ? allCos : co?.split(",")[0] ? [co?.split(",")[0]] : ["0"]) : coCodes
+			// 		: coCodes, // previous code
 
+			co_id: coCodes?.length === 0
+					? selectedCO === "AC"
+						? allCos
+						: selectedCO
+						? [selectedCO]
+						: ["0"]
+					: coCodes
 					
 		}
+
+		// console.log(creds, "RESSSSS======>>>>", coCodes, '||', selectedCO, '||', allCos, '||', selectedCO === "AC")
 
 		await axios
 			.post(`${url}/dmd_vs_collec_report_cowise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
+				// console.log(creds, "RESSSSS======>>>>", res?.data)
 
 				if(res?.data?.suc > 0){
 				setReportData(res?.data?.co_demand_collec_data?.msg)
@@ -611,7 +619,7 @@ function DemandVsCollectionMain() {
 		await axios
 			.post(`${url}/filter_dayawise_coll_report_cowise`, creds)
 			.then((res) => {
-				console.log("RESSSSS======>>>>", res?.data)
+				// console.log(creds, "RESSSSS======>>>>", res?.data)
 
 				if(res?.data?.suc > 0){
 				setReportData(res?.data?.co_demand_collec_data_day?.msg)
