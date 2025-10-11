@@ -66,7 +66,6 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
 		                      AND a.branch_code IN (${data.branch_code})  
 		                      AND a.demand_date = '${create_date}'
 		                      AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-                          AND f.tr_type = 'R'
 		                  GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, 
 			                e.emp_name,b.disb_dt,b.curr_roi, b.period, b.period_mode,b.recovery_day,
 			                b.instl_start_dt,b.instl_end_dt
@@ -152,7 +151,6 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
 		       AND a.demand_date = '${create_date}'
 		       AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
 		       AND b.fund_id IN (${data.fund_id})
-           AND g.tr_type = 'R'
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,b.fund_id,
 		       f.fund_name,b.period_mode,b.recovery_day
 		       )a	
@@ -249,7 +247,6 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
 		       AND a.demand_date = '${create_date}'
 		       AND f.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
 		       AND d.co_id IN (${data.co_id})
-           AND f.tr_type = 'R'
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,
 				b.period_mode,b.recovery_day
 		                  )a	
@@ -334,7 +331,6 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
 		                  AND a.branch_code IN (${data.branch_code})  
 		                  AND a.demand_date = '${create_date}'
 		                  AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-                      AND g.tr_type = 'R'
 		                  )a	
 	          GROUP BY demand_date,branch_code,branch_name,loan_id,member_code,client_name,client_mobile,group_cd, group_name,
 	          co_id, emp_name,disb_dt,curr_roi,loan_period,period_mode,
@@ -406,7 +402,6 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_branchwise", async (req, res) => {
 		       AND a.branch_code IN (${data.branch_code})  
 		       AND a.demand_date = '${create_date}'
 		       AND d.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-           AND d.tr_type = 'R'
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name
 		                  )a	
 	          GROUP BY demand_date,branch_code,branch_name
