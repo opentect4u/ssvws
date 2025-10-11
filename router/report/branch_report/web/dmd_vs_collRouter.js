@@ -146,10 +146,11 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
 		       AND a.loan_id = g.loan_id
 		       AND a.group_cd = d.group_code
 		       AND d.co_id = e.emp_id
+           AND b.fund_id = f.fund_id
 		       AND a.branch_code IN (${data.branch_code})  
 		       AND a.demand_date = '${create_date}'
-		       AND b.fund_id IN (${data.fund_id})
 		       AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+		       AND b.fund_id IN (${data.fund_id})
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,b.fund_id,
 		       f.fund_name,b.period_mode,b.recovery_day
 		       )a	
@@ -574,10 +575,11 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_fundwise", async (req, res)
 		       AND a.loan_id = g.loan_id
 		       AND a.group_cd = d.group_code
 		       AND d.co_id = e.emp_id
+           AND b.fund_id = f.fund_id
 		       AND a.branch_code IN (${data.branch_code})  
 		       AND a.demand_date = '${create_date}'
-		       AND b.fund_id IN (${data.fund_id})
 		       AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
+		       AND b.fund_id IN (${data.fund_id})
            AND b.period_mode = '${data.period_mode}' 
            AND b.recovery_day BETWEEN '${data.from_day}' AND '${data.to_day}'
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_cd, d.group_name, d.co_id, e.emp_name,b.fund_id,
