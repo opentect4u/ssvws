@@ -320,7 +320,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
 		                  b.member_code,f.client_name,f.client_mobile,a.group_cd, d.group_name, d.co_id, e.emp_name,
 		                  b.disb_dt,0 AS disb_amt,b.curr_roi, b.period AS loan_period, b.period_mode,
 		                  b.recovery_day AS recovery_day,b.instl_start_dt,b.instl_end_dt,0 AS tot_emi, 
-		                  0 AS demand_amt,SUM(g.credit) AS coll_amt, 0 AS curr_outstanding
+		                  0 AS demand_amt,g.credit AS coll_amt, 0 AS curr_outstanding
 		                  FROM td_loan_month_demand a,td_loan b,md_branch c,md_group d,md_employee e,md_member f, td_loan_transactions g
 		                  WHERE a.loan_id = b.loan_id
 		                  AND a.loan_id = g.loan_id
@@ -737,7 +737,7 @@ dmd_vs_collRouter.post("/filter_dayawise_coll_report_membwise", async (req, res)
 		                  b.member_code,f.client_name,f.client_mobile,a.group_cd, d.group_name, d.co_id, e.emp_name,
 		                  b.disb_dt,0 AS disb_amt,b.curr_roi, b.period AS loan_period, b.period_mode,
 		                  b.recovery_day AS recovery_day,b.instl_start_dt,b.instl_end_dt,0 AS tot_emi, 
-		                  0 AS demand_amt,SUM(g.credit) AS coll_amt, 0 AS curr_outstanding
+		                  0 AS demand_amt,g.credit AS coll_amt, 0 AS curr_outstanding
 		                  FROM td_loan_month_demand a,td_loan b,md_branch c,md_group d,md_employee e,md_member f, td_loan_transactions g
 		                  WHERE a.loan_id = b.loan_id
 		                  AND a.loan_id = g.loan_id
