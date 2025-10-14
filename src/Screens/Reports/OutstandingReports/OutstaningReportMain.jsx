@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from "react"
 import Sidebar from "../../../Components/Sidebar"
 import axios from "axios"
 import { url } from "../../../Address/BaseUrl"
-import { Spin, Tooltip } from "antd"
+import { Alert, Spin, Tooltip } from "antd"
 import {
 	LoadingOutlined,
 	SearchOutlined,
@@ -31,6 +31,7 @@ import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
 import { MultiSelect } from "primereact/multiselect"
+import { Message } from "../../../Components/Message"
 
 const options = [
 	{
@@ -74,6 +75,7 @@ function OutstaningReportMain() {
 	const [selectedOptions, setSelectedOptions] = useState([])
 	const [selectedCOs, setSelectedCOs] = useState([])
 	const [procedureSuccessFlag, setProcedureSuccessFlag] = useState("0")
+	const [conditionState, setConditionState] = useState("current")
 
 	const onChange = (e) => {
 		console.log("radio1 checked", e)
@@ -91,6 +93,36 @@ function OutstaningReportMain() {
 			supply_date: formatDateToYYYYMMDD(fromDate),
 		}
 
+		if(conditionState === "current"){
+		await axios
+			.post(`${url}/loan_outstanding_report_memberwise_new`, creds)
+			.then((res) => {
+
+				if(res?.data?.outstanding_member_data?.suc > 0) {
+				const data = res?.data?.outstanding_member_data?.msg || []
+				if (data.length === 0) {
+					console.log("--------------- NO DATA ---------------", data?.length)
+				}
+
+				console.log("---------- DATA MEMBERWISE -----------", res?.data)
+				setFetchedReportDate(
+					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
+				)
+				setReportData(data)
+				populateColumns(res?.data?.outstanding_member_data?.msg,memberwiseOutstandingHeader);	
+
+			} else {
+				Message("error", res?.data?.outstanding_member_data?.msg[0])
+				setReportData([])
+				populateColumns([], memberwiseOutstandingHeader)
+			}
+			})
+		.catch((err) => {
+			console.log("ERRRR>>>", err)
+		})
+		}
+
+		if(conditionState === "old"){
 		await axios
 			.post(`${url}/loan_outstanding_report_memberwise`, creds)
 			.then((res) => {
@@ -106,9 +138,10 @@ function OutstaningReportMain() {
 				setReportData(data)
 				populateColumns(res?.data?.outstanding_member_data?.msg,memberwiseOutstandingHeader);	
 			})
-			.catch((err) => {
-				console.log("ERRRR>>>", err)
-			})
+		.catch((err) => {
+			console.log("ERRRR>>>", err)
+		})
+		}
 
 		setLoading(false)
 	}
@@ -124,6 +157,36 @@ function OutstaningReportMain() {
 			supply_date: formatDateToYYYYMMDD(fromDate),
 		}
 
+		if(conditionState === "current"){
+		await axios
+			.post(`${url}/loan_outstanding_report_branchwise_new`, creds)
+			.then((res) => {
+
+				if(res?.data?.outstanding_branch_data?.suc > 0) {
+
+				const data = res?.data?.outstanding_branch_data?.msg || []
+				if (data.length === 0) {
+					console.log("--------------- NO DATA ---------------", data?.length)
+				}
+
+				console.log("---------- DATA BRN WISE -----------", res?.data)
+				setFetchedReportDate(
+					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
+				)
+				setReportData(data)
+				populateColumns(res?.data?.outstanding_branch_data?.msg,branchwiseOutstandingHeader)
+			} else {
+				Message("error", res?.data?.outstanding_branch_data?.msg[0])
+				setReportData([])
+				populateColumns([], branchwiseOutstandingHeader)
+			}
+			})
+			.catch((err) => {
+				console.log("ERRRR>>>", err)
+			})
+		}
+
+		if(conditionState === "old"){
 		await axios
 			.post(`${url}/loan_outstanding_report_branchwise`, creds)
 			.then((res) => {
@@ -142,6 +205,9 @@ function OutstaningReportMain() {
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
 			})
+		}
+
+
 
 		setLoading(false)
 	}
@@ -157,8 +223,50 @@ function OutstaningReportMain() {
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			supply_date: formatDateToYYYYMMDD(fromDate),
 		}
+		
 
-		await axios
+		if(conditionState === "current"){
+
+			await axios
+			.post(`${url}/loan_outstanding_report_groupwise_new`, creds)
+			.then((res) => {
+
+				if(res?.data?.outstanding_data?.suc > 0) {
+
+					const data = res?.data?.outstanding_data?.msg || []
+
+					if (data.length === 0) {
+					console.log(
+						"--------------- LOOP BREAKS ---------------",
+						data?.length
+					)
+				}
+
+				
+				setFetchedReportDate(
+					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
+				)
+				setReportData(data)
+				populateColumns(res?.data?.outstanding_data?.msg, groupwiseOutstandingHeader)
+					
+				} else {
+					Message("error", res?.data?.outstanding_data?.msg[0])
+					setReportData([])
+					populateColumns([], groupwiseOutstandingHeader)
+					// alert("No Data Found")
+					
+				}
+				
+
+			})
+			.catch((err) => {
+				console.log("ERRRR>>>", err)
+		})
+		
+		} 
+		
+		if(conditionState === "old"){
+			await axios
 			.post(`${url}/loan_outstanding_report_groupwise`, creds)
 			.then((res) => {
 				const data = res?.data?.outstanding_data?.msg || []
@@ -179,7 +287,10 @@ function OutstaningReportMain() {
 			})
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
-			})
+		})
+		}
+
+		
 
 		setLoading(false)
 	}
@@ -214,8 +325,45 @@ function OutstaningReportMain() {
 			supply_date: formatDateToYYYYMMDD(fromDate),
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
-			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
+			// fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
+			fund_id: selectedFund ? selectedFund === "F" ? selectedFunds : [selectedFund] : ["0"]
 		}
+
+		if(conditionState === "current"){
+
+			await axios
+			.post(`${url}/loan_outstanding_report_fundwise_new`, creds)
+			.then((res) => {
+
+				if(res?.data?.outstanding_fund_data?.suc > 0) {
+
+				const data = res?.data?.outstanding_fund_data?.msg || []
+				if (data.length === 0) {
+					console.log("--------------- NO DATA ---------------", data?.length)
+				}
+
+				console.log("---------- DATA FUNDWISE -----------", res?.data)
+				setFetchedReportDate(
+					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
+				)
+				setReportData(data);
+				populateColumns(res?.data?.outstanding_fund_data?.msg,fundwiseOutstandingHeader)
+
+			} else {
+				Message("error", res?.data?.outstanding_fund_data?.msg[0])
+				setReportData([])
+				populateColumns([], fundwiseOutstandingHeader)
+				
+			}
+
+			})
+			.catch((err) => {
+				console.log("ERRRR>>>", err)
+			})
+
+		}
+		
+		if(conditionState === "old"){
 
 		await axios
 			.post(`${url}/loan_outstanding_report_fundwise`, creds)
@@ -236,6 +384,8 @@ function OutstaningReportMain() {
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
 			})
+
+		}
 
 		setLoading(false)
 	}
@@ -278,13 +428,58 @@ function OutstaningReportMain() {
 			supply_date: formatDateToYYYYMMDD(fromDate),
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
+			// co_id:
+			// 	coCodes?.length === 0
+			// 		? selectedCO === "AC"
+			// 			? allCos
+			// 			: [selectedCO]
+			// 		: coCodes || [],
 			co_id:
 				coCodes?.length === 0
 					? selectedCO === "AC"
 						? allCos
-						: [selectedCO]
-					: coCodes || [],
+						: selectedCO
+						? [selectedCO]
+						: ["0"]
+					: coCodes,
+					
 		}
+
+		if(conditionState === "current"){
+
+			await axios
+			.post(`${url}/loan_outstanding_report_cowise_new`, creds)
+			.then((res) => {
+				// Message("error", res?.data?.outstanding_co_data?.msg[0])
+				
+				if(res?.data?.outstanding_co_data?.suc > 0) {
+				
+				const data = res?.data?.outstanding_co_data?.msg || []
+				if (data.length === 0) {
+					console.log("--------------- NO DATA ---------------", data?.length)
+				}
+
+				console.log("---------- DATA CO-wise -----------", res?.data)
+				setFetchedReportDate(
+					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
+				)
+				setReportData(data)
+				populateColumns(res?.data?.outstanding_co_data?.msg,cowiseOutstandingHeader);
+				
+				} else {
+					Message("error", res?.data?.outstanding_co_data?.msg[0])
+					setReportData([])
+					populateColumns([], cowiseOutstandingHeader)
+				}
+
+			})
+			.catch((err) => {
+				console.log("ERRRR>>>", err)
+			})
+
+		} 
+		
+		if(conditionState === "old"){
 
 		await axios
 			.post(`${url}/loan_outstanding_report_cowise`, creds)
@@ -304,6 +499,7 @@ function OutstaningReportMain() {
 			.catch((err) => {
 				console.log("ERRRR>>>", err)
 			})
+		}
 
 		setLoading(false)
 	}
@@ -331,6 +527,115 @@ function OutstaningReportMain() {
 		getBranches()
 	}, [])
 
+
+	// useEffect(() => {
+	// 	// Alert(`Invalid date selection.\n\nAllowed`)
+
+	// 	if (!fromDate) return; // 🛑 Skip if no date selected yet
+		
+	// 	  const selectedDate = new Date(fromDate);
+	// 	  if (isNaN(selectedDate)) return; // 🛑 Skip if invalid date
+		
+	// 	  const today = new Date();
+		
+	// 	  const currentYear = today.getFullYear();
+	// 	  const currentMonth = today.getMonth();
+	// 	  const selectedYear = selectedDate.getFullYear();
+	// 	  const selectedMonth = selectedDate.getMonth();
+		
+	// 	  const endOfCurrentMonth = new Date(currentYear, currentMonth + 1, 0);
+	// 	  const endOfSelectedMonth = new Date(selectedYear, selectedMonth + 1, 0);
+		
+	// 	  const format = (d) => d.toISOString().slice(0, 10);
+		
+	// 	  // ✅ CASE 1: Today’s date
+	// 	  const isToday = selectedDate.toDateString() === today.toDateString();
+		
+	// 	  // ✅ CASE 2: End of current month
+	// 	  const isEndOfCurrentMonth =
+	// 		selectedDate.toDateString() === endOfCurrentMonth.toDateString();
+		
+	// 	  // ✅ CASE 3: End of previous month(s)
+	// 	  const isPastMonthEnd =
+	// 		(selectedYear < currentYear ||
+	// 		  (selectedYear === currentYear && selectedMonth < currentMonth)) &&
+	// 		selectedDate.toDateString() === endOfSelectedMonth.toDateString();
+		
+	// 	  // ✅ SET STATE BASED ON VALID CASES
+	// 	  if (isToday || isEndOfCurrentMonth) {
+	// 		setConditionState("current");
+	// 	  } else if (isPastMonthEnd) {
+	// 		setConditionState("old");
+	// 	  } else {
+	// 		// alert(`Invalid date selection.\n\nAllowed dates:\n• Today (${format(today)})\n• End of this month (${format(endOfCurrentMonth)})\n• Or end date of any previous month (e.g., ${format(endOfSelectedMonth)}`)	
+	// 		Message("warning", `Invalid date selection. Allowed dates: Today (${format(today)}) End of this Month (${format(endOfCurrentMonth)}) Or End date of any Previous Month`)
+	// 		setConditionState(""); // optional: reset state on invalid selection
+	// 	  }
+
+		
+	// }, [fromDate, selectedOptions]);
+
+
+	useEffect(() => {
+
+	setProcedureSuccessFlag('0')
+	
+
+    if (!fromDate) return; // 🛑 Skip if no date selected yet
+
+    const selectedDate = new Date(fromDate);
+    if (isNaN(selectedDate)) return; // 🛑 Skip if invalid date
+
+    const today = new Date();
+
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+    const selectedYear = selectedDate.getFullYear();
+    const selectedMonth = selectedDate.getMonth();
+
+    const endOfCurrentMonth = new Date(currentYear, currentMonth + 1, 0);
+    const endOfSelectedMonth = new Date(selectedYear, selectedMonth + 1, 0);
+
+    const format = (d) => d.toISOString().slice(0, 10);
+
+    // ✅ CASE 1: Today’s date
+    const isToday = selectedDate.toDateString() === today.toDateString();
+
+    // ✅ CASE 2: End of current month
+    const isEndOfCurrentMonth =
+        selectedDate.toDateString() === endOfCurrentMonth.toDateString();
+
+    // ✅ CASE 3: End of previous month(s)
+    const isPastMonthEnd =
+        (selectedYear < currentYear ||
+            (selectedYear === currentYear && selectedMonth < currentMonth)) &&
+        selectedDate.toDateString() === endOfSelectedMonth.toDateString();
+
+    // ✅ NEW CASE: Before 30th September 2025
+    const oldDateThreshold = new Date(2025, 8, 30); // Months are 0-indexed, so 8 = September
+    const isOldDate = selectedDate < oldDateThreshold;
+
+    // ✅ SET STATE BASED ON VALID CASES
+    if (isOldDate) {
+        setConditionState("old");
+		setSelectedOptions([])
+    } else if (isToday || isEndOfCurrentMonth) {
+        setConditionState("current");
+    } else if (isPastMonthEnd) {
+        setConditionState("current");
+    } else {
+        Message(
+            "warning",
+            `Invalid date selection. Allowed dates: Today (${format(today)}), End of this Month (${format(
+                endOfCurrentMonth
+            )}), Or End date of any Previous Month`
+        );
+        setConditionState(""); // optional: reset state on invalid selection
+    }
+// }, [fromDate, selectedOptions]);
+}, [fromDate]);
+
+
 	const runProcedureReport = async () => {
 		setLoading(true)
 
@@ -354,6 +659,7 @@ function OutstaningReportMain() {
 					: branchCodes,
 		}
 
+		if(conditionState === "old"){
 		await axios
 			.post(`${url}/call_outstanding_proc`, creds)
 			.then((res) => {
@@ -363,6 +669,9 @@ function OutstaningReportMain() {
 			.catch((err) => {
 				console.log("Some error while running procedure.", err)
 			})
+		} else {
+			setProcedureSuccessFlag('1')
+		}
 
 		setLoading(false)
 	}
@@ -440,13 +749,29 @@ function OutstaningReportMain() {
 		label: `${branch.branch_name} - ${branch.branch_assign_id}`,
 	}))
 
-	const displayedOptions = selectedOptions
+	// const displayedOptions = selectedOptions
+
+	const displayedOptions =
+		selectedOptions.length === dropdownOptions.length
+			? [{ value: "all", label: "All" }]
+			: selectedOptions
 
 	const handleMultiSelectChange = (selected) => {
-		if (selected && selected.length > 4) {
+		// if (selected && selected.length > 4) {
+		// 	return
+		// }
+		// setSelectedOptions(selected)
+
+
+		if (selected.some((option) => option.value === "all")) {
+			setSelectedOptions(dropdownOptions)
+		} else {
+			// setSelectedOptions(selected)
+			if (selected && selected.length > 4) {
 			return
+			}
+			setSelectedOptions(selected)
 		}
-		setSelectedOptions(selected)
 	}
 
 	const dropdownCOs = cos?.map((branch) => ({
@@ -498,7 +823,8 @@ function OutstaningReportMain() {
 				<main className="px-4 pb-5 bg-slate-50 rounded-lg shadow-lg h-auto my-10 mx-32">
 					<div className="flex flex-row gap-3 mt-20 py-3 rounded-xl">
 						<div className="text-3xl text-slate-700 font-bold">
-							Outstanding Report
+							Outstanding Report  
+							{/* {JSON.stringify(conditionState, null, 2)} || {JSON.stringify(conditionState.length > 0 ? true : false, null, 2)} */}
 						</div>
 					</div>
 
@@ -527,53 +853,61 @@ function OutstaningReportMain() {
 						userDetails?.id === 11) &&
 						userDetails?.brn_code == 100 && (
 							<div className="w-full">
-								<Select
-									options={dropdownOptions}
-									isMulti
-									value={displayedOptions}
-									onChange={handleMultiSelectChange}
-									placeholder="Select branches..."
-									className="basic-multi-select"
-									classNamePrefix="select"
-									styles={{
+										<Select
+										options={conditionState === "current" ? [
+										{ value: "all", label: "All" },
+										...dropdownOptions,
+										] : dropdownOptions}
+										// options={[
+										// { value: "all", label: "All" },
+										// ...dropdownOptions,
+										// ]}
+										isMulti
+										value={displayedOptions}
+										onChange={handleMultiSelectChange}
+										placeholder="Select branches..."
+										className="basic-multi-select"
+										classNamePrefix="select"
+										styles={{
 										control: (provided) => ({
-											...provided,
-											borderRadius: "8px",
+										...provided,
+										borderRadius: "8px",
 										}),
 										valueContainer: (provided) => ({
-											...provided,
-											borderRadius: "8px",
+										...provided,
+										borderRadius: "8px",
 										}),
 										singleValue: (provided) => ({
-											...provided,
-											color: "black",
+										...provided,
+										color: "black",
 										}),
 										multiValue: (provided) => ({
-											...provided,
-											padding: "0.1rem",
-											backgroundColor: "#da4167",
-											color: "white",
-											borderRadius: "8px",
+										...provided,
+										padding: "0.1rem",
+										backgroundColor: "#da4167",
+										color: "white",
+										borderRadius: "8px",
 										}),
 										multiValueLabel: (provided) => ({
-											...provided,
-											color: "white",
+										...provided,
+										color: "white",
 										}),
 										multiValueRemove: (provided) => ({
-											...provided,
-											color: "white",
-											"&:hover": {
-												backgroundColor: "red",
-												color: "white",
-												borderRadius: "8px",
-											},
+										...provided,
+										color: "white",
+										"&:hover": {
+										backgroundColor: "red",
+										color: "white",
+										borderRadius: "8px",
+										},
 										}),
 										placeholder: (provided) => ({
-											...provided,
-											fontSize: "0.9rem",
+										...provided,
+										fontSize: "0.9rem",
 										}),
-									}}
-								/>
+										}}
+										/>
+
 							</div>
 						)}
 
@@ -594,7 +928,7 @@ function OutstaningReportMain() {
 							<button
 								className="inline-flex items-center px-4 py-2 text-sm font-small text-white border hover:border-green-600 border-teal-500 bg-teal-500 transition ease-in-out hover:bg-green-600 duration-300 rounded-full disabled:cursor-not-allowed"
 								onClick={runProcedureReport}
-								// disabled={selectedOptions?.length == 0}
+								disabled={conditionState.length > 0 ? false : true}
 							>
 								<RefreshOutlined /> <span className="ml-2">Process Report</span>
 							</button>
