@@ -231,6 +231,8 @@ function OutstaningReportMain() {
 			.post(`${url}/loan_outstanding_report_groupwise_new`, creds)
 			.then((res) => {
 
+				console.log(res?.data?.balance_date, 'vvvvvvvvvvvvvvvvv');
+
 				if(res?.data?.outstanding_data?.suc > 0) {
 
 					const data = res?.data?.outstanding_data?.msg || []
@@ -243,9 +245,14 @@ function OutstaningReportMain() {
 				}
 
 				
+				
 				setFetchedReportDate(
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
+				
+				// setFetchedReportDate(
+				// 	res?.data?.balance_date
+				// )
 				setReportData(data)
 				populateColumns(res?.data?.outstanding_data?.msg, groupwiseOutstandingHeader)
 					
@@ -269,6 +276,9 @@ function OutstaningReportMain() {
 			await axios
 			.post(`${url}/loan_outstanding_report_groupwise`, creds)
 			.then((res) => {
+
+				// console.log(res?.data?.balance_date, 'vvvvvvvvvvvvvvvvv');
+
 				const data = res?.data?.outstanding_data?.msg || []
 				if (data.length === 0) {
 					console.log(
@@ -624,12 +634,17 @@ function OutstaningReportMain() {
     } else if (isPastMonthEnd) {
         setConditionState("current");
     } else {
-        Message(
+        // Message(
+        //     "warning",
+        //     `Invalid date selection. Allowed dates: Today (${format(today)}), End of this Month (${format(
+        //         endOfCurrentMonth
+        //     )}), Or End date of any Previous Month`
+        // );
+		Message(
             "warning",
-            `Invalid date selection. Allowed dates: Today (${format(today)}), End of this Month (${format(
-                endOfCurrentMonth
-            )}), Or End date of any Previous Month`
+            `Date must be current date or last day of the month`
         );
+		
         setConditionState(""); // optional: reset state on invalid selection
     }
 // }, [fromDate, selectedOptions]);
