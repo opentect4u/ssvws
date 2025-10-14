@@ -379,7 +379,8 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,b.bank_name,b.acc_no1,b.acc_no2,a.recovery_day,c.emp_name`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
-                    res.send({outstanding_data,formattedDate});
+                    var balance_date = formattedDate;
+                    res.send({outstanding_data,balance_date});
                     // console.log(outstanding_data,'444');
                     
                     // res.send({suc: 1, outstanding_data,  balance_date: currentDate.toISOString().split('T')[0]});
@@ -402,14 +403,15 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     // console.log(outstanding_data,'555');
 
                     const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
+                    var balance_date = formattedDate;
 
                     if (!outstanding_data.msg || outstanding_data.msg.length === 0) {
                         outstanding_data.suc = 0;
                          outstanding_data.msg = ['No data found'];
-                    return res.send({outstanding_data,formattedDate });
+                    return res.send({outstanding_data,balance_date });
                    }
 
-                    res.send({outstanding_data,formattedDate});
+                    res.send({outstanding_data,balance_date});
                 }
             //   }
             } catch (error) {
@@ -449,7 +451,8 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 order = `GROUP BY a.branch_code,d.branch_name,a.group_code,c.group_name,a.fund_id,b.fund_name`;
                 var outstanding_fund_data = await db_Select(select,table_name,whr,order);
                 const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
-                res.send({outstanding_fund_data,formattedDate});
+                var balance_date = formattedDate;
+                res.send({outstanding_fund_data,balance_date});
             }else {
                 // var select = "MAX(balance_date) balance_date",
                 // table_name = "tt_loan_outstanding",
@@ -468,14 +471,15 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 // outstanding_fund_data['balance_date'] = balance_date
 
                 const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
+                var balance_date = formattedDate;
 
                 if (!outstanding_fund_data.msg || outstanding_fund_data.msg.length === 0) {
                     outstanding_fund_data.suc = 0;
                     outstanding_fund_data.msg = ['No data found'];
-                    return res.send({outstanding_fund_data, formattedDate });
+                    return res.send({outstanding_fund_data, balance_date });
                    }
 
-                res.send({outstanding_fund_data,formattedDate});
+                res.send({outstanding_fund_data,balance_date});
             // }
           }
         } catch (error) {
@@ -538,7 +542,8 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     order = `GROUP BY a.branch_code,d.branch_name,a.group_code,b.group_name,b.co_id,c.emp_name`;
                     var outstanding_co_data = await db_Select(select,table_name,whr,order);
                     const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
-                    res.send({outstanding_co_data,formattedDate});
+                    var balance_date = formattedDate;
+                    res.send({outstanding_co_data,balance_date});
                 }else {
                     // var select = "MAX(balance_date) balance_date",
                     // table_name = "tt_loan_outstanding",
@@ -557,14 +562,15 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     // outstanding_co_data['balance_date'] = balance_date
 
                     const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
+                    var balance_date = formattedDate;
 
                     if (!outstanding_co_data.msg || outstanding_co_data.msg.length === 0) {
                     outstanding_co_data.suc = 0;
                     outstanding_co_data.msg = ['No data found'];
-                    return res.send({outstanding_co_data, formattedDate });
+                    return res.send({outstanding_co_data, balance_date });
                    }
 
-                    res.send({outstanding_co_data,formattedDate});
+                    res.send({outstanding_co_data,balance_date});
                 // }
               }
             } catch (error) {
@@ -605,7 +611,8 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     order = `GROUP BY a.branch_code,b.branch_name`;
                     var outstanding_branch_data = await db_Select(select,table_name,whr,order);
                     const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
-                    res.send({outstanding_branch_data,formattedDate});
+                    var balance_date = formattedDate;
+                    res.send({outstanding_branch_data,balance_date});
                 }else {
                     // var select = "MAX(balance_date) balance_date",
                     // table_name = "tt_loan_outstanding",
@@ -624,15 +631,16 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     // outstanding_branch_data['balance_date'] = balance_date
 
                     const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
+                    var balance_date = formattedDate;
 
                      if (!outstanding_branch_data.msg || outstanding_branch_data.msg.length === 0) {
                     outstanding_branch_data.suc = 0;
                     outstanding_branch_data.msg = ['No data found'];
-                    return res.send({outstanding_branch_data, formattedDate });
+                    return res.send({outstanding_branch_data, balance_date });
                    }
 
 
-                    res.send({outstanding_branch_data,formattedDate});
+                    res.send({outstanding_branch_data,balance_date});
                 // }
               }
             } catch (error) {
@@ -674,7 +682,8 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 order = `ORDER BY a.branch_code,i.branch_name,a.member_code desc`;
                 var outstanding_member_data = await db_Select(select,table_name,whr,order);
                 const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
-                res.send({outstanding_member_data,formattedDate});
+                var balance_date = formattedDate;
+                res.send({outstanding_member_data,balance_date});
             }else {
                 // var select = "MAX(balance_date) balance_date",
                 // table_name = "tt_loan_outstanding",
@@ -694,14 +703,15 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 // outstanding_member_data['balance_date'] = balance_date
 
                 const formattedDate = dateFormat(supplyDate, "dd-mm-yyyy");
+                var balance_date = formattedDate;
                 
                  if (!outstanding_member_data.msg || outstanding_member_data.msg.length === 0) {
                     outstanding_member_data.suc = 0;
                     outstanding_member_data.msg = ['No data found'];
-                    return res.send({outstanding_member_data,formattedDate });
+                    return res.send({outstanding_member_data,balance_date });
                    }
 
-                res.send({outstanding_member_data,formattedDate});
+                res.send({outstanding_member_data,balance_date});
             // }
           }
         } catch (error) {
