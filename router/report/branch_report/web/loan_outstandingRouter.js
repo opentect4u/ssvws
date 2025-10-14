@@ -399,7 +399,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON a.branch_code = e.branch_code LEFT JOIN md_bank f ON c.bank_name = f.bank_code",
                     whr = `a.balance_date = '${dateFormat(supplyDate, "yyyy-mm-dd")}' AND a.branch_code IN (${data.branch_code})`,
                     order = `GROUP BY a.branch_code,e.branch_name,b.group_code,c.group_name,c.co_id,f.bank_name,c.acc_no1,c.acc_no2,b.recovery_day,d.emp_name
-                    ORDER BY a.branch_code,a.group_code`;
+                    ORDER BY a.branch_code,b.group_code`;
                     var outstanding_data = await db_Select(select,table_name,whr,order);
                     // outstanding_data['balance_date'] = balance_date
                     // console.log(outstanding_data,'555');
@@ -470,7 +470,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                 table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_fund c ON b.fund_id = c.fund_id LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_branch e ON a.branch_code = e.branch_code",
                 whr = `a.balance_date = '${dateFormat(supplyDate, "yyyy-mm-dd")}' AND a.branch_code IN (${data.branch_code}) AND b.fund_id IN (${data.fund_id})`,
                 order = `GROUP BY a.branch_code,e.branch_name,b.group_code,d.group_name,b.fund_id,c.fund_name
-                ORDER BY a.branch_code,a.group_code`;
+                ORDER BY a.branch_code,b.group_code`;
                 var outstanding_fund_data = await db_Select(select,table_name,whr,order);
                 // outstanding_fund_data['balance_date'] = balance_date
 
@@ -563,7 +563,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                         table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON a.branch_code = e.branch_code",
                         whr = `a.balance_date = '${dateFormat(supplyDate, "yyyy-mm-dd")}' AND a.branch_code IN (${data.branch_code}) AND c.co_id IN (${data.co_id})`,
                         order = `GROUP BY a.branch_code,e.branch_name,b.group_code,c.group_name,c.co_id,d.emp_name
-                        ORDER BY a.branch_code,a.group_code`;
+                        ORDER BY a.branch_code,b.group_code`;
                     var outstanding_co_data = await db_Select(select,table_name,whr,order);
                     // outstanding_co_data['balance_date'] = balance_date
 
@@ -706,7 +706,7 @@ loan_outstandingRouter.post("/fetch_branch_name_based_usertype", async (req, res
                     table_name = "td_loan_month_balance a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_member c ON b.member_code = c.member_code LEFT JOIN td_grt_basic d ON b.member_code = d.member_code LEFT JOIN md_group e ON b.group_code = e.group_code LEFT JOIN md_employee f ON e.co_id = f.emp_id LEFT JOIN md_fund g ON b.fund_id = g.fund_id LEFT JOIN md_scheme h ON b.scheme_id = h.scheme_id LEFT JOIN md_purpose i ON b.purpose = i.purp_id LEFT JOIN md_branch j ON a.branch_code = j.branch_code LEFT JOIN md_bank k ON e.bank_name = k.bank_code",
                     whr = `a.balance_date = '${dateFormat(supplyDate, "yyyy-mm-dd")}' AND a.branch_code IN (${data.branch_code})`,
                     order = `GROUP BY a.branch_code,j.branch_name,a.loan_id,d.form_no,c.member_code,c.client_name,c.client_mobile,c.dob, TIMESTAMPDIFF(YEAR, c.dob, CURDATE()),c.gurd_name,c.husband_name,c.client_addr,c.voter_id,c.pan_no,c.aadhar_no,c.nominee_name,e.group_code,e.group_name,e.co_id,e.bank_name,e.acc_no1,e.acc_no2,f.emp_name,b.fund_id,g.fund_name,b.scheme_id,h.scheme_name,b.purpose,i.purpose_id,b.applied_dt,b.applied_amt,b.disb_dt,b.prn_disb_amt,b.curr_roi,b.recovery_day,a.prn_amt,a.intt_amt
-                    ORDER BY a.branch_code,i.branch_name,a.loan_id,a.member_code desc`;
+                    ORDER BY a.branch_code,j.branch_name,a.loan_id desc`;
                 var outstanding_member_data = await db_Select(select,table_name,whr,order);
                 // outstanding_member_data['balance_date'] = balance_date
 
