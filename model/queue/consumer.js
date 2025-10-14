@@ -94,10 +94,16 @@ async function startMonthEndProcessConsumer(io, userId) {
                         if(pocRes.suc > 0){
                             demandProcRes = await db_Select(null, null, null, null, true, `CALL p_pop_demand('${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}', ${+dt.branch_code})`);
                         }
+                        var outpocRes = {}
+                        if(demandProcRes > 0){
+                            var outpocRes = await db_Select(null, null, null, null, true, `CALL p_loan_outstanding_all(${+dt.branch_code},'${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}')`);
+                        }
+
                         jobStatus.push({
                             branch_code: dt.branch_code,
                             res: pocRes,
-                            demProcRes: demandProcRes
+                            demProcRes: demandProcRes,
+                            outstandingpocRes: outpocRes
                         })
                         // console.log(pocRes, 'poc status');
                     }
