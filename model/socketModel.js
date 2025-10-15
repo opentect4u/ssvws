@@ -1,5 +1,5 @@
 const { Server } = require("socket.io");
-const { startOutStandRepoConsumer, startMonthEndProcessConsumer, startLoanTrnsRepoProcessConsumer, startOverdueRepoProcessConsumer } = require("./queue/consumer");
+const { startOutStandRepoConsumer, startMonthEndProcessConsumer, startLoanTrnsRepoProcessConsumer, startOverdueRepoProcessConsumer, startPortfolioProcessConsumer } = require("./queue/consumer");
 let io;
 
 function initSocket(server) {
@@ -42,6 +42,13 @@ function initSocket(server) {
             // console.log("Initiating Loan Transaction Report Process for user:");
             // console.log(data, 'data');
             await startOverdueRepoProcessConsumer(io, userId);
+            // startMonthEndProcessConsumer(io)
+        })
+
+          socket.on("portfolio_process", async (data) => {
+            // console.log("Initiating Month End Process for user:");
+            // console.log(data, 'data');
+            await startPortfolioProcessConsumer(io, userId);
             // startMonthEndProcessConsumer(io)
         })
     });
