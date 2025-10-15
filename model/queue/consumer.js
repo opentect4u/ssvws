@@ -471,7 +471,7 @@ async function startPortfolioProcessConsumer(io, userId) {
                 // await runReportProcedure(job.userId, job.dateRange);
                 var data = job, jobStatus = [];
                 if (!data.branches) {
-                    return io.to(`user-${userId}`).emit("receive_notification", {
+                    return io.to(`user-${userId}`).emit("receive_notification_portfolio", {
                         suc: 0,
                         msg: "Invalid input data",
                         err: true
@@ -491,14 +491,14 @@ async function startPortfolioProcessConsumer(io, userId) {
                         console.log(pocRes, 'poc status');
                     }
                 }else{
-                    return io.to(`user-${userId}`).emit("receive_notification", {
+                    return io.to(`user-${userId}`).emit("receive_notification_portfolio", {
                         suc: 0,
                         msg: "Invalid input data",
                         err: true
                     });
                 }
                 
-                io.to(`user-${userId}`).emit("receive_notification", {
+                io.to(`user-${userId}`).emit("receive_notification_portfolio", {
                     message: jobStatus.length > 0 ? "Portfolio Report Process Completed!" : "Something went wrong!",
                     err: false,
                     msg: jobStatus
@@ -507,7 +507,7 @@ async function startPortfolioProcessConsumer(io, userId) {
             } catch (err) {
                 console.error("Error processing report:", err);
                 channel.nack(msg);
-                io.to(`user-${userId}`).emit("receive_notification", {
+                io.to(`user-${userId}`).emit("receive_notification_portfolio", {
                     suc: 0,
                     msg: "Error occurred",
                     err: err
