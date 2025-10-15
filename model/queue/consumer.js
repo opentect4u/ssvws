@@ -460,7 +460,7 @@ async function startPortfolioProcessConsumer(io, userId) {
     // set prefetch
     await channel.prefetch(1);
     await channel.assertQueue("portfolio_jobs", { durable: true });
-    console.log("Consumer is waiting for messages...",portfolio_jobs);
+    console.log("Consumer is waiting for messages...","portfolio_jobs");
 
     channel.consume("portfolio_jobs", async (msg) => {
         if (msg !== null) {

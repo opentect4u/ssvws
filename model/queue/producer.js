@@ -66,7 +66,7 @@ async function publishPortfolioReportJob(data) {
     const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
     const channel = await conn.createChannel();
     await channel.assertQueue("portfolio_jobs", { durable: true });
-    console.log("Consumer is waiting for messagessss...",portfolio_jobs);
+    console.log("Consumer is waiting for messagessss...","portfolio_jobs");
     channel.sendToQueue("portfolio_jobs", Buffer.from(JSON.stringify(data)), {
         persistent: true
     });
