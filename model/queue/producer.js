@@ -69,6 +69,7 @@ async function publishPortfolioReportJob(data) {
     channel.sendToQueue("portfolio_jobs", Buffer.from(JSON.stringify(data)), {
         persistent: true
     });
+     console.log("✅ Portfolio job published:", data);
     setTimeout(() => {
         channel.close()
         conn.close()
