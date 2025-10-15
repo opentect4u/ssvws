@@ -452,4 +452,69 @@ async function startOverdueRepoProcessConsumer(io, userId) {
     }, { noAck: false });
 }
 
-module.exports = { startOutStandRepoConsumer, startMonthEndProcessConsumer, startLoanTrnsRepoProcessConsumer, getgroupwiseReport, getmemberwiseReport, getfundwiseReport, getcowiseReport, getbranchwiseReport, startOverdueRepoProcessConsumer };
+async function startPortfolioProcessConsumer(io, userId) {
+    // const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
+    const channel = await conn.createChannel();
+    // set prefetch
+    await channel.prefetch(1);
+    await channel.assertQueue("portfolio_jobs", { durable: true });
+    console.log("Consumer is waiting for messages...");
+
+    channel.consume("portfolio_jobs", async (msg) => {
+        if (msg !== null) {
+            const job = JSON.parse(msg.content.toString());
+            console.log("Received job:", job);
+
+            try {
+                // await runReportProcedure(job.userId, job.dateRange);
+                var data = job, jobStatus = [];
+                if (!data.branches) {
+                    return io.to(`user-${userId}`).emit("receive_notification", {
+                        suc: 0,
+                        msg: "Invalid input data",
+                        err: true
+                    });
+                }
+                
+                if(Array.isArray(data.branches)){
+                    for (let dt of data.branches) {
+                        console.log(dt,'lolo');
+                        
+                        var pocRes = await db_Select(null, null, null, null, true, `CALL p_portfolio(${+dt.branch_code},'${dateFormat(new Date(data.from_dt), "yyyy-mm-dd")}','${dateFormat(new Date(data.to_dt), "yyyy-mm-dd")}')`);
+
+                        jobStatus.push({
+                            branch_code: dt.branch_code,
+                            res: pocRes
+                        })
+                        console.log(pocRes, 'poc status');
+                    }
+                }else{
+                    return io.to(`user-${userId}`).emit("receive_notification", {
+                        suc: 0,
+                        msg: "Invalid input data",
+                        err: true
+                    });
+                }
+                
+                io.to(`user-${userId}`).emit("receive_notification", {
+                    message: jobStatus.length > 0 ? "Portfolio Report Process Completed!" : "Something went wrong!",
+                    err: false,
+                    msg: jobStatus
+                });
+                channel.ack(msg);
+            } catch (err) {
+                console.error("Error processing report:", err);
+                channel.nack(msg);
+                io.to(`user-${userId}`).emit("receive_notification", {
+                    suc: 0,
+                    msg: "Error occurred",
+                    err: err
+                });
+            }
+        }
+    }, { noAck: false });
+}
+
+module.exports = { startOutStandRepoConsumer, startMonthEndProcessConsumer, startLoanTrnsRepoProcessConsumer, getgroupwiseReport, getmemberwiseReport, getfundwiseReport, getcowiseReport, getbranchwiseReport, startOverdueRepoProcessConsumer, startPortfolioProcessConsumer };

@@ -60,4 +60,19 @@ async function publishOverdueRepoJob(data) {
     }, 500);
 }
 
-module.exports = { publishReportJob, publishMonthEndJob, publishLoanTrnsRepoJob, publishOverdueRepoJob };
+async function publishPortfolioReportJob(data) {
+    // const conn = await amqp.connect("amqp://localhost");
+    // const conn = await amqp.connect("amqp://subham:Samanta%53421d@localhost");
+    const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
+    const channel = await conn.createChannel();
+    await channel.assertQueue("portfolio_jobs", { durable: true });
+    channel.sendToQueue("portfolio_jobs", Buffer.from(JSON.stringify(data)), {
+        persistent: true
+    });
+    setTimeout(() => {
+        channel.close()
+        conn.close()
+    }, 500);
+}
+
+module.exports = { publishReportJob, publishMonthEndJob, publishLoanTrnsRepoJob, publishOverdueRepoJob, publishPortfolioReportJob };
