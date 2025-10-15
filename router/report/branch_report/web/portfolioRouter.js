@@ -16,7 +16,8 @@ portfolioRouter.post("/call_proc_portfolio", async (req, res) => {
 
          // ✅ Publish job to RabbitMQ 15.10.2025
          await publishPortfolioReportJob(data);
-
+         console.log("Portfolio job sent to RabbitMQ queue:", data);
+         
         //Delete existing data against branch_code
         // const branchCodes = data.branches.map(b => `'${b.branch_code}'`).join(",");
         // var delete_data = await db_Delete('tt_portfolio',null);
