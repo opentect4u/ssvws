@@ -60,7 +60,7 @@ function Sidebar({ mode = 0 }) {
 	// Add effect to ensure socket connection
 	useEffect(() => {
 		if (!socket && userDetails?.emp_id) {
-			console.log("Initializing socket connection...")
+			// console.log("Initializing socket connection...")
 			const newSocket = connectSocket(userDetails?.emp_id)
 			if (newSocket) {
 				// console.log(newSocket, 'newSocketnewSocketnewSocket');
@@ -70,6 +70,12 @@ function Sidebar({ mode = 0 }) {
 				// Message("success", "Month end details updated successfully")
 				MessageWithLink("success", "Your month end process is complete. To view the report,", "/homebm/overduereport", 'Click Here')
 				})
+
+				// newSocket.on('receive_notification_portfolio', (data) => {
+				// console.log("Received month end process update:", data, 'receive_notification_portfolio')
+				// // Message("success", "Month end details updated successfully")
+				// // MessageWithLink("success", "Your month end process is complete. To view the report,", "/homebm/overduereport", 'Click Here')
+				// })
 
 
 			} else {

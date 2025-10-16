@@ -136,9 +136,9 @@ function MonthEndForm() {
 				payload
 			)
 			
+			console.log(res?.data, 'RESSSSS======>>>>');
 			if(res?.data?.suc > 0){
-				// console.log(res?.data?.req_data, 'RESSSSS======>>>> ////');
-				
+
 				if (!socket) {
 					console.warn("Socket not connected, attempting to reconnect...")
 					const newSocket = connectSocket(userDetails?.emp_id)

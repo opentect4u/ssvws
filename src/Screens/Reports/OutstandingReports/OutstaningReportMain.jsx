@@ -250,9 +250,6 @@ function OutstaningReportMain() {
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				
-				// setFetchedReportDate(
-				// 	res?.data?.balance_date
-				// )
 				setReportData(data)
 				populateColumns(res?.data?.outstanding_data?.msg, groupwiseOutstandingHeader)
 					

@@ -25,6 +25,8 @@ import { exportToExcel } from "../../../Utils/exportToExcel"
 import { printTableReport } from "../../../Utils/printTableReport"
 import { useCtrlP } from "../../../Hooks/useCtrlP"
 import { MultiSelect } from "primereact/multiselect"
+// import { useSocket } from "../../../Context/SocketContext"
+import { Message } from "../../../Components/Message"
 
 const options = [
 	{
@@ -68,6 +70,38 @@ function PortfolioReport() {
 	const [selectedOptions, setSelectedOptions] = useState([])
 	const [selectedCOs, setSelectedCOs] = useState([])
 	const [procedureSuccessFlag, setProcedureSuccessFlag] = useState("0")
+	// const { socket, connectSocket } = useSocket()
+
+
+		// Add effect to ensure socket connection
+		// useEffect(() => {
+		// 	if (!socket && userDetails?.emp_id) {
+		// 		connectSocket(userDetails.emp_id)
+		// 	}
+		// }, [socket, userDetails, connectSocket])
+
+		// useEffect(() => {
+		// if (!socket && userDetails?.emp_id) {
+		// const newSocket = connectSocket(userDetails?.emp_id)
+		// if (newSocket) {
+
+		// newSocket.on('receive_notification_portfolio', (data) => {
+		// setLoading(false)
+		// setProcedureSuccessFlag(data?.msg[0]?.res?.suc)
+		// console.log("RESSSSS======>>>>", data?.msg[0]?.res?.suc, 'receive_notification_portfolio')
+		// Message("success", "Process Report updated successfully")
+		// })
+		// } else {
+		// console.error("Failed to establish socket connection")
+		// setLoading(false)
+		// }
+		// }
+		// }, [socket, userDetails, connectSocket])
+	
+		// // Debug socket status changes
+		// useEffect(() => {
+		// 	console.log("Socket connection status:", socket ? "Connected" : "Disconnected")
+		// }, [socket])
 
 	const onChange = (e) => {
 		console.log("radio1 checked", e)
@@ -213,7 +247,8 @@ function PortfolioReport() {
 		const creds = {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
-			fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
+			// fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
+			fund_id: selectedFund === "F" ? selectedFunds : selectedFund ? [selectedFund] : ["0"]
 		}
 
 		await axios
@@ -349,8 +384,35 @@ function PortfolioReport() {
 		await axios
 			.post(`${url}/call_proc_portfolio`, creds)
 			.then((res) => {
-				console.log("Procedure called", res?.data)
+
+				
+				// if(res?.data?.suc > 0){
+				// if (!socket) {
+				// 	console.warn("Socket not connected, attempting to reconnect...")
+				// 	const newSocket = connectSocket(userDetails?.emp_id)
+				// 	console.log(newSocket, 'RESSSSS======>>>>', creds);
+				// 	if (newSocket) {					
+				// 		newSocket.emit('portfolio_process', {
+				// 			// data: res?.data?.req_data
+				// 			data: res?.data?.msg
+				// 		})
+				// 	} else {
+				// 		console.error("Failed to establish socket connection")
+				// 	}
+				// } else {
+				// 	// console.log(res?.data, 'RESSSSS======>>>>');
+				// 	socket.emit('portfolio_process', {
+				// 		// data: res?.data?.req_data
+				// 		data: res?.data?.msg
+				// 	})
+				// }
+
+				// console.log("Received month end process update:", res?.data)
 				setProcedureSuccessFlag(res?.data?.suc)
+
+				// }else{
+				// Message("error", "Some error occurred while Processing Report")
+				// }
 			})
 			.catch((err) => {
 				console.log("Some error while running procedure.", err)
@@ -432,13 +494,28 @@ function PortfolioReport() {
 		label: `${branch.branch_name} - ${branch.branch_assign_id}`,
 	}))
 
-	const displayedOptions = selectedOptions
+	// const displayedOptions = selectedOptions
+
+	const displayedOptions =
+		selectedOptions.length === dropdownOptions.length
+			? [{ value: "all", label: "All" }]
+			: selectedOptions
 
 	const handleMultiSelectChange = (selected) => {
-		if (selected && selected.length > 4) {
+		// if (selected && selected.length > 4) {
+		// 	return
+		// }
+		// setSelectedOptions(selected)
+
+		if (selected.some((option) => option.value === "all")) {
+			setSelectedOptions(dropdownOptions)
+		} else {
+			// setSelectedOptions(selected)
+			if (selected && selected.length > 4) {
 			return
+			}
+			setSelectedOptions(selected)
 		}
-		setSelectedOptions(selected)
 	}
 
 	const dropdownCOs = cos?.map((branch) => ({
@@ -454,6 +531,7 @@ function PortfolioReport() {
 	const handleMultiSelectChangeCOs = (selected) => {
 		if (selected.some((option) => option.value === "all")) {
 			// If "All" is selected, select all options
+			// setSelectedCOs(dropdownCOs)
 			setSelectedCOs(dropdownCOs)
 		} else {
 			setSelectedCOs(selected)
@@ -519,7 +597,8 @@ function PortfolioReport() {
 						userDetails?.brn_code == 100 && (
 							<div className="w-full">
 								<Select
-									options={dropdownOptions}
+									// options={dropdownOptions}
+									options={[{ value: "all", label: "All" }, ...dropdownOptions]}
 									isMulti
 									value={displayedOptions}
 									onChange={handleMultiSelectChange}
