@@ -88,6 +88,11 @@ async function startMonthEndProcessConsumer(io, userId) {
                 if(Array.isArray(data.month_end_dt)){
                     for (let dt of data.month_end_dt) {
                         // console.log(dt,'lolo');
+                        const closedDate = new Date(dt.closed_upto);
+
+                        // ✅ Get the first date of the same month
+                         const firstDateOfMonth = new Date(closedDate.getFullYear(), closedDate.getMonth(), 1);
+                         console.log(firstDateOfMonth,'uuu');
                         
                         var pocRes = await db_Select(null, null, null, null, true, `CALL p_pop_od('${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}', ${+dt.branch_code})`);
                         var demandProcRes = {}
@@ -98,12 +103,17 @@ async function startMonthEndProcessConsumer(io, userId) {
                         if(demandProcRes > 0){
                             var outpocRes = await db_Select(null, null, null, null, true, `CALL p_loan_outstanding_all(${+dt.branch_code},'${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}')`);
                         }
+                        var portpocRes = {}
+                        if(outpocRes > 0){
+                            var portpocRes = await db_Select(null,null,null,null,true,`CALL p_portfolio(${+dt.branch_code},'${dateFormat(new Date(firstDateOfMonth), "yyyy-mm-dd")}','${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}')`);
+                        }
 
                         jobStatus.push({
                             branch_code: dt.branch_code,
                             res: pocRes,
                             demProcRes: demandProcRes,
-                            outstandingpocRes: outpocRes
+                            outstandingpocRes: outpocRes,
+                            portfoliopocRes: portpocRes
                         })
                         // console.log(pocRes, 'poc status');
                     }
@@ -458,11 +468,13 @@ async function startPortfolioProcessConsumer(io, userId) {
     const conn = await amqp.connect("amqp://ssspl:Sign%232025@localhost");
     const channel = await conn.createChannel();
     // set prefetch
-    await channel.prefetch(1);
     await channel.assertQueue("portfolio_jobs", { durable: true });
+    await channel.prefetch(1);
     console.log("Consumer is waiting for messages...","portfolio_jobs");
 
     channel.consume("portfolio_jobs", async (msg) => {
+        console.log(msg,'msg');
+        
         if (msg !== null) {
             const job = JSON.parse(msg.content.toString());
             console.log("Received job:", job);
@@ -483,6 +495,7 @@ async function startPortfolioProcessConsumer(io, userId) {
                         console.log(dt,'lolo');
                         
                         var pocRes = await db_Select(null, null, null, null, true, `CALL p_portfolio(${+dt.branch_code},'${dateFormat(new Date(data.from_dt), "yyyy-mm-dd")}','${dateFormat(new Date(data.to_dt), "yyyy-mm-dd")}')`);
+                        
 
                         jobStatus.push({
                             branch_code: dt.branch_code,
@@ -503,7 +516,7 @@ async function startPortfolioProcessConsumer(io, userId) {
                     err: false,
                     msg: jobStatus
                 });
-                channel.ack(msg);
+                channel.nack(msg, false, false);
             } catch (err) {
                 console.error("Error processing report:", err);
                 channel.nack(msg);
