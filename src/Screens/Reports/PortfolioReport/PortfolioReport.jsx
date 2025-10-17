@@ -121,22 +121,42 @@ function PortfolioReport() {
 			branch_code:
 				branchCodes?.length === 0 ? userDetails?.brn_code : branchCodes,
 			// supply_date: formatDateToYYYYMMDD(fromDate),
+			from_dt: formatDateToYYYYMMDD(fromDate),
+			to_dt: formatDateToYYYYMMDD(toDate),
 		}
 
 		await axios
 			.post(`${url}/memberwise_portfolio_report`, creds)
 			.then((res) => {
-				const data = res?.data?.msg?.msg || []
-				if (data.length === 0) {
-					console.log("--------------- NO DATA ---------------", data?.length)
-				}
 
-				console.log("---------- DATA MEMBERWISE -----------", res?.data)
+				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				if(res?.data?.suc == 1){
+				// const data = res?.data?.msg?.msg || []
+				const data = res?.data?.msg?.msg;
+				
 				setFetchedReportDate(
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
-				populateColumns(data,portfolioReportHeaderMemberwise);	
+				populateColumns(data, portfolioReportHeaderMemberwise);	
+
+				}
+
+				if(res?.data?.suc == 2){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderMemberwise);
+				
+				}
+
+				if(res?.data?.suc == 0){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderMemberwise);
+				
+				}
+
+				
 
 			})
 			.catch((err) => {
@@ -155,22 +175,42 @@ function PortfolioReport() {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			// supply_date: formatDateToYYYYMMDD(fromDate),
+			from_dt: formatDateToYYYYMMDD(fromDate),
+			to_dt: formatDateToYYYYMMDD(toDate),
 		}
 
 		await axios
 			.post(`${url}/branchwise_portfolio_report`, creds)
 			.then((res) => {
-				const data = res?.data?.msg?.msg || []
-				if (data.length === 0) {
-					console.log("--------------- NO DATA ---------------", data?.length)
-				}
 
-				console.log("---------- DATA BRN WISE -----------", res?.data)
+				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				if(res?.data?.suc == 1){
+				// const data = res?.data?.msg?.msg || []
+				const data = res?.data?.msg?.msg
+				
 				setFetchedReportDate(
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
-				populateColumns(data,portfolioReportHeaderBranchwise);	
+				populateColumns(data,portfolioReportHeaderBranchwise);
+
+				}
+
+				if(res?.data?.suc == 2){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderBranchwise);
+				
+				}
+
+				if(res?.data?.suc == 0){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderBranchwise);
+				
+				}
+
+					
 
 			})
 			.catch((err) => {
@@ -187,28 +227,42 @@ function PortfolioReport() {
 		console.log("BRNADHIKUDUSTYSTUDGF", branchCodes)
 
 		const creds = {
-			branch_code:
-				branchCodes?.length === 0 ? [Number(userDetails?.brn_code)] : branchCodes,
+			branch_code: branchCodes?.length === 0 ? [Number(userDetails?.brn_code)] : branchCodes,
+			from_dt: formatDateToYYYYMMDD(fromDate),
+			to_dt: formatDateToYYYYMMDD(toDate),
 			// supply_date: formatDateToYYYYMMDD(fromDate),
 		}
+		
 
 		await axios
 			.post(`${url}/groupwise_portfolio_report`, creds)
 			.then((res) => {
-				const data = res?.data?.suc == 0 ? [] : (res?.data?.msg?.msg || [])
-				if (data.length === 0) {
-					console.log(
-						"--------------- LOOP BREAKS ---------------",
-						data?.length
-					)
-				}
+				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
 
-				console.log("---------- DATA GROUPWISE -----------", res?.data)
+				if(res?.data?.suc == 1){
+				// const data = res?.data?.suc == 0 ? [] : (res?.data?.msg?.msg || [])
+				const data = res?.data?.msg?.msg;
+
 				// setFetchedReportDate(
 				// 	new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				// )
 				setReportData(data)
-				populateColumns(data,portfolioReportHeaderGroupwise);	
+				populateColumns(data,portfolioReportHeaderGroupwise);
+				}
+
+				if(res?.data?.suc == 2){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderGroupwise);
+				}
+
+				if(res?.data?.suc == 0){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderGroupwise);
+				}
+				
+					
 
 			})
 			.catch((err) => {
@@ -248,23 +302,43 @@ function PortfolioReport() {
 			branch_code:
 				branchCodes?.length === 0 ? [userDetails?.brn_code] : branchCodes,
 			// fund_id: selectedFund === "F" ? selectedFunds : [selectedFund],
-			fund_id: selectedFund === "F" ? selectedFunds : selectedFund ? [selectedFund] : ["0"]
+			fund_id: selectedFund === "F" ? selectedFunds : selectedFund ? [selectedFund] : ["0"],
+			from_dt: formatDateToYYYYMMDD(fromDate),
+			to_dt: formatDateToYYYYMMDD(toDate),
 		}
 
 		await axios
 			.post(`${url}/fundwise_portfolio_report`, creds)
 			.then((res) => {
-				const data = res?.data?.msg?.msg || []
-				if (data.length === 0) {
-					console.log("--------------- NO DATA ---------------", data?.length)
-				}
 
-				console.log("---------- DATA FUNDWISE -----------", res?.data)
+				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				 if(res?.data?.suc == 1){
+				// const data = res?.data?.msg?.msg || []
+				const data = res?.data?.msg?.msg
+				
 				setFetchedReportDate(
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
-				populateColumns(data,portfolioReportHeaderFundwise);	
+				populateColumns(data, portfolioReportHeaderFundwise);
+
+				}
+
+				if(res?.data?.suc == 2){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderFundwise);
+				
+				}
+
+				if(res?.data?.suc == 0){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderFundwise);
+				
+				}
+
+					
 
 			})
 			.catch((err) => {
@@ -317,22 +391,41 @@ function PortfolioReport() {
 						? allCos
 						: [selectedCO]
 					: coCodes,
+			from_dt: formatDateToYYYYMMDD(fromDate),
+			to_dt: formatDateToYYYYMMDD(toDate),
 		}
 
 		await axios
 			.post(`${url}/cowise_portfolio_report`, creds)
 			.then((res) => {
-				const data = res?.data?.msg?.msg || []
-				if (data.length === 0) {
-					console.log("--------------- NO DATA ---------------", data?.length)
-				}
-
-				console.log("---------- DATA CO-wise -----------", res?.data)
+				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				if(res?.data?.suc == 1){
+				// const data = res?.data?.msg?.msg || []
+				const data = res?.data?.msg?.msg;
+				
 				setFetchedReportDate(
 					new Date(res?.data?.balance_date).toLocaleDateString("en-GB")
 				)
 				setReportData(data)
 				populateColumns(data,portfolioReportHeaderCOwise);	
+
+				}
+
+				if(res?.data?.suc == 2){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderCOwise);
+				
+				}
+
+				if(res?.data?.suc == 0){
+				Message("error", res?.data?.msg?.msg[0])
+				setReportData([])
+				populateColumns([], portfolioReportHeaderCOwise);
+				
+				}
+
+				
 
 			})
 			.catch((err) => {
@@ -365,6 +458,33 @@ function PortfolioReport() {
 		getBranches()
 	}, [])
 
+
+	useEffect(() => {
+	// setLoading(true)
+	console.log(userDetails?.brn_code, 'cccccccccccc', userDetails);
+	
+	// setProcedureSuccessFlag("0")
+
+	if(userDetails?.brn_code != 100){
+	// runProcedureReport()
+	setProcedureSuccessFlag("0")
+	// setLoading(false)
+	}
+
+	if(userDetails?.brn_code == 100){
+	// runProcedureReport()
+	setProcedureSuccessFlag("0")
+	// setLoading(false)
+	}
+
+	// if(userDetails?.brn_code == 100 && selectedOptions.length > 0 && choosenMonth && choosenYear){
+	// // runProcedureReport()
+	// setProcedureSuccessFlag("1")
+	// // setLoading(false)
+	// }
+
+	}, [selectedOptions, fromDate, toDate])
+
 	const runProcedureReport = async () => {
 		setLoading(true)
 
@@ -379,13 +499,30 @@ function PortfolioReport() {
 				branchCodes?.length === 0
 					? [{ branch_code: userDetails?.brn_code }]
 					: branchCodes,
+
+			// Here if "All" is selected, we pass "A" to the backend to indicate all branches
+			// branches: displayedOptions[0]?.value === "all" ? ["A"] : branchCodes?.length === 0 ? [{ branch_code: userDetails?.brn_code }] : branchCodes
 		}
 
-		await axios
-			.post(`${url}/call_proc_portfolio`, creds)
-			.then((res) => {
+		// console.log(branchCodes.length > 0, 'branchCodes', fromDate, '||',  toDate);
 
-				
+		if(fromDate && toDate){
+			console.log('branchCodes', fromDate, '||',  toDate);
+			setProcedureSuccessFlag('1');
+			setLoading(false)
+		} else {
+			setLoading(false)
+		}
+		
+
+		// if(displayedOptions[0]?.value === "all"){
+		// 	console.log(displayedOptions[0]?.value, 'branchCodes', creds);
+		// }
+		
+		// await axios
+		// 	.post(`${url}/call_proc_portfolio`, creds)
+		// 	.then((res) => {
+
 				// if(res?.data?.suc > 0){
 				// if (!socket) {
 				// 	console.warn("Socket not connected, attempting to reconnect...")
@@ -408,17 +545,17 @@ function PortfolioReport() {
 				// }
 
 				// console.log("Received month end process update:", res?.data)
-				setProcedureSuccessFlag(res?.data?.suc)
+				// setProcedureSuccessFlag(res?.data?.suc)
 
 				// }else{
 				// Message("error", "Some error occurred while Processing Report")
 				// }
-			})
-			.catch((err) => {
-				console.log("Some error while running procedure.", err)
-			})
+			// })
+			// .catch((err) => {
+			// 	console.log("Some error while running procedure.", err)
+			// })
 
-		setLoading(false)
+		// setLoading(false)
 	}
 
 	const handleSubmit = () => {
