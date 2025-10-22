@@ -203,7 +203,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.branch_code,b.branch_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,(SUM(a.credit) - SUM(a.intt)) AS prn_recov,SUM(a.intt) AS intt`,
+    var select = `a.branch_code,b.branch_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,(SUM(a.credit) - SUM(a.intt)) AS prn_recov,SUM(a.intt) AS intt_recov`,
     table_name = `(SELECT a.payment_date,
                   a.payment_id,
                   b.branch_code,

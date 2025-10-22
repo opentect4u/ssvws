@@ -354,15 +354,22 @@ grtformRouter.post("/delete_form", async (req, res) => {
 });
 
 grtformRouter.post("/edit_basic_dtls", async (req, res) => {
+    try {
     var data = req.body;
     console.log(data,'getdata');
     
- if (!req.files || !req.files.files) {
-        return res.send('No file uploaded.');
-    }
+//  if (!req.files || !req.files.files) {
+//         return res.send('No file uploaded.');
+//     }
+
+const files = req.files && req.files.files ? req.files.files : null;
     //edit basic details
-    var basic_dt = await edit_basic_dt(data,req.files.files)
+    var basic_dt = await edit_basic_dt(data,files)
     res.send(basic_dt);
+    } catch (err) {
+    console.error('Error in edit_basic_dtls:', err.message);
+    res.send({ suc: 0, msg: err.message });
+  }
 });
 
 grtformRouter.post("/save_occup_dtls", async (req, res) => {
