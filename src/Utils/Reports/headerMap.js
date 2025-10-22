@@ -740,7 +740,7 @@ const txnMembHeader = {
 	debit: "Debit",
 	credit: "Credit",
 	prn_recov:"Principle Recovery",
-	intt:"Interest Recovery",
+	intt_recov:"Interest Recovery",
 	curr_balance: "Current Balance",
 	bank_name:"Bank",
 	bank_branch_name:"Bank Branch",
@@ -753,14 +753,15 @@ const txnMembHeader = {
 }
 
 const branchwiseTxnReportHeader = {
-	branch_id: "Branch ID",
+	branch_code: "Branch Code",
 	branch_name: "Branch Name",
 	debit: "Debit",
 	credit: "Credit",
 	curr_balance: "Current Balance",
 	prn_recov:"Principle Recovery",
-	intt:"Interest Recovery",
+	intt_recov:"Interest Recovery", 
 }
+
 
 const txnDetailsHeader = {
 	payment_date: "Payment Date",

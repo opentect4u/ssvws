@@ -129,7 +129,7 @@ function PortfolioReport() {
 			.post(`${url}/memberwise_portfolio_report`, creds)
 			.then((res) => {
 
-				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				// console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
 				if(res?.data?.suc == 1){
 				// const data = res?.data?.msg?.msg || []
 				const data = res?.data?.msg?.msg;
@@ -183,7 +183,7 @@ function PortfolioReport() {
 			.post(`${url}/branchwise_portfolio_report`, creds)
 			.then((res) => {
 
-				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				// console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
 				if(res?.data?.suc == 1){
 				// const data = res?.data?.msg?.msg || []
 				const data = res?.data?.msg?.msg
@@ -237,7 +237,7 @@ function PortfolioReport() {
 		await axios
 			.post(`${url}/groupwise_portfolio_report`, creds)
 			.then((res) => {
-				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				// console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
 
 				if(res?.data?.suc == 1){
 				// const data = res?.data?.suc == 0 ? [] : (res?.data?.msg?.msg || [])
@@ -311,7 +311,7 @@ function PortfolioReport() {
 			.post(`${url}/fundwise_portfolio_report`, creds)
 			.then((res) => {
 
-				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				// console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
 				 if(res?.data?.suc == 1){
 				// const data = res?.data?.msg?.msg || []
 				const data = res?.data?.msg?.msg
@@ -398,7 +398,7 @@ function PortfolioReport() {
 		await axios
 			.post(`${url}/cowise_portfolio_report`, creds)
 			.then((res) => {
-				console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
+				// console.log(res?.data?.suc, 'RESSSSS======>>>>', res?.data);
 				if(res?.data?.suc == 1){
 				// const data = res?.data?.msg?.msg || []
 				const data = res?.data?.msg?.msg;
@@ -461,7 +461,7 @@ function PortfolioReport() {
 
 	useEffect(() => {
 	// setLoading(true)
-	console.log(userDetails?.brn_code, 'cccccccccccc', userDetails);
+	// console.log(userDetails?.brn_code, 'cccccccccccc', userDetails);
 	
 	// setProcedureSuccessFlag("0")
 

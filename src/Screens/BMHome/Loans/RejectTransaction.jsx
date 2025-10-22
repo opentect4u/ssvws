@@ -208,6 +208,47 @@ const RejectTransaction = () => {
 		}
 	}
 
+	const checkTransaction = async () =>{
+		setLoading(true)
+
+		const modifiedArr = data
+			.filter((_, i) => selectedRowIndices.includes(i))
+			.map((txn) => ({
+				payment_date: txn.transaction_date,
+				loan_id: txn.loan_id,
+				payment_id: txn.transaction_id,
+				// tr_type: txn.tr_type,
+			}))
+
+		const creds = {
+			reject_data: modifiedArr,
+		}
+
+		try {
+			const res = await axios.post(`${url}/check_date_id_before_payment`, creds)
+			console.log("RES", res?.data)
+
+			if(res?.data?.suc == 1){
+				// Message("success", "Loan Txns rejected.")
+				await rejectTnx()
+				setData([])
+				setRejRes('')
+			}
+			else{
+				Message("error", res?.data?.msg)
+			}
+		} catch (err) {
+			Message("error", "Some error occurred.")
+			console.log("ERRR", err)
+		} finally {
+			setLoading(false)
+		}
+
+		console.log(creds, 'creds');
+
+
+	}
+
 	const rejectTnx = async () => {
 		setLoading(true)
 
@@ -466,8 +507,9 @@ const RejectTransaction = () => {
 													</>
 												}
 												onConfirm={async () => {
-													await rejectTnx()
-													setData([])
+													// await rejectTnx()
+													checkTransaction()
+													// setData([])
 													// Message("success", "Transaction Rejected.")
 												}}
 												onCancel={() => null}
