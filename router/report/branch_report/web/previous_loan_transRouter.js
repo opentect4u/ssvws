@@ -61,7 +61,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
            AND c.scheme_id   = g.scheme_id
            AND e.bank_name = h.bank_code`,
     order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
-    ORDER BY a.payment_date,a.loan_id`       
+    ORDER BY a.payment_date`       
     var groupwise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(groupwise_prev_loan_transaction_report);
   }catch(error){
@@ -148,8 +148,8 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
            AND c.scheme_id   = g.scheme_id
            AND e.bank_name = h.bank_code
            AND e.co_id IN (${data.co_id})`,
-    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,e.bank_name,e.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
-    ORDER BY a.payment_date,a.loan_id`       
+    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
+    ORDER BY a.payment_date`       
     var cowise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(cowise_prev_loan_transaction_report);
   }catch(error){
@@ -188,7 +188,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
            AND c.fund_id = h.fund_id
            AND c.fund_id IN (${data.fund_id})`,
     order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.fund_id,h.fund_name,c.group_code,e.group_name,e.bank_name,e.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
-    ORDER BY a.payment_date,a.loan_id`       
+    ORDER BY a.payment_date`       
     var fundwise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(fundwise_prev_loan_transaction_report);
   }catch(error){

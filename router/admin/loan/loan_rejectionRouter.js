@@ -101,6 +101,49 @@ loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, re
     }    
 });
 
+loan_rejectionRouter.post("/check_date_id_before_payment", async (req, res) => {
+ try{
+  var data = req.body;
+  console.log(data,'data');
+
+  if (!data.reject_data || data.reject_data.length === 0) {
+      return res.send({ suc: 0, msg: 'No data received' });
+    }
+
+    // var payment_date_ar = data.reject_data.map(dt => `'${dateFormat(dt.payment_date, 'yyyy-mm-dd')}'`)
+    // var payment_id_ar = data.reject_data.map(dt => `'${dt.payment_id}'`)
+    // var branch_code_ar = data.reject_data.map(dt => `'${dt.branch_code}'`)
+
+    // console.log(payment_date_ar,loan_id_ar,branch_code_ar,'arrays');
+
+    for(let dt of data.reject_data){
+        const payment_date = dateFormat(dt.payment_date, 'yyyy-mm-dd');
+        const payment_id = dt.payment_id;
+        const loan_id = dt.loan_id;
+
+    var select = "COUNT(*) tot_data",
+    table_name = "td_loan_transactions",
+    whr = `payment_date = '${payment_date}'
+           AND payment_id > '${payment_id}'
+           AND loan_id = '${loan_id}'`
+    order = null;
+    var fetch_loans_data = await db_Select(select,table_name,whr,order);
+
+    console.log(fetch_loans_data,'fetch_loans');
+
+    // If any record found, return message "no delete"
+    if (fetch_loans_data.suc > 0 && fetch_loans_data.msg.length > 0 && fetch_loans_data.msg[0].tot_data > 0) {
+          return res.send({ suc: 0, msg: 'Delete not possible' });
+    }
+  }
+  return res.send({ suc: 1, msg: 'Now delete' });
+  
+ } catch (error) {
+    console.error("Error occurred:", error.message);
+    res.send({ success: false, error: error.message });
+}
+});
+
 //reject selected loan transaction
 loan_rejectionRouter.post("/reject_loan_transactions", async (req, res) => {
  try{

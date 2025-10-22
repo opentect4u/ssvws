@@ -266,7 +266,7 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
       table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_fund e ON b.fund_id = e.fund_id LEFT JOIN md_branch f ON b.branch_code = f.branch_code",
       whr = `b.branch_code IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
              AND c.co_id IN (${data.co_id}) AND a.tr_type IN ('D','R')`,
-      order = `GROUP BY b.branch_code,f.branch_name,a.payment_date,c.co_id,d.emp_name,b.fund_id,e.fund_name
+      order = `GROUP BY b.branch_code,f.branch_name,a.payment_date,c.group_code,b.member_code,c.co_id,d.emp_name,b.fund_id,e.fund_name
                ORDER BY a.payment_date`;
     var transaction_co_data = await db_Select(select,table_name,whr,order);
     }
@@ -317,7 +317,45 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
 
    // Transaction report branchwise 21.05.2025
 
-  loan_transRouter.post("/transaction_report_branchwise", async (req, res) => {
+  // loan_transRouter.post("/transaction_report_branchwise", async (req, res) => {
+  //   try{
+  //     var data = req.body;
+   
+  //     if(data.tr_type === 'D'){
+  //     var select = `a.branch_id,c.branch_name,SUM(a.debit) AS debit,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
+  //     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
+  //     whr = `b.branch_code IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
+  //     order = `GROUP BY a.branch_id,c.branch_name`;
+  //     var transaction_branch_data = await db_Select(select,table_name,whr,order);
+  //     }else if (data.tr_type === 'R'){
+  //     var select = `a.branch_id,c.branch_name,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
+  //     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
+  //     whr = `b.branch_code IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type = '${data.tr_type}'`,
+  //     order = `GROUP BY a.branch_id,c.branch_name`;
+  //     var transaction_branch_data = await db_Select(select,table_name,whr,order);
+  //     }else {
+  //     var select = `a.branch_id,c.branch_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,
+  //     (
+  //               SELECT SUM(a.prn_amt + a.od_prn_amt + a.intt_amt)
+  //               FROM td_loan a
+  //               WHERE a.group_code = b.group_code
+  //             ) AS curr_balance`,
+  //     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
+  //     whr = `b.branch_code IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type IN ('D','R')`,
+  //     order = `GROUP BY a.branch_id,c.branch_name`;
+  //     var transaction_branch_data = await db_Select(select,table_name,whr,order);
+  //     }
+  //     res.send({transaction_branch_data})
+  //     //  publishLoanTrnsRepoJob(data)
+  //   // res.send({transaction_group_data})
+  //   // res.send({ suc:1, msg: "Loan transaction report are processing", req_data: data})
+  //   }catch (error){
+  //    console.error("Error fetching transaction report branchwise:", error);
+  //    res.send({ suc: 0, msg: "An error occurred" });
+  //   }
+  //  });
+
+    loan_transRouter.post("/transaction_report_branchwise", async (req, res) => {
     try{
       var data = req.body;
    
@@ -334,12 +372,7 @@ loan_transRouter.post("/transaction_report_groupwise", async (req, res) => {
       order = `GROUP BY a.branch_id,c.branch_name`;
       var transaction_branch_data = await db_Select(select,table_name,whr,order);
       }else {
-      var select = `a.branch_id,c.branch_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,
-      (
-                SELECT SUM(prn_amt + od_prn_amt + intt_amt)
-                FROM td_loan a
-                WHERE a.group_code = b.group_code
-              ) AS curr_balance`,
+      var select = `a.branch_id,c.branch_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,SUM(a.prn_recov) AS prn_recov,SUM(a.intt_recov) AS intt_recov,SUM(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance`,
       table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
       whr = `b.branch_code IN (${data.branch_code}) AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' AND a.tr_type IN ('D','R')`,
       order = `GROUP BY a.branch_id,c.branch_name`;
