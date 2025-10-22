@@ -477,7 +477,7 @@ const BMBasicDetailsForm = forwardRef(({
     const handleUpdateBasicDetails = async () => {
         // console.log("handleUpdateBasicDetails called - " + geolocationFetchedAddress);
 
-        const creds = {
+        const creds_ = {
             form_no: formNumber,
             branch_code: branchCode,
             member_code: readonlyMemberId,
@@ -516,11 +516,20 @@ const BMBasicDetailsForm = forwardRef(({
         // })
         // console.log("handleUpdateBasicDetails", creds, "handleUpdateBasicDetails")
         // return;
+
+        // 🧠 Convert all string values to CAPITAL letters
+        const creds = Object.fromEntries(
+        Object.entries(creds_).map(([key, value]) => [
+        key, typeof value === "string" ? value.toUpperCase() : value,
+        ])
+        );
         if(approvalStatus === "U"){
                 // setLoading(true);
                await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
                 .then((res) => {
-                        console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0])
+
+                        // console.log('>>>>', creds, "REVERSE GEO ENCODING RES =============", res?.data?.results[0])
+                        
                         const payload = {
                             ...creds,
                             bm_gps_address: res?.data?.results[0]?.formatted_address
@@ -591,7 +600,7 @@ const BMBasicDetailsForm = forwardRef(({
 
     const submitBasicDetails = (addr:string | null | undefined = '') =>{
             try{
-                const creds = {
+                const creds_ = {
                     member_code: readonlyMemberId || 0,
                     branch_code: loginStore?.brn_code,
                     prov_grp_code: formData?.groupCode || "",
@@ -621,12 +630,23 @@ const BMBasicDetailsForm = forwardRef(({
                     co_gps_address: addr,
                     created_by: loginStore?.emp_id,
                 }; 
+
+                // 🧠 Convert all string values to CAPITAL letters
+                const creds = Object.fromEntries(
+                Object.entries(creds_).map(([key, value]) => [
+                    key, typeof value === "string" ? value.toUpperCase() : value,
+                ])
+                );
+
                 const fb = new FormData();
                 Object.keys(creds).forEach(key => {
                     fb.append(key,creds[key])
                 })
                 fb.append('files',formData?.uploadImg)
+
                 // console.log('Submitting basic details ',  fb)
+                // setLoading(false);
+
                 axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, fb,{
                             headers: {
                             'Content-Type': 'multipart/form-data',
@@ -1371,7 +1391,8 @@ const BMBasicDetailsForm = forwardRef(({
 
                         {
                             flag !== "BM" && <ButtonPaper mode='outlined' icon="cloud-upload-outline"
-                            onPress={triggerUpdateButton} disabled={updateDisabled}
+                            onPress={triggerUpdateButton} 
+                            disabled={updateDisabled}
                                 loading={loading}>SUBMIT</ButtonPaper>
                         }
                     </View>
