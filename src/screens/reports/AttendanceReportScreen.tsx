@@ -1,3 +1,5 @@
+import React, { SetStateAction, useContext, useEffect, useState } from 'react';
+
 import {
   StyleSheet,
   SafeAreaView,
@@ -15,7 +17,6 @@ import {
   Text,
   TouchableRipple,
 } from 'react-native-paper';
-import React, { SetStateAction, useEffect, useState } from 'react';
 import { usePaperColorScheme } from '../../theme/theme';
 import HeadingComp from '../../components/HeadingComp';
 import normalize, { SCREEN_HEIGHT, SCREEN_WIDTH } from 'react-native-normalize';
@@ -30,6 +31,7 @@ import { ADDRESSES } from '../../config/api_list';
 import DialogBox from '../../components/DialogBox';
 import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker';
 import dayjs, { Dayjs } from 'dayjs';
+import { AppStore } from '../../context/AppContext';
 
 const AttendanceReportScreen = () => {
   const theme = usePaperColorScheme();
@@ -38,7 +40,7 @@ const AttendanceReportScreen = () => {
   const [date, setDate] = useState<any>(dayjs());
   const [isLoading, setIsLoading] = useState(() => false);
   const [isDisabled, setIsDisabled] = useState(() => false);
-
+  const { handleLogout } = useContext<any>(AppStore)
   const [fromDate, setFromDate] = useState(() => new Date());
   const [toDate, setToDate] = useState(() => new Date());
   const [openFromDate, setOpenFromDate] = useState(() => false);
@@ -76,11 +78,22 @@ const AttendanceReportScreen = () => {
       emp_id: loginStore?.emp_id,
     };
     await axios
-      .post(`${ADDRESSES.ATTENDANCE_REPORT}`, creds)
+      .post(`${ADDRESSES.ATTENDANCE_REPORT}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+)
       .then(res => {
+        if (res?.data?.suc !== 1) {
+          handleLogout();
+        }
+        else{
         console.log('>>>>>>', res?.data);
         setReportData(res?.data?.msg);
         setVisible(true)
+        }
       })
       .catch(err => {
         console.log('<<<<<<', err);
@@ -97,10 +110,21 @@ const AttendanceReportScreen = () => {
       sl_no: slNo,
     };
     await axios
-      .post(`${ADDRESSES.FETCH_EMP_ATTENDANCE_DETAILS}`, creds)
+      .post(`${ADDRESSES.FETCH_EMP_ATTENDANCE_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+)
       .then(res => {
+        if (res?.data?.suc !== 1) {
+          handleLogout();
+        }
+        else{
         console.log('>>>>>>', res?.data);
         setDetailedReportData(res?.data?.msg);
+        }
       })
       .catch(err => {
         console.log('<<<<<<', err);

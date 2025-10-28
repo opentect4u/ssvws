@@ -1,6 +1,7 @@
-import { StyleSheet, SafeAreaView, View, ScrollView} from 'react-native'
+import React, { useContext, useEffect, useState } from 'react'
+
+import { StyleSheet, SafeAreaView, View, ScrollView } from 'react-native'
 import { DataTable, MD2Colors, MD2DarkTheme, MD2LightTheme, MD3LightTheme, Text } from "react-native-paper"
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import HeadingComp from "../../components/HeadingComp"
 import CollectionButtonsWrapper from "../../components/CollectionButtonsWrapper"
@@ -16,6 +17,7 @@ import RadioComp from '../../components/RadioComp'
 import { formattedDate } from '../../utils/dateFormatter'
 import axios from 'axios'
 import { ADDRESSES } from '../../config/api_list'
+import { AppStore } from '../../context/AppContext'
 
 function GroupwiseRecovery() {
     const theme = usePaperColorScheme()
@@ -24,7 +26,7 @@ function GroupwiseRecovery() {
 
     const [isLoading, setIsLoading] = useState(() => false)
     const [isDisabled, setIsDisabled] = useState(() => false)
-
+    const { handleLogout } = useContext<any>(AppStore)
     const [fromDate, setFromDate] = useState(() => new Date())
     const [toDate, setToDate] = useState(() => new Date())
     const [openFromDate, setOpenFromDate] = useState(() => false)
@@ -32,7 +34,7 @@ function GroupwiseRecovery() {
 
     const formattedFromDate = formattedDate(fromDate)
     const formattedToDate = formattedDate(toDate)
-    const [tot_credit,setTotCredit] = useState(()=>0)
+    const [tot_credit, setTotCredit] = useState(() => 0)
 
     const [checkUser, setCheckUser] = useState(() => "O")
     const [txnMode, setTxnMode] = useState(() => "C")
@@ -47,9 +49,9 @@ function GroupwiseRecovery() {
         backgroundColor: theme.colors.primaryContainer,
     }
     const colStyle = {
-    paddingHorizontal:25,width:10
+        paddingHorizontal: 25, width: 10
     }
-    
+
 
 
     const fetchRecoveryReport = async () => {
@@ -64,10 +66,21 @@ function GroupwiseRecovery() {
             "flag": checkUser,
             "branch_code": loginStore?.brn_code,
         }
-        await axios.post(`${ADDRESSES.GROUPWISERECOVERYREPORT}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.GROUPWISERECOVERYREPORT}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
+            if (res?.data?.suc !== 1) {
             console.log(">>>>>>", res?.data)
             setReportData(res?.data?.msg)
-            setTotCredit(res?.data?.msg.reduce((n, {credit}) => n + credit, 0))
+            setTotCredit(res?.data?.msg.reduce((n, { credit }) => n + credit, 0))
+            }
+            else{
+                handleLogout()
+            }
         }).catch(err => {
             console.log("<<<<<<", err)
         })
@@ -141,7 +154,7 @@ function GroupwiseRecovery() {
                                     },
                                 ]}
                             />
-                        </View> 
+                        </View>
                         <View
                             style={{
                                 flexDirection: "row",
@@ -248,7 +261,7 @@ function GroupwiseRecovery() {
                             {/* </ScrollView> */}
                             <View style={{ padding: normalize(10) }}>
                                 <Text variant="labelMedium" style={{ color: theme.colors.primary }}>
-                                    TOTAL CREDIT: {tot_credit?.toFixed(2)}/- 
+                                    TOTAL CREDIT: {tot_credit?.toFixed(2)}/-
                                 </Text>
                             </View>
                         </SurfacePaper>

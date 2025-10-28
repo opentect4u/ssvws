@@ -1,3 +1,5 @@
+import React, { useContext, useEffect, useState } from 'react';
+
 import {
   StyleSheet,
   SafeAreaView,
@@ -16,25 +18,26 @@ import {
   Searchbar,
   Text,
 } from 'react-native-paper';
-import React, {useEffect, useState} from 'react';
-import {usePaperColorScheme} from '../../theme/theme';
+import { usePaperColorScheme } from '../../theme/theme';
 import HeadingComp from '../../components/HeadingComp';
 import CollectionButtonsWrapper from '../../components/CollectionButtonsWrapper';
 import CollectionButton from '../../components/CollectionButton';
-import normalize, {SCREEN_HEIGHT, SCREEN_WIDTH} from 'react-native-normalize';
-import {CommonActions, useNavigation} from '@react-navigation/native';
+import normalize, { SCREEN_HEIGHT, SCREEN_WIDTH } from 'react-native-normalize';
+import { CommonActions, useNavigation } from '@react-navigation/native';
 import navigationRoutes from '../../routes/routes';
-import {loginStorage} from '../../storage/appStorage';
+import { loginStorage } from '../../storage/appStorage';
 import ButtonPaper from '../../components/ButtonPaper';
 import SurfacePaper from '../../components/SurfacePaper';
 import DatePicker from 'react-native-date-picker';
 import RadioComp from '../../components/RadioComp';
-import {formattedDate} from '../../utils/dateFormatter';
+import { formattedDate } from '../../utils/dateFormatter';
 import axios from 'axios';
-import {ADDRESSES} from '../../config/api_list';
-
+import { ADDRESSES } from '../../config/api_list';
+import { AppStore } from '../../context/AppContext';
 const RecoveryReportScreen = () => {
   const theme = usePaperColorScheme();
+const { handleLogout } = useContext<any>(AppStore)
+
   const navigation = useNavigation();
   const loginStore = JSON.parse(loginStorage?.getString('login-data') ?? '');
 
@@ -79,11 +82,22 @@ const RecoveryReportScreen = () => {
       grp_dtls_app: search,
     };
     await axios
-      .post(`${ADDRESSES.MEMBERWISE_RECOVERY_REPORT}`, creds)
+      .post(`${ADDRESSES.MEMBERWISE_RECOVERY_REPORT}`, creds, {
+        headers: {
+          Authorization: loginStore?.token, // example header
+          "Content-Type": "application/json", // optional
+        }
+      }
+      )
       .then(res => {
+        if( res?.data?.suc !== 1) {
         console.log('>>>>>>', res?.data);
         setReportData(res?.data?.msg);
-        setTotCredit(res?.data?.msg.reduce((n, {credit}) => n + credit, 0));
+        setTotCredit(res?.data?.msg.reduce((n, { credit }) => n + credit, 0));
+        }
+        else{
+          handleLogout()
+        }
       })
       .catch(err => {
         console.log('<<<<<<', err);
@@ -261,38 +275,38 @@ const RecoveryReportScreen = () => {
             <SurfacePaper backgroundColor={theme.colors.surface}>
               {reportData?.map((item, index) => (
                 <>
-                  <View style={{backgroundColor:theme.colors.primaryContainer,width:'100%',alignItems:'center',padding:10,borderRadius:10}}>
+                  <View style={{ backgroundColor: theme.colors.primaryContainer, width: '100%', alignItems: 'center', padding: 10, borderRadius: 10 }}>
                     <Text>{item.group_name}</Text>
                   </View>
                   {item.memb_dtls_app?.map((mem, i) => (
                     <React.Fragment key={i}>
                       <List.Item
-                       
+
                         key={i}
                         title={
-                            <View>
-                                <Text style={{color:theme.colors.green,fontSize:15}}>
-                                Code -{mem?.member_code}
-                                </Text>
-                                <Text >
-                                Name -{mem?.client_name}
-                                </Text>
-                                <Text>
-                                Credit -{mem?.credit}/-
-                                </Text>
-                                <Text>
-                                Balance -{mem?.balance}/-
-                                </Text>
-                                
-                            </View>
-                           
-                        
+                          <View>
+                            <Text style={{ color: theme.colors.green, fontSize: 15 }}>
+                              Code -{mem?.member_code}
+                            </Text>
+                            <Text >
+                              Name -{mem?.client_name}
+                            </Text>
+                            <Text>
+                              Credit -{mem?.credit}/-
+                            </Text>
+                            <Text>
+                              Balance -{mem?.balance}/-
+                            </Text>
+
+                          </View>
+
+
                         }
                         description={
                           <View>
                             <Text
-                              >
-                             {mem?.member_name}
+                            >
+                              {mem?.member_name}
                             </Text>
                           </View>
                         }

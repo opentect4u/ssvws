@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -13,6 +14,7 @@ import RadioComp from '../components/RadioComp'
 import DatePicker from 'react-native-date-picker'
 import ButtonPaper from '../components/ButtonPaper'
 import { formattedDate } from '../utils/dateFormatter'
+import { AppStore } from '../context/AppContext'
 
 const SearchLoanRecoveryScreen = () => {
     const theme = usePaperColorScheme()
@@ -21,6 +23,7 @@ const SearchLoanRecoveryScreen = () => {
     const [openFromDate, setOpenFromDate] = useState(() => false);
     const [reportData, setReportData] = useState(() => [])
     const [fromDate, setFromDate] = useState(() => new Date());
+    const { handleLogout } = useContext<any>(AppStore)
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
     const [loading, setLoading] = useState(() => false)
     const [isDisabled, setDisabled] = useState(() => false)
@@ -50,22 +53,37 @@ const SearchLoanRecoveryScreen = () => {
             branch_code: loginStore?.brn_code
         }
 
-        await axios.post(`${ADDRESSES.SEARCH_GROUP_RECOVERY}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.SEARCH_GROUP_RECOVERY}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
                 console.log("===++=++====", res?.data)
+            }
+            else{
+                handleLogout() 
             }
         }).catch(err => {
             ToastAndroid.show("Some error while searching groups!", ToastAndroid.SHORT)
         })
         setLoading(false)
     }
-    
+
     const getDemandReportData = () => {
         console.log("hello")
         setLoading(true)
         setDisabled(true)
-        axios.post(`${ADDRESSES.DEMANDREPORT}`, { get_date: formattedDate(fromDate) }).then(res => {
+        axios.post(`${ADDRESSES.DEMANDREPORT}`, { get_date: formattedDate(fromDate) }, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
             console.log('report_date', res?.data);
             setGroupCode(Object.keys(res?.data?.msg))
             setDisabled(false)
@@ -253,7 +271,13 @@ const SearchLoanRecoveryScreen = () => {
 
                                     await axios.post(ADDRESSES.VERIFY_RECOVERY, {
                                         "group_code": item?.group_code
-                                    }).then(res => {
+                                    }, {
+                                        headers: {
+                                            Authorization: loginStore?.token, // example header
+                                            "Content-Type": "application/json", // optional
+                                        }
+                                    }
+                                    ).then(res => {
                                         console.log("VERIFY_RECOV", res?.data)
                                         if (res?.data?.suc === 1) {
                                             Alert.alert("Alert", "Recovery already done today. Do you want to recover again?", [

@@ -1,6 +1,7 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { Alert, Linking, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
 import { Chip, Surface, Text } from "react-native-paper"
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import { Divider, List } from 'react-native-paper'
 import InputPaper from '../../components/InputPaper'
@@ -17,6 +18,7 @@ import useGeoLocation from '../../hooks/useGeoLocation'
 import RadioComp from '../../components/RadioComp'
 // import LoadingOverlay from '../components/LoadingOverlay'
 import ThermalPrinterModule from 'react-native-thermal-printer'
+import { AppStore } from '../../context/AppContext'
 
 const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
     const theme = usePaperColorScheme()
@@ -31,7 +33,7 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
     console.log("LOGIN DATAAA =============", loginStore)
     console.log("4444444444444444444ffffffffffffffff", fetchedData)
     console.log("LAT, LNG, ERR", location.latitude, location.longitude, error)
-
+    const { handleLogout } = useContext<any>(AppStore)
     const [loading, setLoading] = useState(() => false)
 
 
@@ -99,12 +101,12 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
         // await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`).then(res => {
         //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
         // })
-         let config = {
+        let config = {
             method: 'get',
             maxBodyLength: Infinity,
             url: `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,
             headers: {
-                
+
                 'Content-Type': 'application/json',
             }
         };
@@ -347,15 +349,27 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
         }
 
         console.log("PAYLOAD---RECOVERY", creds)
-        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds).then(res => {
-            ToastAndroid.show("Loan recovery EMI installment done.", ToastAndroid.SHORT)
-            console.log("Loan recovery EMI installment done.", res?.data)
+        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
+            if (res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else {
+                ToastAndroid.show("Loan recovery EMI installment done.", ToastAndroid.SHORT)
+                console.log("Loan recovery EMI installment done.", res?.data)
 
-            // navigation.goBack()
-            // recoveryResponse = res?.data?.msg[0] as any
-            handlePrint(res?.data?.msg[0])
-            setRemainingTotalOutstandingRes(res?.data?.msg[0]?.outstanding)
-            setCreditAmount(() => "")
+                // navigation.goBack()
+                // recoveryResponse = res?.data?.msg[0] as any
+
+                handlePrint(res?.data?.msg[0])
+                setRemainingTotalOutstandingRes(res?.data?.msg[0]?.outstanding)
+                setCreditAmount(() => "")
+            }
         }).catch(err => {
             ToastAndroid.show("Some error occurred while submitting EMI.", ToastAndroid.SHORT)
             console.log("Some error occurred while submitting EMI.", err)

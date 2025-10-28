@@ -189,7 +189,13 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus = "U" }) => {
         }
 
         console.log("PAYLOAD---RECOVERY", creds)
-        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds).then(res => {
+        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             ToastAndroid.show("Loan recovery EMI installment done.", ToastAndroid.SHORT)
             console.log("Loan recovery EMI installment done.", res?.data)
 

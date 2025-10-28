@@ -1,6 +1,7 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { Alert, Linking, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
 import { Checkbox, Icon, Text } from "react-native-paper"
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import { Divider, List } from 'react-native-paper'
 import InputPaper from '../../components/InputPaper'
@@ -18,6 +19,7 @@ import { formattedDate } from '../../utils/dateFormatter'
 import { useEscPosPrint } from "../../hooks/useEscPosPrint"
 import { BASE_URL } from '../../config/config'
 import dayjs from 'dayjs'
+import { AppStore } from '../../context/AppContext'
 
 const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const theme = usePaperColorScheme()
@@ -65,7 +67,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const [openDate2, setOpenDate2] = useState(() => false)
     // const formattedTnxDate = formattedDate(formData?.txnDate)
     const [canTxnCheckFlag, setCanTxnCheckFlag] = useState<"D" | "F">(() => "F")
-
+const { handleLogout } = useContext<any>(AppStore)
     const groupTypes = [
         {
             title: "SHG",
@@ -89,9 +91,9 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
             [field]: value,
         }))
     }
-    useEffect(()=>{
-            console.log("Recovery Group Form useEffect called")
-    },[])
+    useEffect(() => {
+        console.log("Recovery Group Form useEffect called")
+    }, [])
     useEffect(() => {
         if (error) {
             Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
@@ -114,7 +116,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
         //     maxBodyLength: Infinity,
         //     url: `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,
         //     headers: {
-                
+
         //         'Content-Type': 'application/json',
         //     }
         // };
@@ -310,74 +312,85 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
         setLoading(true);
         setHasBeforeUpnapproveTransDate(false);
         const payload = {
-            branch_code:loginStore?.brn_code,
+            branch_code: loginStore?.brn_code,
             transaction_date: dayjs(formData?.txnDate).format('YYYY-MM-DD'),
-          }
-          axios.post(`${BASE_URL}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
-                console.log('res?.data?.msg');
+        }
+        axios.post(`${BASE_URL}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
+            console.log('res?.data?.msg');
 
-                console.log(res?.data?.msg);
-               if(res?.data?.suc === 1){
-                    if(res?.data?.msg?.length > 0){
-                        const hasNonZero = res?.data?.msg.some(item =>Object.values(item).some(value => value != 0));
-                        setHasBeforeUpnapproveTransDate(hasNonZero);
-                          if(hasNonZero){
-                                setLoading(false);
-                                let txt = `${res?.data?.msg[0]?.transactions > 0 ? 'transaction(s),' : ''} ${res?.data?.msg[0]?.group_migrate > 0 ? 'group migrate(s),' : ''} ${res?.data?.msg[0]?.member_migrate > 0 ? 'member migrate(s)' : ''} `;
-                                setErrMsg(txt);
-                                 Alert.alert(`Cannot proceed`, `There are unapproved ${txt}before this date. Please check and try again.`, [
+            console.log(res?.data?.msg);
+            if (res?.data?.suc === 1) {
+                if (res?.data?.msg?.length > 0) {
+                    const hasNonZero = res?.data?.msg.some(item => Object.values(item).some(value => value != 0));
+                    setHasBeforeUpnapproveTransDate(hasNonZero);
+                    if (hasNonZero) {
+                        setLoading(false);
+                        let txt = `${res?.data?.msg[0]?.transactions > 0 ? 'transaction(s),' : ''} ${res?.data?.msg[0]?.group_migrate > 0 ? 'group migrate(s),' : ''} ${res?.data?.msg[0]?.member_migrate > 0 ? 'member migrate(s)' : ''} `;
+                        setErrMsg(txt);
+                        Alert.alert(`Cannot proceed`, `There are unapproved ${txt}before this date. Please check and try again.`, [
+                            {
+                                text: "OK", onPress: () => null
+                            }
+                        ])
+                        // ToastAndroid.show(`There are unapproved ${txt} before this date. Please check and try again.`, ToastAndroid.SHORT)
+                    }
+                    else {
+                        const transformedObj = memberDetailsArray.filter((item, i) => item.isChecked && item.credit > 0).map((item) => ({
+                            loan_id: item.loan_id,
+                            last_trn_dt: formattedDate(formData.txnDate),
+                        }));
+
+                        axios.post(`${ADDRESSES.CHECK_CAN_TXN}`, {
+                            checkdatedtls: transformedObj,
+                        }, {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }
+                        ).then(res => {
+                            setLoading(false);
+                            // console.log("CAN TXN", res?.data)
+                            if(res?.data?.suc === 0) {
+                                handleLogout()
+                            }
+                            else{
+                            setCanTxnCheckFlag(res?.data?.tr_flag)
+                            if (res?.data?.tr_flag === "F") {
+                                Alert.alert("Cannot proceed", "Some future transactions found! You cannot proceed this transaction. Try changing Txn Date instead.", [
                                     {
                                         text: "OK", onPress: () => null
                                     }
                                 ])
-                                // ToastAndroid.show(`There are unapproved ${txt} before this date. Please check and try again.`, ToastAndroid.SHORT)
-                          }
-                          else{
-                                    const transformedObj = memberDetailsArray.filter((item, i) => item.isChecked && item.credit > 0).map((item) => ({
-                                        loan_id: item.loan_id,
-                                        last_trn_dt: formattedDate(formData.txnDate),
-                                    }));
-                                    
-                                    axios.post(`${ADDRESSES.CHECK_CAN_TXN}`, {
-                                        checkdatedtls: transformedObj,
-                                    }).then(res => {
-                                        setLoading(false);
-                                        // console.log("CAN TXN", res?.data)
-                                        setCanTxnCheckFlag(res?.data?.tr_flag)
-                                        if (res?.data?.tr_flag === "F") {
-                                            Alert.alert("Cannot proceed", "Some future transactions found! You cannot proceed this transaction. Try changing Txn Date instead.", [
-                                                {
-                                                    text: "OK", onPress: () => null
-                                                }
-                                            ])
-                                        } else if (res?.data?.tr_flag === "D") {
-                                            Alert.alert("Approved", "Now you can collect amount.", [
-                                                {
-                                                    text: "OK", onPress: () => null
-                                                }
-                                            ])
-                                        }
+                            } else if (res?.data?.tr_flag === "D") {
+                                Alert.alert("Approved", "Now you can collect amount.", [
+                                    {
+                                        text: "OK", onPress: () => null
                                     }
-                                ).catch(err => {
-                                    setLoading(false);
-                                    console.log("CAN TXN ERR", err)
-                                    setCanTxnCheckFlag("F")
-                                })
-                          }
+                                ])
+                            }
+                        }
+                        }
+                        ).catch(err => {
+                            setLoading(false);
+                            console.log("CAN TXN ERR", err)
+                            setCanTxnCheckFlag("F")
+                        })
                     }
-               }
-          }).
-            catch((err) => {
-            setLoading(false);
-             Alert.alert("Cannot proceed", "We are unable to process your request!! Please try again later", [
-                {
-                    text: "OK", onPress: () => null
                 }
-            ])
-        })
+            }
+        }).
+            catch((err) => {
+                setLoading(false);
+                Alert.alert("Cannot proceed", "We are unable to process your request!! Please try again later", [
+                    {
+                        text: "OK", onPress: () => null
+                    }
+                ])
+            })
 
         //
-      
+
         //
     }
 
@@ -386,7 +399,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     }, [memberDetailsArray, formData.txnDate])
 
     const sendRecoveryEMI = async () => {
-        if(hasBeforeUpnapproveTransDate){
+        if (hasBeforeUpnapproveTransDate) {
             ToastAndroid.show(`There are unapproved ${errMsg} before this date. Please check and try again.`, ToastAndroid.SHORT)
             return;
         }
@@ -415,7 +428,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
             // "trn_long": location.longitude,
             // "trn_addr": geolocationFetchedAddress,
             "trn_lat": 0,
-            "trn_long":0,
+            "trn_long": 0,
             "trn_addr": "",
             "tr_mode": formData.txnMode,
             "bank_name": formData?.bankName || "",
@@ -439,7 +452,13 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
         }
 
         console.log("PAYLOAD---RECOVERY", creds)
-        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds).then(async res => {
+        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(async res => {
             console.log("RESSSSS", res?.data)
             if (res?.data?.suc === 0) {
                 Alert.alert("Alert", res?.data?.msg, [
@@ -626,8 +645,8 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
 
                     <ButtonPaper icon="alert-circle-check-outline" mode="contained" style={{
                         backgroundColor: theme.colors.tertiary,
-                    }} onPress={async () => await checkCanTxn()} loading={loading} 
-                    disabled={loading || memberDetailsArray.reduce((sum, item) => sum + +item.credit, 0) === 0 || memberDetailsArray.filter((item, _) => +item.credit > (+item.prn_amt + +item.intt_amt)).length > 0}>
+                    }} onPress={async () => await checkCanTxn()} loading={loading}
+                        disabled={loading || memberDetailsArray.reduce((sum, item) => sum + +item.credit, 0) === 0 || memberDetailsArray.filter((item, _) => +item.credit > (+item.prn_amt + +item.intt_amt)).length > 0}>
                         {"Check TXN Availability"}
                     </ButtonPaper>
 
@@ -794,7 +813,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
                             {!loading ? "Collect Amount" : "DON'T CLOSE THIS PAGE..."}
                         </ButtonPaper>
                     </View>
-                       
+
                     <View>
                         <Divider />
                     </View>

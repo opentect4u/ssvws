@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { Alert, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import InputPaper from '../../components/InputPaper'
 import { Divider, List } from 'react-native-paper'
@@ -13,6 +14,7 @@ import { loginStorage } from '../../storage/appStorage'
 import { disableConditionExceptBasicDetails } from '../../utils/disableCondition'
 import { CommonActions, useNavigation } from '@react-navigation/native'
 import navigationRoutes from '../../routes/routes'
+import { AppStore } from '../../context/AppContext'
 
 interface BMOccupationDetailsFormProps {
     formNumber?: any
@@ -26,7 +28,7 @@ const BMHouseholdDetailsForm = ({ formNumber, branchCode, flag = "BM", approvalS
     const theme = usePaperColorScheme()
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
     const navigation = useNavigation()
-
+const { handleLogout } = useContext<any>(AppStore)
     const [loading, setLoading] = useState(() => false)
 
     const [houseTypes, setHouseTypes] = useState(() => [])
@@ -64,7 +66,12 @@ const BMHouseholdDetailsForm = ({ formNumber, branchCode, flag = "BM", approvalS
     const fetchHouseholdDetails = async () => {
         setLoading(true)
 
-        await axios.get(`${ADDRESSES.FETCH_HOUSEHOLD_DETAILS}?form_no=${formNumber}&branch_code=${branchCode}`).then(res => {
+        await axios.get(`${ADDRESSES.FETCH_HOUSEHOLD_DETAILS}?form_no=${formNumber}&branch_code=${branchCode}`,{headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
+                            if( res?.data?.suc !== 1) {
             console.log("HOUSEHOLD===FETCH", res?.data)
             setFormData({
                 noOfRooms: res?.data?.msg[0]?.no_of_rooms || "",
@@ -79,6 +86,10 @@ const BMHouseholdDetailsForm = ({ formNumber, branchCode, flag = "BM", approvalS
                 fridgeAvailable: res?.data?.msg[0]?.fridge_flag || "",
                 washingMachineAvailable: res?.data?.msg[0]?.wm_flag || "",
             })
+        }
+        else{
+            handleLogout()
+        }
         }).catch(err => {
             ToastAndroid.show("Something went wrong while fetching Household Details!", ToastAndroid.SHORT)
         })
@@ -113,7 +124,11 @@ const BMHouseholdDetailsForm = ({ formNumber, branchCode, flag = "BM", approvalS
 
         console.log("//////////////", creds, "///////////////")
 
-        await axios.post(`${ADDRESSES.SAVE_HOUSEHOLD_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.SAVE_HOUSEHOLD_DETAILS}`, creds,{headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
             console.log("HOUSEHOLD====RES", res?.data)
 
             if (res?.data?.suc === 1) {
@@ -139,7 +154,11 @@ const BMHouseholdDetailsForm = ({ formNumber, branchCode, flag = "BM", approvalS
             remarks: "",
         }
 
-        await axios.post(`${ADDRESSES.FINAL_SUBMIT}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.FINAL_SUBMIT}`, creds,{headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
             console.log("FINAL SUBMIT RESSSSS=====", res?.data)
             ToastAndroid.show("Form sent to MIS Assistant.", ToastAndroid.SHORT)
             // navigation.dispatch(CommonActions.goBack())

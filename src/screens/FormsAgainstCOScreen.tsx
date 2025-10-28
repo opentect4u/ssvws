@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -11,6 +12,7 @@ import navigationRoutes from '../routes/routes'
 import { loginStorage } from '../storage/appStorage'
 import RadioComp from '../components/RadioComp'
 import LoadingOverlay from '../components/LoadingOverlay'
+import { AppStore } from '../context/AppContext'
 
 const FormsAgainstCOScreen = () => {
     const theme = usePaperColorScheme()
@@ -19,7 +21,7 @@ const FormsAgainstCOScreen = () => {
     const { params } = useRoute<any>()
 
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
-
+    const { handleLogout } = useContext<any>(AppStore)
     const [loading, setLoading] = useState(() => false)
 
     const [search, setSearch] = useState(() => "")
@@ -49,10 +51,18 @@ const FormsAgainstCOScreen = () => {
 
         // console.log(">>>>>>>>>>>>>>", creds)
 
-        await axios.post(`${ADDRESSES.GET_FORM_AGAINST_CO}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.GET_FORM_AGAINST_CO}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
                 console.log("===++=++====", res?.data)
+            }
+            else{
+                handleLogout()
             }
         }).catch(err => {
             ToastAndroid.show("Some error while fetching GRT forms!", ToastAndroid.SHORT)

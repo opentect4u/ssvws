@@ -391,7 +391,13 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
         }
 
         console.log("PAYLOAD---RECOVERY", creds)
-        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds).then(res => {
+        await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log("RESSSSS", res?.data)
             if (res?.data?.suc === 0) {
                 Alert.alert("Alert", res?.data?.msg, [

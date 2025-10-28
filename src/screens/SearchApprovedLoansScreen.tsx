@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -10,6 +11,7 @@ import { CommonActions, useIsFocused, useNavigation } from '@react-navigation/na
 import navigationRoutes from '../routes/routes'
 import { loginStorage } from '../storage/appStorage'
 import RadioComp from '../components/RadioComp'
+import { AppStore } from '../context/AppContext'
 
 const SearchApprovedLoansScreen = () => {
     const theme = usePaperColorScheme()
@@ -19,7 +21,7 @@ const SearchApprovedLoansScreen = () => {
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
 
     const [loading, setLoading] = useState(() => false)
-
+    const { handleLogout } = useContext<any>(AppStore)
     const [search, setSearch] = useState(() => "")
     const [formsData, setFormsData] = useState<any[]>(() => [])
     // const [isApproved, setIsApproved] = useState<string>(() => "U")
@@ -41,15 +43,24 @@ const SearchApprovedLoansScreen = () => {
         setLoading(true)
 
         const creds = {
-            "branch_code":loginStore?.brn_code,
+            "branch_code": loginStore?.brn_code,
             "loan_id": search,
             "approval_status": "A"
         }
 
-        await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
                 console.log("===++=++====", res?.data)
+            }
+            else{
+                handleLogout()
             }
         }).catch(err => {
             ToastAndroid.show("Some error while searching loans!", ToastAndroid.SHORT)

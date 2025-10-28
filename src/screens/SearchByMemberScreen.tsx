@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -10,6 +11,7 @@ import { CommonActions, useIsFocused, useNavigation } from '@react-navigation/na
 import navigationRoutes from '../routes/routes'
 import { loginStorage } from '../storage/appStorage'
 import RadioComp from '../components/RadioComp'
+import { AppStore } from '../context/AppContext'
 
 const SearchByMemberScreen = () => {
     const theme = usePaperColorScheme()
@@ -23,6 +25,7 @@ const SearchByMemberScreen = () => {
     const [search, setSearch] = useState(() => "")
     const [formsData, setFormsData] = useState<any[]>(() => [])
     const [isApproved, setIsApproved] = useState<string>(() => "U")
+    const { handleLogout } = useContext<any>(AppStore)
 
     const onChangeSearch = (query: string) => {
         setSearch(query)
@@ -48,10 +51,18 @@ const SearchByMemberScreen = () => {
 
         console.log(">>>>>>>>>>>>>>", creds)
 
-        await axios.post(`${ADDRESSES.SEARCH_MEMBER}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.SEARCH_MEMBER}`, creds,  {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
                 console.log("===++=++====", res?.data)
+            }
+            else{
+                handleLogout()
             }
         }).catch(err => {
             ToastAndroid.show("Some error while searching members!", ToastAndroid.SHORT)

@@ -1,6 +1,7 @@
+import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, View, Alert, ToastAndroid, Linking, Dimensions, StatusBar } from 'react-native'
 import { ActivityIndicator, Divider, Icon, IconButton, List, Text, useTheme } from "react-native-paper"
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { formattedDate } from "../../utils/dateFormatter"
 import InputPaper from "../../components/InputPaper"
 import ButtonPaper from "../../components/ButtonPaper"
@@ -19,6 +20,7 @@ import { SCREEN_WIDTH } from 'react-native-normalize'
 import { Camera, useCameraDevice, useCameraDevices, useCameraFormat, useCameraPermission } from 'react-native-vision-camera'
 import ImageView from "react-native-image-viewing";
 import { BASE_URL } from '../../config/config'
+import { AppStore } from '../../context/AppContext'
 interface BMBasicDetailsFormProps {
     formNumber?: any
     branchCode?: any
@@ -38,17 +40,18 @@ const BMBasicDetailsForm = forwardRef(({
     closeHeader,
     onUpdateDisabledChange = () => { }
 }: BMBasicDetailsFormProps, ref) => {
-   
+const { handleLogout } = useContext<any>(AppStore)
+
     const [visible, setVisible] = useState(false);
-    const [isFront,setFront] = useState(true);
+    const [isFront, setFront] = useState(true);
     const device = useCameraDevice(isFront ? 'front' : 'back');
-     const format = useCameraFormat(device, [
+    const format = useCameraFormat(device, [
         { photoResolution: { width: 100, height: 100 } }, // Lower resolution
     ])
     const { hasPermission, requestPermission } = useCameraPermission()
-    const [isPendingPermission,setPendingPermission] = useState(true);
+    const [isPendingPermission, setPendingPermission] = useState(true);
     const cameraRef = useRef(null);
-    const [isCameraOpen,setOpenCamera] = useState(false);
+    const [isCameraOpen, setOpenCamera] = useState(false);
 
     const theme = usePaperColorScheme()
     // 110 -> Branch Code
@@ -97,8 +100,8 @@ const BMBasicDetailsForm = forwardRef(({
         groupCodeName: "",
         dob: new Date(),
         grtDate: new Date(),
-        uploadImg:null, // image to be uploaded
-        previewImg:"" // image to be previewed
+        uploadImg: null, // image to be uploaded
+        previewImg: "" // image to be previewed
     })
 
     const [readonlyMemberId, setReadonlyMemberId] = useState(() => "")
@@ -127,6 +130,9 @@ const BMBasicDetailsForm = forwardRef(({
             }])
         }
     }, [isFocused, error])
+    useEffect(() => {
+        console.log("LOCATION EFFECT CALLING...",loginStore?.token)
+    },[])
 
     // console.log("LOcAtion", location)
     // console.log("LOcAtion ERRR", error)
@@ -136,23 +142,23 @@ const BMBasicDetailsForm = forwardRef(({
         await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`).then(res => {
             setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
         })
-            // let config = {
-            //     method: 'get',
-            //     maxBodyLength: Infinity,
-            //     url: `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,
-            //     headers: {
-                    
-            //         'Content-Type': 'application/json',
-            //     }
-            // };
+        // let config = {
+        //     method: 'get',
+        //     maxBodyLength: Infinity,
+        //     url: `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,
+        //     headers: {
 
-            // await axios.request(config).then(res => {
-            //     console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0])
-            //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
-            // }).catch(err => {
-            //     console.log("REVERSE GEO ENCODING ERR =============", JSON.stringify(err))
-            //     // ToastAndroid.show("Some error occurred while fetching geolocation address.", ToastAndroid.SHORT)
-            // })
+        //         'Content-Type': 'application/json',
+        //     }
+        // };
+
+        // await axios.request(config).then(res => {
+        //     console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0])
+        //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
+        // }).catch(err => {
+        //     console.log("REVERSE GEO ENCODING ERR =============", JSON.stringify(err))
+        //     // ToastAndroid.show("Some error occurred while fetching geolocation address.", ToastAndroid.SHORT)
+        // })
         // await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyAhSuw5-ThQnJTZCGC4e_oBsL1iIUbJxts`).then(res => {
         //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
         // })
@@ -177,23 +183,23 @@ const BMBasicDetailsForm = forwardRef(({
         ])
     }, [])
 
-    const checkCameraPermission = () =>{
-        try{    
-              if(!hasPermission){
-                    setPendingPermission(true);
-                    requestPermission().then(res =>{
-                        console.log(res);
-                        setPendingPermission(false);
-                    }).catch(err =>{
-                        console.log(err);
-                        setPendingPermission(false);
-                    })
-              }
-              else{
+    const checkCameraPermission = () => {
+        try {
+            if (!hasPermission) {
+                setPendingPermission(true);
+                requestPermission().then(res => {
+                    console.log(res);
+                    setPendingPermission(false);
+                }).catch(err => {
+                    console.log(err);
+                    setPendingPermission(false);
+                })
+            }
+            else {
                 setPendingPermission(false);
-              }
+            }
         }
-        catch(err){
+        catch (err) {
             console.log(err);
         }
     }
@@ -230,7 +236,13 @@ const BMBasicDetailsForm = forwardRef(({
         setLoading(true);
         setGroupNames(() => []);
         try {
-            const response = await axios.get(`${ADDRESSES.GROUP_NAMES}?branch_code=${loginStore?.brn_code}`);
+            const response = await axios.get(`${ADDRESSES.GROUP_NAMES}?branch_code=${loginStore?.brn_code}`, {
+                headers: {
+                    Authorization: loginStore?.token, // example header
+                    "Content-Type": "application/json", // optional
+                }
+            }
+            );
             // const groupNames = response?.data?.msg?.map((item) => ({
             //     title: item?.group_name,
             //     func: () => {
@@ -252,7 +264,13 @@ const BMBasicDetailsForm = forwardRef(({
     const handleFetchReligions = async () => {
         setLoading(true)
         setReligions(() => [])
-        await axios.get(`${ADDRESSES.GET_RELIGIONS}`).then(res => {
+        await axios.get(`${ADDRESSES.GET_RELIGIONS}`, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
             res?.data?.map((item, i) => (
                 //@ts-ignore
                 setReligions(prev => [...prev, { title: item?.name, func: () => handleFormChange("religion", item?.id) }])
@@ -266,7 +284,13 @@ const BMBasicDetailsForm = forwardRef(({
     const handleFetchCastes = async () => {
         setLoading(true)
         setCastes(() => [])
-        await axios.get(`${ADDRESSES.GET_CASTES}`).then(res => {
+        await axios.get(`${ADDRESSES.GET_CASTES}`, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
             console.log(">>>>>>>><<<<<<<<<", res?.data)
             res?.data?.map((item, i) => (
                 //@ts-ignore
@@ -281,7 +305,13 @@ const BMBasicDetailsForm = forwardRef(({
     const handleFetchEducations = async () => {
         setLoading(true)
         setEducations(() => [])
-        await axios.get(`${ADDRESSES.GET_EDUCATIONS}`).then(res => {
+        await axios.get(`${ADDRESSES.GET_EDUCATIONS}`, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
             res?.data?.map((item, i) => (
                 //@ts-ignore
                 setEducations(prev => [...prev, { title: item?.name, func: () => handleFormChange("education", item?.id) }])
@@ -321,6 +351,8 @@ const BMBasicDetailsForm = forwardRef(({
     //     }
 
     //     await axios.post(`${ADDRESSES.FETCH_CLIENT_DETAILS}`, creds).then(res => {
+
+    
     //         console.log("PPPPPPPPPPPPPPPPP", res?.data)
     //         if (res?.data?.suc === 1) {
     //             if (res?.data?.msg?.length > 0) {
@@ -399,7 +431,13 @@ const BMBasicDetailsForm = forwardRef(({
             approval_status: approvalStatus
         }
 
-        await axios.post(`${ADDRESSES.FETCH_BASIC_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.FETCH_BASIC_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        ).then(res => {
             if (res?.data?.suc === 1) {
                 console.log(res?.data)
                 setMemberCodeShowHide(true)
@@ -428,8 +466,8 @@ const BMBasicDetailsForm = forwardRef(({
                     dob: new Date(res?.data?.msg[0]?.dob) ?? new Date(),
                     grtDate: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
                     // group_name: new Date(res?.data?.msg[0]?.grt_date) ?? new Date(), // fetch date later
-                    previewImg:"",
-                    uploadImg:null
+                    previewImg: "",
+                    uploadImg: null
                 })
                 setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
                 console.log("APPROVAL STATUS ===", approvalStatus);
@@ -448,26 +486,31 @@ const BMBasicDetailsForm = forwardRef(({
         setLoading(false)
     }
 
-    const fetchCoUploadImage = async (member_code) =>{
-            try{
-                axios.post(`${BASE_URL}/admin/preview_image_web`,{
-                    member_code:member_code
-                }).then(res =>{
-                     const timestamp = new Date().getTime();
-                    //  console.log(`${BASE_URL}/uploads/${res?.data?.msg[0]?.img_path}`)
-                     setFormData((prev) => ({
-                        ...prev,
-                        previewImg:`${BASE_URL}/uploads/${res?.data?.msg[0]?.img_path}?t=${timestamp}`
-                     })) ;
-                    //  setVisible(true)
-                }).catch((error) => {
-                        console.log('ERRORR!!' , error.message);
-                         ToastAndroid.show(error.message, ToastAndroid.SHORT)
-                })
-            }
-            catch(err){
-                console.log(err)
-            }
+    const fetchCoUploadImage = async (member_code) => {
+        try {
+            axios.post(`${BASE_URL}/admin/preview_image_web`, {
+                member_code: member_code
+            }, {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
+                const timestamp = new Date().getTime();
+                //  console.log(`${BASE_URL}/uploads/${res?.data?.msg[0]?.img_path}`)
+                setFormData((prev) => ({
+                    ...prev,
+                    previewImg: `${BASE_URL}/uploads/${res?.data?.msg[0]?.img_path}?t=${timestamp}`
+                }));
+                //  setVisible(true)
+            }).catch((error) => {
+                console.log('ERRORR!!', error.message);
+                ToastAndroid.show(error.message, ToastAndroid.SHORT)
+            })
+        }
+        catch (err) {
+            console.log(err)
+        }
     }
 
     useEffect(() => {
@@ -519,58 +562,69 @@ const BMBasicDetailsForm = forwardRef(({
 
         // 🧠 Convert all string values to CAPITAL letters
         const creds = Object.fromEntries(
-        Object.entries(creds_).map(([key, value]) => [
-        key, typeof value === "string" ? value.toUpperCase() : value,
-        ])
+            Object.entries(creds_).map(([key, value]) => [
+                key, typeof value === "string" ? value.toUpperCase() : value,
+            ])
         );
-        if(approvalStatus === "U"){
-                // setLoading(true);
-               await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+        if (approvalStatus === "U") {
+            // setLoading(true);
+            await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
                 .then((res) => {
 
-                        // console.log('>>>>', creds, "REVERSE GEO ENCODING RES =============", res?.data?.results[0])
-                        
-                        const payload = {
-                            ...creds,
-                            bm_gps_address: res?.data?.results[0]?.formatted_address
-                        }
-                        const fb = new FormData();
-                        Object.keys(payload).forEach(keys =>{
-                                fb.append(keys,payload[keys])
-                        })
-                        fb.append('files',formData?.uploadImg ? formData?.uploadImg : '')
-                        // console.log(payload);
-                        axios.post(
-                            `${ADDRESSES.EDIT_BASIC_DETAILS}`, 
-                            fb,
-                            {
-                                headers: {
-                                'Content-Type': 'multipart/form-data',
-                                }
-                            }
-                        ).then(res => {
-                            ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
-                            onSubmit()
-                        }).catch(err => {
-                            ToastAndroid.show("Some error while updating basic details!", ToastAndroid.SHORT)
-                        })
-                }).catch(err =>{
-                    ToastAndroid.show("Error Fetching Location!!", ToastAndroid.SHORT)
-                })  
-        }
-        else{
-             const fb = new FormData();
-            Object.keys(creds).forEach(keys =>{
-                    fb.append(keys,creds[keys])
-            })
-            fb.append('files',formData?.uploadImg ? formData?.uploadImg : '')
-            await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`, 
-                fb,
-                {
-                    headers: {
-                    'Content-Type': 'multipart/form-data',
+                    // console.log('>>>>', creds, "REVERSE GEO ENCODING RES =============", res?.data?.results[0])
+
+                    const payload = {
+                        ...creds,
+                        bm_gps_address: res?.data?.results[0]?.formatted_address
                     }
-                }
+                    const fb = new FormData();
+                    Object.keys(payload).forEach(keys => {
+                        fb.append(keys, payload[keys])
+                    })
+                    fb.append('files', formData?.uploadImg ? formData?.uploadImg : '')
+                    // console.log(payload);
+            console.log('fb',fb)
+
+                    axios.post(
+                        `${ADDRESSES.EDIT_BASIC_DETAILS}`,
+                        fb["_parts"],
+                        {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }
+
+                    ).then(res => {
+                        if (res?.data?.suc !== 1) {
+                           handleLogout()
+                        }
+                        else{
+                        ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
+                        onSubmit()
+                        }
+                    }).catch(err => {
+                        ToastAndroid.show("Some error while updating basic details!", ToastAndroid.SHORT)
+                    })
+                }).catch(err => {
+                    ToastAndroid.show("Error Fetching Location!!", ToastAndroid.SHORT)
+                })
+        }
+        else {
+            const fb = new FormData();
+            Object.keys(creds).forEach(keys => {
+                fb.append(keys, creds[keys])
+            })
+            fb.append('files', formData?.uploadImg ? formData?.uploadImg : '')
+            console.log('fb',fb)
+            await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`,
+                fb["_parts"],
+                {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }
             ).then(res => {
                 // console.log("QQQQQQQQQQQQQQQ", res?.data)
                 ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
@@ -584,192 +638,194 @@ const BMBasicDetailsForm = forwardRef(({
 
     const handleSubmitBasicDetails = async () => {
         setLoading(true)
-        if(approvalStatus === "U"){
+        if (approvalStatus === "U") {
             await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
-            .then(res => {
+                .then(res => {
                     submitBasicDetails(res?.data?.results[0]?.formatted_address);
-            }).catch(err =>{
-                console.log("Error fetching geolocation address", err?.message);
-                setLoading(false);
-            })
+                }).catch(err => {
+                    console.log("Error fetching geolocation address", err?.message);
+                    setLoading(false);
+                })
         }
-        else{
-             submitBasicDetails(geolocationFetchedAddress);
+        else {
+            submitBasicDetails(geolocationFetchedAddress);
         }
     }
 
-    const submitBasicDetails = (addr:string | null | undefined = '') =>{
-            try{
-                const creds_ = {
-                    member_code: readonlyMemberId || 0,
-                    branch_code: loginStore?.brn_code,
-                    prov_grp_code: formData?.groupCode || "",
-                    gender: formData.clientGender,
-                    client_name: formData.clientName,
-                    client_mobile: formData.clientMobile,
-                    email_id: formData.clientEmail,
-                    gurd_name: formData.guardianName,
-                    husband_name: formData.husbandName,
-                    voter_id: formData.voterId || "",
-                    nominee_name: formData.nomineeName || "",
-                    gurd_mobile: formData.guardianMobile,
-                    client_addr: formData.clientAddress,
-                    pin_no: formData.clientPin,
-                    aadhar_no: formData.aadhaarNumber,
-                    pan_no: formData.panNumber,
-                    religion: formData.religion,
-                    other_religion: formData.otherReligion,
-                    caste: formData.caste,
-                    other_caste: formData.otherCaste,
-                    education: formData.education,
-                    other_education: formData.otherEducation,
-                    dob: formattedDob,
-                    grt_date: formattedGrtDate,
-                    co_lat_val: location?.latitude,
-                    co_long_val: location?.longitude,
-                    co_gps_address: addr,
-                    created_by: loginStore?.emp_id,
-                }; 
+    const submitBasicDetails = (addr: string | null | undefined = '') => {
+        try {
+            const creds_ = {
+                member_code: readonlyMemberId || 0,
+                branch_code: loginStore?.brn_code,
+                prov_grp_code: formData?.groupCode || "",
+                gender: formData.clientGender,
+                client_name: formData.clientName,
+                client_mobile: formData.clientMobile,
+                email_id: formData.clientEmail,
+                gurd_name: formData.guardianName,
+                husband_name: formData.husbandName,
+                voter_id: formData.voterId || "",
+                nominee_name: formData.nomineeName || "",
+                gurd_mobile: formData.guardianMobile,
+                client_addr: formData.clientAddress,
+                pin_no: formData.clientPin,
+                aadhar_no: formData.aadhaarNumber,
+                pan_no: formData.panNumber,
+                religion: formData.religion,
+                other_religion: formData.otherReligion,
+                caste: formData.caste,
+                other_caste: formData.otherCaste,
+                education: formData.education,
+                other_education: formData.otherEducation,
+                dob: formattedDob,
+                grt_date: formattedGrtDate,
+                co_lat_val: location?.latitude,
+                co_long_val: location?.longitude,
+                co_gps_address: addr,
+                created_by: loginStore?.emp_id,
+            };
 
-                // 🧠 Convert all string values to CAPITAL letters
-                const creds = Object.fromEntries(
+            // 🧠 Convert all string values to CAPITAL letters
+            const creds = Object.fromEntries(
                 Object.entries(creds_).map(([key, value]) => [
                     key, typeof value === "string" ? value.toUpperCase() : value,
                 ])
-                );
+            );
 
-                const fb = new FormData();
-                Object.keys(creds).forEach(key => {
-                    fb.append(key,creds[key])
-                })
-                fb.append('files',formData?.uploadImg)
+            const fb = new FormData();
+            Object.keys(creds).forEach(key => {
+                fb.append(key, creds[key])
+            })
+            fb.append('files', formData?.uploadImg)
 
-                // console.log('Submitting basic details ',  fb)
-                // setLoading(false);
+            // console.log('Submitting basic details ',  fb)
+            // setLoading(false);
 
-                axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, fb,{
-                            headers: {
-                            'Content-Type': 'multipart/form-data',
-                            }
+            axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, fb, {
+                headers: {
+                    Authorization: loginStore?.token, // example header
+                    "Content-Type": "application/json", // optional
                 }
-                ).then(response => {
-                        console.log(response?.data);
-                        setLoading(false);
-                        if(response?.data?.suc == 1){
-                            Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
-                            setFormData({
-                                clientName: "",
-                                clientEmail: "",
-                                clientGender: "",
-                                clientMobile: "",
-                                guardianName: "",
-                                husbandName: "",
-                                nomineeName: "",
-                                guardianMobile: "",
-                                clientAddress: "",
-                                clientPin: "",
-                                aadhaarNumber: "",
-                                panNumber: "",
-                                voterId: "",
-                                religion: "",
-                                otherReligion: "",
-                                caste: "",
-                                otherCaste: "",
-                                education: "",
-                                otherEducation: "",
-                                groupCode: "",
-                                groupCodeName: "",
-                                dob: new Date(),
-                                grtDate: new Date(),
-                                previewImg:"",
-                                uploadImg:""
-                            })
-                            setMemberCodeShowHide(false)
-                            onSubmit()
-                        }
-                        else{
-                            ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
-                        }
+            }
 
-                        // if(response?.data?.suc == 1){
-                        //     console.log('dsfdssdfsfs : ', response?.data?.member_code)
-                        //         console.log(formData?.uploadImg);
-                        //         const fb = new FormData();
-                        //         fb.append('files',formData?.uploadImg);
-                        //         fb.append('form_no',response?.data?.form_no);
-                        //         fb.append('member_code',response?.data?.member_code);
-                        //         fb.append('created_by',loginStore?.emp_id);
-                        //         fb.append('branch_code',loginStore?.brn_code);
-                        //         axios.post(
-                        //             ADDRESSES.UPLOAD_GRT_IMAGE,
-                        //             fb,
-                        //             {
-                        //                 headers: {
-                        //                 'Content-Type': 'multipart/form-data',
-                        //                 },
-                        //             }
-                        //         ).then(res =>{
-                        //                      setLoading(false);
-                        //                 console.log(res);
-                        //                 console.log(res?.data , 'asadads')
-                        //                 if(res?.data?.suc == 1){
-                        //                     Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
-                        //                     setFormData({
-                        //                         clientName: "",
-                        //                         clientEmail: "",
-                        //                         clientGender: "",
-                        //                         clientMobile: "",
-                        //                         guardianName: "",
-                        //                         husbandName: "",
-                        //                         nomineeName: "",
-                        //                         guardianMobile: "",
-                        //                         clientAddress: "",
-                        //                         clientPin: "",
-                        //                         aadhaarNumber: "",
-                        //                         panNumber: "",
-                        //                         voterId: "",
-                        //                         religion: "",
-                        //                         otherReligion: "",
-                        //                         caste: "",
-                        //                         otherCaste: "",
-                        //                         education: "",
-                        //                         otherEducation: "",
-                        //                         groupCode: "",
-                        //                         groupCodeName: "",
-                        //                         dob: new Date(),
-                        //                         grtDate: new Date(),
-                        //                         previewImg:"",
-                        //                         uploadImg:null
-                        //                     })
-                        //                     setMemberCodeShowHide(false)
-                        //                     onSubmit()
-                        //                 }
-                        //                 else{
-                        //                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
-                        //                     setLoading(false);
-                        //                 }
-                        //         }).catch(err =>{
-                        //             ToastAndroid.show(err?.message, ToastAndroid.SHORT);
-                        //             setLoading(false);
-                        //         })
-                        // }
-                        // else{
-                        //              ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
-                        //           setLoading(false);
-                        // }
-                        
-                }).catch(err => {
-                    ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
-                    console.log("SAVE_BASIC_DETAILS ERRRRR", err);
-                    setLoading(false);
-                }).finally(() => {
-                    setLoading(false);
-                });    
-            }
-            catch(err){
-                console.log("Error in submitBasicDetails", err);   
+            ).then(response => {
+                console.log(response?.data);
                 setLoading(false);
-            }
+                if (response?.data?.suc == 1) {
+                    Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
+                    setFormData({
+                        clientName: "",
+                        clientEmail: "",
+                        clientGender: "",
+                        clientMobile: "",
+                        guardianName: "",
+                        husbandName: "",
+                        nomineeName: "",
+                        guardianMobile: "",
+                        clientAddress: "",
+                        clientPin: "",
+                        aadhaarNumber: "",
+                        panNumber: "",
+                        voterId: "",
+                        religion: "",
+                        otherReligion: "",
+                        caste: "",
+                        otherCaste: "",
+                        education: "",
+                        otherEducation: "",
+                        groupCode: "",
+                        groupCodeName: "",
+                        dob: new Date(),
+                        grtDate: new Date(),
+                        previewImg: "",
+                        uploadImg: ""
+                    })
+                    setMemberCodeShowHide(false)
+                    onSubmit()
+                }
+                else {
+                    ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
+                }
+
+                // if(response?.data?.suc == 1){
+                //     console.log('dsfdssdfsfs : ', response?.data?.member_code)
+                //         console.log(formData?.uploadImg);
+                //         const fb = new FormData();
+                //         fb.append('files',formData?.uploadImg);
+                //         fb.append('form_no',response?.data?.form_no);
+                //         fb.append('member_code',response?.data?.member_code);
+                //         fb.append('created_by',loginStore?.emp_id);
+                //         fb.append('branch_code',loginStore?.brn_code);
+                //         axios.post(
+                //             ADDRESSES.UPLOAD_GRT_IMAGE,
+                //             fb,
+                //             {
+                //                 headers: {
+                //                 'Content-Type': 'multipart/form-data',
+                //                 },
+                //             }
+                //         ).then(res =>{
+                //                      setLoading(false);
+                //                 console.log(res);
+                //                 console.log(res?.data , 'asadads')
+                //                 if(res?.data?.suc == 1){
+                //                     Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
+                //                     setFormData({
+                //                         clientName: "",
+                //                         clientEmail: "",
+                //                         clientGender: "",
+                //                         clientMobile: "",
+                //                         guardianName: "",
+                //                         husbandName: "",
+                //                         nomineeName: "",
+                //                         guardianMobile: "",
+                //                         clientAddress: "",
+                //                         clientPin: "",
+                //                         aadhaarNumber: "",
+                //                         panNumber: "",
+                //                         voterId: "",
+                //                         religion: "",
+                //                         otherReligion: "",
+                //                         caste: "",
+                //                         otherCaste: "",
+                //                         education: "",
+                //                         otherEducation: "",
+                //                         groupCode: "",
+                //                         groupCodeName: "",
+                //                         dob: new Date(),
+                //                         grtDate: new Date(),
+                //                         previewImg:"",
+                //                         uploadImg:null
+                //                     })
+                //                     setMemberCodeShowHide(false)
+                //                     onSubmit()
+                //                 }
+                //                 else{
+                //                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
+                //                     setLoading(false);
+                //                 }
+                //         }).catch(err =>{
+                //             ToastAndroid.show(err?.message, ToastAndroid.SHORT);
+                //             setLoading(false);
+                //         })
+                // }
+                // else{
+                //              ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
+                //           setLoading(false);
+                // }
+
+            }).catch(err => {
+                ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
+                console.log("SAVE_BASIC_DETAILS ERRRRR", err);
+                setLoading(false);
+            }).finally(() => {
+                setLoading(false);
+            });
+        }
+        catch (err) {
+            console.log("Error in submitBasicDetails", err);
+            setLoading(false);
+        }
     }
 
     const handleResetForm = () => {
@@ -803,8 +859,8 @@ const BMBasicDetailsForm = forwardRef(({
                     groupCodeName: "",
                     dob: new Date(),
                     grtDate: new Date(),
-                    uploadImg:"",
-                    previewImg:""
+                    uploadImg: "",
+                    previewImg: ""
                 })
                 setMemberCodeShowHide(false)
                 // setDob(new Date())
@@ -860,7 +916,7 @@ const BMBasicDetailsForm = forwardRef(({
     // const updateDisabled =
     //     loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || !geolocationFetchedAddress || disableCondition(approvalStatus, branchCode);
 
-     const updateDisabled = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || (!formData.uploadImg && flag == 'CO') || disableCondition(approvalStatus, branchCode);
+    const updateDisabled = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || (!formData.uploadImg && flag == 'CO') || disableCondition(approvalStatus, branchCode);
 
     // Inform parent about the current disabled state.
     useEffect(() => {
@@ -891,59 +947,59 @@ const BMBasicDetailsForm = forwardRef(({
     }))
 
     const takePhoto = async () => {
-    if (!cameraRef.current) return;
-    const photo = await cameraRef.current.takePhoto({});
-    // console.log(photo);
-    const fileName = photo.path.split('/').pop() ?? 'photo.jpg';
-    const filePath = `file://${photo.path}`;
-    console.log({
-                    uri: filePath,
-                    name: fileName,
-                    type: `image/${fileName.split('.').pop()}`,
-                })
-    // setPhotoUri('file://' + photo.path);
+        if (!cameraRef.current) return;
+        const photo = await cameraRef.current.takePhoto({});
+        // console.log(photo);
+        const fileName = photo.path.split('/').pop() ?? 'photo.jpg';
+        const filePath = `file://${photo.path}`;
+        console.log({
+            uri: filePath,
+            name: fileName,
+            type: `image/${fileName.split('.').pop()}`,
+        })
+        // setPhotoUri('file://' + photo.path);
         setFormData((prev) => ({
             ...prev,
             uploadImg: {
-                    uri: filePath,
-                    name: fileName,
-                    type: `image/${fileName.split('.').pop()}`,
-                },
+                uri: filePath,
+                name: fileName,
+                type: `image/${fileName.split('.').pop()}`,
+            },
             previewImg: 'file://' + photo.path,
         }))
         closeHeader(true);
         setOpenCamera(false);
-  };
+    };
 
-  
-    if(!hasPermission) return <>
-                <SafeAreaView>
-                    <View
-                        style={{
-                            flex:1,
-                            justifyContent:'center',
-                            alignItems:'center'
-                        }}
-                    >
-                        {
-                            isPendingPermission ? <ActivityIndicator
-                                size={'large'}
-                            /> : <PermissionsPage/>
-                        }
-                        
-                    </View>
-                </SafeAreaView>
+
+    if (!hasPermission) return <>
+        <SafeAreaView>
+            <View
+                style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                }}
+            >
+                {
+                    isPendingPermission ? <ActivityIndicator
+                        size={'large'}
+                    /> : <PermissionsPage />
+                }
+
+            </View>
+        </SafeAreaView>
     </>
 
     if (device == null) return <NoCameraDeviceError />
 
-    if(isCameraOpen) return <>
-          <View style={{
-                flex: 1,
-                backgroundColor: 'black',
-                height:Dimensions.get('screen').height,
-                width:Dimensions.get('screen').width
-          }}>
+    if (isCameraOpen) return <>
+        <View style={{
+            flex: 1,
+            backgroundColor: 'black',
+            height: Dimensions.get('screen').height,
+            width: Dimensions.get('screen').width
+        }}>
             <Camera
                 ref={cameraRef}
                 // style={{}}
@@ -956,20 +1012,20 @@ const BMBasicDetailsForm = forwardRef(({
 
             <View
                 style={{
-                    position:'absolute',
-                    top:StatusBar.currentHeight + 50,
-                    right:20,
-                    display:'flex',
-                    justifyContent:'center',
-                    alignItems:'center',
-                    gap:5,
-                    flexDirection:'row'
+                    position: 'absolute',
+                    top: StatusBar.currentHeight + 50,
+                    right: 20,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    gap: 5,
+                    flexDirection: 'row'
                 }}
             >
 
-               
 
-                 <IconButton
+
+                <IconButton
                     icon="camera-retake-outline"
                     iconColor={theme.colors.background}
                     size={30}
@@ -979,7 +1035,7 @@ const BMBasicDetailsForm = forwardRef(({
                 />
                 <IconButton
                     icon="close"
-                    
+
                     iconColor={theme.colors.background}
                     size={30}
                     onPress={() => {
@@ -989,20 +1045,20 @@ const BMBasicDetailsForm = forwardRef(({
                 />
             </View>
             <View style={styles.controls}>
-                    <IconButton
-                            contentStyle={{
-                                backgroundColor:theme.colors.background
-                            }}
-                        icon="camera"
-                        background={'#fff'}
-                        iconColor={theme.colors.primary}
-                        size={30}
-                        onPress={() => {
-                            takePhoto()
-                        }}
-                    />
+                <IconButton
+                    contentStyle={{
+                        backgroundColor: theme.colors.background
+                    }}
+                    icon="camera"
+                    background={'#fff'}
+                    iconColor={theme.colors.primary}
+                    size={30}
+                    onPress={() => {
+                        takePhoto()
+                    }}
+                />
             </View>
-            </View>
+        </View>
     </>
 
     return (
@@ -1015,7 +1071,7 @@ const BMBasicDetailsForm = forwardRef(({
                     paddingBottom: 10
                 }}>
                     <ImageView
-                        images={formData?.previewImg ?  [{uri:formData?.previewImg}] : []}
+                        images={formData?.previewImg ? [{ uri: formData?.previewImg }] : []}
                         imageIndex={0} // which image to show first
                         visible={visible}
                         onRequestClose={() => setVisible(false)}
@@ -1023,7 +1079,7 @@ const BMBasicDetailsForm = forwardRef(({
                     {/* <Divider /> */}
 
                     {/* Location Field Visible */}
-                    
+
                     {flag == 'BM' && <InputPaper label={approvalStatus === "U" && geolocationFetchedAddress ? `Geo Location Address` : (approvalStatus === "A" || approvalStatus === "S") ? "Geo Location Address" : `Fetching GPS Address...`} multiline leftIcon='google-maps' value={geolocationFetchedAddress || ""} onChangeText={(txt: any) => setGeolocationFetchedAddress(txt)} disabled customStyle={{
                         backgroundColor: theme.colors.background,
                         minHeight: 95,
@@ -1305,48 +1361,48 @@ const BMBasicDetailsForm = forwardRef(({
 
 
                     {/* Image Upload */}
-                         <List.Item
-                            title={'Upload Image *'}
-                            description={formData?.previewImg && <View
-                                style={{
-                                    display:'flex',
-                                    flexDirection:'row'
+                    <List.Item
+                        title={'Upload Image *'}
+                        description={formData?.previewImg && <View
+                            style={{
+                                display: 'flex',
+                                flexDirection: 'row'
+                            }}
+                        >
+                            <IconButton size={20}
+                                icon={'eye-outline'}
+                                iconColor={theme.colors.primary}
+                                onPress={() => {
+                                    setVisible(true);
                                 }}
-                            >
-                                    <IconButton size={20}
-                                        icon={'eye-outline'}
-                                        iconColor={theme.colors.primary}
-                                        onPress={() =>{
-                                            setVisible(true);
-                                        }}
-                                    />
+                            />
 
-                                    <IconButton size={20}
-                                        icon={'trash-can-outline'}
-                                        iconColor={theme.colors.error}
-                                        onPress={() =>{
-                                            setFormData((prev) => ({
-                                                ...prev,
-                                                uploadImg:null,
-                                                previewImg:''
-                                            }))
-                                        }}
-                                    />
-                            </View>}
-                            left={props => <List.Icon {...props} icon="cloud-upload-outline" />}
-                            right={props => {
-                                return  <ButtonPaper mode="text" textColor={theme.colors.primary} icon="camera-outline" onPress={() => {
-                                    // console.log('asdasd')
-                                    closeHeader(false)
+                            <IconButton size={20}
+                                icon={'trash-can-outline'}
+                                iconColor={theme.colors.error}
+                                onPress={() => {
+                                    setFormData((prev) => ({
+                                        ...prev,
+                                        uploadImg: null,
+                                        previewImg: ''
+                                    }))
+                                }}
+                            />
+                        </View>}
+                        left={props => <List.Icon {...props} icon="cloud-upload-outline" />}
+                        right={props => {
+                            return <ButtonPaper mode="text" textColor={theme.colors.primary} icon="camera-outline" onPress={() => {
+                                // console.log('asdasd')
+                                closeHeader(false)
                                 setOpenCamera(true);
-                                }}>
+                            }}>
                                 Choose
                             </ButtonPaper>
-                            }}
-                            descriptionStyle={{
-                                color: theme.colors.tertiary,
-                            }}
-                        />
+                        }}
+                        descriptionStyle={{
+                            color: theme.colors.tertiary,
+                        }}
+                    />
                     {/* End */}
 
                     {/* <View style={{
@@ -1381,9 +1437,9 @@ const BMBasicDetailsForm = forwardRef(({
                         marginBottom: 45
                     }}>
                         {flag === "CO" && <ButtonPaper mode="text"
-                        textColor={theme.colors.error} onPress={handleResetForm} icon="backup-restore" disabled={disableCondition(approvalStatus, branchCode)}>
+                            textColor={theme.colors.error} onPress={handleResetForm} icon="backup-restore" disabled={disableCondition(approvalStatus, branchCode)}>
                             <Text variant='labelMedium' style={{
-                                color:theme.colors.error
+                                color: theme.colors.error
                             }}>RESET FORM</Text>
                         </ButtonPaper>}
                         {/* <ButtonPaper mode='text' icon="cloud-upload-outline" onPress={triggerUpdateButton} disabled={updateDisabled}
@@ -1391,8 +1447,8 @@ const BMBasicDetailsForm = forwardRef(({
 
                         {
                             flag !== "BM" && <ButtonPaper mode='outlined' icon="cloud-upload-outline"
-                            onPress={triggerUpdateButton} 
-                            disabled={updateDisabled}
+                                onPress={triggerUpdateButton}
+                                disabled={updateDisabled}
                                 loading={loading}>SUBMIT</ButtonPaper>
                         }
                     </View>
@@ -1406,30 +1462,30 @@ const BMBasicDetailsForm = forwardRef(({
     )
 })
 
-const PermissionsPage = () =>{
+const PermissionsPage = () => {
     return <Text>
-            Don't have permission to access camera.
+        Don't have permission to access camera.
     </Text>
 }
 
-const NoCameraDeviceError = () =>{
+const NoCameraDeviceError = () => {
     return <SafeAreaView>
-        <View 
-        style={{
-            flex:1,
-            justifyContent:'center',
-            alignItems:'center'
-        }}
+        <View
+            style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center'
+            }}
         >
-                <Text 
-                    variant='bodyLarge'
-                    style={{
-                        color:useTheme().colors.error
-                    }}
-                >
-                        Error!! No Camera Found.
+            <Text
+                variant='bodyLarge'
+                style={{
+                    color: useTheme().colors.error
+                }}
+            >
+                Error!! No Camera Found.
 
-                </Text>
+            </Text>
         </View>
     </SafeAreaView>
 }
@@ -1466,11 +1522,11 @@ const styles = StyleSheet.create({
     },
     controls: {
         position: 'absolute',
-        display:'flex',
-        justifyContent:'center',
+        display: 'flex',
+        justifyContent: 'center',
         bottom: 0,
-        flexDirection:'row',
-        gap:2,
+        flexDirection: 'row',
+        gap: 2,
         width: '100%',
         alignItems: 'center',
         backgroundColor: 'rgba(0, 0, 0, 0.5)'

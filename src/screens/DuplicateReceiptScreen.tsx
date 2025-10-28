@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -13,12 +14,13 @@ import ButtonPaper from '../components/ButtonPaper'
 import { formattedDate } from '../utils/dateFormatter'
 import { BASE_URL } from '../config/config'
 import { useEscPosPrint } from '../hooks/useEscPosPrint'
+import { AppStore } from '../context/AppContext'
 
 const DuplicateReceiptScreen = () => {
     const theme = usePaperColorScheme()
     const navigation = useNavigation()
     const isFocused = useIsFocused()
-
+    const { handleLogout } = useContext<any>(AppStore)
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
 
     const [loading, setLoading] = useState(() => false)
@@ -96,10 +98,19 @@ const DuplicateReceiptScreen = () => {
 
         console.log(">>>>>>>>>>>>>>", creds)
 
-        await axios.post(`${ADDRESSES.DUPLICATE_PRINT}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DUPLICATE_PRINT}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg?.msg)
                 console.log("===++=++====", res?.data?.msg?.msg)
+            }
+            else{
+               handleLogout() 
             }
         }).catch(err => {
             ToastAndroid.show("Some error while searching!", ToastAndroid.SHORT)
@@ -116,9 +127,18 @@ const DuplicateReceiptScreen = () => {
             "upload_on": data["upload_on"],
         }
 
-        await axios.post(`${BASE_URL}/fetch_grpwise_member_collec`, creds).then(async res => {
+        await axios.post(`${BASE_URL}/fetch_grpwise_member_collec`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(async res => {
             console.log("handleFetchDuplicateReceipt RESSSS", res?.data)
             await handlePrint(res?.data?.msg, true)
+            if(res?.data?.suc !== 1){
+               handleLogout() 
+            }
         }).catch(err => {
             console.log("handleFetchDuplicateReceipt ERRRRR", err)
         })

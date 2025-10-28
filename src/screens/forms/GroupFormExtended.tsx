@@ -1,6 +1,7 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { Alert, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
 import { Chip, Text } from "react-native-paper"
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import { Divider, List } from 'react-native-paper'
 import InputPaper from '../../components/InputPaper'
@@ -11,6 +12,7 @@ import { ADDRESSES } from '../../config/api_list'
 import { loginStorage } from '../../storage/appStorage'
 import { CommonActions, useNavigation } from '@react-navigation/native'
 import navigationRoutes from '../../routes/routes'
+import { AppStore } from '../../context/AppContext'
 // import LoadingOverlay from '../components/LoadingOverlay'
 
 const GroupFormExtended = ({ fetchedData, approvalStatus = "U" }) => {
@@ -21,7 +23,7 @@ const GroupFormExtended = ({ fetchedData, approvalStatus = "U" }) => {
 
     console.log("LOGIN DATAAA =============", loginStore)
     console.log("4444444444444444444ffffffffffffffff", fetchedData)
-
+const { handleLogout } = useContext<any>(AppStore)
     const [loading, setLoading] = useState(() => false)
 
 
@@ -96,9 +98,18 @@ const GroupFormExtended = ({ fetchedData, approvalStatus = "U" }) => {
             flag: fetchedData?.approval_status
         }
         console.log("+++++===++++++++++++++++", creds)
-        await axios.post(`${ADDRESSES.MEMBER_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.MEMBER_DETAILS}`, creds,{headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
+            if(res?.data?.suc === 1){
             console.log("JJJJJJJSADDDASDSAD", res?.data)
             setMemberDetailsArray(res?.data?.msg)
+            }
+            else{
+                handleLogout()
+            }
         }).catch(err => {
             ToastAndroid.show("Some error occurred {handleFetchMembers}!", ToastAndroid.SHORT)
         })
