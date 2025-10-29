@@ -434,7 +434,7 @@ const { handleLogout } = useContext<any>(AppStore)
         await axios.post(`${ADDRESSES.FETCH_BASIC_DETAILS}`, creds, {
             headers: {
                 Authorization: loginStore?.token, // example header
-                "Content-Type": "application/json", // optional
+                "Content-Type": "multipart/form-data", // optional
             }
         }
         ).then(res => {
@@ -591,7 +591,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         {
                             headers: {
                                 Authorization: loginStore?.token, // example header
-                                "Content-Type": "application/json", // optional
+                                "Content-Type": "multipart/form-data", // optional
                             }
                         }
 
@@ -622,13 +622,17 @@ const { handleLogout } = useContext<any>(AppStore)
                 {
                             headers: {
                                 Authorization: loginStore?.token, // example header
-                                "Content-Type": "application/json", // optional
+                                "Content-Type": "multipart/form-data", // optional
                             }
                         }
             ).then(res => {
+                if(res?.data?.suc === 0) {
+                handleLogout()
+            } else {
                 // console.log("QQQQQQQQQQQQQQQ", res?.data)
                 ToastAndroid.show("Update Successful", ToastAndroid.SHORT)
                 onSubmit()
+            }
             }).catch(err => {
                 ToastAndroid.show("Some error while updating basic details!", ToastAndroid.SHORT)
             })
@@ -698,18 +702,15 @@ const { handleLogout } = useContext<any>(AppStore)
             })
             fb.append('files', formData?.uploadImg)
 
-            // console.log('Submitting basic details ',  fb)
-            // setLoading(false);
-
-            axios.post(`${ADDRESSES.SAVE_BASIC_DETAILS}`, fb, {
+            
+            
+            axios.post(ADDRESSES.SAVE_BASIC_DETAILS, fb, {
                 headers: {
                     Authorization: loginStore?.token, // example header
-                    "Content-Type": "application/json", // optional
+                    "Content-Type": "multipart/form-data", // optional
                 }
-            }
-
-            ).then(response => {
-                console.log(response?.data);
+            }).then(response => {
+                // console.log(response?.data, 'kkkkkkkkkkkkkkkkkkkk');
                 setLoading(false);
                 if (response?.data?.suc == 1) {
                     Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
@@ -816,7 +817,7 @@ const { handleLogout } = useContext<any>(AppStore)
 
             }).catch(err => {
                 ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
-                console.log("SAVE_BASIC_DETAILS ERRRRR", err);
+                console.log(loginStore?.token, "SAVE_BASIC_DETAILS>>> ERRRRR", err);
                 setLoading(false);
             }).finally(() => {
                 setLoading(false);

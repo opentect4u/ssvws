@@ -1,5 +1,5 @@
 import { Alert, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
-import React, { useEffect, useState, forwardRef, useImperativeHandle } from 'react'
+import React, { useEffect, useState, forwardRef, useImperativeHandle, useContext } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import InputPaper from '../../components/InputPaper'
 import { Divider, List } from 'react-native-paper'
@@ -12,6 +12,7 @@ import ButtonPaper from '../../components/ButtonPaper'
 import { loginStorage } from '../../storage/appStorage'
 import { disableConditionExceptBasicDetails } from '../../utils/disableCondition'
 import { SCREEN_WIDTH } from 'react-native-normalize'
+import { AppStore } from '../../context/AppContext'
 
 interface BMOccupationDetailsFormProps {
     formNumber?: any
@@ -40,6 +41,8 @@ const BMOccupationDetailsForm = forwardRef(({
     // const [subPurposesOfLoan, setSubPurposesOfLoan] = useState([])
     const [defaultAmt, setDefaultAmt] = useState('')
 
+    const { handleLogout } = useContext<any>(AppStore)
+
     const [formData, setFormData] = useState({
         selfOccupation: "",
         selfMonthlyIncome: "",
@@ -64,28 +67,38 @@ const BMOccupationDetailsForm = forwardRef(({
 
     const fetchOccupationDetails = async () => {
         setLoading(true)
-        await axios.get(`${ADDRESSES.FETCH_OCCUPATION_DETAILS}?form_no=${formNumber}&branch_code=${branchCode}`)
+        await axios.get(`${ADDRESSES.FETCH_OCCUPATION_DETAILS}?form_no=${formNumber}&branch_code=${branchCode}`, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "multipart/form-data", // optional
+            }
+        }
+        )
             .then(res => {
-                if (res?.data?.msg?.length === 0) {
-                    ToastAndroid.show("No data found!", ToastAndroid.SHORT)
-                    return
-                }
-                if (res?.data?.suc === 1) {
-                    setFormData({
-                        selfOccupation: res?.data?.msg[0]?.self_occu || "",
-                        selfMonthlyIncome: res?.data?.msg[0]?.self_income || "",
-                        spouseOccupation: res?.data?.msg[0]?.spouse_occu || "",
-                        spouseMonthlyIncome: res?.data?.msg[0]?.spouse_income || "",
-                        purposeOfLoan: res?.data?.msg[0]?.loan_purpose || "",
-                        purposeOfLoanName: res?.data?.msg[0]?.purpose_id || "",
-                        // subPurposeOfLoan: res?.data?.msg[0]?.sub_pupose || "",
-                        subPurposeOfLoanName: res?.data?.msg[0]?.sub_purp_name || "",
-                        amountApplied: res?.data?.msg[0]?.applied_amt || "",
-                        checkOtherOngoingLoan: res?.data?.msg[0]?.other_loan_flag || "",
-                        otherLoanAmount: res?.data?.msg[0]?.other_loan_amt || "",
-                        monthlyEmi: res?.data?.msg[0]?.other_loan_emi || "",
-                    })
-                    setDefaultAmt(res?.data?.msg[0]?.applied_amt)
+
+                // if (res?.data?.msg?.length === 0) {
+                //     ToastAndroid.show("No data found!", ToastAndroid.SHORT)
+                //     return
+                // }
+
+                if(res?.data?.suc === 0) {
+                handleLogout()
+                } else{
+                setFormData({
+                    selfOccupation: res?.data?.msg[0]?.self_occu || "",
+                    selfMonthlyIncome: res?.data?.msg[0]?.self_income || "",
+                    spouseOccupation: res?.data?.msg[0]?.spouse_occu || "",
+                    spouseMonthlyIncome: res?.data?.msg[0]?.spouse_income || "",
+                    purposeOfLoan: res?.data?.msg[0]?.loan_purpose || "",
+                    purposeOfLoanName: res?.data?.msg[0]?.purpose_id || "",
+                    // subPurposeOfLoan: res?.data?.msg[0]?.sub_pupose || "",
+                    subPurposeOfLoanName: res?.data?.msg[0]?.sub_purp_name || "",
+                    amountApplied: res?.data?.msg[0]?.applied_amt || "",
+                    checkOtherOngoingLoan: res?.data?.msg[0]?.other_loan_flag || "",
+                    otherLoanAmount: res?.data?.msg[0]?.other_loan_amt || "",
+                    monthlyEmi: res?.data?.msg[0]?.other_loan_emi || "",
+                })
+                setDefaultAmt(res?.data?.msg[0]?.applied_amt)
                 }
             }).catch(err => {
                 ToastAndroid.show("Error fetching occupation details!", ToastAndroid.SHORT)
@@ -180,11 +193,14 @@ const BMOccupationDetailsForm = forwardRef(({
         }
         await axios.post(`${ADDRESSES.SAVE_OCCUPATION_DETAILS}`, creds, {headers: {
                                 Authorization: loginStore?.token, // example header
-                                "Content-Type": "application/json", // optional
+                                "Content-Type": "multipart/form-data", // optional
                             }
                         })
             .then(res => {
-                if (res?.data?.suc === 1) {
+                
+                if(res?.data?.suc === 0) {
+                handleLogout()
+                } else {
                     ToastAndroid.show("Occupation details saved.", ToastAndroid.SHORT)
                     onSubmit()
                 }

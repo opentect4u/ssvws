@@ -49,7 +49,7 @@ const AppContext = ({ children }) => {
                         loginStorage.set("login-data", JSON.stringify(dt));
                         console.log("USER DETAILS", dt, "USER DETAILS");
                         setIsLogin(true);
-                    } else{
+                    } else {
 
                         const dt_ = {
                             ...res?.data?.user_dtls,
@@ -57,6 +57,7 @@ const AppContext = ({ children }) => {
                         };
 
                         loginStorage.set("login-data", JSON.stringify(dt_));
+                        // loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls));
                         console.log("USER DETAILS", dt_);
                         setIsLogin(true);
                     }

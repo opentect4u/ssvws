@@ -68,7 +68,7 @@ const { handleLogout } = useContext<any>(AppStore)
 
         await axios.get(`${ADDRESSES.FETCH_HOUSEHOLD_DETAILS}?form_no=${formNumber}&branch_code=${branchCode}`,{headers: {
                                 Authorization: loginStore?.token, // example header
-                                "Content-Type": "application/json", // optional
+                                "Content-Type": "multipart/form-data", // optional
                             }
                         }).then(res => {
                             if( res?.data?.suc !== 1) {
@@ -126,12 +126,15 @@ const { handleLogout } = useContext<any>(AppStore)
 
         await axios.post(`${ADDRESSES.SAVE_HOUSEHOLD_DETAILS}`, creds,{headers: {
                                 Authorization: loginStore?.token, // example header
-                                "Content-Type": "application/json", // optional
+                                "Content-Type": "multipart/form-data", // optional
                             }
                         }).then(res => {
-            console.log("HOUSEHOLD====RES", res?.data)
 
-            if (res?.data?.suc === 1) {
+            // console.log("HOUSEHOLD====RES", res?.data)
+
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            } else {
                 ToastAndroid.show("Household details updated.", ToastAndroid.SHORT)
                 onSubmit()
             }
