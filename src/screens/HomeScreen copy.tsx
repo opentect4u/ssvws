@@ -222,7 +222,12 @@ const HomeScreen = () => {
             out_addr: geolocationFetchedAddress,
             modified_by: loginStore?.emp_id
         }
-        await axios.post(`${ADDRESSES.CLOCK_OUT}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.CLOCK_OUT}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
             console.log("CLOCK OUT RES", res?.data)
             setIsClockedIn(!isClockedIn)
         }).catch(err => {
@@ -234,7 +239,13 @@ const HomeScreen = () => {
         const creds = {
             emp_id: loginStore?.emp_id,
         }
-        await axios.post(`${ADDRESSES.CLOCKED_IN_DATE_TIME}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.CLOCKED_IN_DATE_TIME}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             if (res?.data?.msg?.length === 0) {
                 setIsClockedIn(false)
                 return
@@ -259,7 +270,13 @@ const HomeScreen = () => {
             branch_code: loginStore?.branch_code,
             datetime: formattedChoosenDate
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log(">>>>>>>D<<<<<<<", res?.data)
             setNoOfGrtForms(res?.data?.msg[0]?.no_of_grt)
         }).catch(err => {
@@ -277,7 +294,13 @@ const HomeScreen = () => {
             "created_by": loginStore?.emp_id
         }
         console.log("CREDSSS C", creds)
-        await axios.post(`${ADDRESSES.DASHBOARD_CASH_RECOV_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_CASH_RECOV_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log(">>>>>>>C<<<<<<<", res?.data)
             setTotalCashRecovery(res?.data?.msg[0]?.tot_recov_cash)
         }).catch(err => {
@@ -295,7 +318,13 @@ const HomeScreen = () => {
             "created_by": loginStore?.emp_id
         }
         console.log("CREDSSS B", creds)
-        await axios.post(`${ADDRESSES.DASHBOARD_BANK_RECOV_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_BANK_RECOV_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log(">>>>>>>B<<<<<<<", res?.data)
             setTotalBankRecovery(res?.data?.msg[0]?.tot_recov_bank)
         }).catch(err => {
@@ -325,7 +354,13 @@ const HomeScreen = () => {
             datetime: formattedChoosenDate,
             branch_code: loginStore?.brn_code
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS_BM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS_BM}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             setNoOfGrtForms(res?.data?.msg[0]?.no_of_grt)
             console.log("----====----", res?.data)
         }).catch(err => {
@@ -342,7 +377,13 @@ const HomeScreen = () => {
             datetime: formattedChoosenDate,
             branch_code: loginStore?.brn_code
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_CASH_DETAILS_BM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_CASH_DETAILS_BM}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             setTotalCashRecovery(res?.data?.msg[0]?.tot_recov_cash)
             console.log("----====----CC", res?.data)
         }).catch(err => {
@@ -359,7 +400,13 @@ const HomeScreen = () => {
             datetime: formattedChoosenDate,
             branch_code: loginStore?.brn_code
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_BANK_DETAILS_BM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_BANK_DETAILS_BM}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             setTotalBankRecovery(res?.data?.msg[0]?.tot_recov_bank)
             console.log("----====----BB", res?.data)
         }).catch(err => {

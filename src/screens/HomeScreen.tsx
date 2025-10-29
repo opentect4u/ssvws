@@ -1,6 +1,7 @@
+import React, { useCallback, useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, View, ScrollView, RefreshControl, ToastAndroid, Alert, Linking, BackHandler } from 'react-native'
 import { Icon, IconButton, MD2Colors, Text } from "react-native-paper"
-import React, { useCallback, useContext, useEffect, useState } from 'react'
 import RNRestart from 'react-native-restart'
 import { usePaperColorScheme } from '../theme/theme'
 import { CommonActions, useIsFocused, useNavigation } from '@react-navigation/native'
@@ -38,7 +39,7 @@ const HomeScreen = () => {
     const [branchAssign, setBranchAssign] = useState(loginStore?.branch_name ?? "")
     const { location, error } = useGeoLocation()
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
-
+    const { handleLogout } = useContext<any>(AppStore)
     const [refreshing, setRefreshing] = useState(() => false)
     const [loading, setLoading] = useState(() => false)
 
@@ -59,10 +60,11 @@ const HomeScreen = () => {
     const [clockedInDateTime, setClockedInDateTime] = useState(() => "")
     const [clockedInFetchedAddress, setClockedInFetchedAddress] = useState(() => "")
     const [clockInStatus, setClockInStatus] = useState<string>(() => "")
-    const [checkIsAttandanceStatusPending,setAttanadanceStatusPending] = useState<boolean>(() => true)
+    const [checkIsAttandanceStatusPending, setAttanadanceStatusPending] = useState<boolean>(() => true)
 
     useEffect(() => {
         fetchCurrentVersion()
+        console.log('home',loginStore?.token)
     }, [navigation])
 
     // useEffect(() => {
@@ -131,37 +133,37 @@ const HomeScreen = () => {
             setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
         })
 
-            // let config = {
-            //     method: 'get',
-            //     maxBodyLength: Infinity,
-            //     url: `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,
-            //     headers: {
-                    
-            //         'Content-Type': 'application/json',
-            //     }
-            // };
+        // let config = {
+        //     method: 'get',
+        //     maxBodyLength: Infinity,
+        //     url: `https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,
+        //     headers: {
 
-            // await axios.request(config).then(res => {
-            //     console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0])
-            //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
-            // }).catch(err => {
-            //     console.log("REVERSE GEO ENCODING ERR =============", JSON.stringify(err))
-            //     // ToastAndroid.show("Some error occurred while fetching geolocation address.", ToastAndroid.SHORT)
-            // })
+        //         'Content-Type': 'application/json',
+        //     }
+        // };
+
+        // await axios.request(config).then(res => {
+        //     console.log("REVERSE GEO ENCODING RES =============", res?.data?.results[0])
+        //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
+        // }).catch(err => {
+        //     console.log("REVERSE GEO ENCODING ERR =============", JSON.stringify(err))
+        //     // ToastAndroid.show("Some error occurred while fetching geolocation address.", ToastAndroid.SHORT)
+        // })
 
 
-            // fetch(`https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,{
-            //     headers:{
-            //         'Content-Type':'application/json',
-            //     }
-            // })
-            // .then(async (res) =>{
-            //     const data = await res.json();
-            //     console.log('location ============================================',data,'abar location ======================================================',data?.results[0]?.formatted_address);
-            //     setGeolocationFetchedAddress(data?.results[0]?.formatted_address)
-            // }).catch(err =>{
-            //     console.error('Error fetching Ola Maps:', err?.message);
-            // })
+        // fetch(`https://api.olamaps.io/places/v1/reverse-geocode?latlng=${location?.latitude},${location?.longitude}&api_key=DYdFc2y563IaPHDz5VCisFGjsspC6rkeIVHzg96e`,{
+        //     headers:{
+        //         'Content-Type':'application/json',
+        //     }
+        // })
+        // .then(async (res) =>{
+        //     const data = await res.json();
+        //     console.log('location ============================================',data,'abar location ======================================================',data?.results[0]?.formatted_address);
+        //     setGeolocationFetchedAddress(data?.results[0]?.formatted_address)
+        // }).catch(err =>{
+        //     console.error('Error fetching Ola Maps:', err?.message);
+        // })
     }
 
     // useEffect(() => {
@@ -192,12 +194,21 @@ const HomeScreen = () => {
 
     const handleClockIn = async () => {
         setAttanadanceStatusPending(true);
-        const check = {emp_id: loginStore?.emp_id,}
-        await axios.post(`${ADDRESSES.FETCH_EMP_LOGGED_DTLS}`, check).then((res_dtls) => {
+        const check = { emp_id: loginStore?.emp_id, }
+        await axios.post(`${ADDRESSES.FETCH_EMP_LOGGED_DTLS}`, check,{
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then((res_dtls) => {
             console.log("CLOCK IN DTLS", res_dtls?.data)
+            if (res_dtls?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
             if (res_dtls?.data?.fetch_emp_logged_dt?.msg[0]?.clock_status !== "O") {
                 axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
-                .then(res => {
+                    .then(res => {
                         const creds = {
                             emp_id: loginStore?.emp_id,
                             in_date_time: formattedDateTime(currentTime),
@@ -206,7 +217,12 @@ const HomeScreen = () => {
                             in_addr: res?.data?.results[0]?.formatted_address,
                             created_by: loginStore?.emp_id
                         }
-                        axios.post(`${ADDRESSES.CLOCK_IN}`, creds).then(res => {
+                        axios.post(`${ADDRESSES.CLOCK_IN}`, creds,{
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
                             console.log("CLOCK IN RES", res?.data)
                             setIsClockedIn(!isClockedIn)
                         }).catch(err => {
@@ -214,12 +230,12 @@ const HomeScreen = () => {
                         }).finally(() => {
                             setAttanadanceStatusPending(false);
                         })
-                }).catch(err =>{
-                         setAttanadanceStatusPending(false);
-                         Alert.alert("WARNING", `Unable to fetch location. Please try agian after some time`, [
+                    }).catch(err => {
+                        setAttanadanceStatusPending(false);
+                        Alert.alert("WARNING", `Unable to fetch location. Please try agian after some time`, [
                             { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
                         ])
-                })
+                    })
             }
             else {
                 setAttanadanceStatusPending(false);
@@ -227,7 +243,8 @@ const HomeScreen = () => {
                     { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
                 ])
             }
-        }).catch(err => { 
+        }
+        }).catch(err => {
             console.log("CLOCK IN ERR", err);
             setAttanadanceStatusPending(false);
         })
@@ -256,48 +273,62 @@ const HomeScreen = () => {
 
     /**** NEW VERSION (DONE BY SUMAN MITRA) */
     const handleClockOut = async () => {
-    setAttanadanceStatusPending(true);
-    await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
-    .then(res => {
-            const creds = {
-            emp_id: loginStore?.emp_id,
-            in_date_time: formattedDateTime(new Date(clockedInDateTime)),
-            out_date_time: formattedDateTime(currentTime),
-            out_lat: location?.latitude,
-            out_long: location?.longitude,
-            out_addr: res?.data?.results[0]?.formatted_address,
-            modified_by: loginStore?.emp_id
+        setAttanadanceStatusPending(true);
+        await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+            .then(res => {
+                const creds = {
+                    emp_id: loginStore?.emp_id,
+                    in_date_time: formattedDateTime(new Date(clockedInDateTime)),
+                    out_date_time: formattedDateTime(currentTime),
+                    out_lat: location?.latitude,
+                    out_long: location?.longitude,
+                    out_addr: res?.data?.results[0]?.formatted_address,
+                    modified_by: loginStore?.emp_id
+                }
+                axios.post(`${ADDRESSES.CLOCK_OUT}`, creds,{
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
             }
-            axios.post(`${ADDRESSES.CLOCK_OUT}`, creds).then(res => {
-                // console.log("CLOCK OUT RES", res?.data)
-                setIsClockedIn(!isClockedIn);
-                // setAttanadanceStatusPending(false);
+        }).then(res => {
+                    // console.log("CLOCK OUT RES", res?.data)
+                    setIsClockedIn(!isClockedIn);
+                    // setAttanadanceStatusPending(false);
+                }).catch(err => {
+                    // setAttanadanceStatusPending(false);
+                    Alert.alert("WARNING", `Unable to process your request right now. Please try agian after some time`, [
+                        { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
+                    ])
+                }).finally(() => {
+                    setAttanadanceStatusPending(false);
+                })
             }).catch(err => {
-                // setAttanadanceStatusPending(false);
-                Alert.alert("WARNING", `Unable to process your request right now. Please try agian after some time`, [
+                setAttanadanceStatusPending(false);
+                Alert.alert("WARNING", `Unable to fetch location. Please try agian after some time`, [
                     { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
                 ])
-            }).finally(() => {
-                setAttanadanceStatusPending(false);
             })
-    }).catch(err =>{
-            setAttanadanceStatusPending(false);
-            Alert.alert("WARNING", `Unable to fetch location. Please try agian after some time`, [
-                { "text": "OK", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" }
-            ])
-    })
-        
+
     }
     /*** END */
 
     const fetchClockedInDateTime = async () => {
         const creds = {
             emp_id: loginStore?.emp_id,
+
         }
-        await axios.post(`${ADDRESSES.CLOCKED_IN_DATE_TIME}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.CLOCKED_IN_DATE_TIME}`, creds,{
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
             // console.log("CLOCK IN RES", res?.data)
             setAttanadanceStatusPending(false);
             // console.log(res?.data?.msg?.length)
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
             if (res?.data?.msg?.length === 0) {
                 setIsClockedIn(false)
                 return
@@ -325,9 +356,19 @@ const HomeScreen = () => {
             branch_code: loginStore?.branch_code,
             datetime: formattedChoosenDate
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS}`, creds,{
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json" // optional
+            }
+        }).then(res => {
             console.log(">>>>>>>D<<<<<<<", res?.data)
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
             setNoOfGrtForms(res?.data?.msg[0]?.no_of_grt)
+            }
         }).catch(err => {
             console.log("ERRRRR<<<<<D", err)
         })
@@ -340,12 +381,23 @@ const HomeScreen = () => {
             "branch_code": loginStore?.brn_code,
             "tr_mode": "C",
             "datetime": formattedChoosenDate,
-            "created_by": loginStore?.emp_id
+            "created_by": loginStore?.emp_id,
+
         }
         console.log("CREDSSS C", creds)
-        await axios.post(`${ADDRESSES.DASHBOARD_CASH_RECOV_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_CASH_RECOV_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
             console.log(">>>>>>>C<<<<<<<", res?.data)
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
             setTotalCashRecovery(res?.data?.msg[0]?.tot_recov_cash)
+            }
         }).catch(err => {
             console.log("ERRRRR<<<<<C", err)
         })
@@ -361,9 +413,19 @@ const HomeScreen = () => {
             "created_by": loginStore?.emp_id
         }
         console.log("CREDSSS B", creds)
-        await axios.post(`${ADDRESSES.DASHBOARD_BANK_RECOV_DETAILS}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_BANK_RECOV_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
             console.log(">>>>>>>B<<<<<<<", res?.data)
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
             setTotalBankRecovery(res?.data?.msg[0]?.tot_recov_bank)
+            }
         }).catch(err => {
             console.log("ERRRRR<<<<<B", err)
         })
@@ -391,11 +453,21 @@ const HomeScreen = () => {
             datetime: formattedChoosenDate,
             branch_code: loginStore?.brn_code
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS_BM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_DETAILS_BM}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }   
+            else{
             setNoOfGrtForms(res?.data?.msg[0]?.no_of_grt)
+            }
             console.log("----====----", res?.data)
         }).catch(err => {
-            ToastAndroid.show("Some error occurred while fetching dashboard details BM.", ToastAndroid.SHORT)
+            ToastAndroid.show("Some error occurred while fetching dashboard details BM 1.", ToastAndroid.SHORT)
             console.log("Some Errr", err)
         })
     }
@@ -408,11 +480,21 @@ const HomeScreen = () => {
             datetime: formattedChoosenDate,
             branch_code: loginStore?.brn_code
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_CASH_DETAILS_BM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_CASH_DETAILS_BM}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
             setTotalCashRecovery(res?.data?.msg[0]?.tot_recov_cash)
             console.log("----====----CC", res?.data)
+            }
         }).catch(err => {
-            ToastAndroid.show("Some error occurred while fetching dashboard details BM.", ToastAndroid.SHORT)
+            ToastAndroid.show("Some error occurred while fetching dashboard details BM 2.", ToastAndroid.SHORT)
             console.log("Some Errr", err)
         })
     }
@@ -425,11 +507,21 @@ const HomeScreen = () => {
             datetime: formattedChoosenDate,
             branch_code: loginStore?.brn_code
         }
-        await axios.post(`${ADDRESSES.DASHBOARD_BANK_DETAILS_BM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DASHBOARD_BANK_DETAILS_BM}`,creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
             setTotalBankRecovery(res?.data?.msg[0]?.tot_recov_bank)
+            }
             console.log("----====----BB", res?.data)
         }).catch(err => {
-            ToastAndroid.show("Some error occurred while fetching dashboard details BM.", ToastAndroid.SHORT)
+            ToastAndroid.show("Some error occurred while fetching dashboard details BM3.", ToastAndroid.SHORT)
             console.log("Some Errr", err)
         })
     }
@@ -463,9 +555,9 @@ const HomeScreen = () => {
                  background={MD2Colors.blue100} 
                  footerText={`Branch • ${branchAssign}`} /> */}
                 <HeadingComp title={`Hi, ${(loginStore?.emp_name as string)?.split(" ")[0]}`}
-                 subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`} 
-                 background={MD2Colors.blue100} 
-                 footerText={`Branch • ${loginStore?.branch_name}`} />
+                    subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`}
+                    background={MD2Colors.blue100}
+                    footerText={`Branch • ${loginStore?.branch_name}`} />
                 <View style={{
                     // paddingHorizontal: 20,
                     // paddingBottom: 120,
@@ -511,8 +603,8 @@ const HomeScreen = () => {
                             }}
                             loading={checkIsAttandanceStatusPending}
                             disabled={checkIsAttandanceStatusPending}>
-                                {!checkIsAttandanceStatusPending && "Clock In"}
-                            </ButtonPaper>
+                            {!checkIsAttandanceStatusPending && "Clock In"}
+                        </ButtonPaper>
 
                         {/* <ButtonPaper
                             mode='text'
@@ -560,7 +652,7 @@ const HomeScreen = () => {
                                 }}
                                 disabled={!geolocationFetchedAddress}>Clock Out</ButtonPaper> */}
 
-                                <ButtonPaper
+                            <ButtonPaper
                                 icon={"clock-out"}
                                 onPress={
                                     () => Alert.alert("Clock Out", `Are you sure you want to Clock Out?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
@@ -577,8 +669,8 @@ const HomeScreen = () => {
                                     borderBottomLeftRadius: 15,
                                 }}
                                 loading={checkIsAttandanceStatusPending}
-                                 disabled={checkIsAttandanceStatusPending}
-                                >{!checkIsAttandanceStatusPending && "Clock Out"}</ButtonPaper>
+                                disabled={checkIsAttandanceStatusPending}
+                            >{!checkIsAttandanceStatusPending && "Clock Out"}</ButtonPaper>
                             <View style={{
                                 // dashed border outside inside text
                                 borderWidth: 1,

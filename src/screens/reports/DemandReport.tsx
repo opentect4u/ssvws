@@ -37,7 +37,13 @@ function DemandReport() {
   }
     const getDemandReportData = async()=>{
       console.log("hello")
-     await axios.post(`${ADDRESSES.DEMANDREPORT}`, {get_date:formattedDate(fromDate)}).then(res=>{console.log('report_data',res?.data);
+     await axios.post(`${ADDRESSES.DEMANDREPORT}`, {get_date:formattedDate(fromDate)}, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res=>{console.log('report_data',res?.data);
       console.log(Object.keys(res?.data?.msg),'keys')
           setGroupCode(Object.keys(res?.data?.msg))
           reportData.length=0

@@ -100,9 +100,13 @@ const BMOccupationDetailsForm = forwardRef(({
     const fetchPurposeOfLoan = async () => {
         setPurposesOfLoan([])
         setLoading(true)
-        await axios.get(`${ADDRESSES.FETCH_PURPOSE_OF_LOAN}`)
+        await axios.get(`${ADDRESSES.FETCH_PURPOSE_OF_LOAN}`, {headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        })
             .then(res => {
-                console.log("FETCH_PURPOSE_OF_LOAN", res?.data)
+                console.log("FETCH_PURPOSE_OF_LOAN", res?.data,    )
                 if (res?.data?.suc === 1) {
                     res?.data?.msg?.forEach((item) => {
                         setPurposesOfLoan(prev => [
@@ -174,7 +178,11 @@ const BMOccupationDetailsForm = forwardRef(({
             modified_by: loginStore?.emp_id,
             created_by: loginStore?.emp_id,
         }
-        await axios.post(`${ADDRESSES.SAVE_OCCUPATION_DETAILS}`, creds)
+        await axios.post(`${ADDRESSES.SAVE_OCCUPATION_DETAILS}`, creds, {headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        })
             .then(res => {
                 if (res?.data?.suc === 1) {
                     ToastAndroid.show("Occupation details saved.", ToastAndroid.SHORT)

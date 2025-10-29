@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -12,11 +13,12 @@ import { loginStorage } from '../storage/appStorage'
 import LoadingOverlay from '../components/LoadingOverlay'
 import DialogBox from '../components/DialogBox'
 import InputPaper from '../components/InputPaper'
+import { AppStore } from '../context/AppContext'
 
 const SearchUnapprovedLoansScreen = () => {
     const theme = usePaperColorScheme()
     const navigation = useNavigation()
-
+const { handleLogout } = useContext<any>(AppStore)
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
 
     const [loading, setLoading] = useState(() => false)
@@ -43,10 +45,19 @@ const SearchUnapprovedLoansScreen = () => {
             "approval_status": "U"
         }
         console.log(creds);
-        await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log(":::;;;:::", res?.data)
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
+            }
+            else{
+                handleLogout()
             }
         }).catch(err => {
             ToastAndroid.show("Some error while fetching forms list!", ToastAndroid.SHORT)
@@ -96,13 +107,22 @@ const SearchUnapprovedLoansScreen = () => {
             "deleted_by": loginStore?.emp_id,
             "loan_id": loanId
         }
-        await axios.post(`${ADDRESSES.DELETE_TNX}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DELETE_TNX}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log("DELETE LOAN ======== RESSS", res?.data)
             if (res?.data?.suc === 1) {
                 ToastAndroid.show("Form Deleted!", ToastAndroid.SHORT)
                 fetchLoans()
                 setRemarks("")
                 hideDialog()
+            }
+            else{
+                handleLogout()
             }
         }).catch(err => {
             console.log("FORM REJ ERRRR ====", err)

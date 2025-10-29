@@ -53,6 +53,9 @@ const SearchByGroupScreen = () => {
                 setFormsData(res?.data?.msg)
                 console.log("===++=++====", res?.data)
             }
+            else{
+                handleLogout()
+            }
         }).catch(err => {
             ToastAndroid.show("Some error while searching groups!", ToastAndroid.SHORT)
         })

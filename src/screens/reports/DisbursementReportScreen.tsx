@@ -1,6 +1,7 @@
+import React, { useContext, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, View, ScrollView, TextStyle, ViewStyle } from 'react-native'
 import { DataTable, Text } from "react-native-paper"
-import React, { useState } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import HeadingComp from "../../components/HeadingComp"
 import CollectionButtonsWrapper from "../../components/CollectionButtonsWrapper"
@@ -16,6 +17,7 @@ import { formattedDate } from '../../utils/dateFormatter'
 import axios from 'axios'
 import { ADDRESSES } from '../../config/api_list'
 import RadioComp from '../../components/RadioComp'
+import { AppStore } from '../../context/AppContext'
 
 const DisbursementReportScreen = () => {
     const theme = usePaperColorScheme()
@@ -24,7 +26,7 @@ const DisbursementReportScreen = () => {
 
     const [isLoading, setIsLoading] = useState(() => false)
     const [isDisabled, setIsDisabled] = useState(() => false)
-
+const { handleLogout } = useContext<any>(AppStore)
     const [fromDate, setFromDate] = useState(() => new Date())
     const [toDate, setToDate] = useState(() => new Date())
     const [openFromDate, setOpenFromDate] = useState(() => false)
@@ -55,9 +57,21 @@ const DisbursementReportScreen = () => {
             "tr_mode": txnMode,
             "emp_id": loginStore?.emp_id,
         }
-        await axios.post(`${ADDRESSES.MEMBERWISE_DISBURSEMENT_REPORT}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.MEMBERWISE_DISBURSEMENT_REPORT}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+).then(res => {
             console.log(">>>>>>", res?.data)
+            if(res?.data?.suc === 0) {
+                setReportData([])
+                handleLogout()
+            }
+            else{
             setReportData(res?.data?.msg)
+            }
         }).catch(err => {
             console.log("<<<<<<", err)
         })

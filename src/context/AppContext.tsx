@@ -41,7 +41,8 @@ const AppContext = ({ children }) => {
                         const dt = {
                             ...res?.data?.user_dtls,
                             brn_code: branch,
-                            branch_name:branchName
+                            branch_name:branchName,
+                            token: res?.data?.token
                         };
                         loginStorage.set("login-data", JSON.stringify(dt));
                         console.log("USER DETAILS", dt, "USER DETAILS");

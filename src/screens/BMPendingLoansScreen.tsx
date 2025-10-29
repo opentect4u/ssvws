@@ -1,5 +1,6 @@
+import React, { useContext, useEffect, useState } from 'react'
+
 import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid, Alert } from 'react-native'
-import React, { useEffect, useState } from 'react'
 import { usePaperColorScheme } from '../theme/theme'
 import { SCREEN_HEIGHT } from 'react-native-normalize'
 import HeadingComp from '../components/HeadingComp'
@@ -13,6 +14,7 @@ import LoadingOverlay from '../components/LoadingOverlay'
 import DialogBox from '../components/DialogBox'
 import InputPaper from '../components/InputPaper'
 import ButtonPaper from '../components/ButtonPaper'
+import { AppStore } from '../context/AppContext'
 
 const BMPendingLoansScreen = () => {
     const theme = usePaperColorScheme()
@@ -30,7 +32,7 @@ const BMPendingLoansScreen = () => {
     const [search, setSearch] = useState(() => "")
     const [formsData, setFormsData] = useState(() => [])
     const [filteredDataArray, setFilteredDataArray] = useState(() => [])
-
+const { handleLogout } = useContext<any>(AppStore)
     // const [AssignGroup, setAssignGroup] = useState(() => "")
 
     const [visiblePendingList, setVisiblePendingList] = useState(() => true)
@@ -73,13 +75,19 @@ const BMPendingLoansScreen = () => {
 
             }
             console.log(creds)
-            await axios.post(`${ADDRESSES.BM_SEARCH_PENDING_FORM}`, creds).then(res => {
+            await axios.post(`${ADDRESSES.BM_SEARCH_PENDING_FORM}`, creds, {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
                 console.log(":::;;;:::", res?.data)
                 if (res?.data?.suc === 1) {
                     setFormsData(res?.data?.msg)
 
                 } else {
                     setFormsData(() => [])
+                    handleLogout()
                 }
 
                 // if(res?.data.group_code != undefined){
@@ -125,7 +133,12 @@ const BMPendingLoansScreen = () => {
             "branch_code" : loginStore?.brn_code
         }
 
-        await axios.post(`${ADDRESSES.PENDING_LIST_DATA}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.PENDING_LIST_DATA}`, creds, {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
             if (res?.data?.suc === 1) {
                 console.log("ffffffffffffffffff", res?.data?.msg)
                 setPendingDataList(res?.data?.msg)
@@ -137,6 +150,7 @@ const BMPendingLoansScreen = () => {
                 ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT)
                 setLoading(false)
                 setPendingDataList(() => [])
+                handleLogout()
             }
         }).catch(err => {
             console.log(">>>>>", err.message)
@@ -182,13 +196,21 @@ const BMPendingLoansScreen = () => {
             remarks: remarks,
             deleted_by: loginStore?.emp_id
         }
-        await axios.post(`${ADDRESSES.DELETE_FORM}`, creds).then(res => {
+        await axios.post(`${ADDRESSES.DELETE_FORM}`, creds, {
+                            headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
             console.log("DELETE FORM ======== RESSS", res?.data)
             if (res?.data?.suc === 1) {
                 ToastAndroid.show("Form Deleted!", ToastAndroid.SHORT)
                 // fetchPendingGRTForms()
                 setRemarks("")
                 hideDialog()
+            }
+            else{
+                handleLogout()
             }
         }).catch(err => {
             console.log("FORM REJ ERRRR ====", err)
