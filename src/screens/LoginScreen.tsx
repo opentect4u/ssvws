@@ -89,7 +89,7 @@ const LoginScreen = () => {
 
     const login = () => {
         const branchName = branch.find(el => el.code === selectedBranch)?.name || "";
-        handleLogin(username, password,selectedBranch,userId,branchName)
+        handleLogin(username, password, selectedBranch, userId,branchName)
     }
 
     // console.log("Device Info Verison :", appVersion)

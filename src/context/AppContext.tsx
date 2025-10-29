@@ -35,7 +35,7 @@ const AppContext = ({ children }) => {
 
         await axios.post(`${ADDRESSES.LOGIN}`, creds).then(res => {
 
-            console.log(userId, "LOGIN LOGGGG===", res?.data);
+            // console.log(userId, "LOGIN LOGGGG===", branch, branchName);
 
             if (res?.data?.suc === 1) {
                     ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT);
@@ -47,7 +47,6 @@ const AppContext = ({ children }) => {
                             token: res?.data?.token
                         };
                         loginStorage.set("login-data", JSON.stringify(dt));
-                        console.log("USER DETAILS", dt, "USER DETAILS");
                         setIsLogin(true);
                     } else {
 
@@ -58,7 +57,6 @@ const AppContext = ({ children }) => {
 
                         loginStorage.set("login-data", JSON.stringify(dt_));
                         // loginStorage.set("login-data", JSON.stringify(res?.data?.user_dtls));
-                        console.log("USER DETAILS", dt_);
                         setIsLogin(true);
                     }
                     

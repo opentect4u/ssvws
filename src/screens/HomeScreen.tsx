@@ -353,7 +353,7 @@ const HomeScreen = () => {
         // setLoading(true)
         const creds = {
             emp_id: loginStore?.emp_id,
-            branch_code: loginStore?.branch_code,
+            branch_code: loginStore?.brn_code,
             datetime: formattedChoosenDate
         }
         await axios.post(`${ADDRESSES.DASHBOARD_DETAILS}`, creds,{
@@ -362,7 +362,7 @@ const HomeScreen = () => {
                 "Content-Type": "application/json" // optional
             }
         }).then(res => {
-            console.log(">>>>>>>D<<<<<<<", res?.data)
+            console.log(">>>>>>>D<<<<<<<", res?.data, 'ggggg', loginStore)
             if(res?.data?.suc === 0) {
                 handleLogout()
             }
