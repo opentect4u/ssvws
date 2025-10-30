@@ -587,7 +587,7 @@ const { handleLogout } = useContext<any>(AppStore)
 
                     axios.post(
                         `${ADDRESSES.EDIT_BASIC_DETAILS}`,
-                        fb["_parts"],
+                        fb,
                         {
                             headers: {
                                 Authorization: loginStore?.token, // example header
@@ -596,6 +596,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         }
 
                     ).then(res => {
+                        // console.log(fb, "SSSSSSSSSSSSSSSSSSSS", res?.data)
                         if (res?.data?.suc !== 1) {
                            handleLogout()
                         }
@@ -618,7 +619,7 @@ const { handleLogout } = useContext<any>(AppStore)
             fb.append('files', formData?.uploadImg ? formData?.uploadImg : '')
             console.log('fb',fb)
             await axios.post(`${ADDRESSES.EDIT_BASIC_DETAILS}`,
-                fb["_parts"],
+                fb,
                 {
                             headers: {
                                 Authorization: loginStore?.token, // example header
@@ -626,6 +627,7 @@ const { handleLogout } = useContext<any>(AppStore)
                             }
                         }
             ).then(res => {
+                // console.log(fb, "SSSSSSSSSSSSSSSSSSSS", res?.data)
                 if(res?.data?.suc === 0) {
                 handleLogout()
             } else {

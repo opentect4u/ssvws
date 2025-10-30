@@ -2,7 +2,7 @@ import { Alert, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 
 import React, { useEffect, useState, forwardRef, useImperativeHandle, useContext } from 'react'
 import { usePaperColorScheme } from '../../theme/theme'
 import InputPaper from '../../components/InputPaper'
-import { Divider, List } from 'react-native-paper'
+import { Divider, List, Text } from 'react-native-paper'
 import MenuPaper from '../../components/MenuPaper'
 import LoadingOverlay from '../../components/LoadingOverlay'
 import RadioComp from '../../components/RadioComp'
@@ -43,6 +43,8 @@ const BMOccupationDetailsForm = forwardRef(({
 
     const { handleLogout } = useContext<any>(AppStore)
 
+
+// return
     const [formData, setFormData] = useState({
         selfOccupation: "",
         selfMonthlyIncome: "",
@@ -52,13 +54,19 @@ const BMOccupationDetailsForm = forwardRef(({
         purposeOfLoanName: "",
         // subPurposeOfLoan: "",
         subPurposeOfLoanName: "",
-        amountApplied: defaultAmt.length > 0 ? defaultAmt : appliedDefaultAmt,
+        // amountApplied: defaultAmt.length > 0 ? defaultAmt : appliedDefaultAmt,
+        amountApplied: defaultAmt && defaultAmt.length != undefined ? defaultAmt : appliedDefaultAmt,
         checkOtherOngoingLoan: "N",
         otherLoanAmount: "",
         monthlyEmi: "",
     })
 
-    const handleFormChange = (field, value) => {
+    // useEffect(() => {
+        // console.log(defaultAmt && defaultAmt.length != undefined ? defaultAmt : appliedDefaultAmt, 'jjjjjjjjjjjjjjjj', formData, appliedDefaultAmt, 'kkkkkkkkkkk');
+    // }, [])
+    
+
+    const handleFormChange = (field: string, value: number | React.SetStateAction<string>) => {
         setFormData(prev => ({
             ...prev,
             [field]: value,
@@ -80,6 +88,7 @@ const BMOccupationDetailsForm = forwardRef(({
                 //     ToastAndroid.show("No data found!", ToastAndroid.SHORT)
                 //     return
                 // }
+                
 
                 if(res?.data?.suc === 0) {
                 handleLogout()
@@ -93,12 +102,17 @@ const BMOccupationDetailsForm = forwardRef(({
                     purposeOfLoanName: res?.data?.msg[0]?.purpose_id || "",
                     // subPurposeOfLoan: res?.data?.msg[0]?.sub_pupose || "",
                     subPurposeOfLoanName: res?.data?.msg[0]?.sub_purp_name || "",
-                    amountApplied: res?.data?.msg[0]?.applied_amt || "",
+                    // amountApplied: res?.data?.msg[0]?.applied_amt || "",
+                    amountApplied: res?.data?.msg[0]?.applied_amt != undefined ? res.data.msg[0].applied_amt : (defaultAmt?.length > 0 ? defaultAmt : appliedDefaultAmt),
                     checkOtherOngoingLoan: res?.data?.msg[0]?.other_loan_flag || "",
                     otherLoanAmount: res?.data?.msg[0]?.other_loan_amt || "",
                     monthlyEmi: res?.data?.msg[0]?.other_loan_emi || "",
                 })
-                setDefaultAmt(res?.data?.msg[0]?.applied_amt)
+                // setDefaultAmt(res?.data?.msg[0]?.applied_amt)
+
+                // setDefaultAmt(res?.data?.msg?.[0]?.applied_amt != undefined ? res.data.msg[0].applied_amt : (defaultAmt?.length > 0 ? defaultAmt : appliedDefaultAmt))
+
+                
                 }
             }).catch(err => {
                 ToastAndroid.show("Error fetching occupation details!", ToastAndroid.SHORT)
@@ -175,7 +189,7 @@ const BMOccupationDetailsForm = forwardRef(({
 
     const handleFormUpdate = async () => {
         setLoading(true)
-        const creds = {
+        const creds_ = {
             form_no: formNumber,
             branch_code: branchCode,
             self_occu: formData.selfOccupation,
@@ -191,6 +205,19 @@ const BMOccupationDetailsForm = forwardRef(({
             modified_by: loginStore?.emp_id,
             created_by: loginStore?.emp_id,
         }
+
+        // 🧠 Convert all string values to CAPITAL letters
+            const creds = Object.fromEntries(
+                Object.entries(creds_).map(([key, value]) => [
+                    key, typeof value === "string" ? value.toUpperCase() : value,
+                ])
+            );
+
+            // console.log(creds, 'credscredscredscreds');
+            
+
+            // return
+
         await axios.post(`${ADDRESSES.SAVE_OCCUPATION_DETAILS}`, creds, {headers: {
                                 Authorization: loginStore?.token, // example header
                                 "Content-Type": "multipart/form-data", // optional
@@ -198,6 +225,10 @@ const BMOccupationDetailsForm = forwardRef(({
                         })
             .then(res => {
                 
+                // console.log(creds, 'creds.credscredscreds', res?.data?.suc);
+
+                // return
+
                 if(res?.data?.suc === 0) {
                 handleLogout()
                 } else {
@@ -327,6 +358,9 @@ const BMOccupationDetailsForm = forwardRef(({
                             <Icon size={25} source={"account-group-outline"} />
                         )}
                     /> */}
+
+                   
+                   {/* <Text>{formData?.amountApplied}hhhh{defaultAmt}</Text> */}
                     <InputPaper
                         label="Amount Applied*"
                         maxLength={15}

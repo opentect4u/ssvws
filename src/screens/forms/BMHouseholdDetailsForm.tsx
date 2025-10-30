@@ -68,12 +68,19 @@ const { handleLogout } = useContext<any>(AppStore)
 
         await axios.get(`${ADDRESSES.FETCH_HOUSEHOLD_DETAILS}?form_no=${formNumber}&branch_code=${branchCode}`,{headers: {
                                 Authorization: loginStore?.token, // example header
-                                "Content-Type": "multipart/form-data", // optional
+                                "Content-Type": "application/json", // optional
                             }
                         }).then(res => {
-                            if( res?.data?.suc !== 1) {
-            console.log("HOUSEHOLD===FETCH", res?.data)
-            setFormData({
+
+                            console.log("HOUSEHOLD===FETCH", res?.data?.suc)
+
+                            // if( res?.data?.suc !== 1) {
+                if(res?.data?.suc === 0) {
+
+                handleLogout()
+                } else{
+
+                setFormData({
                 noOfRooms: res?.data?.msg[0]?.no_of_rooms || "",
                 parentalAddress: res?.data?.msg[0]?.parental_addr || "",
                 parentalPhoneNumber: res?.data?.msg[0]?.parental_phone || "",
@@ -85,11 +92,9 @@ const { handleLogout } = useContext<any>(AppStore)
                 bikeAvailable: res?.data?.msg[0]?.bike_flag || "",
                 fridgeAvailable: res?.data?.msg[0]?.fridge_flag || "",
                 washingMachineAvailable: res?.data?.msg[0]?.wm_flag || "",
-            })
-        }
-        else{
-            handleLogout()
-        }
+                })
+                }
+
         }).catch(err => {
             ToastAndroid.show("Something went wrong while fetching Household Details!", ToastAndroid.SHORT)
         })
@@ -104,7 +109,7 @@ const { handleLogout } = useContext<any>(AppStore)
     const handleFormUpdate = async () => {
         setLoading(true)
 
-        const creds = {
+        const creds_ = {
             form_no: formNumber,
             branch_code: branchCode,
             no_of_rooms: formData.noOfRooms,
@@ -122,7 +127,17 @@ const { handleLogout } = useContext<any>(AppStore)
             created_by: loginStore?.emp_id
         }
 
-        console.log("//////////////", creds, "///////////////")
+        // console.log("//////////////", creds, "///////////////")
+
+        // 🧠 Convert all string values to CAPITAL letters
+            const creds = Object.fromEntries(
+                Object.entries(creds_).map(([key, value]) => [
+                    key, typeof value === "string" ? value.toUpperCase() : value,
+                ])
+            );
+
+            // console.log("ddddddddddddddddd", creds, "///////////////")
+
 
         await axios.post(`${ADDRESSES.SAVE_HOUSEHOLD_DETAILS}`, creds,{headers: {
                                 Authorization: loginStore?.token, // example header

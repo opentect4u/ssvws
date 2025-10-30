@@ -108,7 +108,7 @@ const { handleLogout } = useContext<any>(AppStore)
     }
 
     useEffect(() => {
-        console.log(loginStore?.brn_code, 'branchCode' , 'jjjj');
+        // console.log(loginStore?.brn_code, 'branchCode' , 'jjjj');
         fetchPendingList()
     }, [])
 
@@ -437,7 +437,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     </View>
                 </DialogBox>
             </ScrollView>
-            {loading && <LoadingOverlay />}
+            {/* {loading && <LoadingOverlay />} */}
         </SafeAreaView>
     )
 }
