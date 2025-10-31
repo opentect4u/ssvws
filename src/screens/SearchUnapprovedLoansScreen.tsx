@@ -52,7 +52,7 @@ const { handleLogout } = useContext<any>(AppStore)
             }
         }
 ).then(res => {
-            console.log(":::;;;:::", res?.data)
+            
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
             }
@@ -114,7 +114,7 @@ const { handleLogout } = useContext<any>(AppStore)
             }
         }
 ).then(res => {
-            console.log("DELETE LOAN ======== RESSS", res?.data)
+            // console.log("DELETE LOAN ======== RESSS", res?.data?.suc)
             if (res?.data?.suc === 1) {
                 ToastAndroid.show("Form Deleted!", ToastAndroid.SHORT)
                 fetchLoans()
@@ -238,7 +238,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     </View>
                 </DialogBox>
             </ScrollView>
-            {loading && <LoadingOverlay />}
+            {/* {loading && <LoadingOverlay />} */}
         </SafeAreaView>
     )
 }

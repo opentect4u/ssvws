@@ -33,10 +33,10 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const [errMsg, setErrMsg] = useState(() => "")
     const { handlePrint } = useEscPosPrint()
 
-    console.log("LOGIN DATAAA =============", loginStore)
-    console.log("4444444444444444444ffffffffffffffff", fetchedData)
-    console.log("tr_dt", fetchedData.memb_dtls[0].last_trn_dt)
-    console.log("membbbbbbbbbbbbb", fetchedData.memb_dtls[0])
+    // console.log("LOGIN DATAAA =============", loginStore)
+    // console.log("4444444444444444444ffffffffffffffff", fetchedData)
+    // console.log("tr_dt", fetchedData.memb_dtls[0].last_trn_dt)
+    // console.log("membbbbbbbbbbbbb", fetchedData.memb_dtls[0])
 
     const [loading, setLoading] = useState(() => false)
 
@@ -103,11 +103,11 @@ const { handleLogout } = useContext<any>(AppStore)
         }
     }, [isFocused, error])
 
-    console.log("LOcAtion", location)
-    console.log("LOcAtion ERRR", error)
+    // console.log("LOcAtion", location)
+    // console.log("LOcAtion ERRR", error)
 
     const fetchGeoLocaltionAddress = async () => {
-        console.log("REVERSE GEO ENCODING API CALLING...")
+        // console.log("REVERSE GEO ENCODING API CALLING...")
         // await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`).then(res => {
         //     setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
         // })
@@ -276,10 +276,10 @@ const { handleLogout } = useContext<any>(AppStore)
     // const [totalEMI, setTotalEMI] = useState(() => "")
 
     const handleEMIChange = (txt: string, i: any) => {
-        console.log(memberDetailsArray.map(e => e.instl_paid), txt, "member details")
-        console.log("TTTTTXXXXXXXTTTTTTTTT", txt)
-        console.log("TTTTTXXXXXXXTTTTTTTTT IIIIIIIIIIII", currentInterestCalculate(+txt))
-        console.log("TTTTTXXXXXXXTTTTTTTTT PPPPPPPPPPPP", currentPrincipalCalculate(+txt))
+        // console.log(memberDetailsArray.map(e => e.instl_paid), txt, "member details")
+        // console.log("TTTTTXXXXXXXTTTTTTTTT", txt)
+        // console.log("TTTTTXXXXXXXTTTTTTTTT IIIIIIIIIIII", currentInterestCalculate(+txt))
+        // console.log("TTTTTXXXXXXXTTTTTTTTT PPPPPPPPPPPP", currentPrincipalCalculate(+txt))
 
         setMemberDetailsArray(prevArray =>
             prevArray.map((member, index) =>
@@ -291,9 +291,16 @@ const { handleLogout } = useContext<any>(AppStore)
     const fetchBanks = async () => {
         setBanks([]);
         setLoading(true)
-        await axios.get(`${ADDRESSES.GET_BANKS}`).then(res => {
-            console.log("LALALALLA", res?.data)
-            if (res?.data?.suc === 1) {
+        await axios.get(`${ADDRESSES.GET_BANKS}`,{headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
+            // console.log("LALALALLA", res?.data)
+            if(res?.data?.suc === 0) {
+
+                handleLogout()
+                } else{
                 res?.data?.msg?.map((item, _) => (
                     setBanks(prev => [...prev, { title: item?.bank_name, func: () => { handleFormChange("bankName", item?.bank_name); handleFormChange("bankId", item?.bank_code) } }])
                 ))
@@ -315,11 +322,18 @@ const { handleLogout } = useContext<any>(AppStore)
             branch_code: loginStore?.brn_code,
             transaction_date: dayjs(formData?.txnDate).format('YYYY-MM-DD'),
         }
-        axios.post(`${BASE_URL}/admin/fetch_unapprove_dtls_before_trns_dt`, payload).then((res) => {
-            console.log('res?.data?.msg');
+        axios.post(`${BASE_URL}/admin/fetch_unapprove_dtls_before_trns_dt`, payload, {headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then((res) => {
+            // console.log('res?.data?.msg');
 
-            console.log(res?.data?.msg);
-            if (res?.data?.suc === 1) {
+            // console.log(res?.data, 'res?.data?.msg');
+            if(res?.data?.suc === 0) {
+
+                handleLogout()
+            } else{
                 if (res?.data?.msg?.length > 0) {
                     const hasNonZero = res?.data?.msg.some(item => Object.values(item).some(value => value != 0));
                     setHasBeforeUpnapproveTransDate(hasNonZero);
@@ -340,8 +354,9 @@ const { handleLogout } = useContext<any>(AppStore)
                             last_trn_dt: formattedDate(formData.txnDate),
                         }));
 
+
                         axios.post(`${ADDRESSES.CHECK_CAN_TXN}`, {
-                            checkdatedtls: transformedObj,
+                            checkdatedtls: transformedObj
                         }, {
                             headers: {
                                 Authorization: loginStore?.token, // example header
@@ -349,6 +364,10 @@ const { handleLogout } = useContext<any>(AppStore)
                             }
                         }
                         ).then(res => {
+
+                            // console.log(res?.data, 'NNNNNNNNNNNNNNNNNNNNN', {checkdatedtls: transformedObj});
+
+                            
                             setLoading(false);
                             // console.log("CAN TXN", res?.data)
                             if(res?.data?.suc === 0) {

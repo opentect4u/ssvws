@@ -47,6 +47,7 @@ const SearchApprovedLoansScreen = () => {
             "loan_id": search,
             "approval_status": "A"
         }
+        // console.log("MMMMMMMMMMMMMMMMMMMMMMMM", creds)
 
         await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds, {
             headers: {
@@ -54,7 +55,9 @@ const SearchApprovedLoansScreen = () => {
                 "Content-Type": "application/json", // optional
             }
         }
+        
         ).then(res => {
+            // console.log("MMMMMMMMMMMMMMMMMMMMMMMM", res?.data?.suc)
             if (res?.data?.suc === 1) {
                 setFormsData(res?.data?.msg)
                 console.log("===++=++====", res?.data)

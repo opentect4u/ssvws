@@ -381,9 +381,16 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
     const fetchBanks = async () => {
         setBanks([]);
         setLoading(true)
-        await axios.get(`${ADDRESSES.GET_BANKS}`).then(res => {
+        await axios.get(`${ADDRESSES.GET_BANKS}`,{headers: {
+                                Authorization: loginStore?.token, // example header
+                                "Content-Type": "application/json", // optional
+                            }
+                        }).then(res => {
             console.log("LALALALLA", res?.data)
-            if (res?.data?.suc === 1) {
+            if(res?.data?.suc === 0) {
+
+                handleLogout()
+                } else{
                 res?.data?.msg?.map((item, _) => (
                     setBanks(prev => [...prev, { title: item?.bank_name, func: () => { handleFormChange("bankName", item?.bank_name); handleFormChange("bankId", item?.bank_code) } }])
                 ))
