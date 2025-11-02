@@ -92,7 +92,7 @@ async function startMonthEndProcessConsumer(io, userId) {
 
                         // ✅ Get the first date of the same month
                          const firstDateOfMonth = new Date(closedDate.getFullYear(), closedDate.getMonth(), 1);
-                         console.log(firstDateOfMonth,'uuu');
+                         console.log(dateFormat(firstDateOfMonth, "yyyy-mm-dd"), 'uuu');
                         
                         var pocRes = await db_Select(null, null, null, null, true, `CALL p_pop_od('${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}', ${+dt.branch_code})`);
                         var demandProcRes = {}
@@ -100,11 +100,11 @@ async function startMonthEndProcessConsumer(io, userId) {
                             demandProcRes = await db_Select(null, null, null, null, true, `CALL p_pop_demand('${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}', ${+dt.branch_code})`);
                         }
                         var outpocRes = {}
-                        if(demandProcRes > 0){
+                        if(demandProcRes.suc > 0){
                             var outpocRes = await db_Select(null, null, null, null, true, `CALL p_loan_outstanding_all(${+dt.branch_code},'${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}')`);
                         }
                         var portpocRes = {}
-                        if(outpocRes > 0){
+                        if(outpocRes.suc > 0){
                             var portpocRes = await db_Select(null,null,null,null,true,`CALL p_portfolio(${+dt.branch_code},'${dateFormat(new Date(firstDateOfMonth), "yyyy-mm-dd")}','${dateFormat(new Date(dt.closed_upto), "yyyy-mm-dd")}')`);
                         }
 
@@ -115,7 +115,7 @@ async function startMonthEndProcessConsumer(io, userId) {
                             outstandingpocRes: outpocRes,
                             portfoliopocRes: portpocRes
                         })
-                        // console.log(pocRes, 'poc status');
+                        console.log(portpocRes,jobStatus, 'port status');
                     }
                 }else{
                     return io.to(`user-${userId}`).emit("receive_notification", {

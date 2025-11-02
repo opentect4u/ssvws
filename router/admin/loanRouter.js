@@ -297,6 +297,8 @@ loanRouter.post("/fetch_loan_trans_dtls", async (req, res) => {
 loanRouter.post("/save_loan_transaction", async (req, res) => {
   var data = req.body,
     res_dt;
+    // console.log(data,'datatatatat');
+    
 
   //save loan transaction details
   loan_trans(data)

@@ -148,10 +148,10 @@ module.exports = {
             whr,
             flag
           );
-        }else {
+        }else { 
           var table_name = "td_grt_occupation_household",
           fields = `(no_of_rooms, house_type, own_rent, land, tv_flag, bike_flag, fridge_flag, wm_flag,poltical_flag,parental_addr,parental_phone,created_by,created_at)`,
-                    values = `('0', ${data.house_type ? `'${data.house_type}'` : 'NULL'}, ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, '${data.land == '' ? 0 : data.land}', ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'},${data.political_flag ? `'${data.political_flag}'` : 'NULL'}, '${data.parental_addr.split("'").join("\\'")}', '${data.parental_phone == '' ? 0 : data.parental_phone}', '${data.created_by}', ${datetime})`,
+                    values = `('0', ${data.house_type ? `'${data.house_type}'` : 'NULL'}, ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, '${data.land == '' ? 0 : data.land}', ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'},${data.political_flag ? `'${data.political_flag}'` : 'NULL'}, '${data.parental_addr ? data.parental_addr.split("'").join("\\'") : ''}', '0', '${data.modified_by}', '${datetime}')`,
           whr = null,
           flag = 0;
           var edit_household_dt = await db_Insert(table_name, fields, values, whr, flag);

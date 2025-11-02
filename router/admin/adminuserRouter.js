@@ -4,7 +4,7 @@ const bcrypt = require("bcrypt");
 const { db_Insert, db_Select } = require('../../model/mysqlModel');
 const { getBankCode } = require('../../modules/api/masterModule');
 
-adminuserRouter.get('/fetch_branch', async (req, res) => {
+adminuserRouter.get('/fetch_branches', async (req, res) => {
     var data = req.body;
 
     //fetch branch details

@@ -191,10 +191,12 @@ fetchRouter.post("/edit_group_web", async (req, res) => {
 
 fetchRouter.post("/verify_four_mem_assign_grp", async (req, res) => {
     var data = req.body;
+    // console.log(data,'datata');
+    
 
     var select = "COUNT(member_code) AS total_members",
         table_name = "td_grt_basic",
-        whr = `branch_code = '${data.branch_code}' AND prov_grp_code = '${data.prov_grp_code}'`,
+        whr = `branch_code = '${data.branch_code}' AND prov_grp_code = '${data.prov_grp_code}' AND approval_status !='R'`,
         order = null;
 
     var mem_assign_dtls = await db_Select(select, table_name, whr, order);
@@ -230,6 +232,8 @@ fetchRouter.post("/edit_basic_dtls_web", async (req, res) => {
   
   fetchRouter.post("/edit_household_dtls_web", async (req, res) => {
     var data = req.body;
+    // console.log(data,'datahouse');
+    
   
     //edit household details in web
     var household_dt_web = await edit_household_dt_web(data);

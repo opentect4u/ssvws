@@ -9,21 +9,70 @@ const checkTime = (session_time) => {
 }
 
 module.exports = {
-  createToken: (userData) => {
-    return new Promise((resolve, reject) => {
-      if (Object.keys(userData).length > 0) {
-        const token = jwt.sign(JSON.parse(JSON.stringify(userData)), process.env.SECRET_KEY, {
-          expiresIn: process.env.TOKEN_EXPIRATION
-        });
-        resolve(token)
-        // console.log(token,'token');
+  // createToken: (userData) => {
+  //   return new Promise((resolve, reject) => {
+  //     if (Object.keys(userData).length > 0) {
+  //       const token = jwt.sign(JSON.parse(JSON.stringify(userData)), process.env.SECRET_KEY, {
+  //         expiresIn: process.env.TOKEN_EXPIRATION
+  //       });
+  //       resolve(token)
+  //       // console.log(token,'token');
         
-      } else {
-        reject('No Object Found')
+  //     } else {
+  //       reject('No Object Found')
+  //     }
+  //   })
+  // },
+ 
+ createToken: (userData) => {
+    return new Promise((resolve, reject) => {
+      try{
+        if (Object.keys(userData).length > 0) {
+          const token = jwt.sign(JSON.parse(JSON.stringify(userData)), process.env.SECRET_KEY, {
+            expiresIn: process.env.TOKEN_EXPIRATION
+          });
+          resolve({suc:1, msg:"Generated", token})
+          // console.log(token,'token');
+          
+        } else {
+          resolve({suc: 0, msg: 'No Object Found', token: false})
+        }
+      }catch(err){
+        resolve({suc: 0, msg: err, token: false})
       }
     })
   },
  
+   // ------------------ AUTH MIDDLEWARE ------------------
+    authenticateToken: (req, res, next) => {
+    let token = null;
+    const authHeader = req.headers["x-access-token"] || req.headers["authorization"];
+    // if (authHeader && authHeader.startsWith("Bearer ")) {
+    if (authHeader) {
+      // token = authHeader.split(" ")[1];
+      token = authHeader;
+    }
+
+    if (!token) {
+      return res.json({suc: 0, msg: "No token found, please login." });
+    }
+
+    // console.log(token);
+    
+
+    try {
+      const verified = jwt.verify(token, process.env.SECRET_KEY);
+      req.user = verified; // ✅ user payload available for next()
+      next();
+    } catch (err) {
+      console.error("Auth error:", err);
+      if (err.name === "TokenExpiredError") {
+        return res.json({suc: 0, msg: "Token expired, please login." });
+      }
+      return res.json({suc: 0, msg: "Invalid token, please login." });
+    }
+  },
+
   authCheckForLogin: (req, res, next) => {
     const token = req.cookies.auth_token;
       if (token){

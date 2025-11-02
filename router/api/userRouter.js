@@ -81,6 +81,18 @@ userRouter.get("/fetch_app_version", async (req, res) => {
   res.send(app_data);
 });
 
+userRouter.get('/fetch_branch', async (req, res) => {
+    var data = req.body;
+
+    //fetch branch details
+    var select = "branch_code,branch_name,brn_addr",
+    table_name = "md_branch",
+    whr = `brn_status = 'O'`,
+    order = `ORDER BY branch_name`;
+    var branch_dt = await db_Select(select,table_name,whr,order)
+    res.send(branch_dt);
+})
+
 userRouter.post("/login_web", async (req, res) => {
   var data = req.body,
     result;
@@ -224,7 +236,7 @@ userRouter.post("/login_web", async (req, res) => {
               suc: 1,
               msg: `${user.user_type} Login successfully`,
               user_dtls: user,
-              token,
+              token: token.token,
               refresh_token,
             });
           } catch (err) {
@@ -302,6 +314,16 @@ userRouter.post("/login_app", async (req, res) => {
 
       if (passwordMatch) {
         try {
+          var tokens = await createToken(user);
+          if (!tokens) {
+              console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
+              return res.send({ suc: 0, msg: "Token generation failed." });
+            }
+          //  if (!(tokenRes.suc && tokenRes.token)) {
+          //     console.error("Token generation failed!"); // 🔍 Error if token is null/undefined
+          //     return res.send({ suc: 0, msg: "Token generation failed." });
+          //   }
+
           await db_Insert(
             "md_user",
             `created_by = "${data.emp_id}", created_at="${datetime}"`,
@@ -324,6 +346,7 @@ userRouter.post("/login_app", async (req, res) => {
           suc: 1,
           msg: `${user.user_type} Login successfully`,
           user_dtls: user,
+          token: tokens.token
         });
       } else {
         return res.send({ suc: 0, msg: "Incorrect user ID or password" });

@@ -40,7 +40,7 @@ audit_trialRouter.post("/generate_audit_trial_report", async (req, res) => {
     // 🔹 Validation for dates
     if (!data.from_date || !data.to_date) {
       return res.send({
-        suc: 0,
+        suc: 2,
         msg: "Invalid request. Date range (form_date & to_date) is required.",
       });
     }
@@ -73,8 +73,9 @@ audit_trialRouter.post("/generate_audit_trial_report", async (req, res) => {
     // 🔹 Handle no results
     if (!generate_data || generate_data.suc === 0 || generate_data.msg.length === 0) {
       return res.send({
-        suc: 0,
-        msg: "No audit records found for this employee.",
+        suc: 1,
+        // msg: "No audit records found for this employee.",
+        msg: [],
       });
     }
     res.send(generate_data);

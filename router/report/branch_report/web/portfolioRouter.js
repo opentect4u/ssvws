@@ -119,8 +119,8 @@ portfolioRouter.post("/groupwise_portfolio_report", async (req, res) => {
 
         if (!group_portfolio_data.msg || group_portfolio_data.msg.length === 0) {
             group_portfolio_data.suc = 0;
-            group_portfolio_data.msg = ['No data found'];
-         return res.send({ suc: 0, msg: group_portfolio_data});
+            group_portfolio_data.msg = [];
+         return res.send({ suc: 1, msg: group_portfolio_data});
         }
 
         res.send({suc : 1, msg: group_portfolio_data});
@@ -157,8 +157,8 @@ portfolioRouter.post("/fundwise_portfolio_report", async (req, res) => {
 
      if (!fund_portfolio_data.msg || fund_portfolio_data.msg.length === 0) {
             fund_portfolio_data.suc = 0;
-            fund_portfolio_data.msg = ['No data found'];
-         return res.send({ suc: 0, msg: fund_portfolio_data});
+            fund_portfolio_data.msg = [];
+         return res.send({ suc: 1, msg: fund_portfolio_data});
         }
 
     res.send({suc : 1, msg: fund_portfolio_data}); 
@@ -195,8 +195,8 @@ try{
 
      if (!co_portfolio_data.msg || co_portfolio_data.msg.length === 0) {
             co_portfolio_data.suc = 0;
-            co_portfolio_data.msg = ['No data found'];
-         return res.send({ suc: 0, msg: co_portfolio_data});
+            co_portfolio_data.msg = [];
+         return res.send({ suc: 1, msg: co_portfolio_data});
         }
 
     res.send({suc : 1, msg: co_portfolio_data});    
@@ -231,8 +231,8 @@ portfolioRouter.post("/memberwise_portfolio_report", async (req, res) => {
 
         if (!member_portfolio_data.msg || member_portfolio_data.msg.length === 0) {
             member_portfolio_data.suc = 0;
-            member_portfolio_data.msg = ['No data found'];
-         return res.send({ suc: 0, msg: member_portfolio_data});
+            member_portfolio_data.msg = [];
+         return res.send({ suc: 1, msg: member_portfolio_data});
         }
 
         res.send({suc : 1, msg: member_portfolio_data});
@@ -268,8 +268,8 @@ portfolioRouter.post("/branchwise_portfolio_report", async (req, res) => {
 
         if (!branch_portfolio_data.msg || branch_portfolio_data.msg.length === 0) {
             branch_portfolio_data.suc = 0;
-            branch_portfolio_data.msg = ['No data found'];
-         return res.send({ suc: 0, msg: branch_portfolio_data});
+            branch_portfolio_data.msg = [];
+         return res.send({ suc: 1, msg: branch_portfolio_data});
         }
 
         res.send({suc : 1, msg: branch_portfolio_data});

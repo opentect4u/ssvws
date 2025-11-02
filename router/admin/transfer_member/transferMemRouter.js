@@ -9,20 +9,21 @@ transferMemRouter.post("/fetch_group_name_fr_mem_trans", async (req, res) => {
     var data = req.body;
 
     if(!data.grp_mem || data.grp_mem.trim() === "") {
-        return res.send({ "suc": 0, "msg": "No records found" });
+        // return res.send({ "suc": 0, "msg": "No records found" });
+        return res.send({ "suc": 1, "msg": [] });
     }
 
     try {
     var select = "group_code,branch_code,group_name,group_type,co_id,phone1",
     table_name = "md_group",
-    whr = `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A' AND (group_code like '%${data.grp_mem}%' OR group_name like '%${data.grp_mem}%')`,
+    whr = data.branch_code == '100' ? `open_close_flag = 'O' AND approval_status = 'A' AND (group_code like '%${data.grp_mem}%' OR group_name like '%${data.grp_mem}%')` : `branch_code = '${data.branch_code}' AND open_close_flag = 'O' AND approval_status = 'A' AND (group_code like '%${data.grp_mem}%' OR group_name like '%${data.grp_mem}%')`,
     order = `ORDER BY group_name`;
     var group_dt_mem_trans = await db_Select(select,table_name,whr,order);
 
     if(group_dt_mem_trans.suc > 0 && group_dt_mem_trans.msg.length > 0){
         return res.send(group_dt_mem_trans);
     }else {
-        return res.send({ "suc": 0, "msg": "No data found"});
+        return res.send({ "suc": 1, "msg": []});
     }
 }catch{
     console.error("Error fetching when search group:", error);
@@ -37,7 +38,7 @@ transferMemRouter.post("/fetch_grp_dtls", async (req, res) => {
   try{
      var select = "a.group_code,a.group_name,a.co_id,b.emp_name co_name,b.branch_id,c.branch_name",
      table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code",
-     whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
+     whr = data.branch_code == '100' ? `a.group_code = '${data.group_code}'` : `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
      order = null;
      var fetch_grp_details = await db_Select(select,table_name,whr,order);
      if (fetch_grp_details.suc > 0 && fetch_grp_details.msg.length > 0) {
@@ -85,7 +86,7 @@ transferMemRouter.post("/fetch_group_member_dtls", async (req, res) => {
             } else {
                 // If no details found
                 return res.send({
-                    suc: 0,
+                    suc: 1,
                     msg: [],
                     details: "Member details not found"
                 });
@@ -105,7 +106,7 @@ const isValidDate = (dateString) => {
 // TRANSFER MEMBER ONE GROUP TO ANOTHER GROUP
 transferMemRouter.post("/transfer_member", async (req, res) => {
     var data = req.body;
-    // console.log(data, 'data');
+    console.log(data, 'data');
 
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
@@ -230,6 +231,7 @@ transferMemRouter.post("/transfer_member_view", async (req, res) => {
 //show all details via member code and group code
 transferMemRouter.post("/transfer_member_view_all_details", async (req, res) => {
  var data = req.body;
+// console.log(data,'memedata');
 
  try{
     if(data.flag == 'P'){

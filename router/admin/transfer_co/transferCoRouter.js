@@ -15,7 +15,7 @@ transferCoRouter.post("/fetch_group_name_brnwise", async (req, res) => {
     //get group details
     var select = "a.group_code,a.branch_code,a.group_name,a.group_type,a.co_id,a.phone1,b.branch_name",
     table_name = "md_group a LEFT JOIN md_branch b ON a.branch_code = b.branch_code",
-    whr = `a.branch_code = '${data.branch_code}' AND a.open_close_flag = 'O' AND a.approval_status = 'A' AND (a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%')`,
+    whr = data.branch_code == '100' ? `a.open_close_flag = 'O' AND a.approval_status = 'A' AND (a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%')` : `a.branch_code = '${data.branch_code}' AND a.open_close_flag = 'O' AND a.approval_status = 'A' AND (a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%')`,
     order = `ORDER BY a.group_name`;
     var group_dt = await db_Select(select,table_name,whr,order);
 
@@ -37,7 +37,7 @@ transferCoRouter.post("/fetch_grp_co_dtls_for_transfer", async (req, res) => {
     try {
             var select = "a.group_code,a.branch_code grp_brn,d.branch_name grp_brn_name,a.group_name,a.co_id,b.emp_name co_name,b.branch_id co_brn_id,c.branch_name co_brn_name";
             table_name = "md_group a LEFT JOIN md_employee b ON a.co_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code LEFT JOIN md_branch d ON a.branch_code = d.branch_code";
-            whr = `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
+            whr = data.branch_code == '100' ? `a.group_code = '${data.group_code}'` : `a.branch_code = '${data.branch_code}' AND a.group_code = '${data.group_code}'`,
             order = null;
             var fetch_grp_co_dt = await db_Select(select, table_name, whr, order);
             if (fetch_grp_co_dt.suc > 0 && fetch_grp_co_dt.msg.length > 0) {
@@ -80,7 +80,7 @@ transferCoRouter.post("/fetch_co_name_branchwise", async (req, res) => {
 
     var select = "a.emp_id to_co_id,a.branch_id to_brn_id,a.emp_name to_co_name,b.user_type,c.branch_name to_brn_name",
     table_name = "md_employee a LEFT JOIN md_user b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON a.branch_id = c.branch_code",
-    whr = `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
+    whr = data.branch_code == '100' ? `b.user_type = '1' AND b.user_status = 'A'` : `a.branch_id = '${data.branch_code}' AND b.user_type = '1' AND b.user_status = 'A'`,
     order = null;
     var co_data = await db_Select(select,table_name,whr,order);
 

@@ -79,21 +79,21 @@ loan_rejectionRouter.post("/fetch_reject_loan_transactions_data", async (req, re
                         finalResults.push(...loan_rejection_dtls.msg);
                     }
                 }else {
-                  res.send({ suc: 0, msg: "No data found against particular payment date and id" });
+                  res.send({ suc: 1, msg: "No data found against particular payment date and id" });
 
                 }
                 }else {
-                  res.send({ suc: 0, msg: "No payment id found" });
+                  res.send({ suc: 1, msg: "No payment id found" });
                 }
             }
             //end loop
             if (finalResults.length > 0) {
                 res.send({ suc: 1, msg: "Data fetched successfully", data: finalResults });
             } else {
-                res.send({ suc: 0, msg: "No transaction data found" });
+                res.send({ suc: 1, msg: "No transaction data found" });
             }
         }else {
-            res.send({ suc: 0, msg: "No loan id found" });
+            res.send({ suc: 1, msg: "No loan id found" });
         }
     }catch(error){
         console.error("Error fetching loan:", error);

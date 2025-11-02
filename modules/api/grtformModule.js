@@ -267,8 +267,6 @@ module.exports = {
     save_basic_dtls: (data,files) => {
         return new Promise(async (resolve, reject) => {
             try {
-                // console.log(data);
-                
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
             let form_no = await getFormNo()
             let member_code = await getMemberCode(data.branch_code)
@@ -283,9 +281,9 @@ module.exports = {
                
                     var table_name = "md_member",
                     fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = ${data.gurd_name == '' ? 'NULL' : data.gurd_name}, gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = '${data.husband_name}', client_addr = '${data.client_addr.split("'").join("\\'")}',
-                    pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'Others' ? data.other_religion : 'null'}', caste = '${data.caste}', other_caste = '${data.caste == 'Others' ? data.other_caste : 'null'}', education = '${data.education}', other_education = '${data.education == 'Others' ? data.other_education : 'null'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, nominee_name, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, voter_id, voter_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
+                    pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'OTHERS' ? data.other_religion : 'NULL'}', caste = '${data.caste}', other_caste = '${data.caste == 'OTHERS' ? data.other_caste : 'NULL'}', education = '${data.education}', other_education = '${data.education == 'OTHERS' ? data.other_education : 'NULL'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, nominee_name, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, voter_id, voter_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
                     values =  `('${data.branch_code}', '${member_code}', '${data.gender}', '${data.client_name}', '${datetime}',
-                    '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.husband_name}', '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.nominee_name}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.voter_id}', 'Y', '${data.religion}', '${data.religion == 'Others' ? data.other_religion : 'null'}', '${data.caste}', '${data.caste == 'Others' ? data.other_caste : 'null'}', '${data.education}', '${data.education == 'Others' ? data.other_education : 'null'}', '${data.dob}', '${data.created_by}', '${datetime}')`,
+                    '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.husband_name}', '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.nominee_name}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.voter_id}', 'Y', '${data.religion}', ${data.religion == 'OTHERS' && data.other_religion ? `'${data.other_religion}'` : 'NULL'}, '${data.caste}', ${data.caste == 'OTHERS' && data.other_caste ? `'${data.other_caste}'` : 'NULL'}, '${data.education}', ${data.education == 'OTHERS' && data.other_education ? `'${data.other_education}'` : 'NULL'}, '${data.dob}', '${data.created_by}', '${datetime}')`,
                     whr = data.member_code > 0 ? `member_code = '${data.member_code}'` : null,
                     flag = data.member_code > 0 ? 1 : 0;
                     var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -462,7 +460,7 @@ module.exports = {
     // },
     
      edit_basic_dt: (data,files) => {
-        console.log(data,'data');
+        // console.log(data,'datasss');
         
         return new Promise(async (resolve, reject) => {
             let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -475,7 +473,7 @@ module.exports = {
                       gurd_name = '${data.gurd_name}', 
                       gurd_mobile = ${data.gurd_mobile == '' ? 0 : `'${data.gurd_mobile}'`}, 
                       husband_name = ${data.husband_name == 'NULL' ? 'NULL' : `'${data.husband_name}'`}, 
-                      client_addr = '${data.client_addr.split("'").join("\\'")}', 
+                      client_addr = '${data.client_addr ? data.client_addr.split("'").join("\\'") : ""}', 
                       pin_no = '${data.pin_no}', 
                       nominee_name = '${data.nominee_name}', 
                       aadhar_no = '${data.aadhar_no}', 

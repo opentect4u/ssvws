@@ -23,7 +23,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov", async (req, res) => {
     // console.log(data,'sss');
     
     //how many recovery done via cash show in dashboard
-    var select = "SUM(credit) tot_recov_cash",
+    var select = "IFNULL(SUM(credit),0) tot_recov_cash",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
     AND tr_type = 'R'
@@ -40,7 +40,7 @@ appdashboardRouter.post("/dashboard_dtls_bank_recov", async (req, res) => {
     var data = req.body;
     
     //how many recovery done via bank show in dashboard
-    var select = "SUM(credit) tot_recov_bank",
+    var select = "IFNULL(SUM(credit),0) tot_recov_bank",
     table_name = "td_loan_transactions",
     whr = `branch_id = '${data.branch_code}'
     AND tr_type = 'R'
@@ -73,7 +73,7 @@ appdashboardRouter.post("/dashboard_dtls_cash_recov_bm", async (req, res) => {
     var data = req.body;
 
     //how many recovery done via cash by branch manager show in dashboard
-    var select = "SUM(credit) tot_recov_cash",
+    var select = "IFNULL(SUM(credit),0) tot_recov_cash",
     table_name = "td_loan_transactions",
     whr = data.flag == 'O' ? `branch_id = '${data.branch_code}'
     AND tr_type = 'R'
@@ -94,7 +94,7 @@ appdashboardRouter.post("/dashboard_dtls_bank_recov_bm", async (req, res) => {
     var data = req.body;
 
     //how many recovery done via bank by branch manager show in dashboard
-    var select = "SUM(credit) tot_recov_bank",
+    var select = "IFNULL(SUM(credit),0) tot_recov_bank",
     table_name = "td_loan_transactions",
     whr =  data.flag == 'O' ? `branch_id = '${data.branch_code}'
     AND tr_type = 'R'

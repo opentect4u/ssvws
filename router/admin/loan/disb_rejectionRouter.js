@@ -89,7 +89,7 @@ disb_rejectRouter.post("/fetch_reject_disb_transactions_data", async (req, res) 
 
     if (monthCheck.suc > 0 && monthCheck.msg.length > 0) {
       return res.send({
-        suc: 0,
+        suc: 1,
         msg: "Not possible because already month closed for this branch",
       });
     }
@@ -113,7 +113,7 @@ disb_rejectRouter.post("/fetch_reject_disb_transactions_data", async (req, res) 
             if (recoveryCheck.suc > 0 && recoveryCheck.msg.length > 0) {
           // 🔹 If Recovery exists, send message and stop loop
           return res.send({
-            suc: 0,
+            suc: 1,
             msg: "Already done recovery in this group",
             });
            }
@@ -136,10 +136,10 @@ disb_rejectRouter.post("/fetch_reject_disb_transactions_data", async (req, res) 
          if (finalResults.length > 0) {
              res.send({ suc: 1, msg: "Data fetched successfully", data: finalResults });
          } else {
-             res.send({ suc: 0, msg: "No unapproved transaction data found" });
+             res.send({ suc: 1, msg: "No unapproved transaction data found" });
          }
      }else {
-         res.send({ suc: 0, msg: "No loan id found" });
+         res.send({ suc: 1, msg: "No loan id found" });
      } 
     }catch(error){
      console.error("Error fetching transaction details for reject:", error);

@@ -175,10 +175,10 @@ recoveryRouter.post("/checking_date_before_transaction", async (req, res) => {
             tr_flag = 'D'
         }
       }
-      res.json({ tr_flag });
+      res.json({ suc: 1, tr_flag });
     } catch (err) {
       console.log(err);
-      res.json({ error: "Server error" });
+      res.json({ suc: 0, error: "Server error" });
     }
   });
   

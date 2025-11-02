@@ -268,7 +268,7 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
             table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON a.group_cd = c.group_code LEFT JOIN md_employee d ON c.co_id = d.emp_id LEFT JOIN md_branch e ON a.branch_code = e.branch_code",
             whr = `a.branch_code IN (${data.branch_code})
                    AND a.demand_date = '${create_date}'`,
-            order = `GROUP BY a.demand_date,a.branch_code,e.branch_name,a.group_cd,c.group_name,b.curr_roi,b.period,b.period_mode,b.instl_end_dt,c.co_id,d.emp_name
+            order = `GROUP BY a.demand_date,a.branch_code,e.branch_name,a.group_cd,c.group_name,b.curr_roi,b.period,b.period_mode,b.instl_end_dt,c.co_id,d.emp_name,b.recovery_day
             ORDER BY a.branch_code,a.group_cd`;
             var groupwise_demand_data = await db_Select(select,table_name,whr,order);
             res.send({groupwise_demand_data})
@@ -349,7 +349,7 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
         END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(b.prn_amt + b.intt_amt) curr_outstanding`,
         table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_cd = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_fund f ON b.fund_id = f.fund_id",
         whr = `a.branch_code IN (${data.branch_code}) AND b.fund_id IN (${data.fund_id}) AND a.demand_date = '${create_date}'`,
-        order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name
+        order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.period_mode,b.recovery_day
         ORDER BY a.branch_code,a.group_cd`;
         var fundwise_demand_data = await db_Select(select,table_name,whr,order);
         res.send({fundwise_demand_data})
@@ -452,7 +452,7 @@ loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
         END AS recovery_day,SUM(a.dmd_amt)dmd_amt,SUM(b.prn_amt + b.intt_amt) curr_outstanding`,
         table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.group_cd = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id",
         whr = `a.branch_code IN (${data.branch_code}) AND d.co_id IN (${data.co_id}) AND a.demand_date = '${create_date}'`,
-        order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name
+        order = `GROUP BY a.demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name,b.period_mode,b.recovery_day
         ORDER BY a.branch_code,a.group_cd`;
         var cowise_demand_data = await db_Select(select,table_name,whr,order);
         res.send({cowise_demand_data})
