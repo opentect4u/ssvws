@@ -281,9 +281,9 @@ module.exports = {
                
                     var table_name = "md_member",
                     fields = data.member_code > 0 ? `gender = '${data.gender}', client_name = '${data.client_name}', client_mobile = '${data.client_mobile}', email_id = '${data.email_id}', gurd_name = ${data.gurd_name == '' ? 'NULL' : data.gurd_name}, gurd_mobile = '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', husband_name = '${data.husband_name}', client_addr = '${data.client_addr.split("'").join("\\'")}',
-                    pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion == 'OTHERS' ? data.other_religion : 'NULL'}', caste = '${data.caste}', other_caste = '${data.caste == 'OTHERS' ? data.other_caste : 'NULL'}', education = '${data.education}', other_education = '${data.education == 'OTHERS' ? data.other_education : 'NULL'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, nominee_name, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, voter_id, voter_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
+                    pin_no = '${data.pin_no}', nominee_name = '${data.nominee_name}', aadhar_no = '${data.aadhar_no}', pan_no = '${data.pan_no}', voter_id = '${data.voter_id}', religion = '${data.religion}', other_religion = '${data.religion.toUpperCase() === 'OTHERS' ? data.other_religion : 'NULL'}', caste = '${data.caste}', other_caste = '${data.caste.toUpperCase() == 'OTHERS' ? data.other_caste : 'NULL'}', education = '${data.education}', other_education = '${data.education.toUpperCase() == 'OTHERS' ? data.other_education : 'NULL'}', dob = '${data.dob}', modified_by = '${data.created_by}', modified_at = '${datetime}'`: "(branch_code, member_code, gender, client_name, member_dt, client_mobile, phone_verify_flag, email_id, gurd_name, gurd_mobile, husband_name, client_addr, pin_no, nominee_name, aadhar_no, aadhar_verify_flag, pan_no, pan_verify_flag, voter_id, voter_verify_flag, religion, other_religion, caste, other_caste, education, other_education, dob, created_by, created_at)",
                     values =  `('${data.branch_code}', '${member_code}', '${data.gender}', '${data.client_name}', '${datetime}',
-                    '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.husband_name}', '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.nominee_name}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.voter_id}', 'Y', '${data.religion}', ${data.religion == 'OTHERS' && data.other_religion ? `'${data.other_religion}'` : 'NULL'}, '${data.caste}', ${data.caste == 'OTHERS' && data.other_caste ? `'${data.other_caste}'` : 'NULL'}, '${data.education}', ${data.education == 'OTHERS' && data.other_education ? `'${data.other_education}'` : 'NULL'}, '${data.dob}', '${data.created_by}', '${datetime}')`,
+                    '${data.client_mobile}', 'Y', '${data.email_id}', '${data.gurd_name == '' ? 'NULL' : data.gurd_name}', '${data.gurd_mobile == '' ? 0 : data.gurd_mobile}', '${data.husband_name}', '${data.client_addr.split("'").join("\\'")}', '${data.pin_no}', '${data.nominee_name}', '${data.aadhar_no}', 'Y', '${data.pan_no}', 'Y', '${data.voter_id}', 'Y', '${data.religion}', ${data.religion.toUpperCase() == 'OTHERS' && data.other_religion ? `'${data.other_religion}'` : 'NULL'}, '${data.caste}', ${data.caste.toUpperCase() == 'OTHERS' && data.other_caste ? `'${data.other_caste}'` : 'NULL'}, '${data.education}', ${data.education.toUpperCase() == 'OTHERS' && data.other_education ? `'${data.other_education}'` : 'NULL'}, '${data.dob}', '${data.created_by}', '${datetime}')`,
                     whr = data.member_code > 0 ? `member_code = '${data.member_code}'` : null,
                     flag = data.member_code > 0 ? 1 : 0;
                     var basic_dt = await db_Insert(table_name, fields, values, whr, flag);
@@ -480,11 +480,11 @@ module.exports = {
                       pan_no = '${data.pan_no}', 
                       voter_id = '${data.voter_id}', 
                       religion = '${data.religion}', 
-                      other_religion = ${data.religion == 'Others' ? `'${data.other_religion}'` : 'NULL'}, 
+                      other_religion = ${data.religion.toUpperCase() == 'OTHERS' ? `'${data.other_religion}'` : 'NULL'}, 
                       caste = '${data.caste}', 
-                      other_caste = ${data.caste == 'Others' ? `'${data.other_caste}'` : 'NULL'}, 
+                      other_caste = ${data.caste.toUpperCase() == 'OTHERS' ? `'${data.other_caste}'` : 'NULL'}, 
                       education = '${data.education}', 
-                      other_education = ${data.education == 'Others' ? `'${data.other_education}'` : 'NULL'}, 
+                      other_education = ${data.education.toUpperCase() == 'OTHERS' ? `'${data.other_education}'` : 'NULL'}, 
                       dob = '${data.dob}', 
                       modified_by = '${data.modified_by}', 
                       modified_at = '${datetime}'`,
@@ -571,7 +571,7 @@ module.exports = {
             if(res_dt.msg.length > 0 && res_dt.suc > 0){
                 var table_name = "td_grt_occupation_household",
                     fields = `house_type = ${data.house_type ? `'${data.house_type}'` : 'NULL'}, own_rent = ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, land = '${data.land == '' ? 0 : data.land}', tv_flag = ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, 
-                    bike_flag = ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, fridge_flag = ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, wm_flag = ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'}, poltical_flag = ${data.political_flag ? `'${data.political_flag}'` : 'NULL'},
+                    bike_flag = ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, fridge_flag = ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, wm_flag = ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'}, poltical_flag = ${data.poltical_flag ? `'${data.poltical_flag}'` : 'NULL'},
                  parental_addr = '${data.parental_addr.split("'").join("\\'")}', parental_phone = '${data.parental_phone == '' ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
                     values = null,
                     whr = `form_no = '${data.form_no}' AND branch_code = '${data.branch_code}'`,

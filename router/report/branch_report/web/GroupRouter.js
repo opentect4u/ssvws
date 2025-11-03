@@ -81,9 +81,9 @@ groupRouter.post("/active_inactive_member_report", async (req, res) => {
         // console.log(data,'data');
 
             var select = `b.form_no,b.grt_date,b.member_code,c.client_name,a.group_code,a.group_name,a.grp_open_dt group_open_date,a.branch_code,e.branch_name,c.client_mobile,c.gurd_name,c.gurd_mobile,c.husband_name,c.client_addr,c.pin_no,c.nominee_name,c.aadhar_no,c.pan_no,c.voter_id,
-            CASE WHEN c.religion = 'Others' THEN c.other_religion ELSE c.religion END AS religion,
-            CASE WHEN c.caste = 'Others' THEN c.other_caste ELSE c.caste END AS caste,
-            CASE WHEN c.education = 'Others' THEN c.other_education ELSE c.education END AS education,
+            CASE WHEN UPPER(c.religion) = 'OTHERS' THEN c.other_religion ELSE c.religion END AS religion,
+            CASE WHEN UPPER(c.caste) = 'OTHERS' THEN c.other_caste ELSE c.caste END AS caste,
+            CASE WHEN UPPER(c.education) = 'OTHERS' THEN c.other_education ELSE c.education END AS education,
             c.dob,a.co_id,g.emp_name co_name,a.phone1,a.phone2,a.grp_addr,a.disctrict,h.dist_name,a.block,i.block_name,a.pin_no,j.bank_name,j.branch_name bank_branch,a.ifsc,a.micr,a.acc_no1 savings_acc,a.acc_no2 loan_acc,d.self_occu,d.self_income,d.spouse_occu,d.spouse_income,d.loan_purpose,d.applied_amt,
             CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_amt ELSE NULL END AS other_loan_amt,
             CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_emi ELSE NULL END AS other_loan_emi,

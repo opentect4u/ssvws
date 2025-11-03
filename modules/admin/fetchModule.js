@@ -137,7 +137,7 @@ module.exports = {
           var table_name = "td_grt_occupation_household",
             fields = `no_of_rooms = '0', house_type = ${data.house_type ? `'${data.house_type}'` : 'NULL'}, own_rent = ${data.own_rent ? `'${data.own_rent}'` : 'NULL'}, land = '${data.land == '' ? 0 : data.land}', tv_flag = ${data.tv_flag ? `'${data.tv_flag}'` : 'NULL'}, 
                     bike_flag = ${data.bike_flag ? `'${data.bike_flag}'` : 'NULL'}, fridge_flag = ${data.fridge_flag ? `'${data.fridge_flag}'` : 'NULL'}, wm_flag = ${data.wm_flag ? `'${data.wm_flag}'` : 'NULL'}, poltical_flag = ${data.political_flag ? `'${data.political_flag}'` : 'NULL'},
-                 parental_addr = '${data.parental_addr ? data.parental_addr.split("'").join("\\'") : ''}', parental_phone = '${!data.parental_phone ? 0 : data.parental_phone}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
+                 parental_addr = '${data.parental_addr ? data.parental_addr.split("'").join("\\'") : ''}', modified_by = '${data.modified_by}', modified_at = '${datetime}'`,
             values = null,
             whr = `form_no = '${data.form_no}'`,
             flag = 1;
@@ -347,9 +347,9 @@ module.exports = {
         // unapproved memnber details
 
          var select = `a.form_no,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
-         CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
-         CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
-         CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education`,
+         CASE WHEN UPPER(b.religion) = 'OTHERS' THEN b.other_religion ELSE b.religion END AS religion,
+         CASE WHEN UPPER(b.caste) = 'OTHERS' THEN b.other_caste ELSE b.caste END AS caste,
+         CASE WHEN UPPER(b.education) = 'OTHERS' THEN b.other_education ELSE b.education END AS education`,
          table_name = `td_grt_basic a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON a.prov_grp_code = d.group_code`,
          whr = data.branch_code == '100' ? `a.approval_status = 'U' AND d.co_id IN (${data.co_id})` : `a.branch_code = '${data.branch_code}' AND a.approval_status = 'U' AND d.co_id IN (${data.co_id})`,
          order = `ORDER BY a.prov_grp_code DESC, a.member_code ASC;`;
@@ -360,9 +360,9 @@ module.exports = {
          // send to mis member details
 
           var select = `a.form_no,a.prov_grp_code,e.group_name,a.branch_code,c.branch_name,a.member_code,b.client_name,a.grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
-          CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
-          CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
-          CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education,
+          CASE WHEN UPPER(b.religion) = 'OTHERS' THEN b.other_religion ELSE b.religion END AS religion,
+          CASE WHEN UPPER(b.caste) = 'OTHERS' THEN b.other_caste ELSE b.caste END AS caste,
+          CASE WHEN UPPER(b.education) = 'OTHERS' THEN b.other_education ELSE b.education END AS education,
           d.self_occu,d.self_income,d.spouse_occu,d.spouse_income,d.loan_purpose,d.applied_amt,
          CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_amt ELSE NULL END AS other_loan_amt,
          CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_emi ELSE NULL END AS other_loan_emi,
@@ -378,9 +378,9 @@ module.exports = {
           //approved_member details
 
          var select = `a.form_no,a.prov_grp_code,e.group_name,a.branch_code,c.branch_name,a.member_code,b.client_name,DATE(a.grt_date)grt_date,b.dob,b.gender,b.client_addr,b.pin_no,b.client_mobile,b.email_id,b.gurd_name,b.gurd_mobile,b.husband_name,b.nominee_name,b.aadhar_no,b.pan_no,b.voter_id, 
-          CASE WHEN b.religion = 'Others' THEN b.other_religion ELSE b.religion END AS religion,
-          CASE WHEN b.caste = 'Others' THEN b.other_caste ELSE b.caste END AS caste,
-          CASE WHEN b.education = 'Others' THEN b.other_education ELSE b.education END AS education,
+          CASE WHEN UPPER(b.religion) = 'OTHERS' THEN b.other_religion ELSE b.religion END AS religion,
+          CASE WHEN UPPER(b.caste) = 'OTHERS' THEN b.other_caste ELSE b.caste END AS caste,
+          CASE WHEN UPPER(b.education) = 'OTHERS' THEN b.other_education ELSE b.education END AS education,
           d.self_occu,d.self_income,d.spouse_occu,d.spouse_income,d.loan_purpose,d.applied_amt,
           CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_amt ELSE NULL END AS other_loan_amt,
          CASE WHEN d.other_loan_flag = 'Y' THEN d.other_loan_emi ELSE NULL END AS other_loan_emi,
