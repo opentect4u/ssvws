@@ -20,39 +20,45 @@ function decryptAES(encryptedText) {
     return decrypted;
 }
 
-// userwebRouter.post("/finance_login_validate", async (req, res) => {
-//   try {
-//      var data = req.body;
-//       // Decrypt emp_id and password
-//         let decryptedEmpId, decryptedPassword;
-//          try {
-//             decryptedEmpId = decryptAES(data.emp_id);
-//             decryptedPassword = decryptAES(data.password);
-//             // console.log(decryptedEmpId,decryptedPassword,'kiki');
+userwebRouter.post("/finance_login_validate", async (req, res) => {
+  try {
+     var data = req.body;
+     console.log(data,'finance');
+     
+      // Decrypt emp_id and password
+        let decryptedEmpId, decryptedPassword;
+         try {
+            decryptedEmpId = decryptAES(data.emp_id);
+            decryptedPassword = decryptAES(data.password);
+            console.log(decryptedEmpId,decryptedPassword,'kiki');
             
-//         } catch (decryptErr) {
-//             return res.send({ suc: 0, msg: "Decryption failed. Possibly incorrect key/IV or corrupted data." });
-//         }
+        } catch (decryptErr) {
+            return res.send({ suc: 0, msg: "Decryption failed. Possibly incorrect key/IV or corrupted data." });
+        }
 
-//          // Fetch user details (you need to ensure this function uses decryptedEmpId)
-//           const fin_log_dt = await finance_login_data({ emp_id: decryptedEmpId });
+         // Fetch user details (you need to ensure this function uses decryptedEmpId)
+          const fin_log_dt = await finance_login_data({ emp_id: decryptedEmpId });
 
-//       if (fin_log_dt.suc > 0 && fin_log_dt.msg.length > 0) {
-//             const user = fin_log_dt.msg[0];
-//             const passwordMatch = await bcrypt.compare(decryptedPassword, user.password);
-//             if (passwordMatch) {
-//                 return res.send({ suc: 1, msg: `${user.user_type_name} Login successfully`, user_dtls: user });
-//             } else {
-//                 return res.send({ suc: 0, msg: "Incorrect user ID or password" });
-//             }
-//         } else {
-//             return res.send({ suc: 2, msg: "No user data found", dt: fin_log_dt });
-//         }
-//   } catch (error) {
-//       console.error("Login Error:", error);
-//       return res.send({ suc: 0, msg: "An unexpected error occurred while login please try again." });
-//   }
-// });
+      if (fin_log_dt.suc > 0 && fin_log_dt.msg.length > 0) {
+            const user = fin_log_dt.msg[0];
+            console.log(user,'user');
+            
+            const passwordMatch = await bcrypt.compare(decryptedPassword, user.password);
+            console.log(passwordMatch,'passwordMatch');
+            
+            if (passwordMatch) {
+                return res.send({ suc: 1, msg: `${user.user_type_name} Login successfully`, user_dtls: user });
+            } else {
+                return res.send({ suc: 0, msg: "Incorrect user ID or password" });
+            }
+        } else {
+            return res.send({ suc: 2, msg: "No user data found", dt: fin_log_dt });
+        }
+  } catch (error) {
+      console.error("Login Error:", error);
+      return res.send({ suc: 0, msg: "An unexpected error occurred while login please try again." });
+  }
+});
 
 
 userwebRouter.get("/get_user_type", async (req, res) => {
