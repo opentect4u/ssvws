@@ -17,6 +17,7 @@ const {
   verifyToken,
 } = require("../../middleware/authMiddleware");
 const crypto  = require("crypto");
+const { finance_login_data } = require("../../modules/admin/user/userwebModule");
 
 const key = process.env.AES_KEY;
 const iv = process.env.AES_IV;
@@ -120,7 +121,7 @@ userRouter.post("/get_emp_dtls_fr_finance", async (req, res) => {
     }
 });
 
-userwebRouter.post("/finance_login_validate", async (req, res) => {
+userRouter.post("/finance_login_validate", async (req, res) => {
   try {
      var data = req.body;
      console.log(data,'finance');
