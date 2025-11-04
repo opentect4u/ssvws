@@ -1,4 +1,6 @@
-const { decrypt } = require('dotenv');
+require('dotenv').config();
+const { decrypt } = require('../../../model/decryption');
+// const { decrypt } = require('dotenv');
 const { db_Select, db_Insert } = require('../../../model/mysqlModel');
 const { save_user_dtls, edit_user_dt, change_pass_data, finance_login_data } = require('../../../modules/admin/user/userwebModule');
 
@@ -374,6 +376,67 @@ userwebRouter.post("/user_profile_details", async (req, res) => {
     res.send(profile_dtls)
 });
 
+// userwebRouter.post("/change_password", async (req, res) => {
+//   var data = req.body;
+//   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+//   try {
+//     // 1️⃣ Decrypt passwords from frontend (CryptoJS AES)
+//     const oldPassword = decrypt(data.old_pwd);
+//     const newPassword = decrypt(data.new_pwd);
+
+//     if (!oldPassword || !newPassword) {
+//       return res.send({ suc: 0, msg: "Password decryption failed." });
+//     }
+
+//     // 2️⃣ Fetch user details from DB
+//     var change_pwd_dt = await change_pass_data(data);
+//     if (change_pwd_dt.suc <= 0 || change_pwd_dt.msg.length === 0) {
+//       return res.send({ suc: 0, msg: "No user found." });
+//     }
+
+//     const user = change_pwd_dt.msg[0];
+
+//     // 3️⃣ Compare decrypted old password with stored bcrypt hash
+//     const isMatch = await bcrypt.compare(oldPassword, user.password);
+//     if (!isMatch) {
+//       return res.send({ suc: 0, msg: "Incorrect old password." });
+//     }
+
+//     // 4️⃣ Hash new password using bcrypt
+//     const pass = bcrypt.hashSync(newPassword, 10);
+
+//     // 5️⃣ Update new password in DB
+//     const table_name = "md_user";
+//     const fields = `password = '${pass}', modified_by = '${data.modified_by}', modified_at='${datetime}'`;
+//     const where = `emp_id = '${data.emp_id}'`;
+//     const flag = 1;
+
+//     await db_Insert(table_name, fields, null, where, flag);
+
+//     // 6️⃣ Insert into td_log_details
+//     await db_Insert(
+//       "td_log_details",
+//       `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks, ip_address)`,
+//       `('${data.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Password Changed', '${data.myIP}')`,
+//       null,
+//       0
+//     );
+
+//     // 7️⃣ Send success response
+//     return res.send({
+//       suc: 1,
+//       msg: "Password changed successfully.",
+//     });
+//   } catch (err) {
+//     console.error("Change password error:", err);
+//     return res.send({
+//       suc: 0,
+//       msg: "An unexpected error occurred. Please try again.",
+//     });
+//   }
+// });
+
 userwebRouter.post("/change_password", async (req, res) => {
     var data = req.body, result;
   // console.log(data);
@@ -381,6 +444,9 @@ userwebRouter.post("/change_password", async (req, res) => {
 //change password
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
   var change_pwd_dt = await change_pass_data(data);
+
+  data.old_pwd = decrypt(data.old_pwd);
+  data.new_pwd = decrypt(data.new_pwd);
 //   console.log(change_pwd_dt);
 
   if(change_pwd_dt.suc > 0) {
@@ -427,6 +493,65 @@ userwebRouter.post("/change_password", async (req, res) => {
   res.send(result);
 
 });
+
+// userwebRouter.post("/change_password", async (req, res) => {
+//   var data = req.body;
+//   console.log("Incoming data:", data);
+
+//   try {
+//     // Decrypt both passwords
+//     data.new_pwd = decrypt(data.new_pwd);
+//     data.old_pwd = decrypt(data.old_pwd);
+//     console.log("Decrypted:", data.new_pwd, data.old_pwd);
+
+//     // Fetch user data
+//     const change_pwd_dt = await change_pass_data(data);
+//     console.log("Fetched:", change_pwd_dt);
+
+//     if (change_pwd_dt.suc > 0 && change_pwd_dt.msg.length > 0) {
+//       const storedHash = change_pwd_dt.msg[0].password;
+
+//       // Compare old password
+//       const match = await bcrypt.compare(data.old_pwd, storedHash);
+//       console.log("Password match:", match);
+
+//       if (match) {
+//         const newHash = bcrypt.hashSync(data.new_pwd, 10);
+//         const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+//         const table_name = "md_user";
+//         const fields = `password = '${newHash}', modified_by = '${data.modified_by}', modified_at='${datetime}'`;
+//         const where = `emp_id = '${data.emp_id}'`;
+//         const flag = 1;
+
+//         const change_pass = await db_Insert(table_name, fields, null, where, flag);
+//         console.log("Update result:", change_pass);
+
+//         if (change_pass.suc > 0) {
+//           // Log password change
+//           await db_Insert(
+//             "td_log_details",
+//             `(emp_id, branch_code, operation_dt, in_out_flag, device_type, remarks, ip_address)`,
+//             `('${data.emp_id}', '${data.branch_code}', '${datetime}', '${data.in_out_flag}', '${data.flag}', 'Password Changed', '${data.myIP}')`,
+//             null,
+//             0
+//           );
+
+//           return res.send({ suc: 1, msg: "Password changed successfully" });
+//         } else {
+//           return res.send({ suc: 1, msg: "Password update failed" });
+//         }
+//       } else {
+//         return res.send({ suc: 1, msg: "Please check your password" });
+//       }
+//     } else {
+//       return res.send({ suc: 1, msg: "No data found" });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.send({ suc: 0, msg: "Something went wrong", error });
+//   }
+// });
 
 userwebRouter.post("/fetch_data_same_pass", async (req, res) => {
   var data = req.body;
