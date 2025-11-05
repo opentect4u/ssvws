@@ -368,7 +368,7 @@ loanRouter.post("/verify_tot_dib_amt", async (req, res) => {
 
     if (data.tot_disb_amt > appliedAmt) {
       res.send({
-        suc: 1,
+        suc: 0,
         msg: "Applied amount is greater than disbursed amount",
         appliedAmt,
       });
