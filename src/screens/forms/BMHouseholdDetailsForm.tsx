@@ -127,7 +127,7 @@ const { handleLogout } = useContext<any>(AppStore)
             created_by: loginStore?.emp_id
         }
 
-        // console.log("//////////////", creds, "///////////////")
+        // console.log("//////////////", formData.politicallyActive, "///////////////")
 
         // 🧠 Convert all string values to CAPITAL letters
             const creds = Object.fromEntries(
@@ -145,7 +145,7 @@ const { handleLogout } = useContext<any>(AppStore)
                             }
                         }).then(res => {
 
-            // console.log("HOUSEHOLD====RES", res?.data)
+            console.log("HOUSEHOLD====RES", res?.data)
 
             if(res?.data?.suc === 0) {
                 handleLogout()

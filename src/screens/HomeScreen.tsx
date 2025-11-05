@@ -24,11 +24,13 @@ import ButtonPaper from '../components/ButtonPaper'
 import useGeoLocation from '../hooks/useGeoLocation'
 import DeviceInfo from 'react-native-device-info'
 import { AppStore } from '../context/AppContext'
+import useCurrentRouteName from '../hooks/useCurrentRoute'
 
 const HomeScreen = () => {
     const theme = usePaperColorScheme()
     const navigation = useNavigation()
     const isFocused = useIsFocused()
+    const currentRoute = useCurrentRouteName()
     // const appVersion = DeviceInfo.getVersion()
     const {
         fetchCurrentVersion,
@@ -62,10 +64,18 @@ const HomeScreen = () => {
     const [clockInStatus, setClockInStatus] = useState<string>(() => "")
     const [checkIsAttandanceStatusPending, setAttanadanceStatusPending] = useState<boolean>(() => true)
 
+
     useEffect(() => {
         fetchCurrentVersion()
         console.log('home',loginStore?.token)
     }, [navigation])
+
+    // useEffect(() => {
+    //     console.log('handleCheckMockLocation');
+        
+    // }, [isFocused])
+
+    
 
     // useEffect(() => {
     //     // convertArrayIntoList();
@@ -251,25 +261,6 @@ const HomeScreen = () => {
 
     }
 
-    /***** OLD Version (DONE By SOUMYADEEP)***/
-    // const handleClockOut = async () => {
-    //     const creds = {
-    //         emp_id: loginStore?.emp_id,
-    //         in_date_time: formattedDateTime(new Date(clockedInDateTime)),
-    //         out_date_time: formattedDateTime(currentTime),
-    //         out_lat: location?.latitude,
-    //         out_long: location?.longitude,
-    //         out_addr: geolocationFetchedAddress,
-    //         modified_by: loginStore?.emp_id
-    //     }
-    //     await axios.post(`${ADDRESSES.CLOCK_OUT}`, creds).then(res => {
-    //         console.log("CLOCK OUT RES", res?.data)
-    //         setIsClockedIn(!isClockedIn)
-    //     }).catch(err => {
-    //         console.log("CLOCK OUT ERR", err)
-    //     })
-    // }
-    /***** END */
 
     /**** NEW VERSION (DONE BY SUMAN MITRA) */
     const handleClockOut = async () => {
@@ -432,19 +423,17 @@ const HomeScreen = () => {
         // setLoading(false)
     }
 
-    // useEffect(() => {
-    //     fetchDashboardDetails()
-    //     fetchDashboardCashRecoveryDetails()
-    //     fetchDashboardBankRecoveryDetails()
-    // }, [choosenDate])
 
     useEffect(() => {
+        // console.log(loginStore?.id, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh 1 2');
+        if(isFocused){
         if (loginStore?.id === 1) { // CO
             fetchDashboardDetails()
             fetchDashboardCashRecoveryDetails()
             fetchDashboardBankRecoveryDetails()
+            }
         }
-    }, [])
+    }, [isFocused])
 
     const handleFetchDashboardDetailsGRTBM = async () => {
         const creds = {
@@ -527,12 +516,15 @@ const HomeScreen = () => {
     }
 
     useEffect(() => {
+        // console.log(loginStore?.id, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh 2 22');
+        if(isFocused){
         if (loginStore?.id === 2) { // BM
             handleFetchDashboardDetailsGRTBM()
             handleFetchDashboardCashDetailsBM()
             handleFetchDashboardBankDetailsBM()
+            }
         }
-    }, [checkUser])
+    }, [checkUser, isFocused])
 
     return (
         <SafeAreaView>

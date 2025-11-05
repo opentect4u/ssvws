@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import navigationRoutes from "../routes/routes"
 import HomeScreen from "../screens/HomeScreen"
@@ -8,8 +8,13 @@ import BMPendingLoanFormScreen from '../screens/BMPendingLoanFormScreen'
 import GRTFormScreen from '../screens/GRTFormScreen'
 import AttendanceReportScreen from '../screens/reports/AttendanceReportScreen'
 
-export default function HomeNavigation() {
+export default function HomeNavigation({ route }: any) {
     const Stack = createNativeStackNavigator()
+//     const currentRoute = route?.params?.currentRoute;
+    
+//      useEffect(() => {
+//     console.log("✅ Current Route in HomeNavigation:", currentRoute);
+//   }, [currentRoute]);
 
     return (
         <Stack.Navigator screenOptions={{ headerShown: false }}>

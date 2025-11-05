@@ -61,9 +61,16 @@ const BMOccupationDetailsForm = forwardRef(({
         monthlyEmi: "",
     })
 
+
     // useEffect(() => {
         // console.log(defaultAmt && defaultAmt.length != undefined ? defaultAmt : appliedDefaultAmt, 'jjjjjjjjjjjjjjjj', formData, appliedDefaultAmt, 'kkkkkkkkkkk');
     // }, [])
+
+    useEffect(() => {
+  if (!formData.checkOtherOngoingLoan) {
+    setFormData(prev => ({ ...prev, checkOtherOngoingLoan: "N" }));
+  }
+}, [formData]);
     
 
     const handleFormChange = (field: string, value: number | React.SetStateAction<string>) => {
@@ -212,11 +219,6 @@ const BMOccupationDetailsForm = forwardRef(({
                     key, typeof value === "string" ? value.toUpperCase() : value,
                 ])
             );
-
-            // console.log(creds, 'credscredscredscreds');
-            
-
-            // return
 
         await axios.post(`${ADDRESSES.SAVE_OCCUPATION_DETAILS}`, creds, {headers: {
                                 Authorization: loginStore?.token, // example header
