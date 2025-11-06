@@ -212,7 +212,7 @@ grtformRouter.post("/fetch_co_brnwise", async (req, res) => {
      try {
     var data = req.body;
 
-       if(data.branch_code == '100'){
+       if(data.brn_code == '100'){
         var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
         table_name = "md_user a, md_employee b",
         // whr = `a.emp_id = b.emp_id AND a.user_type = '1'`,
