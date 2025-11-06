@@ -14,7 +14,7 @@ const RecoveryGroupScreen = () => {
 
     // const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
 
-    console.log("LLLLLLLLLLLKKKKKKKKKKAAAAAAAAAAAAAss", params.group_details)
+    // console.log("LLLLLLLLLLLKKKKKKKKKKAAAAAAAAAAAAAss", params.group_details)
 
     return (
         <SafeAreaView>

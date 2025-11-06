@@ -147,16 +147,18 @@ export const useEscPosPrint = () => {
                 ['TOTAL', ":", `${tot_amt}`],
                 {},
             );
-            await BluetoothEscposPrinter.printColumn(
-                columnWidths,
-                [
-                    BluetoothEscposPrinter.ALIGN.LEFT,
-                    BluetoothEscposPrinter.ALIGN.CENTER,
-                    BluetoothEscposPrinter.ALIGN.RIGHT,
-                ],
-                ['OUTSTANDING', ":", `${data[0]?.outstanding}`],
-                {},
-            );
+
+            // await BluetoothEscposPrinter.printColumn(
+            //     columnWidths,
+            //     [
+            //         BluetoothEscposPrinter.ALIGN.LEFT,
+            //         BluetoothEscposPrinter.ALIGN.CENTER,
+            //         BluetoothEscposPrinter.ALIGN.RIGHT,
+            //     ],
+            //     ['OUTSTANDING', ":", `${data[0]?.outstanding}`],
+            //     {},
+            // );
+
             await BluetoothEscposPrinter.printColumn(
                 columnWidths,
                 [
