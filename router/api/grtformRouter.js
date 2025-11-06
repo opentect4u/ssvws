@@ -216,14 +216,14 @@ grtformRouter.post("/fetch_co_brnwise", async (req, res) => {
         var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
         table_name = "md_user a, md_employee b",
         // whr = `a.emp_id = b.emp_id AND a.user_type = '1'`,
-        whr = `a.emp_id = b.emp_id`,
+        whr = `a.emp_id = b.emp_id AND a.user_type IN ('1','2')`,
         order = null; 
         var fetch_co_data = await db_Select(select,table_name,whr,order);
        }else {
         var select = "a.emp_id,a.brn_code,a.user_type,b.emp_name",
         table_name = "md_user a, md_employee b",
         // whr = `a.brn_code = '${data.brn_code}' AND a.emp_id = b.emp_id AND a.user_type = '1'`,
-        whr = `a.brn_code = '${data.brn_code}' AND a.emp_id = b.emp_id`,
+        whr = `a.brn_code = '${data.brn_code}' AND a.emp_id = b.emp_id AND a.user_type IN ('1','2')`,
         order = null; 
         var fetch_co_data = await db_Select(select,table_name,whr,order);
        }
