@@ -11,6 +11,7 @@ type InputPaperProps = {
     keyboardType?: KeyboardTypeOptions
     customStyle?: {}
     leftIcon?: string
+     leftIconSize?: number        // 👈 NEW
     autoFocus?: boolean
     mode?: "outlined" | "flat"
     maxLength?: number
@@ -36,6 +37,7 @@ const InputPaper = ({
     keyboardType,
     customStyle,
     leftIcon,
+    leftIconSize = 20,
     autoFocus,
     mode = "flat",
     maxLength = 100,
@@ -62,7 +64,7 @@ const InputPaper = ({
             onBlur={onBlur}
             secureTextEntry={secureTextEntry}
             style={[customStyle,isInputFieldInUppercase && style.textInputStyle]}
-            left={leftIcon && <TextInput.Icon icon={leftIcon} />}
+            left={leftIcon && <TextInput.Icon icon={leftIcon} size={leftIconSize} />}
             // right={<TextInput.Icon icon={secureTextEntry ? "eye-off" : "eye"} onPress={() => setSecureTextEntry(!secureTextEntry)} />}
             autoFocus={autoFocus}
             maxLength={maxLength}

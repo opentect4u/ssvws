@@ -278,12 +278,18 @@ const { handleLogout } = useContext<any>(AppStore)
     const handleEMIChange = (txt: string, i: any) => {
         // console.log(memberDetailsArray.map(e => e.instl_paid), txt, "member details")
         // console.log("TTTTTXXXXXXXTTTTTTTTT", txt)
-        // console.log("TTTTTXXXXXXXTTTTTTTTT IIIIIIIIIIII", currentInterestCalculate(+txt))
-        // console.log("TTTTTXXXXXXXTTTTTTTTT PPPPPPPPPPPP", currentPrincipalCalculate(+txt))
+        console.log(txt, "TTTTTXXXXXXXTTTTTTTTT IIIIIIIIIIII", currentInterestCalculate(+txt))
+        console.log(currentInterestCalculate(+txt), txt, "TTTTTXXXXXXXTTTTTTTTT PPPPPPPPPPPP", currentPrincipalCalculate(+txt))
 
         setMemberDetailsArray(prevArray =>
             prevArray.map((member, index) =>
-                index === i ? { ...member, credit: txt, intt_emi: currentInterestCalculate(+txt), prn_emi: currentPrincipalCalculate(+txt), instl_paid: 0 } : member
+                index === i ? { 
+                    ...member, 
+                    credit: txt, 
+                    intt_emi: currentInterestCalculate(+txt), 
+                    prn_emi: currentPrincipalCalculate(+txt), 
+                    instl_paid: 0 
+                } : member
             )
         )
     }
@@ -709,17 +715,21 @@ const { handleLogout } = useContext<any>(AppStore)
                                         title={<Text style={{
                                             color: theme.colors.primary,
                                             textDecorationLine: !item?.isChecked ? "line-through" : "none"
-                                        }}>{item?.client_name}</Text>}
+                                        }}>{item?.client_name} </Text>}
                                         description={
                                             <View>
                                                 <Text style={{
                                                     color: theme.colors.green,
                                                     textDecorationLine: !item?.isChecked ? "line-through" : "none"
-                                                }}>Outstanding - {+item?.intt_amt + +item?.prn_amt}{(+item?.intt_amt + +item?.prn_amt) && "/-"}</Text>
+                                                }}>Outstanding - 
+                                                {+item?.intt_amt + +item?.prn_amt}{(+item?.intt_amt + +item?.prn_amt) && "/-"}
+                                                </Text>
                                                 <Text style={{
                                                     color: theme.colors.secondary,
                                                     textDecorationLine: !item?.isChecked ? "line-through" : "none"
-                                                }}>Last Txn - {new Date(item?.last_trn_dt).toLocaleDateString("en-GB")}</Text>
+                                                }}>Last Txn - 
+                                                {new Date(item?.last_trn_dt).toLocaleDateString("en-GB")}
+                                                </Text>
                                             </View>
                                         }
                                         // onPress={() => {
@@ -754,10 +764,16 @@ const { handleLogout } = useContext<any>(AppStore)
                                             </View>
                                         )}
                                         right={() => {
-                                            //    console.log("@@@@@@@@@@@@@@", item?.credit)
+                                               console.log(item.prn_amt + +item.intt_amt, "@@@@@@@@@@@@@@", item?.outstanding)
                                             return (
-                                                <InputPaper selectTextOnFocus label="EMI" maxLength={8} leftIcon='cash-100' keyboardType="numeric" value={item?.credit}
+                                                <InputPaper selectTextOnFocus label="EMI" maxLength={8} 
+                                                // leftIcon='cash-100' 
+                                                 leftIconSize={20}
+                                                keyboardType="numeric" 
+                                                value={item?.credit}
                                                     onBlur={() => {
+                                                        // console.log("ITEM onBlur ===>", item);
+
                                                         if (memberDetailsArray.filter((item, _) => +item.credit > (+item.prn_amt + +item.intt_amt)).length > 0) {
                                                             ToastAndroid.show('Entered amount cannot be greater than the outstanding amount', ToastAndroid.SHORT)
                                                         }
@@ -767,6 +783,8 @@ const { handleLogout } = useContext<any>(AppStore)
                                                         handleEMIChange(txt, i)
                                                     }} customStyle={{
                                                         backgroundColor: theme.colors.background,
+                                                        // width: 120 , 
+                                                        padding: 0, margin: 0
                                                     }} disabled={!item?.isChecked} />
                                             )
                                         }}
