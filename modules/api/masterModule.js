@@ -384,6 +384,12 @@ const periodic = [
     div_period: 1,
     tot_period: 48,
   },
+   {
+    id: "Fortnight",
+    name: "month",
+    div_period: 1,
+    tot_period: 12,
+  },
 ];
 
 const interest_cal_amt = async (principal, time, rate, period_mode) => {
@@ -490,7 +496,7 @@ var dayRevarseList = {
   Saturday: 7,
 };
 
-const genDate = (period, mode, emiDate, selDay) => {
+const genDate = (trans_date, period, mode, emiDate, selDay) => {
   return new Promise((resolve, reject) => {
     const dateFormat = require("dateformat");
     var currDate = new Date();
@@ -514,11 +520,13 @@ const genDate = (period, mode, emiDate, selDay) => {
 
     switch (mode) {
       case "Monthly":
+        var modendDt = new Date(trans_date);
         var modDt = new Date(
-          currDate.setMonth(currDate.getMonth() + 1 + period)
+          modendDt.setMonth(modendDt.getMonth() + 1 + period)
         );
         emiEndDate = new Date(modDt.getFullYear(), modDt.getMonth(), emiDate);
-        var modStDt = new Date();
+        // var modStDt = new Date();
+        var modStDt = new Date(trans_date);
         modStDt.setMonth(modStDt.getMonth() + 1);
         emiStartDate = new Date(
           modStDt.getFullYear(),
@@ -526,13 +534,32 @@ const genDate = (period, mode, emiDate, selDay) => {
           emiDate
         );
         break;
-      case "Weekly":
-        var emiEndDate = new Date(
-          currDate.setDate(currDate.getDate() + period * 7)
-        );
+      case "Fortnight":
+        var modendDt = new Date(trans_date);
+        var dayOfMonth = modendDt.getDate();
 
+        var modDt = new Date(
+          modendDt.setMonth(modendDt.getMonth() + 1 + period)
+        );
+        emiEndDate = new Date(modDt.getFullYear(), modDt.getMonth(), dayOfMonth);
+
+         var modStDt = new Date(trans_date);
+        modStDt.setMonth(modStDt.getMonth() + 1);
+        emiStartDate = new Date(
+          modStDt.getFullYear(),
+          modStDt.getMonth(),
+          dayOfMonth
+        );
+        break;
+      case "Weekly":
+        var modendDt = new Date(trans_date);
+        var emiEndDate = new Date(
+          modendDt.setDate(modendDt.getDate() + period * 7)
+        );
+        // console.log(emiEndDate,'emi end date');
+        
         for (
-          let i = emiEndDate.getDate();
+          let i = emiEndDate.getDate();          
           i <
           new Date(
             emiEndDate.getFullYear(),
@@ -540,20 +567,31 @@ const genDate = (period, mode, emiDate, selDay) => {
             0
           ).getDate();
           i++
+          
         ) {
           var selectedMon = dayList[selDay];
+          // console.log(selectedMon,'selected');
+          
           if (selectedMon == dateFormat(new Date(emiEndDate), "dddd")) {
             break;
           }
           emiEndDate.setDate(emiEndDate.getDate() + 1);
+          // console.log(emiEndDate.setDate(emiEndDate.getDate() + 1()));
+          
         }
 
-        var modStDt = new Date();
+        // var modStDt = new Date(); 
+        var modStDt = new Date(trans_date); 
+        // console.log(modStDt,'modStDt');
+        
         var selDayNum = dayRevarseList[dateFormat(new Date(modStDt), "dddd")];
+        // console.log(selDayNum,'selDayNum');
+        
         emiStartDate = new Date(
           modStDt.setDate(modStDt.getDate() + (7 - selDayNum))
         );
-
+        // console.log(emiStartDate);
+        
         for (
           let i = emiStartDate.getDate();
           i <
@@ -565,6 +603,8 @@ const genDate = (period, mode, emiDate, selDay) => {
           i++
         ) {
           var selectedMon = dayList[selDay];
+          // console.log(selectedMon,'selectedMon2');
+          
           if (selectedMon == dateFormat(new Date(emiStartDate), "dddd")) {
             break;
           }

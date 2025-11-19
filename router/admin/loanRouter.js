@@ -204,6 +204,8 @@ loanRouter.post("/checking_factor", async (req, res) => {
 
     if (data.mode === "Monthly") {
       whr = `months = ${periodValue}`;
+    } else if (data.mode === "Fortnight") {
+      whr = `months = ${periodValue}`;  
     } else if (data.mode === "Weekly") {
       whr = `weeks = ${periodValue}`;
     } else {

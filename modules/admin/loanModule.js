@@ -143,7 +143,11 @@ module.exports = {
                             dts.prn_disb_amt,
                             data.period
                         );
+                        let fortnight_prn_emi = Math.round(prn_emi / 2);
+
                         let intt_emi = await calculate_intt_emi(intt_cal_amt, data.period);
+
+                        let fortnight_intt_emi = Math.round(intt_emi / 2);
 
                         if (isNaN(prn_emi) || isNaN(intt_emi)) {
                             console.error(
@@ -153,6 +157,7 @@ module.exports = {
                             var tot_emi = Math.round(
                                 parseFloat(prn_emi) + parseFloat(intt_emi)
                             );
+                            var fortnight_emi = Math.round(tot_emi / 2);  
                         }
 
                         let outstanding =
@@ -163,6 +168,7 @@ module.exports = {
                         // console.log(outstanding,'outstanding');
 
                         let instl_date = await genDate(
+                            data.trans_date,
                             data.period,
                             data.period_mode,
                             data.recovery_date,
@@ -187,9 +193,7 @@ module.exports = {
                                 }','${intt_cal_amt}','${dts.prn_disb_amt == "" ? 0 : dts.prn_disb_amt
                                 }','${data.old_prn_amt == "" ? 0 : data.old_prn_amt
                                 }',NULL,'${intt_cal_amt}','${data.od_intt_amt == "" ? 0 : data.od_intt_amt
-                                }','${outstanding > 0 ? outstanding : 0}','${prn_emi == "" ? 0 : prn_emi
-                                }','${intt_emi == "" ? 0 : intt_emi}','${tot_emi > 0 ? tot_emi : 0
-                                }','${data.recovery_date}','${data.period_mode}','${data.loan_cycle}', '${dateFormat(
+                                }','${outstanding > 0 ? outstanding : 0}','${data.period_mode === "Fortnight" ? (fortnight_prn_emi || 0) : (prn_emi || 0)}','${data.period_mode === "Fortnight" ? (fortnight_intt_emi || 0) : (intt_emi || 0)}','${data.period_mode === "Fortnight" ? (fortnight_emi > 0 ? fortnight_emi : 0) : (tot_emi > 0 ? tot_emi : 0)}','${data.recovery_date}','${data.period_mode}','${data.loan_cycle}', '${dateFormat(
                                     startDate,
                                     "yyyy-mm-dd"
                                 )}','${dateFormat(endDate, "yyyy-mm-dd")}','${data.trans_date
