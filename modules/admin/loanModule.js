@@ -139,25 +139,42 @@ module.exports = {
                             data.curr_roi,
                             data.period_mode
                         );
-                        let prn_emi = await calculate_prn_emi(
+                        let tot_prn_emi = await calculate_prn_emi(
                             dts.prn_disb_amt,
                             data.period
                         );
-                        let fortnight_prn_emi = Math.round(prn_emi / 2);
+                        let prn_emi = Math.round(tot_prn_emi);
+                        // let fortnight_prn_emi = Math.round(prn_emi / 2);
+                        var fortnight_prn_emis = (tot_prn_emi / 2);
+                        let fortnight_prn_emi = Math.round(fortnight_prn_emis);
 
-                        let intt_emi = await calculate_intt_emi(intt_cal_amt, data.period);
+                        let tot_intt_emi = await calculate_intt_emi(intt_cal_amt, data.period);
+                        let intt_emi = Math.round(tot_intt_emi);
 
-                        let fortnight_intt_emi = Math.round(intt_emi / 2);
+                        // let fortnight_intt_emi = Math.round(intt_emi / 2);
+                        var fortnight_intt_emis = (intt_emi / 2);
+                        let fortnight_intt_emi = Math.round(fortnight_intt_emis);
 
                         if (isNaN(prn_emi) || isNaN(intt_emi)) {
                             console.error(
                                 "One of the values is not a number. Please check the calculate functions."
                             );
                         } else {
-                            var tot_emi = Math.round(
-                                parseFloat(prn_emi) + parseFloat(intt_emi)
-                            );
-                            var fortnight_emi = Math.round(tot_emi / 2);  
+                            // var tot_emi = Math.round(
+                            //     parseFloat(prn_emi) + parseFloat(intt_emi)
+                            // );
+                            //  var tot_emis = 
+                            //     parseFloat(tot_prn_emi) + parseFloat(tot_intt_emi);
+                            //     console.log(tot_emis,'tot_emis');
+                                
+                            var tot_emi = (prn_emi + intt_emi)
+                            console.log(tot_emi,'tot_emi');
+                            
+                            // var fortnight_emi = Math.round(tot_emi / 2);  
+                            // var fortnight_emis = (fortnight_prn_emis + fortnight_intt_emis);  
+                            // var fortnight_emi = Math.round(fortnight_emis);  
+                            var fortnight_emi = (fortnight_prn_emi + fortnight_intt_emi);  
+                             console.log(fortnight_emi,'fortnight_tot_emi');
                         }
 
                         let outstanding =
@@ -182,7 +199,7 @@ module.exports = {
                         // console.log("End Date:", endDate);
 
                         var table_name = "td_loan",
-                            fields = `(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,period_mode,loan_cycle,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,
+                            fields = `(loan_id,branch_code,group_code,member_code,grt_form_no,purpose,sub_purpose,applied_amt,applied_dt,scheme_id,fund_id,period,curr_roi,od_roi,disb_dt,prn_disb_amt,intt_cal_amt,prn_amt,od_prn_amt,od_dt,intt_amt,od_intt_amt,outstanding,prn_emi,intt_emi,tot_emi,recovery_day,week_no,period_mode,loan_cycle,instl_start_dt,instl_end_dt,last_trn_dt,created_by,created_dt)`,
                             values = `('${loan_code}','${data.branch_code == "" ? 0 : data.branch_code
                                 }','${data.group_code == "" ? 0 : data.group_code}','${dts.member_code == "" ? 0 : dts.member_code
                                 }','${dts.grt_form_no == "" ? 0 : dts.grt_form_no}','${data.purpose
@@ -193,7 +210,7 @@ module.exports = {
                                 }','${intt_cal_amt}','${dts.prn_disb_amt == "" ? 0 : dts.prn_disb_amt
                                 }','${data.old_prn_amt == "" ? 0 : data.old_prn_amt
                                 }',NULL,'${intt_cal_amt}','${data.od_intt_amt == "" ? 0 : data.od_intt_amt
-                                }','${outstanding > 0 ? outstanding : 0}','${data.period_mode === "Fortnight" ? (fortnight_prn_emi || 0) : (prn_emi || 0)}','${data.period_mode === "Fortnight" ? (fortnight_intt_emi || 0) : (intt_emi || 0)}','${data.period_mode === "Fortnight" ? (fortnight_emi > 0 ? fortnight_emi : 0) : (tot_emi > 0 ? tot_emi : 0)}','${data.recovery_date}','${data.period_mode}','${data.loan_cycle}', '${dateFormat(
+                                }','${outstanding > 0 ? outstanding : 0}','${data.period_mode === "Fortnight" ? (fortnight_prn_emi || 0) : (prn_emi || 0)}','${data.period_mode === "Fortnight" ? (fortnight_intt_emi || 0) : (intt_emi || 0)}','${data.period_mode === "Fortnight" ? (fortnight_emi > 0 ? fortnight_emi : 0) : (tot_emi > 0 ? tot_emi : 0)}','${data.recovery_date}','${data.week_no}','${data.period_mode}','${data.loan_cycle}', '${dateFormat(
                                     startDate,
                                     "yyyy-mm-dd"
                                 )}','${dateFormat(endDate, "yyyy-mm-dd")}','${data.trans_date

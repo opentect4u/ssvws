@@ -415,7 +415,8 @@ const calculate_prn_emi = (principal, period) => {
     // console.log(emi_prn.toFixed(2));
 
     //  resolve(emi_prn.toFixed(2));
-    resolve(Math.round(emi_prn));
+    // resolve(Math.round(emi_prn));
+    resolve(emi_prn);
   });
 };
 
@@ -427,7 +428,8 @@ const calculate_intt_emi = (interest, period) => {
     // console.log(emi_intt.toFixed(2));
 
     //  resolve(emi_intt.toFixed(2));
-    resolve(Math.round(emi_intt));
+    // resolve(Math.round(emi_intt));
+    resolve(emi_intt);
   });
 };
 
