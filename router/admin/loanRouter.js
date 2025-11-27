@@ -684,7 +684,7 @@ loanRouter.post("/fetch_search_grp_view", async (req, res) => {
     // whr = `group_code = '${data.group_code}'`,
     // order = `GROUP BY a.purpose,b.purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.period,a.period_mode,a.fund_id,d.fund_name,a.disb_dt`;
     var select =
-        "a.loan_id,a.member_code,e.client_name,a.purpose,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.recovery_day,a.period,a.period_mode,a.loan_cycle,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,a.disb_dt,(a.prn_disb_amt) disburse_amt,(a.tot_emi)tot_emi,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
+        "a.loan_id,a.member_code,e.client_name,a.purpose,CONCAT(b.sub_purpose,'-',b.purpose_id)purpose_id,a.scheme_id,c.scheme_name,a.curr_roi,a.recovery_day,a.week_no,a.period,a.period_mode,a.loan_cycle,a.fund_id,d.fund_name,(a.applied_amt) applied_amt,a.disb_dt,(a.prn_disb_amt) disburse_amt,(a.tot_emi)tot_emi,(a.prn_amt + a.od_prn_amt + a.intt_amt) curr_outstanding",
       table_name =
         "td_loan a LEFT JOIN md_purpose b ON a.purpose = b.purp_id LEFT JOIN md_scheme c ON a.scheme_id = c.scheme_id LEFT JOIN md_fund d ON a.fund_id = d.fund_id LEFT JOIN md_member e ON a.member_code = e.member_code",
       whr = `group_code = '${data.group_code}'`,
@@ -742,7 +742,7 @@ loanRouter.post("/view_loan_dtls", async (req, res) => {
 
   //view loan details
   var select =
-      "a.loan_id,a.branch_code,a.group_code,g.group_name,a.member_code,b.client_name,a.purpose,CONCAT(c.sub_purpose,'-',c.purpose_id)purpose_id,a.scheme_id,e.scheme_name,a.period_mode,a.fund_id,f.fund_name,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day",
+      "a.loan_id,a.branch_code,a.group_code,g.group_name,a.member_code,b.client_name,a.purpose,CONCAT(c.sub_purpose,'-',c.purpose_id)purpose_id,a.scheme_id,e.scheme_name,a.period_mode,a.fund_id,f.fund_name,a.period,a.curr_roi,a.disb_dt,a.prn_disb_amt,a.intt_cal_amt,a.prn_amt,a.intt_amt,a.outstanding,a.prn_emi,a.intt_emi,a.tot_emi,a.recovery_day,a.week_no",
     table_name =
       "td_loan a LEFT JOIN md_member b ON a.member_code = b.member_code LEFT JOIN md_purpose c ON a.purpose = c.purp_id LEFT JOIN md_scheme e ON a.scheme_id = e.scheme_id LEFT JOIN md_fund f ON a.fund_id = f.fund_id LEFT JOIN md_group g ON a.group_code = g.group_code",
     whr = data.branch_code == '100' ? `a.loan_id = '${data.loan_id}'` : `a.loan_id = '${data.loan_id}' AND a.branch_code = '${data.branch_code}'`,
@@ -815,7 +815,7 @@ loanRouter.post("/change_recovery_day", async (req, res) => {
       // console.log(dt,'dtttt');
 
       var table_name = "td_loan",
-        fields = `recovery_day = '${data.recovery_day}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+        fields = `recovery_day = '${data.recovery_day}', week_no = '${data.week_no}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
         values = null,
         whr = `loan_id = '${dt.loan_id}'`,
         flag = 1;
