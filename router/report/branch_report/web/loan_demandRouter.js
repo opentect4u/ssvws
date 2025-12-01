@@ -245,9 +245,9 @@ loan_demandRouter.post("/loan_demand_report_groupwise", async (req, res) => {
         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
         var dateResult = await db_Select(date_query);
-        console.log(dateResult, 'dmy');
+        // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,e.branch_name,a.group_cd,c.group_name,c.co_id,SUM(b.prn_disb_amt)prn_disb_amt,b.curr_roi,b.period,b.period_mode,
             CASE 
@@ -329,7 +329,7 @@ loan_demandRouter.post("/loan_demand_report_fundwise", async (req, res) => {
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,b.period_mode,
         CASE 
@@ -432,7 +432,7 @@ loan_demandRouter.post("/loan_demand_report_cowise", async (req, res) => {
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name co_name,b.period_mode, 
         CASE 
@@ -475,7 +475,7 @@ loan_demandRouter.post("/loan_demand_report_memberwise", async (req, res) => {
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.loan_id,b.member_code,f.client_name,a.group_cd,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode, 
         CASE 
@@ -517,7 +517,7 @@ loan_demandRouter.post("/loan_demand_report_branchwise", async (req, res) => {
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = "DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,SUM(a.dmd_amt) demand_amt,SUM(b.prn_amt + b.intt_amt) curr_outstanding",
         table_name = "td_loan_month_demand a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
@@ -541,14 +541,14 @@ loan_demandRouter.post("/loan_demand_report_branchwise", async (req, res) => {
 loan_demandRouter.post("/filter_dayawise_dmd_report_groupwise", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'filter data');
+        // console.log(data,'filter data');
         
         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,SUM(b.prn_disb_amt)disb_amt,b.curr_roi,b.period,b.period_mode, 
         CASE 
@@ -582,14 +582,14 @@ loan_demandRouter.post("/filter_dayawise_dmd_report_groupwise", async (req, res)
 loan_demandRouter.post("/filter_dayawise_dmd_report_fundwise", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'filter fund');
+        // console.log(data,'filter fund');
 
         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name co_name,b.fund_id,f.fund_name,b.period_mode, 
         CASE 
@@ -624,14 +624,14 @@ loan_demandRouter.post("/filter_dayawise_dmd_report_fundwise", async (req, res) 
 loan_demandRouter.post("/filter_dayawise_dmd_report_cowise", async (req, res) => {
     try {
         var data = req.body;
-        console.log(data,'filter co');
+        // console.log(data,'filter co');
 
         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
 
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
 
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.group_cd,d.group_name,d.co_id,e.emp_name co_name,b.period_mode, 
         CASE 
@@ -665,7 +665,7 @@ loan_demandRouter.post("/filter_dayawise_dmd_report_cowise", async (req, res) =>
 loan_demandRouter.post("/filter_dayawise_dmd_report_membwise", async (req, res) => {
     try{
         var data = req.body;
-        console.log(data,'filter member');
+        // console.log(data,'filter member');
         
 
         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
@@ -673,7 +673,7 @@ loan_demandRouter.post("/filter_dayawise_dmd_report_membwise", async (req, res) 
         var dateResult = await db_Select(date_query);
         // console.log(dateResult, 'dmy');
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
-        console.log("Created date:", create_date);
+        // console.log("Created date:", create_date);
        
         var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,a.loan_id,b.member_code,f.client_name,a.group_cd,d.group_name,d.co_id,e.emp_name co_name,b.disb_dt,b.prn_disb_amt disb_amt,b.curr_roi,b.period,b.period_mode, 
         CASE 
