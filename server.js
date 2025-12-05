@@ -137,6 +137,7 @@ const { groupRouter } = require("./router/report/branch_report/web/GroupRouter")
 const { prev_loan_transRouter } = require("./router/report/branch_report/web/previous_loan_transRouter");
 const { disb_rejectRouter } = require("./router/admin/loan/disb_rejectionRouter");
 const { initSocket } = require("./model/socketModel");
+const { advance_collRouter } = require("./router/report/branch_report/web/advance_collRouter");
 
 
 // app.use(authCheckForLogin);
@@ -193,13 +194,14 @@ app.use('/',authenticateToken,portfolioRouter)
 app.use('/',authenticateToken,groupRouter)
 app.use('/',authenticateToken,prev_loan_transRouter)
 app.use('/',authenticateToken,disb_rejectRouter)
+app.use('/',authenticateToken,advance_collRouter)
 
 app.get("/",async (req, res) => {
   // var currentDate = `${dateFormat(new Date(), "yyyy-mm-dd")}`;
   // console.log(currentDate);
   
   // const bcrypt = require("bcrypt");
-  // var pass = bcrypt.hashSync('SSVWS@2025',10)
+  // var pass = bcrypt.hashSync('9038080776',10)
   // console.log(pass);
   
 //   var user = req.session.user;
@@ -208,7 +210,7 @@ app.get("/",async (req, res) => {
 //   } else {
     // res.redirect("/login");
 //   }
-// res.send(currentDate)
+// res.send(pass)
 // try{
 //   const currentDate = dateFormat(new Date(), "yyyy-mm-dd");
 //   const branch_code = "111";

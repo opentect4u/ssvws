@@ -551,7 +551,7 @@ module.exports = {
                       : ""
                   }','${dt.credit}','0','${prnEmi}','${inttEMI}','${prn_recov}','0','${intt_recovs}','${datetime}','R','${data.tr_mode}','${data.bank_name}','${
                     data.cheque_id == "" ? 0 : data.cheque_id
-                  }', '${data.chq_dt == "" ? null : data.chq_dt}','${dt.upload_on}'
+                  }', ${data.chq_dt ? `'${data.chq_dt}'` : 'NULL'},'${dt.upload_on}'
 ,'U','${
                     data.created_by
                   }','${datetime}','${data.trn_lat}','${
@@ -620,6 +620,7 @@ module.exports = {
                     reject({ suc: 0, msg: "Print receipt data not generated" });
                   }
                 } else {
+                  console.error("REC INSERT ERROR:", rec_dtls_prn);
                   reject({
                     suc: 0,
                     msg: "Recovery row not inserted",
