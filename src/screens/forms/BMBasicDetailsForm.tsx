@@ -111,7 +111,8 @@ const { handleLogout } = useContext<any>(AppStore)
     const formattedDob = formattedDate(formData?.dob)
 
     const [openDate2, setOpenDate2] = useState(() => false)
-    const formattedGrtDate = formattedDate(formData?.grtDate)
+    // const formattedGrtDate = formattedDate(formData?.grtDate)
+    const formattedGrtDate = loginStore?.transaction_date
 
     const isToday = (someDate: Date) => {
         const today = new Date()
@@ -557,7 +558,7 @@ const { handleLogout } = useContext<any>(AppStore)
         // Object.keys(creds).forEach(keys =>{
         //         fb.append(keys,creds[keys])
         // })
-        // console.log("handleUpdateBasicDetails", creds, "handleUpdateBasicDetails")
+        // console.log("handleUpdateBasicDetails", creds_                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               , "handleUpdateBasicDetails")
         // return;
 
         // 🧠 Convert all string values to CAPITAL letters
@@ -690,6 +691,9 @@ const { handleLogout } = useContext<any>(AppStore)
                 co_gps_address: addr,
                 created_by: loginStore?.emp_id,
             };
+
+            // console.log(creds_, 'creds_creds_creds______________________________________________________');
+            
 
             // 🧠 Convert all string values to CAPITAL letters
             const creds = Object.fromEntries(
@@ -923,6 +927,7 @@ const { handleLogout } = useContext<any>(AppStore)
 
     // Inform parent about the current disabled state.
     useEffect(() => {
+        // console.log(updateDisabled, 'updateDisabledupdateDisabledupdateDisabledupdateDisabled');
         onUpdateDisabledChange(updateDisabled)
     }, [updateDisabled, onUpdateDisabledChange])
 
@@ -1139,14 +1144,18 @@ const { handleLogout } = useContext<any>(AppStore)
                     />
 
                     <Divider /> */}
-
+                    {/* <Text>{JSON.stringify(loginStore?.transaction_date , null, 2)}   {JSON.stringify(formData.grtDate , null, 2)}</Text> */}
                     <ButtonPaper
                         textColor={theme.colors.primary}
                         onPress={() => setOpenDate2(true)}
                         mode="elevated"
                         icon="calendar-outline"
-                        disabled={disableCondition(approvalStatus, branchCode)}>
-                        CHOOSE GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")}
+                        // disabled={disableCondition(approvalStatus, branchCode)}
+                        disabled={true}
+                        >
+                        {/* CHOOSE GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")} */}
+                        CHOOSE GRT DATE*: {loginStore?.transaction_date}
+                        
                     </ButtonPaper>
                     <DatePicker
                         modal

@@ -1,5 +1,5 @@
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createMaterialBottomTabNavigator } from "react-native-paper/react-navigation"
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons"
 import { usePaperColorScheme } from "../theme/theme"
@@ -15,6 +15,8 @@ import useCurrentRouteName from "../hooks/useCurrentRoute"
 import LoanRecoveryNavigation from "./LoanRecoveryNavigation"
 import ReportsNavigation from "./ReportsNavigation"
 import DemandNavigation from './DemandNavigation'
+import useCheckOpenCloseDate from '../components/useCheckOpenCloseDate'
+import { useIsFocused } from '@react-navigation/native'
 // import { loginStorage } from "../storage/appStorage"
 // import { LoginDataMessage } from "../models/api_types"
 
@@ -23,10 +25,27 @@ const Tab = createMaterialBottomTabNavigator()
 function BottomNavigationPaper() {
     const theme = usePaperColorScheme()
     const currentRoute = useCurrentRouteName()
+    const isFocused = useIsFocused()
 
     const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
+    
+    // const pendingApprove = JSON.parse(loginStorage?.getString("pendingApprove") ?? "")
+    // console.log("CURRNT ROUTE: ", pendingApprove)
 
-    console.log("CURRNT ROUTE: ", currentRoute)
+    const { checkOpenCloseDate, openDtCloseDt } =	useCheckOpenCloseDate(loginStore)
+
+	useEffect(() => {
+		checkOpenCloseDate()
+	}, [checkOpenCloseDate])
+
+
+    // useEffect(() => {
+    //         // console.log(loginStore?.id, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh 1 2');
+    //         console.log(openDtCloseDt, 'openDtCloseDtopenDtCloseDtopen________________________XXXXXXXXXXXX');
+    //         if(isFocused){
+    //         console.log(openDtCloseDt, 'openDtCloseDtopenDtCloseDtopen________________________');
+    //         }
+    //     }, [isFocused])
 
     const shouldHideTabBar = ["BMPendingLoanFormScreen", "SearchByGroupScreen", "COGroupFormExtendedScreen", "SearchByMemberScreen", "MemberDetailsAllFormScreen", "BMPendingLoansScreen", "RecoveryGroupScreen", "RecoveryMemberScreen", "AvailableFormsScreen", "SearchByCOScreen", "FormsAgainstCOScreen", "SearchTransactionChooseScreen", "SearchApprovedLoansScreen", "SearchUnapprovedLoansScreen", "GRTFormScreen", "RecoveryReportScreen"].includes(currentRoute)
 
@@ -36,6 +55,7 @@ function BottomNavigationPaper() {
         <Tab.Navigator
             theme={theme}
             initialRouteName="Home"
+            
             activeColor={theme.colors.primary}
             inactiveColor={theme.colors.onSurface}
             barStyle={{
@@ -62,7 +82,9 @@ function BottomNavigationPaper() {
                         ) : (
                             <MaterialCommunityIcons name="home" color={color} size={26} />
                         ),
+                        
                 }}
+                
             />
             {checkBMOrCOFlag === 1 || checkBMOrCOFlag===2 ? (
                 <>
@@ -142,7 +164,10 @@ function BottomNavigationPaper() {
                     : (null)
             }
             {/* ===========================to be enabled================= */}
-            {(loginStore?.id === 1 || loginStore?.id === 2) &&   <Tab.Screen
+            {(loginStore?.id === 1 || loginStore?.id === 2) &&   
+            <>
+            {openDtCloseDt === "O" &&(
+            <Tab.Screen
                 name={navigationRoutes.reportsNavigation}
                 component={ReportsNavigation}
                 options={{
@@ -158,10 +183,17 @@ function BottomNavigationPaper() {
                             <MaterialCommunityIcons name="table-headers-eye" color={color} size={26} />
                         ),
                 }}
-            />}
+            />
+            )}
+            
+            </>
+            }
             {/* ===========================to be enabled================= */}
 
-            {(loginStore?.id === 1 || loginStore?.id === 2) && <Tab.Screen
+            {(loginStore?.id === 1 || loginStore?.id === 2) && 
+            <>
+            {openDtCloseDt === "O" &&(
+            <Tab.Screen
                 name={navigationRoutes.loanRecoveryNavigation}
                 component={LoanRecoveryNavigation}
                 options={{
@@ -177,9 +209,17 @@ function BottomNavigationPaper() {
                             <MaterialCommunityIcons name="refresh-circle" color={color} size={26} />
                         ),
                 }}
-            />}
+            />
+            )}
+            
+            </>
+        }
 
-{(loginStore?.id === 1 || loginStore?.id === 2) &&  <Tab.Screen
+{(loginStore?.id === 1 || loginStore?.id === 2) &&  
+
+            <>
+            {openDtCloseDt === "O" &&(
+                <Tab.Screen
                 name={navigationRoutes.searchNavigation}
                 component={SearchNavigation}
                 options={{
@@ -195,7 +235,11 @@ function BottomNavigationPaper() {
                             <MaterialCommunityIcons name="database-search" color={color} size={26} />
                         ),
                 }}
-            />}
+            />
+            )}
+            
+            </>
+        }
             {/* <Tab.Screen
                 name={navigationRoutes.DemandNavigation}
                 component={DemandNavigation}

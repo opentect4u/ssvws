@@ -57,6 +57,8 @@ const BMPendingLoanFormScreen = () => {
     // NEXT button handler.
     // For the Basic Details and Occupation Details step, it triggers the update logic.
     const handleNextButton = () => {
+        console.log(currentPosition, 'currentPosition________________________________________', basicDetailsFormRef.current);
+        
         if (currentPosition === 0) {
             basicDetailsFormRef.current?.updateAndNext()
         }

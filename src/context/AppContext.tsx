@@ -1,12 +1,16 @@
 import axios from "axios"
 import React, { createContext, useEffect, useRef, useState } from "react"
-import { AppState, ToastAndroid, BackHandler, Text } from "react-native"
+import { AppState, ToastAndroid, BackHandler, Text, Alert } from "react-native"
 import { branchStorage, loginStorage } from "../storage/appStorage"
 import { ADDRESSES } from "../config/api_list"
 import DeviceInfo from "react-native-device-info"
 import DialogBox from "../components/DialogBox";
 
+// ✅ Correct Firebase import
+import messaging from '@react-native-firebase/messaging'
+
 export const AppStore = createContext<any>(null)
+
 
 const AppContext = ({ children }) => {
     const appState = useRef(AppState.currentState)
@@ -18,7 +22,7 @@ const AppContext = ({ children }) => {
     const [isLoading, setIsLoading] = useState<boolean>(() => false)
     const [dialogVisible, setDialogVisible] = useState(false);
 
-    const handleLogin = async (username: string, password: string,branch:any,userId:number,branchName:string) => {
+    const handleLogin = async (username: string, password: string,branch:any,userId:number,branchName:string, fcmToken:string) => {
         setIsLoading(true)
         const creds = {
             emp_id: username,
@@ -27,7 +31,8 @@ const AppContext = ({ children }) => {
             "flag": "A",
             "session_id": 0,
             "in_out_flag":"I",
-            branch_code:branch
+            branch_code:branch,
+            fcm_token: fcmToken
         }
 
         console.log("LOGIN-----USERNAME-----PASS", creds)
@@ -104,6 +109,42 @@ const AppContext = ({ children }) => {
         console.log('asadsasd')
         setIsLoading(false)
     }
+
+
+    //   Firebase onMessage listener
+    useEffect(() => {
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+        
+      console.log(remoteMessage?.notification?.body, 'remoteMessage________________________');
+      // Alert.alert('New Notification', 'lll');
+      
+    //   if (logout_Storage.getString("logoutSet-data") != 'logged_out') {
+        Alert.alert('New Notification', JSON.stringify(remoteMessage?.notification?.body || ""));
+        handleLogout()
+    //   }
+
+    //   if (remoteMessage?.data?.title == 'force_logout') {
+    //     // logout_FireBase();
+    //     handleLogout()
+    //   }
+
+    })
+
+    messaging().setBackgroundMessageHandler(async remoteMessage => {
+
+    //   if (remoteMessage?.data?.title == 'force_logout') {
+        handleLogout()
+    //   }
+    });
+
+    return unsubscribe;
+
+
+
+  }, []);
+
+    
 
     const fetchCurrentVersion = async () => {
         // console.log('SASD')

@@ -25,6 +25,7 @@ import useGeoLocation from '../hooks/useGeoLocation'
 import DeviceInfo from 'react-native-device-info'
 import { AppStore } from '../context/AppContext'
 import useCurrentRouteName from '../hooks/useCurrentRoute'
+import useCheckOpenCloseDate from '../components/useCheckOpenCloseDate'
 
 const HomeScreen = () => {
     const theme = usePaperColorScheme()
@@ -63,6 +64,7 @@ const HomeScreen = () => {
     const [clockedInFetchedAddress, setClockedInFetchedAddress] = useState(() => "")
     const [clockInStatus, setClockInStatus] = useState<string>(() => "")
     const [checkIsAttandanceStatusPending, setAttanadanceStatusPending] = useState<boolean>(() => true)
+    // const [openDtCloseDt, setOpenDtCloseDt] = useState(null)
 
 
     useEffect(() => {
@@ -336,7 +338,71 @@ const HomeScreen = () => {
         })
     }
 
+
+    // const useCheckOpenCloseDate = async () => {
+    //     const creds = {
+    //         branch_code: loginStore?.brn_code,
+
+    //     }
+
+        
+
+    //     // return
+        
+    //     await axios.post(`${ADDRESSES.CHECK_BRN_OPEN_CLOSE}`, creds,{
+    //         headers: {
+    //             Authorization: loginStore?.token, // example header
+    //             "Content-Type": "application/json", // optional
+    //         }
+    //     }).then(res => {
+    //         // console.log("CLOCK IN RES", res?.data)
+    //         // setAttanadanceStatusPending(false);
+    //         // console.log(res?.data?.msg?.length)
+    //         // if(res?.data?.suc === 0) {
+    //         //     handleLogout()
+    //         // }
+
+    //         // if (res?.data?.msg?.length === 0) {
+    //         //     setIsClockedIn(false)
+    //         //     return
+    //         // }
+
+    //         console.log(creds, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhh', res?.data);
+
+    //         // if (res?.data?.msg?.length === 0) {
+    //         if (res?.data?.end_flag === "C") {
+	// 			// localStorage.setItem("pendingApprove", "yes")
+    //             loginStorage.set("pendingApprove", JSON.stringify('yes'));
+	// 			setOpenDtCloseDt(res?.data?.end_flag)
+	// 		}
+    //         // }
+
+    //         // console.log("CLOCK IN RES================", res?.data)
+    //         // // console.log(formattedDateTime(res?.data?.msg[0]?.in_date_time));
+    //         // console.log("asasdads == ++ === " + formattedDateTime(new Date(res?.data?.msg[0]?.in_date_time)))
+    //         // setClockedInDateTime(res?.data?.msg[0]?.in_date_time)
+    //         // setClockedInFetchedAddress(res?.data?.msg[0]?.in_addr)
+    //         // setClockInStatus(res?.data?.msg[0]?.clock_status);
+    //     }).catch(err => {
+    //         console.log("CLOCK IN ERR", err);
+    //         // setAttanadanceStatusPending(false);
+    //     })
+    // }
+
+    // useEffect(() => {
+    //     // console.log(loginStore?.id, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh 1 22');
+    //     useCheckOpenCloseDate()
+    // }, [])
+
+    const { checkOpenCloseDate, openDtCloseDt } =	useCheckOpenCloseDate(loginStore)
+
+	useEffect(() => {
+		checkOpenCloseDate()
+	}, [checkOpenCloseDate])
+
+
     useEffect(() => {
+        
         fetchClockedInDateTime()
     }, [isClockedIn])
 
@@ -423,8 +489,10 @@ const HomeScreen = () => {
         // setLoading(false)
     }
 
+    
 
     useEffect(() => {
+        
         // console.log(loginStore?.id, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh 1 2');
         if(isFocused){
         if (loginStore?.id === 1) { // CO
@@ -803,7 +871,8 @@ const HomeScreen = () => {
                                 <Icon source="arrow-left-thin" size={25} color={theme.colors.onSurface} />
                             </View>
                             <View>
-                                <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`DATE: ${choosenDate.toLocaleDateString("en-GB")}`}</Text>
+                                {/* <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`DATE: ${choosenDate.toLocaleDateString("en-GB")}`}</Text> */}
+                                <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`DATE: ${loginStore?.transaction_date}`}</Text>
                                 <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`CURRENT TIME: ${currentTime.toLocaleTimeString("en-GB")}`}</Text>
                             </View>
                         </View>
@@ -848,6 +917,7 @@ const HomeScreen = () => {
                 variant="tertiary"
                 icon="form-select"
                 label="Pending Forms"
+                disabled={openDtCloseDt === "C" ? true : false}
                 onPress={() =>
                     navigation.dispatch(
                         CommonActions.navigate({
@@ -860,12 +930,14 @@ const HomeScreen = () => {
                 iconMode="dynamic"
                 customStyle={[styles.fabStyle, { backgroundColor: theme.colors.tertiaryContainer }]}
             />}
-
+            {/* openDtCloseDt */}
+            
             {loginStore?.id === 1 && <AnimatedFABPaper
                 color={theme.colors.onTertiaryContainer}
                 variant="tertiary"
                 icon="form-select"
                 label="GRT Form"
+                disabled={openDtCloseDt === "C" ? true : false}
                 onPress={() =>
                     navigation.dispatch(
                         CommonActions.navigate({

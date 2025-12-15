@@ -54,7 +54,8 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
         period: "",
         periodMode: "",
         txnMode: "C",
-        txnDate: new Date(),
+        txnDate: new Date(loginStore?.transaction_date),
+        // txnDate: loginStore?.transaction_date,
         chequeDate: new Date(),
         bankName: "",
         chequeId: "",
@@ -524,6 +525,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     paddingBottom: 10,
                     gap: 14
                 }}>
+                    {/* <Text>{formData?.txnDate?.toLocaleDateString("en-GB")}</Text> */}
                     <InputPaper label="Last Transaction Date" leftIcon='account-group-outline' keyboardType="default" value={new Date(last_trn_dt).toLocaleDateString("en-GB")} onChangeText={(txt: any) => handleFormChange("last_trn_dt", txt)} customStyle={{
                         backgroundColor: theme.colors.background,
                     }} disabled />
@@ -646,10 +648,13 @@ const { handleLogout } = useContext<any>(AppStore)
                             onPress={() => setOpenDate(true)}
                             mode="elevated"
                             icon="calendar"
+                            disabled={true}
                         // disabled={inputDisableLogic()}
                         >
                             {/* CHOOSE DOB: {formData.dob?.toLocaleDateString("en-GB")} */}
                             CHOOSE TXN. DATE: {formData.txnDate?.toLocaleDateString("en-GB")}
+                            {/* CHOOSE TXN. DATE: {loginStore?.transaction_date} */}
+
                         </ButtonPaper>
                     </View>
                     <DatePicker

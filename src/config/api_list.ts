@@ -75,5 +75,6 @@ export const ADDRESSES = {
     LOGOUT_APP:`${BASE_URL}/logout_app`,
 
 
-    PENDING_LIST_DATA:`${BASE_URL}/bm_show_pending_form`
+    PENDING_LIST_DATA:`${BASE_URL}/bm_show_pending_form`,
+    CHECK_BRN_OPEN_CLOSE:`${BASE_URL}/admin/fetch_brnwise_end_details`
 }

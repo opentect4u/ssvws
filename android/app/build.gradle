@@ -2,6 +2,9 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+// Firebase Gradle Plugin
+apply plugin: "com.google.gms.google-services"
+
 react {
     autolinkLibrariesWithApp()
 }
@@ -63,6 +66,10 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Firebase dependencies
+    implementation 'com.google.android.gms:play-services-auth:20.3.0'
+    implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
 
     implementation project(':react-native-vector-icons')
 

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "70765800126",
+    "project_id": "ssvws-logout",
+    "storage_bucket": "ssvws-logout.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:70765800126:android:4adc6e19756e8615408cef",
+        "android_client_info": {
+          "package_name": "com.ssvwsloan"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmdFwEwqXjCRroSQIqTAdgqWx3lh01XZ4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

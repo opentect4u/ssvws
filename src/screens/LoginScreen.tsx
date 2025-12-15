@@ -14,6 +14,10 @@ import DropDownPicker from 'react-native-dropdown-picker'
 // import axios from 'axios'
 // import { ADDRESSES } from '../config/api_list'
 import Icon from 'react-native-vector-icons/MaterialIcons';
+
+// ✅ Correct Firebase import
+import messaging from '@react-native-firebase/messaging'
+
 const LoginScreen = () => {
     const theme = usePaperColorScheme()
     // const appVersion = DeviceInfo.getVersion()
@@ -56,6 +60,11 @@ const LoginScreen = () => {
         }
     };
 
+    // ✅ Firebase State
+    const [fcmToken, setFcmToken] = useState(() => "");
+
+    
+
     const requestNearbyDevicesPermission = async () => {
         if (Platform.OS === 'android') {
             try {
@@ -81,6 +90,7 @@ const LoginScreen = () => {
     useEffect(() => {
         requestPermissions()
         fetchCurrentVersion()
+        requestUserPermission();
     }, [])
 
     useEffect(() => {
@@ -89,8 +99,50 @@ const LoginScreen = () => {
 
     const login = () => {
         const branchName = branch.find(el => el.code === selectedBranch)?.name || "";
-        handleLogin(username, password, selectedBranch, userId,branchName)
+        handleLogin(username, password, selectedBranch, userId, branchName, fcmToken)
     }
+
+
+    // ✅ FIXED PERMISSION CODE
+  const requestUserPermission = async () => {
+
+    // console.log('enabled', 'xxxxxxxxxxxxxxxxx');
+    
+    const authStatus = await messaging().requestPermission();
+
+    // console.log('authStatus', 'xxxxxxxxxxxxxxxxx', authStatus);
+
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+
+    if (enabled) {
+      console.log("Notification permission status:", authStatus);
+      getFcmToken();
+    } else {
+      Alert.alert("Push Notification permission denied");
+    }
+  };
+
+//   ✅ FIXED FCM TOKEN FUNCTION
+  const getFcmToken = async () => {
+    try {
+      const token = await messaging().getToken();
+
+      console.log('tokentokentokentokentoken', token, 'tokentokentokentokentoken');
+      
+
+      if (token) {
+        // console.log("FCM Token:", token);
+        setFcmToken(token);
+      } else {
+        console.log("Failed to get FCM token");
+      }
+    } catch (error) {
+      console.error("Error fetching FCM token:", error);
+    }
+  };
 
     // console.log("Device Info Verison :", appVersion)
 
