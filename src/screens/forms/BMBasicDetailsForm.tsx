@@ -1318,6 +1318,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     contentStyle={{
                         backgroundColor: theme.colors.background
                     }}
+                    style={{bottom:80}}
                     icon="camera"
                     background={'#fff'}
                     iconColor={theme.colors.primary}
