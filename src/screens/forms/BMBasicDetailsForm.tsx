@@ -74,6 +74,7 @@ const { handleLogout } = useContext<any>(AppStore)
     const [groupNames, setGroupNames] = useState(() => [])
     const [memberGenders, setMemberGenders] = useState(() => [])
     const [responseMemberCode, setResponseMemberCode] = useState(() => "")
+    const [isAadhaarVerified, setIsAadhaarVerified] = useState(false);
 
     const [memberCodeShowHide, setMemberCodeShowHide] = useState(() => false)
     const [formData, setFormData] = useState({
@@ -99,7 +100,8 @@ const { handleLogout } = useContext<any>(AppStore)
         groupCode: "",
         groupCodeName: "",
         dob: new Date(),
-        grtDate: new Date(),
+        // grtDate: new Date(),
+        grtDate: new Date(loginStore?.transaction_date),
         uploadImg: null, // image to be uploaded
         previewImg: "" // image to be previewed
     })
@@ -111,8 +113,8 @@ const { handleLogout } = useContext<any>(AppStore)
     const formattedDob = formattedDate(formData?.dob)
 
     const [openDate2, setOpenDate2] = useState(() => false)
-    // const formattedGrtDate = formattedDate(formData?.grtDate)
-    const formattedGrtDate = loginStore?.transaction_date
+    const formattedGrtDate = formattedDate(formData?.grtDate)
+    // const formattedGrtDate = loginStore?.transaction_date
 
     const isToday = (someDate: Date) => {
         const today = new Date()
@@ -330,99 +332,348 @@ const { handleLogout } = useContext<any>(AppStore)
         handleFetchEducations()
     }, [])
 
-    // const fetchClientDetails = async (flag, data) => {
-    //     // setLoading(true)
-    //     setOngoingLoanCheckFlag(true)
-    //     const creds = {
-    //         flag: flag,
-    //         user_dt: data,
-    //         branch_code: loginStore?.brn_code
-    //     }
+    const fetchClientDetails = async (flag:any, data:any) => {
+        // setLoading(false)
+        setOngoingLoanCheckFlag(true)
 
-    //     if (flag === "M" && !formData.clientMobile) {
-    //         return
-    //     }
+        console.log(flag, "check__________mmm", data)
 
-    //     if (flag === "P" && !formData.panNumber) {
-    //         return
-    //     }
+        const creds = {
+            flag: flag,
+            user_dt: data,
+            branch_code: loginStore?.brn_code
+        }
 
-    //     if (flag === "A" && !formData.aadhaarNumber) {
-    //         return
-    //     }
+        if (flag === "M" && !formData.clientMobile) {
+            return
+        }
 
-    //     await axios.post(`${ADDRESSES.FETCH_CLIENT_DETAILS}`, creds).then(res => {
+        if (flag === "P" && !formData.panNumber) {
+            return
+        }
+
+        if (flag === "A" && !formData.aadhaarNumber) {
+            return
+        }
+
+        if (flag === "V" && !formData.voterId) {
+            return
+        }
+
+        await axios.post(`${ADDRESSES.FETCH_CLIENT_DETAILS}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
 
     
-    //         console.log("PPPPPPPPPPPPPPPPP", res?.data)
-    //         if (res?.data?.suc === 1) {
-    //             if (res?.data?.msg?.length > 0) {
-    //                 setMemberCodeShowHide(true)
-    //                 setFormData({
-    //                     clientName: res?.data?.msg[0]?.client_name || "",
-    //                     clientEmail: res?.data?.msg[0]?.email_id || "",
-    //                     clientGender: res?.data?.msg[0]?.gender || "",
-    //                     clientMobile: res?.data?.msg[0]?.client_mobile || "",
-    //                     guardianName: res?.data?.msg[0]?.gurd_name || "",
-    //                     guardianMobile: res?.data?.msg[0]?.gurd_mobile || "",
-    //                     clientAddress: res?.data?.msg[0]?.client_addr || "",
-    //                     clientPin: res?.data?.msg[0]?.pin_no || "",
-    //                     aadhaarNumber: res?.data?.msg[0]?.aadhar_no || "",
-    //                     panNumber: res?.data?.msg[0]?.pan_no || "",
-    //                     religion: res?.data?.msg[0]?.religion || "",
-    //                     otherReligion: res?.data?.msg[0]?.other_religion || "",
-    //                     caste: res?.data?.msg[0]?.caste || "",
-    //                     otherCaste: res?.data?.msg[0]?.other_caste || "",
-    //                     education: res?.data?.msg[0]?.education ?? "",
-    //                     otherEducation: res?.data?.msg[0]?.other_education || "",
-    //                     groupCode: res?.data?.msg[0]?.prov_grp_code || "",
-    //                     groupCodeName: res?.data?.msg[0]?.group_name || "",
-    //                     dob: res?.data?.msg[0]?.dob ? new Date(res.data.msg[0].dob) : new Date(),
-    //                     grtDate: res?.data?.msg[0]?.grt_date ? new Date(res.data.msg[0].grt_date) : new Date(),
-    //                 })
-    //                 setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
+            console.log(formData, "PPPPPPPPPPPPPPPPP", res?.data)
 
-    //                 if (approvalStatus !== "U") {
-    //                     setGeolocationFetchedAddress(res?.data?.msg[0]?.co_gps_address || "")
-    //                 }
-    //             }
-    //         } else if (res?.data?.suc === 0) {
-    //             Alert.alert("On-going Loan", `${res?.data?.status}`, [{
-    //                 text: "OK",
-    //                 onPress: () => {
-    //                     setFormData({
-    //                         clientName: "",
-    //                         clientEmail: "",
-    //                         clientGender: "",
-    //                         clientMobile: "",
-    //                         guardianName: "",
-    //                         guardianMobile: "",
-    //                         clientAddress: "",
-    //                         clientPin: "",
-    //                         aadhaarNumber: "",
-    //                         panNumber: "",
-    //                         religion: "",
-    //                         otherReligion: "",
-    //                         caste: "",
-    //                         otherCaste: "",
-    //                         education: "",
-    //                         otherEducation: "",
-    //                         groupCode: "",
-    //                         groupCodeName: "",
-    //                         dob: new Date(),
-    //                         grtDate: new Date(),
-    //                     })
-    //                     setMemberCodeShowHide(false)
-    //                 }
-    //             }])
-    //         }
+                if (res?.data?.suc === 1) { // Suc 2 Fresh User
 
-    //     }).catch(err => {
-    //         ToastAndroid.show("Some error occurred while fetching data", ToastAndroid.SHORT)
-    //     })
-    //     // setLoading(false)
-    //     setOngoingLoanCheckFlag(false)
-    // }
+                Alert.alert("Message", `${res?.data?.status}`, [{
+                text: "OK",
+                onPress: () => {
+                setFormData({
+                // clientName: "",
+                // clientEmail: "",
+                // clientGender: "",
+                // clientMobile: "",
+                // guardianName: "",
+                // guardianMobile: "",
+                // clientAddress: "",
+                // clientPin: "",
+                // aadhaarNumber: "",
+                // panNumber: "",
+                // religion: "",
+                // otherReligion: "",
+                // caste: "",
+                // otherCaste: "",
+                // education: "",
+                // otherEducation: "",
+                // groupCode: "",
+                // groupCodeName: "",
+                // dob: new Date(),
+                // grtDate: new Date(),
+
+
+                clientName: "",
+                clientEmail: "",
+                clientGender: "",
+                clientMobile: formData?.clientMobile ? formData?.clientMobile : "",
+                guardianName: "",
+                guardianMobile: "",
+                clientAddress: "",
+                clientPin: "",
+                aadhaarNumber: formData?.aadhaarNumber ? formData?.aadhaarNumber : "",
+                panNumber: formData?.panNumber ? formData?.panNumber : "",
+                religion: "",
+                otherReligion: "",
+                caste: "",
+                otherCaste: "",
+                education: "",
+                otherEducation: "",
+                groupCode: "",
+                dob: new Date(),
+                grtDate: new Date(loginStore?.transaction_date),
+
+                husbandName: "",
+                nomineeName: "",
+                voterId: formData?.voterId ? formData?.voterId : "",
+                groupCodeName: "",
+                // grtDate: new Date(),
+                uploadImg: null, // image to be uploaded
+                previewImg: "" // image to be previewed
+                })
+
+                setIsAadhaarVerified(false)
+                setMemberCodeShowHide(false)
+                }
+                }])
+                // setFormData({
+
+                //         clientName: "",
+                //         clientEmail: "",
+                //         clientGender: "",
+                //         clientMobile: "",
+                //         guardianName: "",
+                //         guardianMobile: "",
+                //         clientAddress: "",
+                //         clientPin: "",
+                //         aadhaarNumber: "",
+                //         panNumber: "",
+                //         religion: "",
+                //         otherReligion: "",
+                //         caste: "",
+                //         otherCaste: "",
+                //         education: "",
+                //         otherEducation: "",
+                //         groupCode: "",
+                //         dob: new Date(),
+                //         grtDate: new Date(loginStore?.transaction_date),
+
+                //         husbandName: "",
+                //         nomineeName: "",
+                //         voterId: "",
+                //         groupCodeName: "",
+                //         // grtDate: new Date(),
+                //         uploadImg: null, // image to be uploaded
+                //         previewImg: "" // image to be previewed
+                //     })
+                }
+
+                if (res?.data?.suc === 2) { // Suc 2 Exist User, Only show default data
+
+                Alert.alert("Message", `${res?.data?.status}`, [{
+                text: "OK",
+                onPress: () => {
+                setFormData({
+
+                clientName: res?.data?.msg[0]?.client_name.length > 0 ? res?.data?.msg[0]?.client_name : formData?.clientName || "",
+                clientEmail: res?.data?.msg[0]?.email_id ? res?.data?.msg[0]?.email_id : "",
+                clientGender: res?.data?.msg[0]?.gender ? res?.data?.msg[0]?.gender : "",
+                clientMobile: res?.data?.msg[0]?.client_mobile ? res?.data?.msg[0]?.client_mobile : "",
+                guardianName: res?.data?.msg[0]?.gurd_name ? res?.data?.msg[0]?.gurd_name : "",
+                guardianMobile: res?.data?.msg[0]?.gurd_mobile ? res?.data?.msg[0]?.gurd_mobile : "",
+                clientAddress: res?.data?.msg[0]?.client_addr ? res?.data?.msg[0]?.client_addr : "",
+                clientPin: res?.data?.msg[0]?.pin_no > 0 ? res?.data?.msg[0]?.pin_no : "",
+                aadhaarNumber: res?.data?.msg[0]?.aadhar_no ? res?.data?.msg[0]?.aadhar_no : "",
+                panNumber: res?.data?.msg[0]?.aadhar_no ? res?.data?.msg[0]?.pan_no : "",
+                religion: res?.data?.msg[0]?.religion ? res?.data?.msg[0]?.religion : "",
+                otherReligion: res?.data?.msg[0]?.other_religion ? res?.data?.msg[0]?.other_religion : "",
+                caste: res?.data?.msg[0]?.caste ? res?.data?.msg[0]?.caste : "",
+                otherCaste: res?.data?.msg[0]?.other_caste ? res?.data?.msg[0]?.other_caste : "",
+                education: res?.data?.msg[0]?.education ? res?.data?.msg[0]?.education : "",
+                otherEducation: res?.data?.msg[0]?.other_education ? res?.data?.msg[0]?.other_education : "",
+                groupCode: "",
+                dob: res?.data?.msg[0]?.dob ?  new Date(res?.data?.msg[0]?.dob) : new Date(),
+                grtDate: new Date(loginStore?.transaction_date),
+
+                husbandName: res?.data?.msg[0]?.husband_name ? res?.data?.msg[0]?.husband_name : "",
+                nomineeName: res?.data?.msg[0]?.nominee_name ? res?.data?.msg[0]?.nominee_name : "",
+                voterId: res?.data?.msg[0]?.voter_id ? res?.data?.msg[0]?.voter_id : "",
+                groupCodeName: "",
+                // grtDate: new Date(),
+                uploadImg: null, // image to be uploaded
+                previewImg: "" // image to be previewed
+                })
+
+                res?.data?.msg[0]?.aadhar_verify_flag == "Y" ? setIsAadhaarVerified(true) : setIsAadhaarVerified(false)
+                
+                setMemberCodeShowHide(false)
+                }
+                }])
+
+                }
+
+                if (res?.data?.suc === 3) { // Suc 3 GRT done but loan disbursement is pending || Outstanding Pending
+
+                Alert.alert("Message", `${res?.data?.status}`, [{
+                text: "OK",
+                onPress: () => {
+                setFormData({
+                clientName: "",
+                clientEmail: "",
+                clientGender: "",
+                clientMobile: "",
+                guardianName: "",
+                guardianMobile: "",
+                clientAddress: "",
+                clientPin: "",
+                aadhaarNumber: "",
+                panNumber: "",
+                religion: "",
+                otherReligion: "",
+                caste: "",
+                otherCaste: "",
+                education: "",
+                otherEducation: "",
+                groupCode: "",
+                dob: new Date(),
+                grtDate: new Date(loginStore?.transaction_date),
+
+                husbandName: "",
+                nomineeName: "",
+                voterId: "",
+                groupCodeName: "",
+                // grtDate: new Date(),
+                uploadImg: null, // image to be uploaded
+                previewImg: "" // image to be previewed
+                })
+                setMemberCodeShowHide(false)
+                }
+                }])
+
+                }
+               
+                // if (res?.data?.msg?.length > 0) {
+                //     setMemberCodeShowHide(true)
+                //     setFormData({
+                //         // clientName: res?.data?.msg[0]?.client_name || "",
+                //         // clientEmail: res?.data?.msg[0]?.email_id || "",
+                //         // clientGender: res?.data?.msg[0]?.gender || "",
+                //         // clientMobile: res?.data?.msg[0]?.client_mobile || "",
+                //         // guardianName: res?.data?.msg[0]?.gurd_name || "",
+                //         // guardianMobile: res?.data?.msg[0]?.gurd_mobile || "",
+                //         // clientAddress: res?.data?.msg[0]?.client_addr || "",
+                //         // clientPin: res?.data?.msg[0]?.pin_no || "",
+                //         // aadhaarNumber: res?.data?.msg[0]?.aadhar_no || "",
+                //         // panNumber: res?.data?.msg[0]?.pan_no || "",
+                //         // religion: res?.data?.msg[0]?.religion || "",
+                //         // otherReligion: res?.data?.msg[0]?.other_religion || "",
+                //         // caste: res?.data?.msg[0]?.caste || "",
+                //         // otherCaste: res?.data?.msg[0]?.other_caste || "",
+                //         // education: res?.data?.msg[0]?.education ?? "",
+                //         // otherEducation: res?.data?.msg[0]?.other_education || "",
+                //         // groupCode: res?.data?.msg[0]?.prov_grp_code || "",
+                //         // groupCodeName: res?.data?.msg[0]?.group_name || "",
+                //         // dob: res?.data?.msg[0]?.dob ? new Date(res.data.msg[0].dob) : new Date(),
+                //         // grtDate: res?.data?.msg[0]?.grt_date ? new Date(res.data.msg[0].grt_date) : new Date(),
+        
+                //         clientName: res?.data?.msg[0]?.client_name || "",
+                //         clientEmail: "",
+                //         clientGender: "",
+                //         clientMobile: "",
+                //         guardianName: "",
+                //         guardianMobile: "",
+                //         clientAddress: "",
+                //         clientPin: "",
+                //         aadhaarNumber: "",
+                //         panNumber: "",
+                //         religion: "",
+                //         otherReligion: "",
+                //         caste: "",
+                //         otherCaste: "",
+                //         education: "",
+                //         otherEducation: "",
+                //         groupCode: "",
+                //         dob: new Date(),
+                //         grtDate: new Date(loginStore?.transaction_date),
+
+                //         husbandName: "",
+                //         nomineeName: "",
+                //         voterId: "",
+                //         groupCodeName: "",
+                //         // grtDate: new Date(),
+                //         uploadImg: null, // image to be uploaded
+                //         previewImg: "" // image to be previewed
+                //     })
+
+                //     setReadonlyMemberId(res?.data?.msg[0]?.member_code || "")
+                //     if (approvalStatus !== "U") {
+                //         setGeolocationFetchedAddress(res?.data?.msg[0]?.co_gps_address || "")
+                //     }
+
+                // }
+           
+            if (res?.data?.suc === 0) {
+                handleLogout()
+                // Alert.alert("On-going Loan", `${res?.data?.status}`, [{
+                //     text: "OK",
+                //     onPress: () => {
+                //         setFormData({
+                //             // clientName: "",
+                //             // clientEmail: "",
+                //             // clientGender: "",
+                //             // clientMobile: "",
+                //             // guardianName: "",
+                //             // guardianMobile: "",
+                //             // clientAddress: "",
+                //             // clientPin: "",
+                //             // aadhaarNumber: "",
+                //             // panNumber: "",
+                //             // religion: "",
+                //             // otherReligion: "",
+                //             // caste: "",
+                //             // otherCaste: "",
+                //             // education: "",
+                //             // otherEducation: "",
+                //             // groupCode: "",
+                //             // groupCodeName: "",
+                //             // dob: new Date(),
+                //             // grtDate: new Date(),
+
+
+                //         clientName: "",
+                //         clientEmail: "",
+                //         clientGender: "",
+                //         clientMobile: "",
+                //         guardianName: "",
+                //         guardianMobile: "",
+                //         clientAddress: "",
+                //         clientPin: "",
+                //         aadhaarNumber: "",
+                //         panNumber: "",
+                //         religion: "",
+                //         otherReligion: "",
+                //         caste: "",
+                //         otherCaste: "",
+                //         education: "",
+                //         otherEducation: "",
+                //         groupCode: "",
+                //         dob: new Date(),
+                //         grtDate: new Date(loginStore?.transaction_date),
+
+                //         husbandName: "",
+                //         nomineeName: "",
+                //         voterId: "",
+                //         groupCodeName: "",
+                //         // grtDate: new Date(),
+                //         uploadImg: null, // image to be uploaded
+                //         previewImg: "" // image to be previewed
+                //         })
+                //         setMemberCodeShowHide(false)
+                //     }
+                // }])
+            }
+
+        }).catch(err => {
+            ToastAndroid.show("Some error occurred while fetching data", ToastAndroid.SHORT)
+        })
+        // setLoading(false)
+        setOngoingLoanCheckFlag(false)
+    }
 
     const fetchBasicDetails = async () => {
         setLoading(true)
@@ -520,6 +771,9 @@ const { handleLogout } = useContext<any>(AppStore)
 
     const handleUpdateBasicDetails = async () => {
         // console.log("handleUpdateBasicDetails called - " + geolocationFetchedAddress);
+        // console.log('ggggggggggggggggggggggggggg');
+        
+        // return
 
         const creds_ = {
             form_no: formNumber,
@@ -644,6 +898,10 @@ const { handleLogout } = useContext<any>(AppStore)
     }
 
     const handleSubmitBasicDetails = async () => {
+
+        // console.log('tttttttttttttttttttttttttttttttt', approvalStatus);
+        // return
+
         setLoading(true)
         if (approvalStatus === "U") {
             await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
@@ -691,8 +949,10 @@ const { handleLogout } = useContext<any>(AppStore)
                 co_gps_address: addr,
                 created_by: loginStore?.emp_id,
             };
-
+            
             // console.log(creds_, 'creds_creds_creds______________________________________________________');
+            // setLoading(false);
+            // return
             
 
             // 🧠 Convert all string values to CAPITAL letters
@@ -748,6 +1008,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         uploadImg: ""
                     })
                     setMemberCodeShowHide(false)
+                    setIsAadhaarVerified(false)
                     onSubmit()
                 }
                 else {
@@ -1153,8 +1414,8 @@ const { handleLogout } = useContext<any>(AppStore)
                         // disabled={disableCondition(approvalStatus, branchCode)}
                         disabled={true}
                         >
-                        {/* CHOOSE GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")} */}
-                        CHOOSE GRT DATE*: {loginStore?.transaction_date}
+                        CHOOSE GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")}
+                        {/* CHOOSE GRT DATE*: {loginStore?.transaction_date} */}
                         
                     </ButtonPaper>
                     <DatePicker
@@ -1172,6 +1433,12 @@ const { handleLogout } = useContext<any>(AppStore)
                             setOpenDate2(false)
                         }}
                     />
+
+
+                    {/* <View>
+                    <Text>{flag}</Text>
+                    </View> */}
+
 
                     {flag !== "CO" && <InputPaper
                         label="Group Name"
@@ -1197,10 +1464,10 @@ const { handleLogout } = useContext<any>(AppStore)
                         keyboardType="phone-pad"
                         value={formData.clientMobile}
                         onChangeText={(txt: any) => handleFormChange("clientMobile", txt)}
-                        // onBlur={() => {
-                        //     formData.clientMobile &&
-                        //         fetchClientDetails("M", formData.clientMobile)
-                        // }}
+                        onBlur={() => {
+                            formData.clientMobile &&
+                                fetchClientDetails("M", formData.clientMobile)
+                        }}
                         customStyle={{
                             backgroundColor: theme.colors.background,
                         }}
@@ -1212,14 +1479,28 @@ const { handleLogout } = useContext<any>(AppStore)
                         leftIcon='card-account-details-star-outline'
                         keyboardType="numeric" value={formData.aadhaarNumber}
                         onChangeText={(txt: any) => handleFormChange("aadhaarNumber", txt)}
-                        // onBlur={() => {
-                        //     formData.aadhaarNumber &&
-                        //         fetchClientDetails("A", formData.aadhaarNumber)
-                        // }}
+                        onBlur={() => {
+                            formData.aadhaarNumber &&
+                                fetchClientDetails("A", formData.aadhaarNumber)
+                        }}
                         customStyle={{
                             backgroundColor: theme.colors.background,
                         }}
                         disabled={disableCondition(approvalStatus, branchCode)} />
+
+                        {isAadhaarVerified && (
+                        <Text
+                        style={{
+                        color: "green",
+                        fontSize: 12,
+                        marginTop: -6,
+                        marginLeft: 4,
+                        }}
+                        >
+                        Aadhaar Number Verified ✔
+                        </Text>
+                        )}
+                    
 
                     <InputPaper
                         label="PAN No."
@@ -1228,10 +1509,10 @@ const { handleLogout } = useContext<any>(AppStore)
                         keyboardType="default"
                         value={formData.panNumber}
                         onChangeText={(txt: any) => handleFormChange("panNumber", txt)}
-                        // onBlur={() => {
-                        //     formData.panNumber &&
-                        //         fetchClientDetails("P", formData.panNumber)
-                        // }}
+                        onBlur={() => {
+                            formData.panNumber &&
+                                fetchClientDetails("P", formData.panNumber)
+                        }}
                         customStyle={{
                             backgroundColor: theme.colors.background,
                         }}
@@ -1244,10 +1525,10 @@ const { handleLogout } = useContext<any>(AppStore)
                         keyboardType="default"
                         value={formData.voterId}
                         onChangeText={(txt: any) => handleFormChange("voterId", txt)}
-                        // onBlur={() => {
-                        //     formData.panNumber &&
-                        //         fetchClientDetails("P", formData.panNumber)
-                        // }}
+                        onBlur={() => {
+                            formData.voterId &&
+                                fetchClientDetails("V", formData.voterId)
+                        }}
                         customStyle={{
                             backgroundColor: theme.colors.background,
                         }}
