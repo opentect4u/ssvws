@@ -872,10 +872,58 @@ const HomeScreen = () => {
                             </View>
                             <View>
                                 {/* <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`DATE: ${choosenDate.toLocaleDateString("en-GB")}`}</Text> */}
-                                <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`DATE: ${loginStore?.transaction_date}`}</Text>
-                                <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`CURRENT TIME: ${currentTime.toLocaleTimeString("en-GB")}`}</Text>
+                                <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`TXN DATE: ${loginStore?.transaction_date}`}</Text>
                             </View>
+                            
                         </View>
+
+                        <View style={{
+                            height: 80,
+                            width: "100%",
+                            backgroundColor: theme.colors.surface,
+                            borderRadius: 20,
+                            borderBottomRightRadius: 0,
+                            borderBottomLeftRadius: 0,
+                            alignItems: "center",
+                            paddingHorizontal: 15,
+                            flexDirection: "row-reverse",
+                            justifyContent: "space-between",
+                            // gap: 15
+                        }}>
+                            <View style={{
+                                backgroundColor: theme.colors.tertiaryContainer,
+                                width: 53,
+                                height: 53,
+                                borderRadius: 150,
+                                justifyContent: 'center',
+                                alignItems: "center"
+                            }}>
+                                <IconButton icon="calendar-month-outline" iconColor={theme.colors.onTertiaryContainer} onPress={() => setOpenDate2(true)} />
+                                {/* <DatePicker
+                                    modal
+                                    mode="date"
+                                    open={openDate2}
+                                    date={choosenDate}
+                                    onConfirm={date => {
+                                        setChoosenDate(date)
+                                        setOpenDate2(false)
+                                    }}
+                                    onCancel={() => {
+                                        setOpenDate2(false)
+                                    }}
+                                /> */}
+                            </View>
+                            <View>
+                                <Icon source="arrow-left-thin" size={25} color={theme.colors.onSurface} />
+                            </View>
+                            <View>
+                                <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`CURRENT DATE & TIME:`}</Text>
+                                <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`${choosenDate.toLocaleDateString("en-GB")} ${currentTime.toLocaleTimeString("en-GB")}`}</Text>
+                            </View>
+                            
+                        </View>
+
+                        
 
                         <ListCard
                             title={`No. of GRTs`}

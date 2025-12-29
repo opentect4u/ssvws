@@ -336,7 +336,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         }).then((res) => {
             // console.log('res?.data?.msg');
 
-            // console.log(res?.data, 'res?.data?.msg');
+            // console.log(res?.data, 'fffffffffffffffffffffffffff', res?.data?.msg);
             if(res?.data?.suc === 0) {
 
                 handleLogout()
@@ -652,7 +652,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         // disabled={inputDisableLogic()}
                         >
                             {/* CHOOSE DOB: {formData.dob?.toLocaleDateString("en-GB")} */}
-                            CHOOSE TXN. DATE: {formData.txnDate?.toLocaleDateString("en-GB")}
+                            TXN. DATE:   {formData.txnDate?.toLocaleDateString("en-GB")}
                             {/* CHOOSE TXN. DATE: {loginStore?.transaction_date} */}
 
                         </ButtonPaper>

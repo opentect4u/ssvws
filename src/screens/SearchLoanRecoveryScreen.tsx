@@ -60,13 +60,25 @@ const SearchLoanRecoveryScreen = () => {
             }
         }
 ).then(res => {
-            if (res?.data?.suc === 1) {
-                setFormsData(res?.data?.msg)
-                console.log("===++=++====", res?.data)
-            }
-            else{
+
+    // console.log(res?.data, 'gggggggggggggggggggggggggggggg');
+    
+            // if (res?.data?.suc === 1) {
+            //     setFormsData(res?.data?.msg)
+            //     // console.log("===++=++====", res?.data)
+            // }
+
+            // if (res?.data?.suc === 2) {
+            //     setFormsData(res?.data?.msg)
+            //     // console.log("===++=++====", res?.data)
+            // }
+
+            if (res?.data?.suc === 0) {
                 handleLogout() 
+            } else {
+                setFormsData(res?.data?.msg)
             }
+
         }).catch(err => {
             ToastAndroid.show("Some error while searching groups!", ToastAndroid.SHORT)
         })

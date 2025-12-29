@@ -1415,7 +1415,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         // disabled={disableCondition(approvalStatus, branchCode)}
                         disabled={true}
                         >
-                        CHOOSE GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")}
+                        GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")}
                         {/* CHOOSE GRT DATE*: {loginStore?.transaction_date} */}
                         
                     </ButtonPaper>
