@@ -196,6 +196,7 @@ function BottomNavigationPaper() {
             <Tab.Screen
                 name={navigationRoutes.loanRecoveryNavigation}
                 component={LoanRecoveryNavigation}
+                
                 options={{
                     tabBarLabel: "Loan Recovery",
                     tabBarIcon: ({ color, focused }) =>
@@ -209,6 +210,15 @@ function BottomNavigationPaper() {
                             <MaterialCommunityIcons name="refresh-circle" color={color} size={26} />
                         ),
                 }}
+
+                listeners={({ navigation }) => ({
+                tabPress: e => {
+                e.preventDefault()
+                navigation.navigate(navigationRoutes.loanRecoveryNavigation, {
+                screen: navigationRoutes.searchLoanRecoveryScreen,
+                })
+                },
+    })}
             />
             )}
             

@@ -21,6 +21,7 @@ const navigationRoutes = {
     DemandNavigation: "DemandNavigation",
     searchLoanRecoveryScreen: "SearchLoanRecoveryScreen",
     recoveryGroupScreen: "RecoveryGroupScreen",
+    recoveryGroupScreenResult: "RecoveryGroupScreenResult",
     recoveryMemberScreen: "RecoveryMemberScreen",
     searchNavigation: "SearchNavigation",
     searchByGroupScreen: "SearchByGroupScreen",

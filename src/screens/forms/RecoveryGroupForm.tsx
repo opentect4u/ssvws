@@ -433,6 +433,7 @@ const { handleLogout } = useContext<any>(AppStore)
         const transformedObj = memberDetailsArray.filter((item, i) => item.isChecked && item.credit > 0).map((item) => ({
             loan_id: item.loan_id,
             credit: item.credit,
+            // credit: isNaN,
             intt_cal_amt: item.intt_cal_amt,
             prn_emi: item.prn_emi,
             intt_emi: item.intt_emi,
@@ -440,6 +441,7 @@ const { handleLogout } = useContext<any>(AppStore)
             // balance:item.balance,
             group_code: fetchedData.group_code,
             prn_amt: item?.prn_amt,
+            // prn_amt: 'aaa',
             intt_amt: item?.intt_amt,
             last_trn_dt: formattedDate(formData.txnDate),
             upload_on: new Date().toLocaleTimeString("en-GB")
@@ -477,7 +479,7 @@ const { handleLogout } = useContext<any>(AppStore)
             "recovdtls": transformedObj
         }
 
-        console.log("PAYLOAD---RECOVERY", creds)
+        console.log("PAYLOAD---RECOVERY", creds, 'PPPPPPPPPPPPPPP')
         // return
         
         await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds, {
@@ -497,11 +499,23 @@ const { handleLogout } = useContext<any>(AppStore)
                 return
             }
             ToastAndroid.show("Loan recovery EMI installment done.", ToastAndroid.SHORT)
-            console.log("Loan recovery EMI installment done.", res?.data)
-
+            // console.log("Loan recovery EMI installment done.", res?.data)
             await handlePrint(res?.data?.msg)
 
-            navigation.goBack()
+            console.log('lllll', res?.data?.msg, 'dddddddddddddddd', res?.data?.not_inserted_row);
+            
+
+            navigation.dispatch(
+                        CommonActions.navigate({
+                            name: navigationRoutes.recoveryGroupScreenResult,
+                            params: {
+                            resultData: res?.data?.msg,
+                            not_inserted_row: res?.data?.not_inserted_row,
+                            },
+                        }),
+                    )
+
+            // navigation.goBack()
         }).catch(err => {
             ToastAndroid.show("Some error occurred while submitting EMI.", ToastAndroid.SHORT)
             console.log("Some error occurred while submitting EMI.", err)
@@ -769,7 +783,7 @@ const { handleLogout } = useContext<any>(AppStore)
                                             </View>
                                         )}
                                         right={() => {
-                                               console.log(item.prn_amt + +item.intt_amt, "@@@@@@@@@@@@@@", item?.outstanding)
+                                            //    console.log(item.prn_amt + +item.intt_amt, "@@@@@@@@@@@@@@", item?.outstanding)
                                             return (
                                                 <InputPaper selectTextOnFocus label="EMI" maxLength={8} 
                                                 // leftIcon='cash-100' 
