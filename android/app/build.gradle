@@ -23,7 +23,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 4
-        versionName "4.6.2"
+        versionName "4.6.3"
     }
     signingConfigs {
         release { 

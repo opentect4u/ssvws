@@ -112,7 +112,7 @@ useFocusEffect(
                         }}
                         >
                         <Text variant="titleSmall" style={{ fontWeight: "bold" }}>
-                            {item.client_name}
+                            {item.client_name.toUpperCase()}
                         </Text>
 
                         <Text variant="bodySmall">
