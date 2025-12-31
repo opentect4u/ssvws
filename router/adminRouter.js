@@ -4,6 +4,7 @@ const { blockRouter } = require('./admin/block/blockRouter');
 const { dashboard_dataRouter } = require('./admin/dashboard/dashboard_dataRouter');
 const { desigRouter } = require('./admin/designation/desigRouter');
 const { districtRouter } = require('./admin/district/districtrouter');
+const { dayEndRouter } = require('./admin/eod_sod/endDayRouter');
 const { fetchRouter } = require('./admin/fetchRouter');
 const { fundRouter } = require('./admin/fund/fundRouter');
 const { loanRouter } = require('./admin/loanRouter');
@@ -29,7 +30,8 @@ const express = require('express'),
     adminRouter.use(purposeRouter);
     adminRouter.use(fundRouter);
     adminRouter.use(schemeRouter);
-    adminRouter.use(audit_trialRouter)
+    adminRouter.use(audit_trialRouter);
+    adminRouter.use(dayEndRouter);
 
 module.exports = {adminRouter}
     

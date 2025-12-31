@@ -409,7 +409,7 @@ userRouter.post("/login_app", async (req, res) => {
   var data = req.body,
     result;
   const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
-  // console.log(data, 'Received Data');
+  console.log(data, 'Received Data');
 
   try {
     let requiredVersion = null;
@@ -470,7 +470,7 @@ userRouter.post("/login_app", async (req, res) => {
 
           await db_Insert(
             "md_user",
-            `created_by = "${data.emp_id}", created_at="${datetime}"`,
+            `created_by = "${data.emp_id}", fcm_token = '${data.fcm_token}', created_at="${datetime}"`,
             null,
             `emp_id='${user.emp_id}'`,
             1

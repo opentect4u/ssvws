@@ -107,7 +107,8 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
                 whr = `a.branch_code = b.branch_code 
                 AND a.member_code = b.member_code 
                 AND ((a.period_mode = 'Monthly' AND a.period = c.months) 
-                OR (a.period_mode = 'Weekly' AND a.period = c.weeks))
+                OR (a.period_mode = 'Weekly' AND a.period = c.weeks)
+                OR (a.period_mode = 'Fortnight' AND a.period = c.months))
                 AND a.branch_code = '${data.branch_code}'
                 AND a.group_code = ${dt.group_code} AND a.outstanding > 0`,
                 order = null;
@@ -152,7 +153,7 @@ recoveryRouter.post("/search_group_app", async (req, res) => {
 
         res.send({ suc: 1, msg: search_grp.msg }); 
     } else {
-        res.send({ suc: 0, msg: "No data found" });
+        res.send({ suc: 2, msg: [] });
     }
 });
 
@@ -185,7 +186,7 @@ recoveryRouter.post("/checking_date_before_transaction", async (req, res) => {
 
 recoveryRouter.post("/recovery_transaction", async (req, res) => {
     var data = req.body,res_dt;
-    // console.log(data,'dt');
+    console.log(data,'dt');
     
     //save recovery transaction
     recovery_trans(data).then(data => {

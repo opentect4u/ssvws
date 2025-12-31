@@ -815,7 +815,7 @@ loanRouter.post("/change_recovery_day", async (req, res) => {
       // console.log(dt,'dtttt');
 
       var table_name = "td_loan",
-        fields = `recovery_day = '${data.recovery_day}', week_no = '${data.week_no}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
+        fields = `recovery_day = '${data.recovery_day}', week_no = '${data.week_no ? data.week_no : 0}', modified_by = '${data.modified_by}', modified_dt = '${datetime}'`,
         values = null,
         whr = `loan_id = '${dt.loan_id}'`,
         flag = 1;
