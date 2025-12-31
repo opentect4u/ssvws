@@ -243,7 +243,7 @@ userRouter.post("/login_web", async (req, res) => {
     
     data.password = decrypt(data.password)
   const pattern = /^\d+$/;
-  // console.log(data,'data');
+  console.log(data,'data');
   if(pattern.test(data.emp_id)){
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     // console.log(data, 'Received Data');
