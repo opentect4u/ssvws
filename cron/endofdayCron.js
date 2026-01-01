@@ -42,8 +42,11 @@ const eodCron = async () => {
       let eod_data = await db_Insert(table_name, fields, values, whr, flag);
 
       if (eod_data.suc > 0) {
+          // WriteLogFile(
+          //   `[${dateFormat(new Date(), "dd-mmm-yy HH:MM:ss")}/${dt.branch_code}/${opened_date}] : EOD closed successfully\n`
+          // );
           WriteLogFile(
-            `[${dateFormat(new Date(), "dd-mmm-yy HH:MM:ss")}/${dt.branch_code}] : EOD closed successfully\n`
+             `[${dateFormat(new Date(), "dd-mmm-yy HH:MM:ss")}][Branch:${dt.branch_code}][Date:${opened_date}] EOD closed successfully\n`
           );
         } else {
           WriteLogFile(
