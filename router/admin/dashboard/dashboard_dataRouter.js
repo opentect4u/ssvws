@@ -4,13 +4,43 @@ const express = require('express'),
 dashboard_dataRouter = express.Router(),
 dateFormat = require('dateformat');
 
-//date of operation
+//date of operation COMMENT OFF 02.01.2026
+// dashboard_dataRouter.post("/date_of_operation", async (req, res) => {
+//   try {
+//     var data = req.body;
+    
+//     var select = "DATE_FORMAT(LAST_DAY(DATE_ADD(closed_upto, INTERVAL 1 MONTH)), '%M %Y') AS date_of_operation",
+//     table_name = "td_month_close",
+//     whr = `branch_code = '${data.branch_code}'`,
+//     order = null;
+//     var operation_date = await db_Select(select,table_name,whr,order);
+
+//     if (operation_date && operation_date.msg && operation_date.msg.length > 0) {
+//     res.send({
+//       suc : 1,
+//       data : {
+//         date_of_operation : operation_date.msg[0].date_of_operation
+//       } 
+//     });
+//     } else {
+//       res.send({
+//         suc: 0,
+//         msg: "No date_of_operation found for this branch"
+//       });
+//     }
+//   }catch(error){
+//     console.error("Error fetching Date of operation:", error);
+//     res.send({ suc: 0, msg: error });
+//   }
+// });
+
+
 dashboard_dataRouter.post("/date_of_operation", async (req, res) => {
   try {
     var data = req.body;
     
-    var select = "DATE_FORMAT(LAST_DAY(DATE_ADD(closed_upto, INTERVAL 1 MONTH)), '%M %Y') AS date_of_operation",
-    table_name = "td_month_close",
+    var select = "DATE_FORMAT(opened_date, '%M %Y') AS date_of_operation",
+    table_name = "td_eod_sod",
     whr = `branch_code = '${data.branch_code}'`,
     order = null;
     var operation_date = await db_Select(select,table_name,whr,order);
