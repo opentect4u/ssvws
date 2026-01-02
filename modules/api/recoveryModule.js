@@ -449,7 +449,7 @@ module.exports = {
   //05.03.2025 (problem create like interest row inserted recovery row not)
   // use upload on as time field for duplicate print 23.05.2025
   recovery_trans: (data) => {
-    // console.log(data,'data');
+    console.log(data,'data');
 
     return new Promise(async (resolve, reject) => {
       let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
@@ -460,7 +460,7 @@ module.exports = {
           data.branch_code,
           data.recovdtls[0].last_trn_dt
         );
-        // console.log(datevalidation,data.branch_code,data.recovdtls[0].last_trn_dt,'log');
+        console.log(datevalidation,data.branch_code,data.recovdtls[0].last_trn_dt,'log');
 
         if (datevalidation.suc > 0) {
           if (data.recovdtls.length > 0) {
@@ -489,16 +489,16 @@ module.exports = {
             }
 
             for (let dt of data.recovdtls) {
-              // console.log(dt,'dtdtd');
+              console.log(dt,'dtdtd');
               try {
                 if (dt.credit > 0 && dt.credit) {
                   let balance = parseFloat(dt.prn_amt) || 0; //previous prn amt
                   balance = !isNaN(balance) && balance > 0 ? balance : 0;
-                  // console.log(balance,'balance');
+                  console.log(balance,'balance');
 
                   let prnEmi = parseFloat(dt.prn_emi) || 0; //prn recovery
                   prnEmi = !isNaN(prnEmi) && prnEmi > 0 ? prnEmi : 0;
-                  // console.log(prnEmi,'prnEmi');
+                  console.log(prnEmi,'prnEmi');
 
                   let intt_balance = parseFloat(dt.intt_amt); //previous intt
                   let inttEMI = parseFloat(dt.intt_emi); //intt recovery
@@ -519,13 +519,13 @@ module.exports = {
                   let prn_recov = balance - prnEmi; //current prn balance
                   let intt_recovs = intt_balance - inttEMI; //current intt balance
 
-                  prn_recov = prn_recov > 0 ? prn_recov : 0;
-                  intt_recovs = intt_recovs > 0 ? intt_recovs : 0;
+                  prn_recov = prn_recov >= 0 ? prn_recov : 0;
+                  intt_recovs = intt_recovs >= 0 ? intt_recovs : 0;
 
                   //   if (rec_dtls_int.suc > 0) {
                   let payment_id = await payment_code();
-                  //console.log(payment_id,'id_recov');
-                  if (dt.credit > 0 && prnEmi > 0 && inttEMI > 0 && prn_recov > 0 && intt_recovs > 0 && balance > 0 && intt_balance > 0 && dt.intt_cal_amt > 0) {
+                  console.log(payment_id,'id_recov');
+                  if (dt.credit > 0 && prnEmi >= 0 && inttEMI >= 0 && prn_recov >= 0 && intt_recovs >= 0 && balance >= 0 && intt_balance >= 0 && dt.intt_cal_amt > 0) {
 
                     var table_name = "td_loan_transactions",
                       fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,upload_on,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
@@ -564,7 +564,7 @@ module.exports = {
                       whr,
                       flag
                     );
-                    // console.log(rec_dtls_prn);
+                    console.log(rec_dtls_prn);
 
                     if (rec_dtls_prn.suc > 0 && rec_dtls_prn.msg.length > 0) {
                       let prn_update = balance - prnEmi;
@@ -572,12 +572,12 @@ module.exports = {
                       let outs_update =
                         parseFloat(prn_update) + parseFloat(intt_update);
 
-                      // console.log(intt_update,'intt_recovery');
+                      console.log(intt_update,'intt_recovery');
 
                       let outstanding =
                         parseFloat(prn_recov) + parseFloat(intt_update);
 
-                      // console.log(prn_recov,intt_update,outstanding,'calculate');
+                      console.log(prn_recov,intt_update,outstanding,'calculate');
 
                       var table_name = "td_loan",
                         fields = `prn_amt = '${
@@ -601,7 +601,7 @@ module.exports = {
                         whr,
                         flag
                       );
-                      //console.log(rec_dt);
+                      console.log(rec_dt);
 
                       if (rec_dt.suc > 0 && rec_dt.msg.length > 0) {
                         var select = `a.loan_id,a.member_code,a.branch_code,a.group_code,a.outstanding memb_outstanding,b.payment_date tnx_date,b.tr_mode,b.cheque_id,b.credit,b.created_by collec_code,b.upload_on,c.group_name,d.branch_name,e.emp_name collec_name,f.client_name,(
