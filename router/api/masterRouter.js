@@ -377,15 +377,16 @@ masterRouter.post("/fetch_validation", async (req, res) => {
       if (grt_dt.suc > 0 && grt_dt.msg.length > 0) {
         let form_no = grt_dt.msg[0].form_no;
 
-        var select = "a.outstanding, b.branch_name",
+        var select = "a.outstanding, b.branch_name,a.grt_form_no",
           table_name = "td_loan a,md_branch b",
           whr = `a.branch_code = b.branch_code 
          AND a.member_code='${member_code}' 
-         AND a.grt_form_no = '${form_no}'`,
+         AND (a.grt_form_no = '${form_no}' OR a.grt_form_no = 0)`,
           order = null;
         var loan_dt = await db_Select(select, table_name, whr, order);
 
         if (loan_dt.suc > 0 && loan_dt.msg.length == 0) {
+          
           response_set = {
             suc: 3,
             msg: [],
