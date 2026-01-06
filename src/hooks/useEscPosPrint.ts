@@ -5,7 +5,7 @@ export const useEscPosPrint = () => {
     async function handlePrint(data: any, isDuplicate = false) {
         try {
             let tot_amt = 0
-            console.log('dataaaaaaaaaaaaaa', data)
+            // console.log('dataaaaaaaaaaaaaa', data)
             console.log("Called Printer...")
 
             let columnSingleRow = [32]

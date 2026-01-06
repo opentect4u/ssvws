@@ -18,6 +18,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 // ✅ Correct Firebase import
 import messaging from '@react-native-firebase/messaging'
 
+
+
 const LoginScreen = () => {
     const theme = usePaperColorScheme()
     // const appVersion = DeviceInfo.getVersion()
@@ -59,6 +61,8 @@ const LoginScreen = () => {
             }
         }
     };
+
+    const [locations, setLocations] = useState([]);
 
     // ✅ Firebase State
     const [fcmToken, setFcmToken] = useState(() => "");
@@ -230,6 +234,22 @@ const LoginScreen = () => {
         }
     }
 
+//   useEffect(() => {
+//     const fetchLocations = async () => {
+//       try {
+//         const data = await getAllLocations();
+//         console.log(data, 'All stored locations'); // ✅ will display all locations
+//         setLocations(data);
+//       } catch (error) {
+//         console.log('Error fetching locations:', error);
+//       }
+//     };
+
+//     fetchLocations();
+//   }, []);
+
+  
+
     return (
         <SafeAreaView>
             <ScrollView keyboardShouldPersistTaps="handled" style={{
@@ -249,6 +269,8 @@ const LoginScreen = () => {
                         borderTopRightRadius: normalize(50),
                         borderBottomLeftRadius: normalize(50)
                     }}>
+
+                        
                         {uat && <View style={{
                             position: "absolute",
                             top: 10,
@@ -263,6 +285,9 @@ const LoginScreen = () => {
                                 fontSize: 22
                             }}>UAT</Text>
                         </View>}
+
+                       
+
                         <View>
                             <Text variant='displayMedium' style={{
                                 color: theme.colors.primary

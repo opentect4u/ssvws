@@ -502,7 +502,7 @@ const { handleLogout } = useContext<any>(AppStore)
             // console.log("Loan recovery EMI installment done.", res?.data)
             await handlePrint(res?.data?.msg)
 
-            console.log('lllll', res?.data?.msg, 'dddddddddddddddd', res?.data?.not_inserted_row);
+            // console.log('lllll', res?.data?.msg, 'dddddddddddddddd', res?.data?.not_inserted_row);
             
 
             navigation.dispatch(
@@ -522,7 +522,7 @@ const { handleLogout } = useContext<any>(AppStore)
         })
         // বিঃ দ্রঃ - দোয়া করে এই রিসিটটির একটি ফটোকপি রাখবেন। 
 
-        console.log("JJJJJJJJJJJJJJJJJJJJ", transformedObj)
+        // console.log("JJJJJJJJJJJJJJJJJJJJ", transformedObj)
         setLoading(false)
     }
 

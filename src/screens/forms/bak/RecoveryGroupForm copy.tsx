@@ -424,7 +424,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
         })
         // বিঃ দ্রঃ - দোয়া করে এই রিসিটটির একটি ফটোকপি রাখবেন। 
 
-        console.log("JJJJJJJJJJJJJJJJJJJJ", transformedObj)
+        // console.log("JJJJJJJJJJJJJJJJJJJJ", transformedObj)
         setLoading(false)
     }
 
