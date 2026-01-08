@@ -70,7 +70,7 @@ loan_recov_approveRouter.post("/fetch_memberwise_recovery_admin", async (req, re
     var data = req.body;
 
         //FETCH MEMBERWISE RECOVERY DATA
-        var select = "a.payment_date transaction_date,a.payment_id,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,b.branch_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
+        var select = "a.payment_date transaction_date,a.payment_id,b.group_code,c.group_name,b.loan_id,b.tot_emi,e.client_name,a.credit amt,if(a.tr_mode='C','Cash','UPI')tr_mode,a.created_by creted_code,a.status,b.branch_code,d.emp_name created_by,(a.balance+a.od_balance+a.intt_balance) outstanding",
         table_name = "td_loan_transactions a JOIN td_loan b ON a.loan_id = b.loan_id JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_employee d ON a.created_by = d.emp_id LEFT JOIN md_member e ON b.member_code = e.member_code",
         whr = data.branch_code == '100' ? `a.status = 'U' AND a.tr_type = 'R'` : `b.branch_code = '${data.branch_code}' AND a.status = 'U' AND a.tr_type = 'R'`,
         order = null;
@@ -572,11 +572,45 @@ loan_recov_approveRouter.post("/checking_credit_amount_grp_cowise", async (req, 
 // });
 
 
+// loan_recov_approveRouter.post("/approve_grpwise_recov", async (req, res) => {
+//     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+//     var data = req.body;
+//     console.log(data,'data');
+
+//     //APPROVE GROUPWISE RECOVERY
+//     if (data.grpdt.length > 0) {        
+//         for (let dt of data.grpdt) {
+//         var select = "loan_id",
+//         table_name = "td_loan",
+//         whr = `branch_code = '${dt.branch_code}' AND group_code = '${dt.group_code}'`,
+//         order = null;
+//         var fetch_loan_id = await db_Select(select,table_name,whr,order);
+
+//             if(fetch_loan_id.suc > 0 && fetch_loan_id.msg.length > 0){
+//                 var loan_id_arr = fetch_loan_id.msg.map(ldt => ldt.loan_id)
+//                 // console.log(loan_id_arr,'arr');
+                
+//                 var table_name = "td_loan_transactions",
+//                 fields = `status = 'A', approved_by = '${data.approved_by}', approved_at = '${datetime}'`,
+//                 values = null,
+//                 whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND loan_id IN (${loan_id_arr.join(',')}) AND tr_type != 'D'`,
+//                 flag = 1;
+//                 var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
+//              }
+//         }
+//     }
+
+//     res.send(approve_dt)
+// });
+
 loan_recov_approveRouter.post("/approve_grpwise_recov", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
-    // console.log(data,'data');
+    console.log(data,'data');
 
+    let approve_dtls = [];
+
+      try {
     //APPROVE GROUPWISE RECOVERY
     if (data.grpdt.length > 0) {        
         for (let dt of data.grpdt) {
@@ -596,17 +630,64 @@ loan_recov_approveRouter.post("/approve_grpwise_recov", async (req, res) => {
                 whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND loan_id IN (${loan_id_arr.join(',')}) AND tr_type != 'D'`,
                 flag = 1;
                 var approve_dt = await db_Insert(table_name,fields,values,whr,flag);
+
+                approve_dtls.push(approve_dt);
+
+                const outstanding_chk = await db_Select(
+                        "SUM(outstanding) outstanding",
+                        "td_loan",
+                        `branch_code = '${dt.branch_code}'
+                         AND group_code = '${dt.group_code}'`,
+                        null
+                );
+
+                 const outstanding = outstanding_chk.suc > 0 &&  outstanding_chk.msg.length > 0
+                            ? outstanding_chk.msg[0].outstanding : 0;
+
+                 if (outstanding <= 0) {
+                        
+                    var select = "MAX(payment_date) payment_date",
+                    table_name = 'td_loan_transactions',
+                    whr = `loan_id IN (select loan_id
+                                       from td_loan
+                                       where group_code = '${dt.group_code}')`,
+                    order = null;
+                    var max_payment_date = await db_Select(select,table_name,whr,order);
+
+                    const payment_date = max_payment_date.suc > 0 &&  max_payment_date.msg.length > 0
+                            ? max_payment_date.msg[0].payment_date : null; 
+                            
+                       
+                            if(payment_date){
+                        const group_update = await db_Insert(
+                            "md_group",
+                            `open_close_flag = 'C',
+                             closed_dt = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}'`,
+                            null,
+                            `branch_code = '${dt.branch_code}'
+                             AND group_code = '${dt.group_code}'`,
+                            1
+                        );
+                        if (group_update.suc === 0) {
+                        console.log("Group not closed due to column mismatch or condition");
+                        }
+                    }
+                    }           
              }
         }
     }
-
     res.send(approve_dt)
+    }catch(error){
+        res.send(error)
+    }
 });
 
 loan_recov_approveRouter.post("/approve_member_recov", async (req, res) => {
     const datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
     var data = req.body;
     // console.log(data,'memdata');
+
+    let memb_approve_dtls = [];
 
     //APPROVE MEMBERWISE RECOVERY
     if (data.membdt.length > 0) {        
@@ -617,6 +698,48 @@ loan_recov_approveRouter.post("/approve_member_recov", async (req, res) => {
                 whr = `payment_date = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}' AND payment_id = '${dt.payment_id}' AND loan_id = '${dt.loan_id}' AND tr_type != 'D'`,
                 flag = 1;
                 var approve_dt_memb = await db_Insert(table_name,fields,values,whr,flag);
+
+                memb_approve_dtls.push(approve_dt_memb);
+
+                const outstanding_chk = await db_Select(
+                        "outstanding",
+                        "td_loan",
+                        `branch_code = '${dt.branch_code}'
+                         AND group_code = '${dt.group_code}'`,
+                        null
+                );
+
+                 const outstanding = outstanding_chk.suc > 0 &&  outstanding_chk.msg.length > 0
+                            ? outstanding_chk.msg[0].outstanding : 0;
+
+                 if (outstanding == 0) {
+                        
+                    var select = "MAX(payment_date) payment_date",
+                    table_name = 'td_loan_transactions',
+                    whr = `loan_id IN (select loan_id
+                                       from td_loan
+                                       where group_code = '${dt.group_code}')`,
+                    order = null;
+                    var max_payment_date = await db_Select(select,table_name,whr,order);
+
+                    const payment_date = max_payment_date.suc > 0 &&  max_payment_date.msg.length > 0
+                            ? max_payment_date.msg[0].payment_date : null;   
+                       
+                            if(payment_date){
+                        const group_update = await db_Insert(
+                            "md_group",
+                            `open_close_flag = 'C',
+                             closed_dt = '${dateFormat(dt.payment_date, 'yyyy-mm-dd')}'`,
+                            null,
+                            `branch_code = '${dt.branch_code}'
+                             AND group_code = '${dt.group_code}'`,
+                            1
+                        );
+                        if (group_update.suc === 0) {
+                        console.log("Group not closed due to column mismatch or condition");
+                        }
+                    }
+                    }   
         }
     }
 
