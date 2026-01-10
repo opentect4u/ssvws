@@ -44,7 +44,7 @@ groupRouter.post("/active_inactive_group_report", async (req, res) => {
         var data = req.body;
         // console.log(data,'data');
 
-            var select = `DISTINCT a.group_code,a.branch_code,c.branch_name,a.group_name,a.grp_open_dt group_open_date,DATE_FORMAT(a.closed_dt, '%Y-%m-%d') AS closed_dt,a.co_id,e.emp_name co_name,a.phone1,a.phone2,a.grp_addr,a.disctrict,f.dist_name,a.block,g.block_name,a.pin_no,h.bank_name,h.branch_name bank_branch,a.ifsc,a.micr,a.acc_no1 savings_acc,a.acc_no2 loan_acc`;
+            var select = `DISTINCT a.group_code,a.branch_code,c.branch_name,c.area_code,a.group_name,a.grp_open_dt group_open_date,DATE_FORMAT(a.closed_dt, '%Y-%m-%d') AS closed_dt,a.co_id,e.emp_name co_name,a.phone1,a.phone2,a.grp_addr,a.disctrict,f.dist_name,a.block,g.block_name,a.pin_no,h.bank_name,h.branch_name bank_branch,a.ifsc,a.micr,a.acc_no1 savings_acc,a.acc_no2 loan_acc`;
             table_name = `md_group a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.group_code = b.prov_grp_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_employee e ON a.co_id = e.emp_id LEFT JOIN md_district f ON a.disctrict = f.dist_id LEFT JOIN md_block g ON a.block = g.block_id LEFT JOIN md_bank h ON a.bank_name = h.bank_code`;
             whr = data.group_flag == 'A' ? `a.grp_open_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND a.open_close_flag = 'O'` : `a.closed_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND a.open_close_flag = 'C'`;
             if (data.branch_code != 100) {
@@ -99,7 +99,7 @@ groupRouter.post("/active_inactive_co_report", async (req, res) => {
         var data = req.body;
         // console.log(data,'data');
 
-            var select = `DISTINCT a.group_code,a.branch_code,c.branch_name,a.group_name,a.grp_open_dt group_open_date,DATE_FORMAT(a.closed_dt, '%Y-%m-%d') AS closed_dt,a.co_id,d.emp_name co_name,a.phone1,a.phone2,a.grp_addr,a.disctrict,f.dist_name,a.block,g.block_name,a.pin_no,h.bank_name,h.branch_name bank_branch,a.ifsc,a.micr,a.acc_no1 savings_acc,a.acc_no2 loan_acc`;
+            var select = `DISTINCT a.group_code,a.branch_code,c.branch_name,c.area_code,a.group_name,a.grp_open_dt group_open_date,DATE_FORMAT(a.closed_dt, '%Y-%m-%d') AS closed_dt,a.co_id,d.emp_name co_name,a.phone1,a.phone2,a.grp_addr,a.disctrict,f.dist_name,a.block,g.block_name,a.pin_no,h.bank_name,h.branch_name bank_branch,a.ifsc,a.micr,a.acc_no1 savings_acc,a.acc_no2 loan_acc`;
             table_name = `md_group a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code AND a.group_code = b.prov_grp_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_employee d ON a.co_id = d.emp_id LEFT JOIN md_district f ON a.disctrict = f.dist_id LEFT JOIN md_block g ON a.block = g.block_id LEFT JOIN md_bank h ON a.bank_name = h.bank_code`;
             whr = data.co_flag == 'A' ? `a.grp_open_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND a.open_close_flag = 'O' AND a.co_id IN (${data.co_id})` : `a.closed_dt BETWEEN '${data.from_date}' AND '${data.to_date}' AND a.open_close_flag = 'C' AND a.co_id IN (${data.co_id})`;
             if (data.branch_code != 100) {
@@ -162,7 +162,7 @@ groupRouter.post("/active_inactive_member_report", async (req, res) => {
         // console.log(data,'data');
         
 
-            var select = `b.form_no,b.grt_date,b.member_code,c.client_name,a.group_code,a.group_name,a.grp_open_dt group_open_date,DATE_FORMAT(a.closed_dt, '%Y-%m-%d') AS closed_dt,a.branch_code,e.branch_name,c.client_mobile,c.gurd_name,c.gurd_mobile,c.husband_name,c.client_addr,c.pin_no,c.nominee_name,c.aadhar_no,c.pan_no,c.voter_id,
+            var select = `b.form_no,b.grt_date,b.member_code,c.client_name,a.group_code,a.group_name,a.grp_open_dt group_open_date,DATE_FORMAT(a.closed_dt, '%Y-%m-%d') AS closed_dt,a.branch_code,e.branch_name,e.area_code,c.client_mobile,c.gurd_name,c.gurd_mobile,c.husband_name,c.client_addr,c.pin_no,c.nominee_name,c.aadhar_no,c.pan_no,c.voter_id,
             CASE WHEN UPPER(c.religion) = 'OTHERS' THEN c.other_religion ELSE c.religion END AS religion,
             CASE WHEN UPPER(c.caste) = 'OTHERS' THEN c.other_caste ELSE c.caste END AS caste,
             CASE WHEN UPPER(c.education) = 'OTHERS' THEN c.other_education ELSE c.education END AS education,

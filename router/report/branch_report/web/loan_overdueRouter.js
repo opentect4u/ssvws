@@ -44,7 +44,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           }
 
             for(let dt of data.search_brn_id){
-            var select = `a.trf_date,MIN(a.od_date) first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,f.branch_name bank_addr,b.period,b.period_mode,
+            var select = `a.trf_date,MIN(a.od_date) first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.acc_no1,d.acc_no2,f.branch_name bank_addr,b.period,b.period_mode,
             CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -62,7 +62,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
            END AS recovery_day,b.week_no,d.co_id code,e.emp_name co_name,SUM(a.disb_amt)loan_amt,b.instl_end_dt,SUM(b.prn_amt)outstanding_principal,SUM(b.intt_amt)outstanding_interest,SUM(a.outstanding) total_outstanding,SUM(a.od_amt) overdue`,
             table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code LEFT JOIN md_employee e ON d.co_id = e.emp_id LEFT JOIN md_bank f ON d.bank_name = f.bank_code",
             whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan WHERE branch_code IN (${dt.branch_code}) AND trf_date <= '${data.send_date}')`,
-            order = `GROUP BY a.trf_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,f.branch_name,d.co_id,e.emp_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
+            order = `GROUP BY a.trf_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.acc_no1,d.acc_no2,f.branch_name,d.co_id,e.emp_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
             ORDER BY b.group_code`;
             var loan_overdue_dtls = await db_Select(select, table_name, whr, order);
 
@@ -87,7 +87,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               }
 
             for(let dt of data.search_brn_id){
-           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.fund_id,f.fund_name,b.period,b.period_mode,
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.fund_id,f.fund_name,b.period,b.period_mode,
            CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -107,7 +107,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                            WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${data.send_date}') AND b.fund_id IN (${data.fund_id})`,
-          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
           ORDER BY b.group_code`;
           var loan_overdue_dtls_fundwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_fundwise.msg)
@@ -132,7 +132,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               }
 
               for(let dt of data.search_brn_id){
-           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.period,b.period_mode, 
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.period,b.period_mode, 
            CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -152,7 +152,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
           whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                            WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${data.send_date}') AND d.co_id IN (${data.co_id})`,
-          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.instl_end_dt,b.period,b.period_mode,b.week_no
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.instl_end_dt,b.period,b.period_mode,b.week_no
           ORDER BY b.group_code`;
           var loan_overdue_dtls_cowise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_cowise.msg)
@@ -178,7 +178,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               }
 
             for(let dt of data.search_brn_id){
-           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,h.branch_name bank_address,b.period,b.period_mode,
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.acc_no1,d.acc_no2,h.branch_name bank_address,b.period,b.period_mode,
            CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -221,12 +221,12 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               }
 
               for(let dt of data.search_brn_id){
-           var select = "a.branch_code,c.branch_name,SUM(a.disb_amt) loan_amt,SUM(b.prn_amt) outstanding_principal,SUM(b.intt_amt) outstanding_interest,SUM(a.outstanding) total_outstanding,SUM(a.od_amt) overdue",
+           var select = "a.branch_code,c.branch_name,c.area_code,SUM(a.disb_amt) loan_amt,SUM(b.prn_amt) outstanding_principal,SUM(b.intt_amt) outstanding_interest,SUM(a.outstanding) total_outstanding,SUM(a.od_amt) overdue",
           table_name = "td_od_loan a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
           whr = `a.branch_code IN (${dt.branch_code}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                            WHERE branch_code IN (${dt.branch_code})
                                                                            AND trf_date <= '${data.send_date}')`,
-          order = `GROUP BY a.branch_code,c.branch_name`;
+          order = `GROUP BY a.branch_code,c.branch_name,c.area_code`;
           var loan_overdue_dtls_branchwise = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_branchwise.msg)
         }
@@ -255,7 +255,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               const branchCodes = Array.isArray(dt.branch_code) ? dt.branch_code : [dt.branch_code];
               const branchCodeStr = branchCodes.map(b => `'${b}'`).join(',');
 
-            var select = `a.trf_date,MIN(a.od_date) first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name bank_addr,b.period,b.period_mode,
+            var select = `a.trf_date,MIN(a.od_date) first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name bank_addr,b.period,b.period_mode,
             CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -288,7 +288,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
             FROM td_od_loan 
             WHERE branch_code IN (${branchCodeStr}) 
             AND trf_date <= '${data.send_date}')`,
-            order = `GROUP BY a.trf_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name,d.co_id,e.emp_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
+            order = `GROUP BY a.trf_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name,d.co_id,e.emp_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
             ORDER BY b.group_code`;
             var loan_overdue_dtls_group = await db_Select(select, table_name, whr, order);
 
@@ -318,7 +318,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
               const branchCodes = Array.isArray(dt.branch_code) ? dt.branch_code : [dt.branch_code];
               const branchCodeStr = branchCodes.map(b => `'${b}'`).join(',');
 
-           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.fund_id,f.fund_name,b.period,b.period_mode,
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.fund_id,f.fund_name,b.period,b.period_mode,
            CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -342,7 +342,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                  AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                  WHERE branch_code IN (${branchCodeStr})
                  AND trf_date <= '${data.send_date}') AND b.fund_id IN (${data.fund_id}) AND b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN ${data.from_day} AND ${data.to_day}`,
-          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id,e.emp_name,b.fund_id,f.fund_name,b.recovery_day,b.week_no,b.disb_dt,b.instl_end_dt,b.period,b.period_mode
           ORDER BY b.group_code`;
           var loan_overdue_dtls_fundwise_day = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_fundwise_day.msg)
@@ -370,7 +370,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                 const branchCodes = Array.isArray(dt.branch_code) ? dt.branch_code : [dt.branch_code];
                 const branchCodeStr = branchCodes.map(b => `'${b}'`).join(',');
 
-           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.period,b.period_mode, 
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id code,e.emp_name co_name,b.period,b.period_mode, 
            CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -392,7 +392,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                                                                            AND trf_date <= '${data.send_date}') AND d.co_id IN (${data.co_id}) AND b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN ${data.from_day} AND ${data.to_day} AND b.week_no = '${data.week_no}'` : `a.branch_code IN (${branchCodeStr}) AND a.trf_date = (SELECT MAX(trf_date) FROM td_od_loan
                                                                            WHERE branch_code IN (${branchCodeStr})
                                                                            AND trf_date <= '${data.send_date}') AND d.co_id IN (${data.co_id}) AND b.period_mode = '${data.period_mode}' AND b.recovery_day BETWEEN ${data.from_day} AND ${data.to_day}`,
-          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.week_no,b.instl_end_dt,b.period,b.period_mode
+          order = `GROUP BY a.trf_date,a.od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.co_id,e.emp_name,b.recovery_day,b.week_no,b.instl_end_dt,b.period,b.period_mode
           ORDER BY b.group_code`;
           var loan_overdue_dtls_cowise_day = await db_Select(select, table_name, whr, order);
           finalData.push(...loan_overdue_dtls_cowise_day.msg)
@@ -419,7 +419,7 @@ loan_overdueRouter.post("/fetch_usertypeWise_branch_name", async (req, res) => {
                const branchCodes = Array.isArray(dt.branch_code) ? dt.branch_code : [dt.branch_code];
                const branchCodeStr = branchCodes.map(b => `'${b}'`).join(',');
 
-           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name bank_address,b.period,b.period_mode,
+           var select = `a.trf_date,a.od_date first_od_date,a.branch_code,c.branch_name,c.area_code,b.group_code,d.group_name,d.acc_no1,d.acc_no2,d.branch_name bank_address,b.period,b.period_mode,
            CASE 
            WHEN b.period_mode = 'Monthly' THEN b.recovery_day
            WHEN b.period_mode IN ('Weekly','Fortnight') THEN 

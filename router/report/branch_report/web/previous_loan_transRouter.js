@@ -38,7 +38,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.payment_date,a.branch_code,b.branch_name code,c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
+    var select = `a.payment_date,a.branch_code,b.branch_name code,b.area_code,c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
     table_name = `(SELECT a.payment_date,a.payment_id,b.branch_code,a.loan_id,a.debit,a.credit,0 intt
                    FROM td_loan_transactions a,td_loan b
                    WHERE a.loan_id = b.loan_id
@@ -60,7 +60,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
            AND e.co_id       = f.emp_id
            AND c.scheme_id   = g.scheme_id
            AND e.bank_name = h.bank_code`,
-    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
+    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,b.area_code,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
     ORDER BY a.payment_date`       
     var groupwise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(groupwise_prev_loan_transaction_report);
@@ -75,7 +75,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     try{
         var data = req.body;
 
-        var select = `a.payment_date,a.branch_code,b.branch_name code,a.loan_id,c.member_code,d.client_name,
+        var select = `a.payment_date,a.branch_code,b.branch_name code,b.area_code,a.loan_id,c.member_code,d.client_name,
        c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,
        e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,
        SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
@@ -107,7 +107,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
                AND e.co_id       = f.emp_id
                AND c.scheme_id   = g.scheme_id
                AND e.bank_name = h.bank_code`,
-        order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,a.loan_id,c.member_code,d.client_name,
+        order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,b.area_code,a.loan_id,c.member_code,d.client_name,
            c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,
            f.emp_name,c.scheme_id,g.scheme_name
            ORDER BY a.payment_date,a.loan_id`;
@@ -125,7 +125,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
+    var select = `a.payment_date,a.branch_code,b.branch_name,b.area_code,c.group_code,e.group_name,h.bank_name,h.branch_name bank_branch,e.acc_no1 sb_account,e.acc_no2 loan_account,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
     table_name = `(SELECT a.payment_date,a.payment_id,b.branch_code,a.loan_id,a.debit,a.credit,0 intt
                    FROM td_loan_transactions a,td_loan b
                    WHERE a.loan_id = b.loan_id
@@ -148,7 +148,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
            AND c.scheme_id   = g.scheme_id
            AND e.bank_name = h.bank_code
            AND e.co_id IN (${data.co_id})`,
-    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
+    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,b.area_code,c.group_code,e.group_name,h.bank_name,h.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
     ORDER BY a.payment_date`       
     var cowise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(cowise_prev_loan_transaction_report);
@@ -164,7 +164,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.payment_date,a.branch_code,b.branch_name,c.fund_id,h.fund_name,c.group_code,e.group_name,e.co_id,f.emp_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
+    var select = `a.payment_date,a.branch_code,b.branch_name,b.area_code,c.fund_id,h.fund_name,c.group_code,e.group_name,e.co_id,f.emp_name,SUM(a.debit)debit,SUM(a.credit)credit,(SUM(a.credit) - SUM(a.intt))prn_recov, SUM(a.intt)intt`,
     table_name = `(SELECT a.payment_date,a.payment_id,b.branch_code,a.loan_id,a.debit,a.credit,0 intt
                    FROM td_loan_transactions a,td_loan b
                    WHERE a.loan_id = b.loan_id
@@ -187,7 +187,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
            AND c.scheme_id   = g.scheme_id
            AND c.fund_id = h.fund_id
            AND c.fund_id IN (${data.fund_id})`,
-    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,c.fund_id,h.fund_name,c.group_code,e.group_name,e.bank_name,e.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
+    order = `GROUP BY a.payment_date,a.branch_code,b.branch_name,b.area_code,c.fund_id,h.fund_name,c.group_code,e.group_name,e.bank_name,e.branch_name,e.acc_no1,e.acc_no2,e.grp_addr,e.co_id,f.emp_name,c.scheme_id,g.scheme_name
     ORDER BY a.payment_date`       
     var fundwise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(fundwise_prev_loan_transaction_report);
@@ -203,7 +203,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
     var data = req.body;
     console.log(data,'data');
 
-    var select = `a.branch_code,b.branch_name,SUM(a.debit) AS debit,SUM(a.credit) AS credit,(SUM(a.credit) - SUM(a.intt)) AS prn_recov,SUM(a.intt) AS intt_recov`,
+    var select = `a.branch_code,b.branch_name,b.area_code,SUM(a.debit) AS debit,SUM(a.credit) AS credit,(SUM(a.credit) - SUM(a.intt)) AS prn_recov,SUM(a.intt) AS intt_recov`,
     table_name = `(SELECT a.payment_date,
                   a.payment_id,
                   b.branch_code,
@@ -225,7 +225,7 @@ prev_loan_transRouter.post("/fetch_brnname_based_usertype", async (req, res) => 
                   AND b.branch_code IN (${data.branch_code})
                   AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}') a,md_branch b`, 
     whr = `a.branch_code = b.branch_code`,
-    order = `GROUP BY a.branch_code,b.branch_name
+    order = `GROUP BY a.branch_code,b.branch_name,b.area_code
     ORDER BY a.branch_code`;      
     var branchwise_prev_loan_transaction_report = await db_Select(select,table_name,whr,order);
     res.send(branchwise_prev_loan_transaction_report);
