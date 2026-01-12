@@ -76,6 +76,12 @@ const { handleLogout } = useContext<any>(AppStore)
     const [responseMemberCode, setResponseMemberCode] = useState(() => "")
     const [isAadhaarVerified, setIsAadhaarVerified] = useState(false);
 
+    const lastClientMobileRef = useRef<string | null>(null)
+    const lastPanNumberRef = useRef<string | null>(null)
+    const lastAadhaarRef = useRef<string | null>(null)
+    const lastVoterIdRef = useRef<string | null>(null)
+    
+
     const [memberCodeShowHide, setMemberCodeShowHide] = useState(() => false)
     const [formData, setFormData] = useState({
         clientName: "",
@@ -133,6 +139,7 @@ const { handleLogout } = useContext<any>(AppStore)
             }])
         }
     }, [isFocused, error])
+    
     useEffect(() => {
         console.log("LOCATION EFFECT CALLING...",loginStore?.token)
     },[])
@@ -479,7 +486,7 @@ const { handleLogout } = useContext<any>(AppStore)
                 clientAddress: res?.data?.msg[0]?.client_addr ? res?.data?.msg[0]?.client_addr : "",
                 clientPin: res?.data?.msg[0]?.pin_no > 0 ? res?.data?.msg[0]?.pin_no : "",
                 aadhaarNumber: res?.data?.msg[0]?.aadhar_no ? res?.data?.msg[0]?.aadhar_no : "",
-                panNumber: res?.data?.msg[0]?.aadhar_no ? res?.data?.msg[0]?.pan_no : "",
+                panNumber: res?.data?.msg[0]?.pan_no,
                 religion: res?.data?.msg[0]?.religion ? res?.data?.msg[0]?.religion : "",
                 otherReligion: res?.data?.msg[0]?.other_religion ? res?.data?.msg[0]?.other_religion : "",
                 caste: res?.data?.msg[0]?.caste ? res?.data?.msg[0]?.caste : "",
@@ -1338,7 +1345,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     // paddingHorizontal: 20,
                     paddingTop: 10,
                     gap: 10,
-                    paddingBottom: 10
+                    paddingBottom: 40,
                 }}>
                     <ImageView
                         images={formData?.previewImg ? [{ uri: formData?.previewImg }] : []}
@@ -1356,7 +1363,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     }} />}
 
                     {/* END */}
-
+                    {/* <Text>{JSON.stringify(flag, null, 2)} </Text> */}
                     {memberCodeShowHide && <InputPaper label="Member Code" maxLength={18} leftIcon='numeric' keyboardType="numeric" value={readonlyMemberId} onChangeText={(txt: any) => setReadonlyMemberId(txt)} disabled customStyle={{
                         backgroundColor: theme.colors.background,
                     }} />}
@@ -1465,9 +1472,22 @@ const { handleLogout } = useContext<any>(AppStore)
                         keyboardType="phone-pad"
                         value={formData.clientMobile}
                         onChangeText={(txt: any) => handleFormChange("clientMobile", txt)}
+                        // onBlur={() => {
+                        //     formData.clientMobile &&
+                        //         fetchClientDetails("M", formData.clientMobile)
+                        // }}
                         onBlur={() => {
+                        if (flag != "BM") {
+                        
+                        if (
                             formData.clientMobile &&
-                                fetchClientDetails("M", formData.clientMobile)
+                            formData.clientMobile.length === 10 &&
+                            lastClientMobileRef.current !== formData.clientMobile
+                        ) {
+                            lastClientMobileRef.current = formData.clientMobile
+                            fetchClientDetails("M", formData.clientMobile)
+                        }
+                        }
                         }}
                         customStyle={{
                             backgroundColor: theme.colors.background,
@@ -1480,16 +1500,29 @@ const { handleLogout } = useContext<any>(AppStore)
                         leftIcon='card-account-details-star-outline'
                         keyboardType="numeric" value={formData.aadhaarNumber}
                         onChangeText={(txt: any) => handleFormChange("aadhaarNumber", txt)}
+                        // onBlur={() => {
+                        //     formData.aadhaarNumber &&
+                        //         fetchClientDetails("A", formData.aadhaarNumber)
+                        // }}
                         onBlur={() => {
+                        if (flag != "BM") {
+                        if (
                             formData.aadhaarNumber &&
-                                fetchClientDetails("A", formData.aadhaarNumber)
+                            formData.aadhaarNumber.length === 12 &&
+                            lastAadhaarRef.current !== formData.aadhaarNumber
+                        ) {
+                            lastAadhaarRef.current = formData.aadhaarNumber
+                            fetchClientDetails("A", formData.aadhaarNumber)
+                        }
+                        }
                         }}
+                        
                         customStyle={{
                             backgroundColor: theme.colors.background,
                         }}
                         disabled={disableCondition(approvalStatus, branchCode)} />
 
-                        {isAadhaarVerified && (
+                        {/* {isAadhaarVerified && (
                         <Text
                         style={{
                         color: "green",
@@ -1500,7 +1533,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         >
                         Aadhaar Number Verified ✔
                         </Text>
-                        )}
+                        )} */}
                     
 
                     <InputPaper
@@ -1510,9 +1543,21 @@ const { handleLogout } = useContext<any>(AppStore)
                         keyboardType="default"
                         value={formData.panNumber}
                         onChangeText={(txt: any) => handleFormChange("panNumber", txt)}
+                        // onBlur={() => {
+                        //     formData.panNumber &&
+                        //         fetchClientDetails("P", formData.panNumber)
+                        // }}
                         onBlur={() => {
+                        if (flag != "BM") {
+                        if (
                             formData.panNumber &&
-                                fetchClientDetails("P", formData.panNumber)
+                            formData.panNumber.length === 10 &&
+                            lastPanNumberRef.current !== formData.panNumber
+                        ) {
+                            lastPanNumberRef.current = formData.panNumber
+                            fetchClientDetails("P", formData.panNumber)
+                        }
+                        }
                         }}
                         customStyle={{
                             backgroundColor: theme.colors.background,
@@ -1526,9 +1571,21 @@ const { handleLogout } = useContext<any>(AppStore)
                         keyboardType="default"
                         value={formData.voterId}
                         onChangeText={(txt: any) => handleFormChange("voterId", txt)}
+                        // onBlur={() => {
+                        //     formData.voterId &&
+                        //         fetchClientDetails("V", formData.voterId)
+                        // }}
                         onBlur={() => {
+                        if (flag != "BM") {
+                        if (
                             formData.voterId &&
-                                fetchClientDetails("V", formData.voterId)
+                            // formData.voterId.length === 20 &&
+                            lastVoterIdRef.current !== formData.voterId
+                        ) {
+                            lastVoterIdRef.current = formData.voterId
+                            fetchClientDetails("V", formData.voterId)
+                        }
+                        }
                         }}
                         customStyle={{
                             backgroundColor: theme.colors.background,

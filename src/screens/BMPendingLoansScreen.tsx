@@ -167,7 +167,8 @@ const { handleLogout } = useContext<any>(AppStore)
             name: navigationRoutes.bmPendingLoanFormScreen,
             params: {
                 formNumber: formNo,
-                branchCode: brCode
+                branchCode: brCode,
+                // pendingForm: 'pendingForms'
             }
         }))
     }
