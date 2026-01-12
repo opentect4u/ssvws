@@ -38,8 +38,9 @@ dateFormat = require('dateformat');
 dashboard_dataRouter.post("/date_of_operation", async (req, res) => {
   try {
     var data = req.body;
+    console.log(data,'ddd');
     
-    var select = "DATE_FORMAT(opened_date, '%M %Y') AS date_of_operation",
+    var select = "DATE_FORMAT(opened_date, '%d %M %Y') AS date_of_operation",
     table_name = "td_eod_sod",
     whr = `branch_code = '${data.branch_code}'`,
     order = null;

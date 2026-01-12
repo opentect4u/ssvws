@@ -33,9 +33,9 @@ loan_statementRouter.post("/loan_statement_memb_dtls", async (req, res) => {
     var data = req.body;
     
     //FETCH MEMBER DETAILS
-    var select = "a.branch_code,a.member_code,b.group_code,a.client_name,b.loan_id,c.branch_name,d.group_name",
+    var select = "a.branch_code,a.member_code,b.group_code,a.client_name,b.loan_id,c.branch_name,c.area_code,d.group_name",
     table_name = "md_member a LEFT JOIN td_loan b ON a.member_code = b.member_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code LEFT JOIN md_group d ON b.group_code = d.group_code",
-    whr = `a.branch_code = '${data.branch_code}' AND (a.member_code like '%${data.memb}%' OR a.client_name like '%${data.memb}%')`,
+    whr = `a.branch_code IN (${data.branch_code}) AND (a.member_code like '%${data.memb}%' OR a.client_name like '%${data.memb}%')`,
     order = null;
     var member_dt = await db_Select(select,table_name,whr,order);
 
@@ -67,10 +67,10 @@ loan_statementRouter.post("/loan_statement_group_dtls", async (req, res) => {
     var data = req.body;
 
     //FETCH GROUP DETAILS
-    var select = "a.branch_code,a.group_code,a.group_name,SUM(b.outstanding) outstanding,c.branch_name",
+    var select = "a.branch_code,a.group_code,a.group_name,SUM(b.outstanding) outstanding,c.branch_name,c.area_code",
     table_name = "md_group a LEFT JOIN td_loan b ON a.group_code = b.group_code LEFT JOIN md_branch c ON a.branch_code = c.branch_code",
-    whr = `a.branch_code = '${data.branch_code}' AND (a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%')`,
-    order = `GROUP BY a.branch_code,a.group_code,a.group_name,c.branch_name`;
+    whr = `a.branch_code IN (${data.branch_code}) AND (a.group_code like '%${data.grp}%' OR a.group_name like '%${data.grp}%')`,
+    order = `GROUP BY a.branch_code,a.group_code,a.group_name,c.branch_name,c.area_code`;
     var grp_dt = await db_Select(select,table_name,whr,order);
 
     res.send(grp_dt);
