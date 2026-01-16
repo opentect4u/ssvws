@@ -721,6 +721,8 @@ const { handleLogout } = useContext<any>(AppStore)
                             gap: 8,
                             flexWrap: "wrap"
                         }}>
+                            <Text>{JSON.stringify(memberDetailsArray[3], null, 2)}</Text>
+                            <Text>{JSON.stringify(memberDetailsArray[2], null, 2)}</Text>
                             {memberDetailsArray?.map((item, i) => (
                                 <View key={i} style={{ width: "100%" }}>
                                     <List.Item
@@ -738,10 +740,10 @@ const { handleLogout } = useContext<any>(AppStore)
                                         description={
                                             <View>
                                                 <Text style={{
-                                                    color: theme.colors.green,
+                                                    color: theme.colors.green, fontSize:10,
                                                     textDecorationLine: !item?.isChecked ? "line-through" : "none"
                                                 }}>Outstanding - 
-                                                {+item?.intt_amt + +item?.prn_amt}{(+item?.intt_amt + +item?.prn_amt) && "/-"}
+                                                {+ (Number(item?.intt_amt) + Number(item?.prn_amt)).toFixed(2)}{(+item?.intt_amt + +item?.prn_amt) && "/-"}
                                                 </Text>
                                                 <Text style={{
                                                     color: theme.colors.secondary,
