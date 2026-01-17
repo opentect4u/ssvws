@@ -721,8 +721,8 @@ const { handleLogout } = useContext<any>(AppStore)
                             gap: 8,
                             flexWrap: "wrap"
                         }}>
-                            <Text>{JSON.stringify(memberDetailsArray[3], null, 2)}</Text>
-                            <Text>{JSON.stringify(memberDetailsArray[2], null, 2)}</Text>
+                            {/* <Text>{JSON.stringify(memberDetailsArray[3], null, 2)}</Text>
+                            <Text>{JSON.stringify(memberDetailsArray[2], null, 2)}</Text> */}
                             {memberDetailsArray?.map((item, i) => (
                                 <View key={i} style={{ width: "100%" }}>
                                     <List.Item
