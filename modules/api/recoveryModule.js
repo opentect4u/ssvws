@@ -525,7 +525,7 @@ module.exports = {
                   //   if (rec_dtls_int.suc > 0) {
                   let payment_id = await payment_code();
                   console.log(payment_id,'id_recov');
-                  if (dt.credit > 0 && prnEmi >= 0 && inttEMI >= 0 && prn_recov >= 0 && intt_recovs >= 0 && balance >= 0 && intt_balance >= 0 && dt.intt_cal_amt > 0) {
+                  if (dt.credit > 0 && prnEmi >= 0 && inttEMI >= 0 && prn_recov >= 0 && intt_recovs >= 0 && balance >= 0 && dt.intt_cal_amt > 0) {
 
                     var table_name = "td_loan_transactions",
                       fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,upload_on,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,

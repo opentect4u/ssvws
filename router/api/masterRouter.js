@@ -336,23 +336,23 @@ masterRouter.post("/fetch_validation", async (req, res) => {
 
   try {
     //fetch member code
-    var select = "member_code";
-    table_name = "md_member";
-    whr = `branch_code = '${data.branch_code}'`;
+    var select = "a.member_code";
+    table_name = "md_member a LEFT JOIN td_grt_basic b ON a.branch_code = b.branch_code and b.approval_status NOT IN ('R')";
+    whr = `a.branch_code = '${data.branch_code}'`;
 
     if (data.flag == "M") {
-      whr += `AND client_mobile = '${data.user_dt}'`;
+      whr += `AND a.client_mobile = '${data.user_dt}'`;
     }
     if (data.flag == "A") {
-      whr += `AND aadhar_no = '${data.user_dt}'`;
+      whr += `AND a.aadhar_no = '${data.user_dt}'`;
     }
     if (data.flag == "P") {
-      whr += `AND pan_no = '${data.user_dt}'`;
+      whr += `AND a.pan_no = '${data.user_dt}'`;
     }
     if (data.flag == "V") {
-      whr += `AND voter_id = '${data.user_dt}'`;
+      whr += `AND a.voter_id = '${data.user_dt}'`;
     }
-    order = `GROUP BY member_code`;
+    order = `GROUP BY a.member_code`;
     var res_dt = await db_Select(select, table_name, whr, order);
 
     if (res_dt.suc > 0 && res_dt.msg.length == 0) {
@@ -370,7 +370,7 @@ masterRouter.post("/fetch_validation", async (req, res) => {
 
       var select = "form_no";
       table_name = "td_grt_basic";
-      whr = `member_code='${member_code}'`;
+      whr = `member_code='${member_code}' AND approval_status NOT IN ('R')`;
       order = "ORDER BY form_no DESC LIMIT 1";
       var grt_dt = await db_Select(select, table_name, whr, order);
 
@@ -405,9 +405,9 @@ masterRouter.post("/fetch_validation", async (req, res) => {
         }
       }
       var select =
-          "branch_code,member_code,gender,client_name,client_mobile,phone_verify_flag,email_id,gurd_name,gurd_mobile,husband_name,client_addr,pin_no,nominee_name,aadhar_no,aadhar_verify_flag,pan_no,pan_verify_flag,voter_id,voter_verify_flag,religion,other_religion,caste,other_caste,education,other_education,dob",
-        table_name = "md_member",
-        whr = `member_code = '${member_code}'`,
+          "a.branch_code,a.member_code,a.gender,a.client_name,a.client_mobile,a.phone_verify_flag,a.email_id,a.gurd_name,a.gurd_mobile,a.husband_name,a.client_addr,a.pin_no,a.nominee_name,a.aadhar_no,a.aadhar_verify_flag,a.pan_no,a.pan_verify_flag,a.voter_id,a.voter_verify_flag,a.religion,a.other_religion,a.caste,a.other_caste,a.education,a.other_education,a.dob",
+        table_name = "md_member a LEFT JOIN td_grt_basic b On a.branch_code = b.branch_code AND b.approval_status NOT IN ('R')",
+        whr = `a.member_code = '${member_code}'`,
         order = null;
 
       var res_dtls = await db_Select(select, table_name, whr, order);
