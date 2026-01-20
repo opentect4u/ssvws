@@ -8,6 +8,12 @@ const checkTime = (session_time) => {
   return dateDiff
 }
 
+const diffHours = (start_dt, end_dt) => {
+  const differenceInMilliseconds = new Date(end_dt) - new Date(start_dt);
+  const differenceInHours = differenceInMilliseconds / (1000 * 60 * 60);
+  return differenceInHours
+}
+
 module.exports = {
   // createToken: (userData) => {
   //   return new Promise((resolve, reject) => {
@@ -42,10 +48,36 @@ module.exports = {
       }
     })
   },
+  createCustomToken: (userData, start_dt, end_dt) => {
+    return new Promise((resolve, reject) => {
+      try {
+        if (Object.keys(userData).length > 0) {
+          const tokenExpTime = diffHours(start_dt, end_dt);
+          console.log(tokenExpTime);
+          
+          const token = jwt.sign(JSON.parse(JSON.stringify(userData)), process.env.SECRET_KEY, {
+            expiresIn: `${tokenExpTime}h`
+          });
+          resolve(token)
+          // console.log(token,'token');
+
+        } else {
+          resolve(null)
+        }
+      } catch (err) {
+        resolve(null)
+      }
+    })
+  },
  
    // ------------------ AUTH MIDDLEWARE ------------------
     authenticateToken: (req, res, next) => {
     let token = null;
+      // console.log(req.path, 'PATH');
+    
+    if (req.path === '/save_location_acc_log') {
+      return next()
+    }
     const authHeader = req.headers["x-access-token"] || req.headers["authorization"];
     // if (authHeader && authHeader.startsWith("Bearer ")) {
     if (authHeader) {

@@ -1,5 +1,5 @@
 const { db_Insert, db_Select } = require('../../../model/mysqlModel');
-const { save_attendance_in, save_attendance_out } = require('../../../modules/api/attendance_module/attendanceModule');
+const { save_attendance_in, save_attendance_out, saveLocationAccessLog } = require('../../../modules/api/attendance_module/attendanceModule');
 
 const express = require('express'),
 attendanceRouter = express.Router(),
@@ -71,6 +71,19 @@ attendanceRouter.post("/get_attendance_dtls", async (req, res) => {
     var atten_emp_dtls = await db_Select(select,table_name,whr,order);
 
     res.send(atten_emp_dtls)
+});
+
+//save in locatino access log
+attendanceRouter.post("/save_location_acc_log", async (req, res) => {
+    var data = req.body, save_loc_acc_dt;
+
+    saveLocationAccessLog(data).then(data => {
+        save_loc_acc_dt = data
+    }).catch(err => {
+        save_loc_acc_dt = err
+    }).finally(() => {
+        res.send(save_loc_acc_dt)
+    })
 });
 
 module.exports = {attendanceRouter}

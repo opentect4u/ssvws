@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Integrating Admin Template with Node js and EJS",
   "main": "server.js",
+  "nodemonConfig": {
+    "ignore": [
+      "*.json"
+    ]
+  },
   "scripts": {
     "test": "nodemon server"
   },
@@ -21,6 +26,7 @@
     "express": "^4.21.2",
     "express-ejs-layouts": "^2.5.1",
     "express-fileupload": "^1.5.2",
+    "firebase-admin": "^13.6.0",
     "jsonwebtoken": "^9.0.2",
     "mysql": "^2.18.1",
     "mysql2": "^3.12.0",
