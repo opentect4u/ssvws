@@ -519,13 +519,13 @@ module.exports = {
                   let prn_recov = balance - prnEmi; //current prn balance
                   let intt_recovs = intt_balance - inttEMI; //current intt balance
 
-                  prn_recov = prn_recov >= 0 ? prn_recov : 0;
-                  intt_recovs = intt_recovs >= 0 ? intt_recovs : 0;
+                  prn_recov = typeof prn_recov == "number" ? prn_recov : 0;
+                  intt_recovs = typeof intt_recovs == "number" ? intt_recovs : 0;
 
                   //   if (rec_dtls_int.suc > 0) {
                   let payment_id = await payment_code();
                   console.log(payment_id,'id_recov');
-                  if (dt.credit > 0 && prnEmi >= 0 && inttEMI >= 0 && prn_recov >= 0 && intt_recovs >= 0 && balance >= 0 && dt.intt_cal_amt > 0) {
+                  if (dt.credit > 0 && prnEmi >= 0 && inttEMI >= 0 && balance >= 0 && dt.intt_cal_amt > 0) {
 
                     var table_name = "td_loan_transactions",
                       fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,upload_on,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
@@ -542,11 +542,8 @@ module.exports = {
                           : ""
                       }','${dt.credit > 0 ? dt.credit : 0}','0','${
                         prnEmi > 0 ? prnEmi : 0
-                      }','${inttEMI > 0 ? inttEMI : 0}','${
-                        prn_recov > 0 ? prn_recov : 0
-                      }','0','${
-                        intt_recovs > 0 ? intt_recovs : 0
-                      }','${datetime}','R','${data.tr_mode}','${
+                      }','${inttEMI > 0 ? inttEMI : 0}','${prn_recov}','0','${
+                        intt_recovs}','${datetime}','R','${data.tr_mode}','${
                         data.bank_name
                       }','${data.cheque_id == "" ? 0 : data.cheque_id}', ${
                         data.chq_dt ? `'${data.chq_dt}'` : "NULL"
@@ -581,9 +578,9 @@ module.exports = {
 
                       var table_name = "td_loan",
                         fields = `prn_amt = '${
-                          prn_update > 0 ? prn_update : 0
+                          prn_update
                         }', intt_amt = '${
-                          intt_update > 0 ? intt_update : 0
+                          intt_update
                         }', outstanding = '${
                           outs_update > 0 ? outs_update : 0
                         }', instl_paid = '${
