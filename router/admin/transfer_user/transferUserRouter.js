@@ -62,9 +62,16 @@ transferUserRouter.post("/tranfer_user", async (req, res) => {
                     whr = `emp_id = '${data.emp_id}'`,
                     flag = 1;
                     var updates_trans_dtls = await db_Insert(table_name,fields,values,whr,flag);  
+
+                    var table_name = "td_assign_branch_user",
+                    fields = `branch_assign_id = '${data.branch_code}'`,
+                    values = null,
+                    whr = `ho_user_id = '${data.emp_id}'`,
+                    flag = 1;
+                    var update_trans_details = await db_Insert(table_name,fields,values,whr,flag);
                 }
 
-                res.send(updates_trans_dtls)
+                res.send(update_trans_details)
 
     }catch (error){
         res.send({"suc": 2, "msg": "Error occurred during fetching user details", details: error });
