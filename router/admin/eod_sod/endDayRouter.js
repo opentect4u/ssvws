@@ -3,7 +3,7 @@ const { db_Select, db_Insert } = require("../../../model/mysqlModel");
 const express = require("express"),
   dayEndRouter = express.Router(),
   dateFormat = require("dateformat");
-const admin = require('../../../config/firebase')  
+const admin = require('../../../config/firebase');  
 
   // send flag that closed_date = opened_date
   dayEndRouter.post("/fetch_brnwise_end_details", async (req, res) => {
@@ -536,6 +536,105 @@ dayEndRouter.post("/check_unapprove_transaction", async (req, res) => {
     }catch(error){
     console.log("fetch error when open new date" , error);
     res.send({ error: "Server Error" });
+    }
+  });
+
+  // FETCH OPENED DATE BASED ON BRANCH 19.02.2026
+  dayEndRouter.post("/fetch_open_date", async (req, res) => {
+    try{
+     var data = req.body;
+    //  console.log(data,'gagaga');
+     
+
+     var select = "DATE_FORMAT(opened_date, '%Y-%m-%d') AS opened_date",
+     table_name = "td_eod_sod",
+     whr = `branch_code = '${data.branch_code}'`,
+     order = null;
+     var open_date = await db_Select(select,table_name,whr,order);
+    res.send(open_date)
+    }catch(error){
+    console.log("error when fetch opened date" , error);
+    res.send({ error: "Server Error" });
+    }
+  });
+
+  // MANUAL DAY END 19.02.2026
+  dayEndRouter.post("/manual_day_end", async (req, res) => {
+    try{
+     var data = req.body;
+    //  console.log(data,'manual day end');
+
+    let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
+
+    let branch_dt = data.branch_dt;
+
+    if (branch_dt.suc <= 0 || branch_dt.length === 0) {
+      return res.send({
+        suc: 1,
+        msg: "No branch data received",
+        data: []
+      });
+    }
+
+     for (let dt of branch_dt) {
+      // UPDATE EOD
+      let table_name = "td_eod_sod",
+      fields = `closed_date = '${dt.opened_date}',closed_by = '${data.closed_by}',closed_at = '${datetime}'`,
+      values = null,
+      whr = `branch_code = '${dt.branch_code}'`,
+      flag = 1;
+      let eod_data_manual = await db_Insert(table_name, fields, values, whr, flag);
+
+     if (eod_data_manual.suc <= 0 || eod_data_manual.msg.length === 0) {
+        console.log(`${dt.branch_code} EOD update failed`);
+        continue;
+     }
+
+      // FETCH ACTIVE USERS
+      let users = await db_Select("emp_id,brn_code,session_id,fcm_token","md_user",`brn_code='${dt.branch_code}' AND user_status = 'A'`,null);
+      
+      if ((!users || users.suc <= 0 || !users.msg || users.msg.length === 0)) {
+        console.log("No active user found for branch", dt.branch_code);
+        continue;
+      }
+
+       // LOGOUT USERS (NULL SESSION)
+       for (let user of users.msg) {
+        if (user.fcm_token) {
+           try {
+            await admin.messaging().send({
+            token: user.fcm_token,
+            notification: {
+              title: "Logged out by System",
+              body: "Daily system reset completed. Please login again.",
+            },
+            data: {
+              type: "EOD_LOGOUT",
+            },
+        });
+        }catch (error) {
+          console.log("FCM error:", user.emp_id, error);
+        }
+        }
+
+       // LOGOUT WEB + APP USERS
+       let table_name1 = "md_user",
+       fields1 = `session_id = NULL, fcm_token = NULL`,
+       values1 = null,
+       whr1 = `emp_id = '${user.emp_id}'`, 
+       flag1 = 1;
+       var update_user_data_manual = await db_Insert(table_name1,fields1,values1,whr1,flag1);
+     }
+    }
+    res.send({
+      suc: 1,
+      msg: "Manual Day End completed successfully. ALL Users logged out from APP and Web."
+    });
+
+    }catch(error){
+    console.log("fetch error when manual day end" , error);
+    res.send({ suc: 0,
+      msg: "Server Error" });
     }
   });
 

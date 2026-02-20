@@ -13,7 +13,7 @@ empRouter.get("/fetch_all_branch_dt", async (req, res) => {
     table_name = "md_branch",
     // whr = `brn_status = 'O' AND branch_code <> 100`,
     whr = `brn_status = 'O'`,
-    order = `ORDER BY branch_name`;
+    order = `ORDER BY branch_code`;
     var fetch_branch_dtls = await db_Select(select,table_name,whr,order);
 
     res.send(fetch_branch_dtls)
