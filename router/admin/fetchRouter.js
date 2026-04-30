@@ -370,11 +370,47 @@ fetchRouter.post("/fetch_form_fwd_bm_to_mis_web", async (req, res) => {
 
     //delete members in MIS
     var table_name = "td_grt_basic",
-    fields = `approval_status = '${data.approval_status}', remarks = '${data.remarks.split("'").join("\\'")}', rejected_by = '${data.rejected_by}', rejected_at = '${datetime}'`,
+    fields = `approval_status = '${data.approval_status}', remarks = '${data.remarks.split("'").join("\\'")}', delete_flag = 'Y', deleted_by = '${data.rejected_by}', deleted_at = '${datetime}', rejected_by = '${data.rejected_by}', rejected_at = '${datetime}'`,
     values = null,
     whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}'`,
     flag = 1;
     var delete_mem_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+    var table_name = "md_member",
+    fields = `client_mobile = CASE 
+                WHEN client_mobile IS NOT NULL 
+                     AND client_mobile <> '' 
+                     AND client_mobile NOT LIKE 'R%' 
+                THEN CONCAT('R', client_mobile) 
+                ELSE client_mobile 
+              END,
+              aadhar_no = CASE 
+                WHEN aadhar_no IS NOT NULL 
+                     AND aadhar_no <> '' 
+                     AND aadhar_no NOT LIKE 'R%' 
+                THEN CONCAT('R', aadhar_no) 
+                ELSE aadhar_no 
+              END,
+              pan_no = CASE 
+                WHEN pan_no IS NOT NULL 
+                     AND pan_no <> '' 
+                     AND pan_no NOT LIKE 'R%' 
+                THEN CONCAT('R', pan_no) 
+                ELSE pan_no 
+              END,
+              voter_id = CASE 
+                WHEN voter_id IS NOT NULL 
+                     AND voter_id <> '' 
+                     AND voter_id NOT LIKE 'R%' 
+                THEN CONCAT('R', voter_id) 
+                ELSE voter_id 
+              END,
+              delete_flag = 'Y'`,
+    values = null,
+    whr = `member_code = '${data.member_code}'`,
+    flag = 1;
+    var delete_mem_dtls = await db_Insert(table_name, fields, values, whr, flag);
+    
     res.send(delete_mem_dt)
 });  
 

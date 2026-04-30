@@ -48,10 +48,12 @@ loan_statementRouter.post("/loan_statement_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR LOAN ID
 
-    var select = `a.loan_id,b.member_code,b.group_code,b.branch_code,c.client_name,date(a.payment_date) trans_date,a.payment_id trans_no,a.debit,a.credit,a.balance,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)total_outstanding,a.tr_type,IF(a.tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,a.particulars,a.created_by,a.created_at,a.approved_by,a.approved_at,IF(a.status = 'A', 'Approved', 'Unapproved')STATUS`,
-    table_name = "td_loan_transactions a,td_loan b,md_member c",
+    var select = `a.loan_id,b.member_code,b.group_code,b.branch_code,c.client_name,date(a.payment_date) trans_date,a.payment_id trans_no,a.debit,a.credit,a.balance,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)total_outstanding,a.tr_type,IF(a.tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,a.particulars,d.co_id,e.emp_name AS co_name,a.created_by,a.created_at,a.approved_by,a.approved_at,IF(a.status = 'A', 'Approved', 'Unapproved')STATUS`,
+    table_name = "td_loan_transactions a,td_loan b,md_member c,md_group d,md_employee e",
     whr = `a.loan_id = b.loan_id
            AND b.member_code = c.member_code
+           AND b.group_code = d.group_code
+           AND d.co_id = e.emp_id
            AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}' 
            AND a.loan_id = '${data.loan_id}' 
            AND a.tr_type NOT IN ('O', 'I')`,
@@ -81,10 +83,12 @@ loan_statementRouter.post("/loan_statement_group_report", async (req, res) => {
 
     //FETCH LOAN STATEMENT DETAILS FOR PARTICULAR GROUP CODE
 
-    var select = `a.loan_id,b.member_code,b.group_code,b.branch_code,c.client_name,date(a.payment_date) trans_date,a.payment_id trans_no,a.debit,a.credit,a.balance,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)total_outstanding,a.tr_type,IF(a.tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,a.particulars,a.created_by,a.created_at,a.approved_by,a.approved_at,IF(a.status = 'A', 'Approved', 'Unapproved')STATUS`,
-    table_name = "td_loan_transactions a,td_loan b,md_member c", 
+    var select = `a.loan_id,b.member_code,b.group_code,b.branch_code,c.client_name,date(a.payment_date) trans_date,a.payment_id trans_no,a.debit,a.credit,a.balance,a.intt_balance,(a.balance + a.od_balance + a.intt_balance)total_outstanding,a.tr_type,IF(a.tr_mode = 'C', 'Cash', 'Bank Transfer')tr_mode,a.particulars,d.co_id,e.emp_name AS co_name,a.created_by,a.created_at,a.approved_by,a.approved_at,IF(a.status = 'A', 'Approved', 'Unapproved')STATUS`,
+    table_name = "td_loan_transactions a,td_loan b,md_member c,md_group d,md_employee e", 
     whr = `a.loan_id = b.loan_id
            AND b.member_code = c.member_code
+           AND b.group_code = d.group_code
+           AND d.co_id = e.emp_id
            AND b.group_code = '${data.group_code}'
            AND a.payment_date BETWEEN '${data.from_dt}' AND '${data.to_dt}'
            AND a.tr_type NOT IN ('O', 'I')`,

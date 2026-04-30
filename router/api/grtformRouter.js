@@ -347,11 +347,46 @@ grtformRouter.post("/delete_form", async (req, res) => {
 
     //delete form
     var table_name = "td_grt_basic",
-    fields = `remarks = '${data.remarks.split("'").join("\\'")}', delete_flag = 'Y', deleted_by = '${data.deleted_by}', deleted_at = '${datetime}'`,
+    fields = `approval_status = 'R', remarks = '${data.remarks.split("'").join("\\'")}', delete_flag = 'Y', deleted_by = '${data.deleted_by}', deleted_at = '${datetime}', rejected_by = '${data.deleted_by}', rejected_at = '${datetime}'`,
     values = null,
     whr = `form_no = '${data.form_no}' AND member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
     flag = 1;
     var delete_dt = await db_Insert(table_name, fields, values, whr, flag);
+
+    var table_name = "md_member",
+    fields = `client_mobile = CASE 
+                WHEN client_mobile IS NOT NULL 
+                     AND client_mobile <> '' 
+                     AND client_mobile NOT LIKE 'R%' 
+                THEN CONCAT('R', client_mobile) 
+                ELSE client_mobile 
+              END,
+              aadhar_no = CASE 
+                WHEN aadhar_no IS NOT NULL 
+                     AND aadhar_no <> '' 
+                     AND aadhar_no NOT LIKE 'R%' 
+                THEN CONCAT('R', aadhar_no) 
+                ELSE aadhar_no 
+              END,
+              pan_no = CASE 
+                WHEN pan_no IS NOT NULL 
+                     AND pan_no <> '' 
+                     AND pan_no NOT LIKE 'R%' 
+                THEN CONCAT('R', pan_no) 
+                ELSE pan_no 
+              END,
+              voter_id = CASE 
+                WHEN voter_id IS NOT NULL 
+                     AND voter_id <> '' 
+                     AND voter_id NOT LIKE 'R%' 
+                THEN CONCAT('R', voter_id) 
+                ELSE voter_id 
+              END,
+              delete_flag = 'Y'`,
+    values = null,
+    whr = `member_code = '${data.member_code}' AND branch_code = '${data.branch_code}'`,
+    flag = 1;
+    var delete_mem_dtl = await db_Insert(table_name, fields, values, whr, flag);
     res.send(delete_dt)
 });
 

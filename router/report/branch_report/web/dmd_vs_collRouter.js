@@ -28,13 +28,13 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
     // order = `GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,b.disb_dt,b.curr_roi, b.period, b.period_mode,b.recovery_day,b.instl_start_dt,b.instl_end_dt
     // ORDER BY d.group_code`;
     var select = `demand_date,branch_code,branch_name,area_code,
-                  group_cd, group_name,co_id, emp_name,
+                  group_cd, group_name,co_id, co_name,
                   disb_dt, SUM(disb_amt)AS disb_amt,curr_roi, loan_period,period_mode,
                   recovery_day  AS recovery_day,week_no,instl_start_dt,instl_end_dt,
                   SUM(tot_emi) AS tot_emi, SUM(demand_amt) AS demand_amt,
                   SUM(coll_amt) AS coll_amt, SUM(curr_outstanding) AS curr_outstanding 
                   FROM(
-		                  SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd, d.group_name,d.co_id, e.emp_name,
+		                  SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd, d.group_name,d.co_id, e.emp_name AS co_name,
 		                  b.disb_dt, SUM(b.prn_disb_amt) AS disb_amt,b.curr_roi, b.period AS loan_period,b.period_mode,
 		                  CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,b.instl_start_dt,b.instl_end_dt,
 		                  SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
@@ -51,7 +51,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
 		                  	 b.instl_start_dt,b.instl_end_dt
 		              UNION
 		                  SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,
-		                  a.group_cd, d.group_name,d.co_id, e.emp_name,
+		                  a.group_cd, d.group_name,d.co_id, e.emp_name AS co_name,
 		                  b.disb_dt, 0 AS disb_amt,b.curr_roi, b.period AS loan_period,b.period_mode,
 		                  CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,b.instl_start_dt,b.instl_end_dt,
 		                  0 AS tot_emi, 0 AS demand_amt,
@@ -69,7 +69,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
 			                e.emp_name,b.disb_dt,b.curr_roi, b.period, b.period_mode,b.recovery_day,b.week_no,
 			                b.instl_start_dt,b.instl_end_dt
 		                  )a	
-	          GROUP BY demand_date,branch_code,branch_name,area_code,group_cd, group_name,co_id, emp_name,
+	          GROUP BY demand_date,branch_code,branch_name,area_code,group_cd, group_name,co_id, co_name,
                      disb_dt, curr_roi,loan_period,period_mode,recovery_day,week_no,instl_start_dt,instl_end_dt
             ORDER BY group_cd`,
     table_name = null,
@@ -114,13 +114,13 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
     //    AND b.fund_id IN (${data.fund_id})`,
     //  order = `GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,b.fund_id,f.fund_name,b.period_mode,b.recovery_day`;
     var select = `demand_date,branch_code,branch_name,area_code,
-                  group_cd, group_name,co_id, emp_name,
+                  group_cd, group_name,co_id, co_name,
                   fund_id, fund_name,period_mode,
                   recovery_day  AS recovery_day,week_no,
                   SUM(demand_amt) AS demand_amt,
                   SUM(coll_amt) AS coll_amt, SUM(curr_outstanding) AS curr_outstanding 
                   FROM(
-		       SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code, c.branch_name,c.area_code,a.group_cd, d.group_name,d.co_id, e.emp_name,b.fund_id,f.fund_name,b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,
+		       SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code, c.branch_name,c.area_code,a.group_cd, d.group_name,d.co_id, e.emp_name AS co_name,b.fund_id,f.fund_name,b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,
 		       SUM(a.dmd_amt) AS demand_amt,0 AS coll_amt, SUM(b.prn_amt + b.intt_amt) AS curr_outstanding
 		       FROM td_loan_month_demand a, td_loan b, md_branch c, md_group d, md_employee e, md_fund f
 		       WHERE a.branch_code = b.branch_code
@@ -136,7 +136,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
 		       f.fund_name,b.period_mode,b.recovery_day,week_no
 		 UNION
 		       SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd, d.group_name,
-		       d.co_id, e.emp_name,b.fund_id,f.fund_name,b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,
+		       d.co_id, e.emp_name AS co_name,b.fund_id,f.fund_name,b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,
 		       0 AS demand_amt,SUM(g.credit) AS coll_amt, 0 AS curr_outstanding
 		       FROM td_loan_month_demand a, td_loan b, md_branch c, md_group d, md_employee e, md_fund f, td_loan_transactions g
 		       WHERE a.branch_code = b.branch_code
@@ -153,7 +153,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_fundwise", async (req, res) => {
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,c.area_code,a.group_cd, d.group_name, d.co_id, e.emp_name,b.fund_id,
 		       f.fund_name,b.period_mode,b.recovery_day,b.week_no
 		       )a	
-	          GROUP BY demand_date,branch_code,branch_name,area_code,group_cd, group_name,co_id, emp_name,fund_id, fund_name,period_mode,
+	          GROUP BY demand_date,branch_code,branch_name,area_code,group_cd, group_name,co_id, co_name,fund_id, fund_name,period_mode,
                   recovery_day,week_no
             ORDER BY group_cd`,
      table_name = null,
@@ -212,12 +212,12 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
     //    AND d.co_id IN (${data.co_id})`,
     //  order = `GROUP BY a.demand_date, a.branch_code, c.branch_name,a.group_code, d.group_name, d.co_id, e.emp_name,
     //      b.period_mode,b.recovery_day`;
-     var select = `demand_date,branch_code,branch_name,area_code,group_cd,group_name,co_id,emp_name,period_mode,recovery_day,week_no,
+     var select = `demand_date,branch_code,branch_name,area_code,group_cd,group_name,co_id,co_name,period_mode,recovery_day,week_no,
                   SUM(tot_emi) AS tot_emi, SUM(demand_amt) AS demand_amt,
                   SUM(coll_amt) AS coll_amt, SUM(curr_outstanding) AS curr_outstanding 
                   FROM(
 		       SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code, c.branch_name,c.area_code,a.group_cd, d.group_name, 
-		       d.co_id, e.emp_name,b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,SUM(b.tot_emi) tot_emi,
+		       d.co_id, e.emp_name AS co_name,b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,SUM(b.tot_emi) tot_emi,
 		       SUM(a.dmd_amt) AS demand_amt,0 AS coll_amt, SUM(b.prn_amt + b.intt_amt) AS curr_outstanding
 		       FROM td_loan_month_demand a, td_loan b,md_branch c, md_group d, md_employee e
 		       WHERE a.branch_code = b.branch_code
@@ -233,7 +233,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
 		   UNION
 		        SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,
            a.branch_code, c.branch_name,c.area_code, a.group_cd, d.group_name, 
-           d.co_id, e.emp_name, b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,
+           d.co_id, e.emp_name AS co_name, b.period_mode,CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,
            0 AS tot_emi, 0 AS demand_amt, SUM(f.credit) AS coll_amt, 0 AS curr_outstanding
 		       FROM td_loan_month_demand a, td_loan b,md_branch c, md_group d, md_employee e, td_loan_transactions f
 		       WHERE a.branch_code = b.branch_code
@@ -249,7 +249,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_cowise", async (req, res) => {
 		       GROUP BY a.demand_date, a.branch_code, c.branch_name,c.area_code,a.group_cd, d.group_name, d.co_id, e.emp_name,
 				b.period_mode,b.recovery_day,b.week_no
 		                  )a	
-	          GROUP BY demand_date,branch_code,branch_name,area_code,group_cd,group_name,co_id,emp_name,period_mode,recovery_day,week_no
+	          GROUP BY demand_date,branch_code,branch_name,area_code,group_cd,group_name,co_id,co_name,period_mode,recovery_day,week_no
             ORDER BY group_cd`,
      table_name = null,
      whr = null,
@@ -319,7 +319,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
 		                  b.member_code,f.client_name,f.client_mobile,a.group_cd, d.group_name, d.co_id, e.emp_name,
 		                  b.disb_dt,0 AS disb_amt,b.curr_roi, b.period AS loan_period, b.period_mode,
 		                  b.recovery_day AS recovery_day,b.week_no,b.instl_start_dt,b.instl_end_dt,0 AS tot_emi, 
-		                  0 AS demand_amt,g.credit AS coll_amt, 0 AS curr_outstanding
+		                  0 AS demand_amt,SUM(g.credit) AS coll_amt, 0 AS curr_outstanding
 		                  FROM td_loan_month_demand a,td_loan b,md_branch c,md_group d,md_employee e,md_member f, td_loan_transactions g
 		                  WHERE a.loan_id = b.loan_id
 		                  AND a.loan_id = g.loan_id
@@ -330,7 +330,9 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_memberwise", async (req, res) => {
 		                  AND a.branch_code IN (${data.branch_code})  
 		                  AND a.demand_date = '${create_date}'
 		                  AND g.payment_date BETWEEN '${first_create_date}' AND '${create_date}'
-		                  )a	
+		                  GROUP BY a.demand_date,a.branch_code,c.branch_name,c.area_code,a.loan_id,b.member_code,f.client_name,f.client_mobile,a.group_cd,d.group_name, d.co_id, e.emp_name,
+		                  b.disb_dt,b.curr_roi, b.period, b.period_mode,
+		                  b.recovery_day,b.week_no,b.instl_start_dt,b.instl_end_dt)a	
 	          GROUP BY demand_date,branch_code,branch_name,area_code,loan_id,member_code,client_name,client_mobile,group_cd, group_name,
 	          co_id, emp_name,disb_dt,curr_roi,loan_period,period_mode,
                   recovery_day,week_no,instl_start_dt,instl_end_dt
