@@ -38,7 +38,7 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
 		                  b.disb_dt, SUM(b.prn_disb_amt) AS disb_amt,b.curr_roi, b.period AS loan_period,b.period_mode,
 		                  CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,b.instl_start_dt,b.instl_end_dt,
 		                  SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
-		                  0 AS coll_amt, (b.prn_amt + b.intt_amt) AS curr_outstanding
+		                  0 AS coll_amt, SUM(b.prn_amt + b.intt_amt) AS curr_outstanding
 		                  FROM td_loan_month_demand a, td_loan b, md_branch c, md_group d, md_employee e
 		                  WHERE a.loan_id = b.loan_id
 		                        AND a.branch_code = c.branch_code
