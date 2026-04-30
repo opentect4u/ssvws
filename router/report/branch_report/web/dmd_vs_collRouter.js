@@ -32,13 +32,13 @@ dmd_vs_collRouter.post("/dmd_vs_collec_report_groupwise", async (req, res) => {
                   disb_dt, SUM(disb_amt)AS disb_amt,curr_roi, loan_period,period_mode,
                   recovery_day  AS recovery_day,week_no,instl_start_dt,instl_end_dt,
                   SUM(tot_emi) AS tot_emi, SUM(demand_amt) AS demand_amt,
-                  SUM(coll_amt) AS coll_amt, curr_outstanding AS curr_outstanding 
+                  SUM(coll_amt) AS coll_amt, SUM(curr_outstanding) AS curr_outstanding 
                   FROM(
 		                  SELECT DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd, d.group_name,d.co_id, e.emp_name AS co_name,
 		                  b.disb_dt, SUM(b.prn_disb_amt) AS disb_amt,b.curr_roi, b.period AS loan_period,b.period_mode,
 		                  CASE WHEN b.period_mode = 'Monthly' THEN b.recovery_day WHEN b.period_mode IN ('Weekly','Fortnight') THEN CASE b.recovery_day WHEN 1 THEN 'Sunday' WHEN 2 THEN 'Monday' WHEN 3 THEN 'Tuesday' WHEN 4 THEN 'Wednesday' WHEN 5 THEN 'Thursday'WHEN 6 THEN 'Friday'WHEN 7 THEN 'Saturday' ELSE 'Unknown' END ELSE 'N/A' END AS recovery_day,b.week_no,b.instl_start_dt,b.instl_end_dt,
 		                  SUM(b.tot_emi) AS tot_emi, SUM(a.dmd_amt) AS demand_amt,
-		                  0 AS coll_amt, SUM(b.prn_amt + b.intt_amt) AS curr_outstanding
+		                  0 AS coll_amt, (b.prn_amt + b.intt_amt) AS curr_outstanding
 		                  FROM td_loan_month_demand a, td_loan b, md_branch c, md_group d, md_employee e
 		                  WHERE a.loan_id = b.loan_id
 		                        AND a.branch_code = c.branch_code
