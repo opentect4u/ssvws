@@ -196,6 +196,8 @@ app.use('/',authenticateToken,prev_loan_transRouter)
 app.use('/',authenticateToken,disb_rejectRouter)
 app.use('/',authenticateToken,advance_collRouter)
 app.use('/activity_log', authenticateToken, require('./router/admin/activeLocationLog').actLocLogRouter);
+app.use('/app_demand', authenticateToken, require('./router/api/demandReportRouter').demandReportRouter);
+app.use('/app_coll', authenticateToken, require('./router/api/collectionReportRouter').collReportRouter);
 
 app.get("/",async (req, res) => {
   // var currentDate = `${dateFormat(new Date(), "yyyy-mm-dd")}`;
