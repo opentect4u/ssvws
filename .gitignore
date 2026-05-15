@@ -7,3 +7,6 @@ db
 /assets/uploads/
 config
 activity_log
+temp_auto_push.bat
+temp_interactive_push.bat
+.gitignore
