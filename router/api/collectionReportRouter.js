@@ -32,7 +32,7 @@ collReportRouter.post("/coll_report_app_cowise", async (req, res) => {
 collReportRouter.post("/coll_report_app_bmwise", async (req, res) => {
     try{
     var data = req.body;
-    console.log(data,'app_bm_coll');
+    console.log(data,'app_bm_colls');
 
     var select = "b.member_code,d.client_name,b.group_code,c.group_name,a.created_by AS co_id,g.emp_name AS co_name,f.bank_name,f.branch_name bank_branch_name,c.acc_no1 sb_account,c.acc_no2 loan_account,b.scheme_id,e.scheme_name,a.tr_mode,a.credit AS credit,a.prn_recov AS prn_recov,a.intt_recov AS intt_recov,(b.prn_amt + b.od_prn_amt + b.intt_amt)curr_balance",
     table_name = "td_loan_transactions a LEFT JOIN td_loan b ON a.loan_id = b.loan_id LEFT JOIN md_group c ON b.group_code = c.group_code LEFT JOIN md_member d ON b.member_code = d.member_code LEFT JOIN md_scheme e ON b.scheme_id = e.scheme_id LEFT JOIN md_bank f ON c.bank_name = f.bank_code LEFT JOIN md_employee g ON a.created_by = g.emp_id",
