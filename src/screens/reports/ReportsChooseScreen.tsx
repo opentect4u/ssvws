@@ -84,6 +84,33 @@ const ReportsChooseScreen = () => {
                                 }))
                             }}
                         />
+
+                        <CollectionButton
+                            icon={"table-refresh"}
+                            text="Demand Report"
+                            color={theme.colors.secondaryContainer}
+                            textColor={theme.colors.onSecondaryContainer}
+                            onPress={() => {
+                                navigation.dispatch(CommonActions.navigate({
+                                    name: navigationRoutes.demandReport
+                                }))
+                            }}
+                        />
+
+                        <CollectionButton
+                            icon={"table-refresh"}
+                            text="Status Report"
+                            color={theme.colors.secondaryContainer}
+                            textColor={theme.colors.onSecondaryContainer}
+                            onPress={() => {
+                                navigation.dispatch(CommonActions.navigate({
+                                    name: navigationRoutes.paymentStatusReportScreen
+                                }))
+                            }}
+                        />
+
+
+
                     </CollectionButtonsWrapper>
                 </View>
             </ScrollView>

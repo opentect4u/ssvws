@@ -43,6 +43,17 @@ export const ADDRESSES = {
     FINAL_SUBMIT: `${BASE_URL}/final_submit`,
     SEARCH_GROUP_RECOVERY: `${BASE_URL}/search_group_app`,
     DEMANDREPORT: `${BASE_URL}/get_demand_data`,
+
+    DEMANDREPORT_NEW_CO: `${BASE_URL}/app_demand/loan_demand_report_app_cowise`,
+    DEMANDREPORT_NEW_FILTER_CO: `${BASE_URL}/app_demand/filter_dayawise_dmd_report_app_cowise`,
+
+    DEMANDREPORT_NEW_BM: `${BASE_URL}/app_demand/loan_demand_report_app_bmwise`,
+    DEMANDREPORT_NEW_FILTER_BM: `${BASE_URL}/app_demand/filter_dayawise_dmd_report_app_bmwise`,
+
+    PAYMENTREPORT_CO: `${BASE_URL}/app_coll/coll_report_app_cowise`,
+    PAYMENTREPORT_BM: `${BASE_URL}/app_coll/coll_report_app_bmwise`,
+
+
     GROUPWISERECOVERYREPORT: `${BASE_URL}/group_wise_recov_app`,
     LOAN_RECOVERY_EMI: `${BASE_URL}/recovery_transaction`,
     BM_SEARCH_PENDING_FORM: `${BASE_URL}/bm_search_pending_form`,
@@ -59,9 +70,11 @@ export const ADDRESSES = {
     DASHBOARD_DETAILS: `${BASE_URL}/dashboard_dtls`,
     DASHBOARD_CASH_RECOV_DETAILS: `${BASE_URL}/dashboard_dtls_cash_recov`,
     DASHBOARD_BANK_RECOV_DETAILS: `${BASE_URL}/dashboard_dtls_bank_recov`,
+    DASHBOARD_DISBURSE_DETAILS_CO: `${BASE_URL}/dashboard_dtls_disb`,
     DASHBOARD_DETAILS_BM: `${BASE_URL}/dashboard_dtls_bm`,
     DASHBOARD_CASH_DETAILS_BM: `${BASE_URL}/dashboard_dtls_cash_recov_bm`,
     DASHBOARD_BANK_DETAILS_BM: `${BASE_URL}/dashboard_dtls_bank_recov_bm`,
+    DASHBOARD_DISBURSE_DETAILS_BM: `${BASE_URL}/dashboard_dtls_bm_disb`,
 
     // MEMBERWISE_RECOVERY_REPORT: `${BASE_URL}/member_wise_recovery`,
     MEMBERWISE_RECOVERY_REPORT: `${BASE_URL}/memb_wise_recov_app`,
@@ -73,6 +86,11 @@ export const ADDRESSES = {
     DUPLICATE_PRINT: `${BASE_URL}/fetch_group_dtls_fr_duplicate_print`,
     UPLOAD_GRT_IMAGE: `${BASE_URL}/image_grt_save`,
     LOGOUT_APP:`${BASE_URL}/logout_app`,
+
+    // Overdue API Start
+    FETCH_OD_LIST: `${BASE_URL}/app_visit_op/fetch_od_list`,
+    FETCH_DETAILS_FR_VIEW: `${BASE_URL}/app_visit_op/fetch_details_fr_view`,
+    SAVE_VISIT_OPTION: `${BASE_URL}/app_visit_op/save_visi_option`,
 
 
     PENDING_LIST_DATA:`${BASE_URL}/bm_show_pending_form`,

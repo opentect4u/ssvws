@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import { Alert, Linking, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
 import { Checkbox, Icon, Text } from "react-native-paper"
@@ -20,9 +20,8 @@ import { useEscPosPrint } from "../../hooks/useEscPosPrint"
 import { BASE_URL } from '../../config/config'
 import dayjs from 'dayjs'
 import { AppStore } from '../../context/AppContext'
-import ViewShot from 'react-native-view-shot';
 
-const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
+const RecoveryGroupFormMain = ({ fetchedData, approvalStatus = "U" }) => {
     const theme = usePaperColorScheme()
     const navigation = useNavigation()
     const isFocused = useIsFocused()
@@ -32,7 +31,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const { location, error } = useGeoLocation()
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
     const [errMsg, setErrMsg] = useState(() => "")
-    const { handlePrint, viewShotRef } = useEscPosPrint()
+    const { handlePrint } = useEscPosPrint()
 
     // console.log("LOGIN DATAAA =============", loginStore)
     // console.log("4444444444444444444ffffffffffffffff", fetchedData)
@@ -533,48 +532,6 @@ const { handleLogout } = useContext<any>(AppStore)
 
     return (
         <SafeAreaView>
-
-            <View
-                style={{
-                    position: "absolute",
-                    left: -9999,
-                }}
-            >
-
-                <ViewShot
-                    ref={viewShotRef}
-                    options={{
-                        format: "png",
-                        quality: 1,
-                        result: "base64",
-                    }}
-                >
-
-                    <View
-                        style={{
-                            backgroundColor: "white",
-                            padding: 5,
-                            width: 380,
-                        }}
-                    >
-
-                        <Text
-                            style={{
-                                color: "black",
-                                fontSize: 24,
-                                fontFamily: "NotoSansBengali-Regular",
-                                textAlign: "center",
-                            }}
-                        >
-                            এই রসিদটি জেরক্স করে রাখিবেন ।
-                        </Text>
-
-                    </View>
-
-                </ViewShot>
-
-            </View>
-
             <ScrollView keyboardShouldPersistTaps="handled" style={{
                 backgroundColor: theme.colors.background,
             }}>
@@ -939,6 +896,6 @@ const { handleLogout } = useContext<any>(AppStore)
     )
 }
 
-export default RecoveryGroupForm
+export default RecoveryGroupFormMain
 
 const styles = StyleSheet.create({})

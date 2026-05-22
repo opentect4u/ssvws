@@ -23,7 +23,7 @@ import messaging from '@react-native-firebase/messaging'
 const LoginScreen = () => {
     const theme = usePaperColorScheme()
     // const appVersion = DeviceInfo.getVersion()
-    const [isPasswordVisible,setPasswordVisibility] = useState(false);
+    const [isPasswordVisible,setPasswordVisibility] = useState(true);
     const {
         handleLogin,
         isLoading,

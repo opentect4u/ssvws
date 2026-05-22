@@ -41,8 +41,9 @@ const AppContext = ({ children }) => {
         await axios.post(`${ADDRESSES.LOGIN}`, creds).then(res => {
 
             
-
+        
             if (res?.data?.suc === 1) {
+                // console.log("LOGIN-----USERNAME-----PASS", res?.data?.user_dtls)
                     ToastAndroid.show(`${res?.data?.msg}`, ToastAndroid.SHORT);
                     if(userId == 2){
                         const dt = {

@@ -7,6 +7,7 @@ import DisbursementReportScreen from '../screens/reports/DisbursementReportScree
 import GroupwiseRecovery from '../screens/reports/GroupwiseRecovery'
 import DemandReport from '../screens/reports/DemandReport'
 import AttendanceReportScreen from '../screens/reports/AttendanceReportScreen'
+import PaymentStatusReport from '../screens/reports/PaymentStatusReport'
 
 export default function ReportsNavigation() {
     const Stack = createNativeStackNavigator()
@@ -19,6 +20,7 @@ export default function ReportsNavigation() {
             <Stack.Screen name={navigationRoutes.groupwiseRecovery} component={GroupwiseRecovery} />
             <Stack.Screen name={navigationRoutes.demandReport} component={DemandReport} />
             <Stack.Screen name={navigationRoutes.attendanceReportScreen} component={AttendanceReportScreen} />
+            <Stack.Screen name={navigationRoutes.paymentStatusReportScreen} component={PaymentStatusReport} />
 
         </Stack.Navigator>
     )

@@ -17,6 +17,7 @@ import ReportsNavigation from "./ReportsNavigation"
 import DemandNavigation from './DemandNavigation'
 import useCheckOpenCloseDate from '../components/useCheckOpenCloseDate'
 import { useIsFocused } from '@react-navigation/native'
+import Overdue from '../screens/Overdue'
 // import { loginStorage } from "../storage/appStorage"
 // import { LoginDataMessage } from "../models/api_types"
 
@@ -267,6 +268,25 @@ function BottomNavigationPaper() {
                         ),
                 }}
             /> */}
+
+            <Tab.Screen
+                name={navigationRoutes.overdue}
+                component={Overdue}
+                options={{
+                    tabBarLabel: "Overdue",
+                    tabBarIcon: ({ color, focused }) =>
+                        !focused ? (
+                            <MaterialCommunityIcons
+                                name="clock-alert-outline"
+                                color={color}
+                                size={26}
+                            />
+                        ) : (
+                            <MaterialCommunityIcons name="clock-alert-outline" color={color} size={26} />
+                        ),
+                }}
+            />
+
             <Tab.Screen
                 name={navigationRoutes.settingsNavigation}
                 component={SettingsNavigation}

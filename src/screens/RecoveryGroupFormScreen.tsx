@@ -22,7 +22,6 @@ const RecoveryGroupScreen = () => {
 
     return (
         <SafeAreaView>
-            
             <ScrollView keyboardShouldPersistTaps="handled" style={{
                 backgroundColor: theme.colors.background
             }}>

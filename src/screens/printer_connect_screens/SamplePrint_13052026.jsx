@@ -1,19 +1,11 @@
-import React, {useRef} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React from 'react';
+import {Button, StyleSheet, Text, View} from 'react-native';
 import {BluetoothEscposPrinter} from 'react-native-bluetooth-escpos-printer';
+import {hsdLogo} from './dummy-logo';
 import ButtonPaper from '../../components/ButtonPaper';
 import {usePaperColorScheme} from '../../theme/theme';
-import ViewShot from 'react-native-view-shot';
 
-const SamplePrint = () => {
-
-  const theme = usePaperColorScheme();
-
-  // MOVE HERE
-  const viewShotRef = useRef();
-
-  // MOVE FUNCTION INSIDE COMPONENT
-  async function printreciept() {
+async function printreciept() {
   const columnWidths = [24, 24];
   const receiptNo = 120;
   const receiptDate = new Date();
@@ -53,15 +45,6 @@ const SamplePrint = () => {
       ['Receipt No: ' + receiptNo],
       {},
     );
-
-    // // Capture Bengali Image
-    //   const base64Image = await viewShotRef.current.capture();
-
-    //   // Print Image
-    //   await BluetoothEscposPrinter.printPic(base64Image, {
-    //     width: 380,
-    //     left: 0,
-    //   });
 
     await BluetoothEscposPrinter.printColumn(
       [30],
@@ -169,49 +152,12 @@ const SamplePrint = () => {
   }
 }
 
+const SamplePrint = () => {
+  const theme = usePaperColorScheme();
   return (
     <View>
-
-      {/* Hidden Bengali View */}
-      <View
-        style={{
-          position: 'absolute',
-          left: -9999,
-        }}>
-
-        <ViewShot
-          ref={viewShotRef}
-          options={{
-            format: 'png',
-            quality: 1,
-            result: 'base64',
-          }}>
-
-          <View
-            style={{
-              backgroundColor: 'white',
-              padding: 10,
-              width: 380,
-            }}>
-
-            <Text
-              style={{
-                color: 'black',
-                fontSize: 26,
-                fontFamily: 'NotoSansBengali-Regular',
-                textAlign: 'center',
-              }}>
-
-              {'এই রসিদ টি জেরক্স করে রাখিবেন ।'}
-
-            </Text>
-
-          </View>
-        </ViewShot>
-
-      </View>
-
       <View style={styles.btn}>
+        {/* <Button title="Test Printer" onPress={printreciept} /> */}
         <ButtonPaper
           onPress={printreciept}
           mode="contained"
@@ -219,7 +165,6 @@ const SamplePrint = () => {
           Test Printer
         </ButtonPaper>
       </View>
-
     </View>
   );
 };

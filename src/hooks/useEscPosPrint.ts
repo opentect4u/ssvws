@@ -1,7 +1,11 @@
 import { BluetoothEscposPrinter } from "react-native-bluetooth-escpos-printer"
 import { CONSTANTS } from "../utils/constants"
+import { useRef } from "react";
 
 export const useEscPosPrint = () => {
+
+    const viewShotRef = useRef<any>(null);
+
     async function handlePrint(data: any, isDuplicate = false) {
         try {
             let tot_amt = 0
@@ -199,6 +203,17 @@ export const useEscPosPrint = () => {
                 ['HELPLINE', ":", `${CONSTANTS.helplineNumeber}`],
                 {},
             );
+            
+          
+            // Capture Bengali Image
+            const base64Image = await viewShotRef.current.capture();
+
+            // Print Image
+            await BluetoothEscposPrinter.printPic(base64Image, {
+                width: 380,
+                left: 0,
+            });
+
             // await BluetoothEscposPrinter.printText(
             //     `===========X==========\r\n\r\n\r\n`,
             //     { align: "center" },
@@ -222,6 +237,6 @@ export const useEscPosPrint = () => {
     }
 
     return {
-        handlePrint,
+        handlePrint, viewShotRef,
     }
 }

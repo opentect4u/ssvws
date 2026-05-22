@@ -1413,7 +1413,10 @@ const { handleLogout } = useContext<any>(AppStore)
                     />
 
                     <Divider /> */}
-                    {/* <Text>{JSON.stringify(loginStore?.transaction_date , null, 2)}   {JSON.stringify(formData.grtDate , null, 2)}</Text> */}
+                    {/* <Text>
+                        {JSON.stringify(loginStore , null, 2)}   
+                        {JSON.stringify(formData.grtDate , null, 2)}
+                        </Text> */}
                     <ButtonPaper
                         textColor={theme.colors.primary}
                         onPress={() => setOpenDate2(true)}
@@ -1422,6 +1425,7 @@ const { handleLogout } = useContext<any>(AppStore)
                         // disabled={disableCondition(approvalStatus, branchCode)}
                         disabled={true}
                         >
+                            {/* {JSON.stringify(formData , null, 2)} */}
                         GRT DATE*: {formData.grtDate?.toLocaleDateString("en-GB")}
                         {/* CHOOSE GRT DATE*: {loginStore?.transaction_date} */}
                         

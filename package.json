@@ -1,6 +1,6 @@
 {
   "name": "ssvwsloan",
-  "version": "4.6.6",
+  "version": "4.6.8",
   "private": true,
   "scripts": {
     "android": "react-native run-android",
@@ -29,8 +29,11 @@
     "react-native-element-dropdown": "^2.12.2",
     "react-native-gesture-handler": "^2.24.0",
     "react-native-get-location": "^5.0.0",
+    "react-native-image-crop-picker": "^0.51.1",
     "react-native-image-viewing": "^0.2.2",
     "react-native-mmkv": "^2.11.0",
+    "react-native-month-selector": "^1.4.0",
+    "react-native-month-year-picker": "^1.9.0",
     "react-native-normalize": "^1.0.1",
     "react-native-paper": "^5.12.5",
     "react-native-permissions": "^5.2.0",
@@ -42,6 +45,7 @@
     "react-native-thermal-printer": "^2.3.6",
     "react-native-ui-datepicker": "^3.1.2",
     "react-native-vector-icons": "^10.2.0",
+    "react-native-view-shot": "^5.1.0",
     "react-native-vision-camera": "^4.7.1",
     "rn-slide-button": "^1.0.3",
     "yup": "^1.4.0"

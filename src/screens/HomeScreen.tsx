@@ -27,6 +27,11 @@ import { AppStore } from '../context/AppContext'
 import useCurrentRouteName from '../hooks/useCurrentRoute'
 import useCheckOpenCloseDate from '../components/useCheckOpenCloseDate'
 
+const statusDataRadio = [
+  { label: "Today", value: "T" },
+  { label: "Monthly", value: "M" },
+];
+
 const HomeScreen = () => {
     const theme = usePaperColorScheme()
     const navigation = useNavigation()
@@ -51,8 +56,10 @@ const HomeScreen = () => {
     const [noOfGrtForms, setNoOfGrtForms] = useState(() => "")
     const [totalCashRecovery, setTotalCashRecovery] = useState(() => "")
     const [totalBankRecovery, setTotalBankRecovery] = useState(() => "")
+    const [totalDisbursement, setTotalDisbursement] = useState(() => "")
 
     const [checkUser, setCheckUser] = useState(() => "O")
+    const [statusOfData, setStatusOfData] = useState(() => "T")
 
     const [openDate2, setOpenDate2] = useState(false)
     const [choosenDate, setChoosenDate] = useState(new Date())
@@ -409,10 +416,12 @@ const HomeScreen = () => {
     const fetchDashboardDetails = async () => {
         // setLoading(true)
         const creds = {
+            day_type: statusOfData,
             emp_id: loginStore?.emp_id,
             branch_code: loginStore?.brn_code,
             datetime: formattedChoosenDate
         }
+
         await axios.post(`${ADDRESSES.DASHBOARD_DETAILS}`, creds,{
             headers: {
                 Authorization: loginStore?.token, // example header
@@ -435,13 +444,14 @@ const HomeScreen = () => {
     const fetchDashboardCashRecoveryDetails = async () => {
         // setLoading(true)
         const creds = {
+            "day_type": statusOfData,
             "branch_code": loginStore?.brn_code,
             "tr_mode": "C",
             "datetime": formattedChoosenDate,
             "created_by": loginStore?.emp_id,
 
         }
-        console.log("CREDSSS C", creds)
+        // console.log("CREDSSS C", creds)
         await axios.post(`${ADDRESSES.DASHBOARD_CASH_RECOV_DETAILS}`, creds, {
             headers: {
                 Authorization: loginStore?.token, // example header
@@ -464,11 +474,13 @@ const HomeScreen = () => {
     const fetchDashboardBankRecoveryDetails = async () => {
         // setLoading(true)
         const creds = {
+            "day_type": statusOfData,
             "branch_code": loginStore?.brn_code,
             "tr_mode": "B",
             "datetime": formattedChoosenDate,
-            "created_by": loginStore?.emp_id
+            "emp_id": loginStore?.emp_id
         }
+       
         console.log("CREDSSS B", creds)
         await axios.post(`${ADDRESSES.DASHBOARD_BANK_RECOV_DETAILS}`, creds, {
             headers: {
@@ -489,6 +501,38 @@ const HomeScreen = () => {
         // setLoading(false)
     }
 
+    const fetchDashboardDisburseDetails = async () => {
+        // setLoading(true)
+        const creds = {
+            "day_type": statusOfData,
+            "branch_code": loginStore?.brn_code,
+            "emp_id": loginStore?.emp_id,
+            // "tr_mode": "B",
+            "datetime": formattedChoosenDate,
+            
+        }
+       
+        await axios.post(`${ADDRESSES.DASHBOARD_DISBURSE_DETAILS_CO}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
+            console.log(">>>>>>>B<<<<<<<", res?.data)
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
+                // console.log(res?.data?.msg[0], 'gggggggggggggggggggggggg');
+                
+            setTotalDisbursement(res?.data?.msg[0]?.tot_disburse)
+            }
+        }).catch(err => {
+            console.log("ERRRRR<<<<<B", err)
+        })
+        // setLoading(false)
+    }
+
     
 
     useEffect(() => {
@@ -499,9 +543,10 @@ const HomeScreen = () => {
             fetchDashboardDetails()
             fetchDashboardCashRecoveryDetails()
             fetchDashboardBankRecoveryDetails()
+            fetchDashboardDisburseDetails()
             }
         }
-    }, [isFocused])
+    }, [isFocused, statusOfData])
 
     const handleFetchDashboardDetailsGRTBM = async () => {
         const creds = {
@@ -583,6 +628,54 @@ const HomeScreen = () => {
         })
     }
 
+    const handleFetchDashboardDisburseDetailsBM = async () => {
+        const creds_O = {
+            flag: checkUser,
+            branch_code: loginStore?.brn_code,
+            emp_id: checkUser === "O" ? loginStore?.emp_id : checkUser === "A" ? 0 : 0,
+            datetime: formattedChoosenDate,
+        }
+
+        const creds_A = {
+            flag: checkUser,
+            branch_code: loginStore?.brn_code,
+            // emp_id: checkUser === "O" ? loginStore?.emp_id : checkUser === "A" ? 0 : 0,
+            datetime: formattedChoosenDate,
+        }
+
+        // {
+        // "flag" : "O",
+        // "branch_code" : "113",
+        // "emp_id" : "10007",
+        // "datetime" : "2026-05-05"
+        // }
+        // {
+        // "flag" : "A",
+        // "branch_code" : "113",
+        // "datetime" : "2026-05-05"
+        // }
+
+        await axios.post(`${ADDRESSES.DASHBOARD_DISBURSE_DETAILS_BM}`, checkUser === "O" ? creds_O : creds_A , {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }).then(res => {
+            if(res?.data?.suc === 0) {
+                handleLogout()
+            }
+            else{
+            console.log(res?.data?.msg[0], 'gggggggggggggggggg', creds_O, creds_A);
+            
+            setTotalDisbursement(res?.data?.msg[0]?.tot_disburse)
+            }
+            console.log("----====----BB", res?.data)
+        }).catch(err => {
+            ToastAndroid.show("Some error occurred while fetching dashboard details BM3.", ToastAndroid.SHORT)
+            console.log("Some Errr", err)
+        })
+    }
+
     useEffect(() => {
         // console.log(loginStore?.id, 'hhhhhhhhhhhhhhhhhhhhhhhhhhhhh 2 22');
         if(isFocused){
@@ -590,6 +683,7 @@ const HomeScreen = () => {
             handleFetchDashboardDetailsGRTBM()
             handleFetchDashboardCashDetailsBM()
             handleFetchDashboardBankDetailsBM()
+            handleFetchDashboardDisburseDetailsBM()
             }
         }
     }, [checkUser, isFocused])
@@ -618,6 +712,50 @@ const HomeScreen = () => {
                     subtitle={`Welcome back, ${loginStore?.id === 1 ? "Branch User" : loginStore?.id === 2 ? "Branch Admin" : loginStore?.id === 3 ? "MIS Assistant" : "Administrator"}!`}
                     background={MD2Colors.blue100}
                     footerText={`Branch • ${loginStore?.branch_name}`} />
+                    
+                    <View style={{
+                    // paddingHorizontal: 20,
+                    // paddingBottom: 120,
+                    // gap: 8
+                    width: SCREEN_WIDTH,
+                    // justifyContent: "center",
+                    alignItems: "center",
+                    // minHeight: SCREEN_HEIGHT,
+                    height: "auto",
+                }}>
+                    <View style={{
+                        backgroundColor: MD2Colors.grey800,
+                        width: SCREEN_WIDTH / 1.1,
+                        height: "auto",
+                        marginBottom: 10,
+                        // borderTopRightRadius: 30,
+                        // borderBottomLeftRadius: 30,
+                        borderRadius:10,
+                        padding: 10,
+                        gap: 10,
+                    }}>
+                    <View style={{
+                            height: "auto",
+                            width: "100%",
+                            backgroundColor: theme.colors.surface,
+                            borderRadius: 5,
+                            // borderBottomRightRadius: 0,
+                            // borderBottomLeftRadius: 0,
+                            alignItems: "center",
+                            // paddingHorizontal: 15,
+                            padding: 10,
+                            // flexDirection: "row-reverse",
+                            justifyContent: "space-between",
+                            // gap: 15
+                        }}>
+                    <View>
+                                <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`DATE & TIME:`} {`${choosenDate.toLocaleDateString("en-GB")} ${currentTime.toLocaleTimeString("en-GB")}`}</Text>
+                                {/* <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`${choosenDate.toLocaleDateString("en-GB")} ${currentTime.toLocaleTimeString("en-GB")}`}</Text> */}
+                            </View>
+                            </View>
+                            </View>
+                            </View>
+
                 <View style={{
                     // paddingHorizontal: 20,
                     // paddingBottom: 120,
@@ -793,6 +931,38 @@ const HomeScreen = () => {
                     {/* <Text variant='bodyLarge'>{JSON.stringify(loginStore)}</Text> */}
 
                     {/* Dashboard Starts From Here... */}
+                    
+                    {loginStore?.id === 1 &&(
+                    <View style={{
+                        backgroundColor: MD2Colors.lightBlue600,
+                        width: SCREEN_WIDTH / 1.1,
+                        height: "auto",
+                        marginBottom: 10,
+                        borderRadius:10,
+                        // borderTopRightRadius: 30,
+                        // borderBottomLeftRadius: 30,
+                        padding: 10,
+                        gap: 10,
+                    }}>
+                        <View>
+                            <RadioComp
+                            // title={statusOfData === "T" ? "Your Data" : "All User"}
+                            title={"Filter: "}
+                            titleColor={MD2Colors.cyan50}
+                            color={MD2Colors.cyan50}
+                            radioButtonColor={MD2Colors.cyan50}
+                            icon="filter-variant"
+                            dataArray={statusDataRadio.map(item => ({
+                                optionName: item.label,
+                                optionState: statusOfData,
+                                currentState: item.value,
+                                optionSetStateDispathFun: setStatusOfData
+                            }))}
+                            />
+                        </View>
+
+                        </View>
+                        )}
 
                     <View style={{
                         backgroundColor: MD2Colors.blue50,
@@ -804,6 +974,8 @@ const HomeScreen = () => {
                         padding: 15,
                         gap: 10,
                     }}>
+                        
+
                         {loginStore?.id === 2 && <View>
                             <RadioComp
                                 title={checkUser === "Own" ? `Your Data` : `All User`}
@@ -819,7 +991,7 @@ const HomeScreen = () => {
                                         optionSetStateDispathFun: (e) => setCheckUser(e)
                                     },
                                     {
-                                        optionName: "ALL",
+                                        optionName: "BRANCH",
                                         optionState: checkUser,
                                         currentState: "A", // emp_id -> 0
                                         optionSetStateDispathFun: (e) => setCheckUser(e)
@@ -831,7 +1003,7 @@ const HomeScreen = () => {
                             color: MD2Colors.blue900
                         }}>Branch - {loginStore?.branch_name}</Text> */}
 
-                        <View style={{
+                        {/* <View style={{
                             height: 80,
                             width: "100%",
                             backgroundColor: theme.colors.surface,
@@ -842,7 +1014,6 @@ const HomeScreen = () => {
                             paddingHorizontal: 15,
                             flexDirection: "row-reverse",
                             justifyContent: "space-between",
-                            // gap: 15
                         }}>
                             <View style={{
                                 backgroundColor: theme.colors.tertiaryContainer,
@@ -853,25 +1024,11 @@ const HomeScreen = () => {
                                 alignItems: "center"
                             }}>
                                 <IconButton icon="calendar-month-outline" iconColor={theme.colors.onTertiaryContainer} onPress={() => setOpenDate2(true)} />
-                                {/* <DatePicker
-                                    modal
-                                    mode="date"
-                                    open={openDate2}
-                                    date={choosenDate}
-                                    onConfirm={date => {
-                                        setChoosenDate(date)
-                                        setOpenDate2(false)
-                                    }}
-                                    onCancel={() => {
-                                        setOpenDate2(false)
-                                    }}
-                                /> */}
                             </View>
                             <View>
                                 <Icon source="arrow-left-thin" size={25} color={theme.colors.onSurface} />
                             </View>
                             <View>
-                                {/* <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`DATE: ${choosenDate.toLocaleDateString("en-GB")}`}</Text> */}
                                 <Text variant='titleMedium' style={{ color: theme.colors.tertiary }}>{`TXN DATE: ${loginStore?.transaction_date}`}</Text>
                             </View>
                             
@@ -888,7 +1045,6 @@ const HomeScreen = () => {
                             paddingHorizontal: 15,
                             flexDirection: "row-reverse",
                             justifyContent: "space-between",
-                            // gap: 15
                         }}>
                             <View style={{
                                 backgroundColor: theme.colors.tertiaryContainer,
@@ -899,19 +1055,6 @@ const HomeScreen = () => {
                                 alignItems: "center"
                             }}>
                                 <IconButton icon="calendar-month-outline" iconColor={theme.colors.onTertiaryContainer} onPress={() => setOpenDate2(true)} />
-                                {/* <DatePicker
-                                    modal
-                                    mode="date"
-                                    open={openDate2}
-                                    date={choosenDate}
-                                    onConfirm={date => {
-                                        setChoosenDate(date)
-                                        setOpenDate2(false)
-                                    }}
-                                    onCancel={() => {
-                                        setOpenDate2(false)
-                                    }}
-                                /> */}
                             </View>
                             <View>
                                 <Icon source="arrow-left-thin" size={25} color={theme.colors.onSurface} />
@@ -921,9 +1064,17 @@ const HomeScreen = () => {
                                 <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`${choosenDate.toLocaleDateString("en-GB")} ${currentTime.toLocaleTimeString("en-GB")}`}</Text>
                             </View>
                             
-                        </View>
+                        </View> */}
 
                         
+                        <ListCard
+                            title={`Disbursements`}
+                            subtitle={`${totalDisbursement || 0} /-`}
+                            position={0}
+                            icon='format-list-numbered'
+                            iconViewColor={MD2Colors.yellow800}
+                            iconViewBorderColor={MD2Colors.yellow600}
+                        />
 
                         <ListCard
                             title={`No. of GRTs`}

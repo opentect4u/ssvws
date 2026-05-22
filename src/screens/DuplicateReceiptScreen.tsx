@@ -15,6 +15,7 @@ import { formattedDate } from '../utils/dateFormatter'
 import { BASE_URL } from '../config/config'
 import { useEscPosPrint } from '../hooks/useEscPosPrint'
 import { AppStore } from '../context/AppContext'
+import ViewShot from 'react-native-view-shot';
 
 const DuplicateReceiptScreen = () => {
     const theme = usePaperColorScheme()
@@ -32,7 +33,7 @@ const DuplicateReceiptScreen = () => {
     const [filteredDataArray, setFilteredDataArray] = useState(() => [])
 
     const defaultStyles = useDefaultStyles();
-    const { handlePrint } = useEscPosPrint();
+    const { handlePrint, viewShotRef } = useEscPosPrint();
 
     const onChangeSearch = (query: string) => {
         setSearch(query)
@@ -152,6 +153,48 @@ const DuplicateReceiptScreen = () => {
 
     return (
         <SafeAreaView>
+
+            <View
+                style={{
+                    position: "absolute",
+                    left: -9999,
+                }}
+            >
+
+                <ViewShot
+                    ref={viewShotRef}
+                    options={{
+                        format: "png",
+                        quality: 1,
+                        result: "base64",
+                    }}
+                >
+
+                    <View
+                        style={{
+                            backgroundColor: "white",
+                            padding: 5,
+                            width: 380,
+                        }}
+                    >
+
+                        <Text
+                            style={{
+                                color: "black",
+                                fontSize: 24,
+                                fontFamily: "NotoSansBengali-Regular",
+                                textAlign: "center",
+                            }}
+                        >
+                            এই রসিদটি জেরক্স করে রাখিবেন ।
+                        </Text>
+
+                    </View>
+
+                </ViewShot>
+
+            </View>
+
             <ScrollView style={{
                 backgroundColor: theme.colors.background,
                 minHeight: SCREEN_HEIGHT,
@@ -164,7 +207,7 @@ const DuplicateReceiptScreen = () => {
                     <View style={{
                         backgroundColor: MD2Colors.amber50,
                         padding: 10,
-                        marginBottom: -30,
+                        marginBottom: 10,
                         borderTopRightRadius: 20,
                         borderBottomLeftRadius: 20,
                     }}>

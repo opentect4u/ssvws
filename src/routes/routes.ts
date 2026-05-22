@@ -36,11 +36,13 @@ const navigationRoutes = {
     memberDetailsAllFormScreen: "MemberDetailsAllFormScreen",
     searchScreen: "SearchScreen",
     settingsNavigation: "SettingsNavigation",
+    overdue: "Overdue",
     settingsScreen: "SettingsScreen",
     printerConnectScreen: "PrinterConnectScreen",
     noInternetScreen: "NoInternetScreen",
 
     attendanceReportScreen: "AttendanceReportScreen",
+    paymentStatusReportScreen: "PaymentStatusReport",
 
     bmPendingLoansNavigation: "BMPendingLoansNavigation",
     bmPendingLoansScreen: "BMPendingLoansScreen",
