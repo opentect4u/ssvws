@@ -831,8 +831,6 @@ const filteredAccounts = useMemo(() => {
 
         ListHeaderComponent={
     <>
-
-       
         <Searchbar
             placeholder="Search Member or Group Name"
             value={search}
