@@ -464,18 +464,6 @@ const { handleLogout } = useContext<any>(AppStore)
             // "cheque_id": 0,
             "chq_dt": formattedDate(formData?.chequeDate) || "",
             "group_code": fetchedData?.group_code,
-            // "prn_amt":formData?.prn_amt,
-            // "balance": fetchedData?.balance,
-            // "recovdtls": [{
-            //     "loan_id": "",
-            //     "credit": "",
-            //     "balance": "",
-            //     "intt_cal_amt": "",
-            //     "prn_emi": "",
-            //     "intt_emi": "",
-            //     "instl_paid": "",
-            //     "last_trn_dt": ""
-            // }],
             "recovdtls": transformedObj
         }
 

@@ -345,7 +345,8 @@ const RecoveryMemberForm = ({ fetchedData, approvalStatus }) => {
             modified_by: loginStore?.emp_id,
             trn_lat: location.latitude,
             trn_long: location.longitude,
-            trn_addr: geolocationFetchedAddress
+            // trn_addr: geolocationFetchedAddress
+            trn_addr: ""
         }
 
         console.log("PAYLOAD---RECOVERY", creds)
