@@ -227,6 +227,8 @@ const { handleLogout } = useContext<any>(AppStore)
     }
 
     useEffect(() => {
+        console.log(fetchedData, 'fetchedData');
+        
         setFormData({
             groupName: fetchedData?.group_name || "",
             groupType: fetchedData?.group_type || "",
