@@ -290,6 +290,13 @@ module.exports = {
 
                     var current_member_code = data.member_code != 0 ? data.member_code : member_code;
 
+                    var table_name1 = "td_plot",
+                    fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_by)",
+                    values1 = `('${data.branch_code}','${data.grt_date}', 'G', '${data.co_lat_val}','${data.co_long_val}','${data.created_by}')`,
+                    whr1= null,
+                    flag1 =  0;
+                    var visit_plot_data_grt = await db_Insert(table_name1, fields1, values1, whr1, flag1); 
+
                     var table_name = "td_grt_basic",
                     fields = "(form_no, grt_date, branch_code, prov_grp_code, member_code, approval_status, co_lat_val, co_long_val, co_gps_address, created_by, created_at)",
                     values = `('${form_no}', '${data.grt_date}', '${data.branch_code}', '0', '${current_member_code}', 'U', '${data.co_lat_val}', '${data.co_long_val}', '${data.co_gps_address}', '${data.created_by}', '${datetime}')`,
@@ -495,6 +502,14 @@ module.exports = {
             var edit_basic_dt = await db_Insert(table_name, fields, values, whr, flag);
     
             if (edit_basic_dt.suc > 0) {
+
+                var table_name1 = "td_plot",
+                fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_by)",
+                values1 = `('${data.branch_code}','${data.grt_date}', 'G', '${data.bm_lat_val}','${data.bm_long_val}','${data.modified_by}')`,
+                whr1= null,
+                flag1 =  0;
+                var visit_plot_data_recov = await db_Insert(table_name1, fields1, values1, whr1, flag1); 
+
                 var table_name = "td_grt_basic",
                 fields = `grt_date = '${data.grt_date}', 
                           bm_lat_val = '${data.bm_lat_val}', 

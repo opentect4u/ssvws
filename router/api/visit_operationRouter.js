@@ -77,7 +77,7 @@ visit_operationRouter.post("/fetch_od_list", async (req, res) => {
     ) e 
     ON a.loan_id = e.loan_id
     AND a.branch_code = e.branch_code`;
-    whr = `a.od_amt > 0 AND a.branch_code = '${branch_code}' AND DATE(a.trf_date) = '${max_trf_date}'`;
+    whr = `a.od_amt > 0 AND b.outstanding > 0 AND a.branch_code = '${branch_code}' AND DATE(a.trf_date) = '${max_trf_date}'`;
 
     if (id === '1') {
     whr += ` AND b.modified_by = '${emp_id}'`;
@@ -292,6 +292,15 @@ values = `('${branch_code}','${datetime}','${group_code}','${member_code}','${lo
 whr = null,
 flag =  0;
 var visit_data = await db_Insert(table_name, fields, values, whr, flag);
+
+if(visit_data.suc === 1 && visit_data.msg.length > 0){
+var table_name1 = "td_plot",
+fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_by)",
+values1 = `('${branch_code}', '${datetime}', 'V', '${visit_lat}','${visit_long}','${created_by}')`,
+whr1= null,
+flag1 =  0;
+var visit_plot_data = await db_Insert(table_name1, fields1, values1, whr1, flag1);   
+}
 return res.send({
 suc: 1,
 msg: "Visit operation data saved successfully",

@@ -527,6 +527,31 @@ module.exports = {
                   console.log(payment_id,'id_recov');
                   if (dt.credit > 0 && prnEmi >= 0 && inttEMI >= 0 && balance >= 0 && dt.intt_cal_amt > 0) {
 
+                  // let member_fetch = await db_Select(
+                  // "member_code",
+                  // "td_loan",
+                  // `branch_code = '${data.branch_code}' 
+                  //  AND group_code = '${data.group_code}' 
+                  //  AND loan_id = '${dt.loan_id}'`,
+                  //  null
+                  //  );
+
+                  //  let member_code = 0;
+
+                  //  if (member_fetch.suc > 0 && member_fetch.msg.length > 0) {
+                  //   member_code = member_fetch.msg[0].member_code;
+                  //  }   
+
+                  var table_name1 = "td_plot",
+                  fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_by)",
+                  values1 = `('${data.branch_code}', '${dateFormat(
+                        dt.last_trn_dt,
+                        "yyyy-mm-dd"
+                      )}', 'R', '${data.trn_lat}','${data.trn_long}','${data.created_by}')`,
+                   whr1= null,
+                   flag1 =  0;
+                   var visit_plot_data_recov = await db_Insert(table_name1, fields1, values1, whr1, flag1);        
+
                     var table_name = "td_loan_transactions",
                       fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,upload_on,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
                       values = `('${dateFormat(
