@@ -540,17 +540,7 @@ module.exports = {
 
                   //  if (member_fetch.suc > 0 && member_fetch.msg.length > 0) {
                   //   member_code = member_fetch.msg[0].member_code;
-                  //  }   
-
-                  var table_name1 = "td_plot",
-                  fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_by)",
-                  values1 = `('${data.branch_code}', '${dateFormat(
-                        dt.last_trn_dt,
-                        "yyyy-mm-dd"
-                      )}', 'R', '${data.trn_lat}','${data.trn_long}','${data.created_by}')`,
-                   whr1= null,
-                   flag1 =  0;
-                   var visit_plot_data_recov = await db_Insert(table_name1, fields1, values1, whr1, flag1);        
+                  //  }           
 
                     var table_name = "td_loan_transactions",
                       fields = `(payment_date,payment_id,branch_id,loan_id,particulars,credit,debit,prn_recov,intt_recov,balance,od_balance,intt_balance,recov_upto,tr_type,tr_mode,bank_name,cheque_id,chq_dt,upload_on,status,created_by,created_at,trn_lat,trn_long,trn_addr)`,
@@ -680,6 +670,12 @@ module.exports = {
                 console.log(err, "Error while inserting the recovery data");
               }
             }
+            var table_name1 = "td_plot",
+                  fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_by)",
+                  values1 = `('${data.branch_code}', '${datetime}', 'R', '${data.trn_lat}','${data.trn_long}','${data.created_by}')`,
+                   whr1= null,
+                   flag1 =  0;
+            var visit_plot_data_recov = await db_Insert(table_name1, fields1, values1, whr1, flag1);
             trans_dtl['not_inserted_row'] = not_inserted_row
             resolve(trans_dtl);
           } else {
