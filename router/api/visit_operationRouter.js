@@ -272,7 +272,7 @@ visit_operationRouter.post("/fetch_details_fr_view", async (req, res) => {
 visit_operationRouter.post("/save_visi_option", async (req, res) => {
 try {    
 const {branch_code,group_code,member_code,loan_id,od_date,od_amt_grp,od_amt_mem,outstanding_gp,outstanding_mem,promise_date,promise_amt,remarks,created_by,visit_lat,visit_long} = req.body;
-// console.log(req.body,'save_visit');
+console.log(req.body,'save_visit');
 
 let datetime = dateFormat(new Date(), "yyyy-mm-dd HH:MM:ss");
 
@@ -286,9 +286,12 @@ member_code
 );
 }
 
+const finalPromiseDate = promise_date ? `'${promise_date}'` : 'NULL';
+const finalPromiseAmt = promise_amt ? `'${promise_amt}'` : 'NULL';
+
 var table_name = "td_visit_operation",
 fields = "(branch_code, datetime_visit, group_code, member_code, loan_id, od_date, od_amt_grp, od_amt_mem, outstanding_gp, outstanding_mem, upload_img, promise_date, promise_amt, remarks,created_by, visit_lat, visit_long)",
-values = `('${branch_code}','${datetime}','${group_code}','${member_code}','${loan_id}','${od_date}','${od_amt_grp}','${od_amt_mem}','${outstanding_gp}','${outstanding_mem}','${upload_img}','${promise_date}','${promise_amt}','${remarks.replace(/'/g, "''")}','${created_by}','${visit_lat}','${visit_long}')`,
+values = `('${branch_code}','${datetime}','${group_code}','${member_code}','${loan_id}','${od_date}','${od_amt_grp}','${od_amt_mem}','${outstanding_gp}','${outstanding_mem}','${upload_img}','${finalPromiseDate}','${finalPromiseAmt}','${remarks.replace(/'/g, "''")}','${created_by}','${visit_lat}','${visit_long}')`,
 whr = null,
 flag =  0;
 var visit_data = await db_Insert(table_name, fields, values, whr, flag);
