@@ -69,7 +69,7 @@ visit_operationRouter.post("/fetch_od_list", async (req, res) => {
         });
     }
 
-    var select = "c.group_code,c.group_name,b.member_code,d.client_name AS member_name,d.client_mobile,Round(COALESCE(a.od_amt,0),2) AS overdue_amount,DATE_FORMAT(a.trf_date,'%Y-%m-%d')AS disb_dt,DATE_FORMAT(a.od_date,'%Y-%m-%d')AS od_dt,TIMESTAMPDIFF(MONTH, a.od_date, CURDATE()) AS overdue_month,DATE_FORMAT(e.datetime_visit,'%Y-%m-%d %H:%i:%s')AS date_time_visit";
+    var select = "c.group_code,c.group_name,b.member_code,d.client_name AS member_name,d.client_mobile,Round(COALESCE(a.od_amt,0),2) AS overdue_amount,DATE_FORMAT(b.disb_dt,'%Y-%m-%d')AS disb_dt,DATE_FORMAT(a.od_date,'%Y-%m-%d')AS od_dt,TIMESTAMPDIFF(MONTH, a.od_date, CURDATE()) AS overdue_month,DATE_FORMAT(e.datetime_visit,'%Y-%m-%d %H:%i:%s')AS date_time_visit";
     table_name = `td_od_loan a JOIN td_loan b ON b.loan_id = a.loan_id AND b.branch_code = a.branch_code JOIN md_group c ON c.group_code = b.group_code AND c.branch_code = b.branch_code JOIN md_member d ON d.member_code = b.member_code AND d.branch_code = b.branch_code LEFT JOIN (
     SELECT loan_id, branch_code, MAX(datetime_visit) AS datetime_visit
     FROM td_visit_operation
@@ -80,7 +80,7 @@ visit_operationRouter.post("/fetch_od_list", async (req, res) => {
     whr = `a.od_amt > 0 AND b.outstanding > 0 AND a.branch_code = '${branch_code}' AND DATE(a.trf_date) = '${max_trf_date}'`;
 
     if (id === '1') {
-    whr += ` AND b.modified_by = '${emp_id}'`;
+    whr += ` AND c.co_id = '${emp_id}'`;
     }
 
     // if(id === '2' || id === '13'){
