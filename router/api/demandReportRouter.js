@@ -8,7 +8,7 @@ const {db_Select} = require('../../model/mysqlModel');
 demandReportRouter.post("/loan_demand_report_app_cowise", async (req, res) => {
     try {
         var data = req.body;
-        // console.log(data,'co_app_data');
+        console.log(data,'co_app_data');
             
     
         var date_query = `LAST_DAY(CONCAT('${data.send_year}', '-', '${data.send_month}', '-01')) AS month_last_date`; 
@@ -18,7 +18,7 @@ demandReportRouter.post("/loan_demand_report_app_cowise", async (req, res) => {
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
         // console.log("Created date:", create_date);
     
-        var select = `a.group_cd,d.group_name,b.member_code,f.client_name,b.period_mode, 
+        var select = `a.group_cd,d.group_name,b.member_code,f.client_name,f.client_mobile,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -61,7 +61,7 @@ demandReportRouter.post("/filter_dayawise_dmd_report_app_cowise", async (req, re
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
         // console.log("Created date:", create_date);
 
-        var select = `a.group_cd,d.group_name,b.member_code,f.client_name,b.period_mode, 
+        var select = `a.group_cd,d.group_name,b.member_code,f.client_name,f.client_mobile,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -102,7 +102,7 @@ demandReportRouter.post("/loan_demand_report_app_bmwise", async (req, res) => {
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
         // console.log("Created date:", create_date);
     
-        var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd,d.group_name,b.member_code,f.client_name,d.co_id,e.emp_name co_name,b.period_mode, 
+        var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd,d.group_name,b.member_code,f.client_name,f.client_mobile,d.co_id,e.emp_name co_name,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode IN ('Weekly','Fortnight') THEN 
@@ -145,7 +145,7 @@ demandReportRouter.post("/filter_dayawise_dmd_report_app_bmwise", async (req, re
         var create_date = dateFormat(dateResult.msg[0].month_last_date,'yyyy-mm-dd');
         // console.log("Created date:", create_date);
 
-        var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd,d.group_name,b.member_code,f.client_name,d.co_id,e.emp_name co_name,b.period_mode, 
+        var select = `DATE_FORMAT(a.demand_date, '%M %Y') AS demand_date,a.branch_code,c.branch_name,c.area_code,a.group_cd,d.group_name,b.member_code,f.client_name,f.client_mobile,d.co_id,e.emp_name co_name,b.period_mode, 
         CASE 
         WHEN b.period_mode = 'Monthly' THEN b.recovery_day
         WHEN b.period_mode IN ('Weekly','Fortnight') THEN 

@@ -80,8 +80,8 @@ attendancewebRouter.post("/attendance_report_brnwise", async (req, res) => {
     try{
     var data = req.body;
 
-            var select = "a.entry_dt,b.branch_id,a.emp_id,b.emp_name,b.phone_mobile,a.in_date_time,a.out_date_time,a.clock_status,a.late_in,a.in_addr,a.out_addr,a.attan_status,a.attn_reject_remarks",
-            table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id",
+            var select = "a.entry_dt,b.branch_id,c.branch_name,a.emp_id,b.emp_name,b.phone_mobile,a.in_date_time,a.out_date_time,a.clock_status,a.late_in,a.in_addr,a.out_addr,a.attan_status,a.attn_reject_remarks",
+            table_name = "td_emp_attendance a LEFT JOIN md_employee b ON a.emp_id = b.emp_id LEFT JOIN md_branch c ON b.branch_id = c.branch_code",
             whr = `date(a.in_date_time) BETWEEN '${data.from_date}' AND '${data.to_date}' ${data.branch_id != 'A' ? `AND b.branch_id = '${data.branch_id}'` : ''} ${data.emp_id != 'A' ? `AND a.emp_id = '${data.emp_id}'` : ''} AND a.attan_status != 'R'`,
             order = `ORDER BY a.entry_dt`;
             var atten_report = await db_Select(select,table_name,whr,order);

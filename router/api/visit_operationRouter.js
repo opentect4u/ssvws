@@ -158,7 +158,7 @@ visit_operationRouter.post("/fetch_details_fr_view", async (req, res) => {
             FROM td_loan x
             WHERE x.branch_code = a.branch_code
             AND x.group_code = a.group_code
-        ) AS group_disb_amount`,
+        ) AS group_disb_amount,DATE_FORMAT(a.last_trn_dt,'%Y-%m-%d')AS last_payment_dt`,
     table_name = "td_loan a LEFT JOIN md_scheme b ON a.scheme_id = b.scheme_id",
     whr = `a.branch_code = '${branch_code}' AND a.member_code = '${member_code}' AND a.group_code = '${group_code}' AND a.outstanding > 0`,
     order = null;
@@ -166,7 +166,7 @@ visit_operationRouter.post("/fetch_details_fr_view", async (req, res) => {
 
     var loan_id = fetch_loan_dtls.suc === 1 && fetch_loan_dtls.msg.length > 0 ? fetch_loan_dtls.msg[0].loan_id
     : 0;
-    console.log(loan_id,'loan');
+    // console.log(loan_id,'loan');
     
      // ================= OVERDUE DETAILS =================
     //  var select = `a.loan_id,DATE_FORMAT(a.od_date,'%Y-%m-%d')AS overdue_date,ROUND(COALESCE(a.od_amt,0),2)
@@ -381,7 +381,7 @@ var select = `IFNULL(NULLIF(a.loan_id,''),'N/A') AS loan_id,DATE_FORMAT(b.disb_d
             FROM td_loan x
             WHERE x.branch_code = b.branch_code
             AND x.group_code = b.group_code
-        ) AS group_disb_amount`,
+        ) AS group_disb_amount,DATE_FORMAT(b.last_trn_dt,'%Y-%m-%d')AS last_payment_dt`,
 table_name = "td_visit_operation a LEFT JOIN td_loan b ON a.branch_code = b.branch_code AND a.group_Code = b.group_code AND a.loan_id = b.loan_id AND a.member_code = b.member_code LEFT JOIN md_scheme c ON b.scheme_id = c.scheme_id",
 whr = `a.branch_code = '${branch_code}' AND a.member_code = '${member_code}' AND a.group_code = '${group_code}' AND a.loan_id = '${loan_id}' AND b.outstanding > 0`,
 order = null;
