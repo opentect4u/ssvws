@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { usePaperColorScheme } from '../../theme/theme';
 import { CommonActions, useIsFocused, useNavigation } from '@react-navigation/native';
 import { loginStorage } from '../../storage/appStorage';
-import { SafeAreaView, TextStyle, ViewStyle } from 'react-native';
+import { Linking, SafeAreaView, StyleSheet, TextStyle, ToastAndroid, TouchableOpacity, ViewStyle } from 'react-native';
 import { ScrollView } from 'react-native';
 import HeadingComp from '../../components/HeadingComp';
 import { View } from 'react-native';
@@ -22,6 +22,8 @@ import MonthPicker from "react-native-month-year-picker";
 import moment from "moment";
 import InputPaper from '../../components/InputPaper';
 import { Dropdown } from 'react-native-element-dropdown';
+
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const daywiseOption = [
     {
@@ -292,6 +294,8 @@ function DemandReport() {
 
             const apiData = res?.data?.cowise_demand_data?.msg || [];
 
+            console.log(apiData[0], 'apiDataapiDataapiDataapiDataapiDataapiData');            
+
             const formattedData = apiData.map((item, index) => ({
                 id: index + 1,
                 group_name: item.group_name,
@@ -300,6 +304,7 @@ function DemandReport() {
                 period_mode: item.period_mode,
                 recovery_day: item.recovery_day,
                 week_no: item.week_no,
+                client_mobile: item?.client_mobile
             }));
 
             setReportData(formattedData);
@@ -465,6 +470,32 @@ function DemandReport() {
     const to = Math.min((page + 1) * numberOfItemsPerPage,filteredReportData.length);
 
 
+        const handleCall = (phone: string) => {
+    
+            if (!phone) {
+                ToastAndroid.show('Phone number not available', ToastAndroid.SHORT,);
+                return;
+            }
+    
+            Linking.openURL(`tel:${phone}`);
+        };
+    
+    
+    
+        const handleWhatsApp = (phone?: string) => {
+    
+            if (!phone) {
+                ToastAndroid.show('Phone number not available', ToastAndroid.SHORT,);
+                return;
+            }
+    
+            const cleanPhone = phone.replace(/\D/g, '');
+    
+            Linking.openURL(
+                `https://wa.me/91${cleanPhone}`
+            );
+        };
+
 
     return (
         <SafeAreaView>
@@ -485,75 +516,12 @@ function DemandReport() {
                         borderTopRightRadius: 20,
                         borderBottomLeftRadius: 20
                     }}>
-                        {/* <View
-                      style={{
-                          flexDirection: "row",
-                          justifyContent: "space-between",
-                          paddingHorizontal: 15,
-                          alignItems: "center",
-                          backgroundColor: theme.colors.tertiary,
-                          padding: 2,
-                          borderRadius: 12
-                      }}>
-                      <ButtonPaper
-                          textColor={theme.colors.onTertiary}
-                          onPress={() => setOpenFromDate(true)}
-                          mode="text">
-                          FROM: {fromDate?.toLocaleDateString("en-GB")}
-                      </ButtonPaper>
-                      <DatePicker
-                          modal
-                          mode="date"
-                          open={openFromDate}
-                          date={fromDate}
-                          onConfirm={date => {
-                              setOpenFromDate(false)
-                              setFromDate(date)
-                          }}
-                          onCancel={() => {
-                              setOpenFromDate(false)
-                          }}
-                      />
-                  </View> */}
-
-                        {/* <View>
-                            <Text>{moment(new Date()).format("MMMM YYYY")} </Text>
-                            <Button
-                                mode="contained"
-                                onPress={() => setShow(true)}
-                            >
-                                Select Month & Year {date ? '(' + moment(date).format("MMMM YYYY") + ')' : ""}
-                            </Button>
-                            <Text>{moment(date).format("MMMM YYYY")}</Text>
-
-                            {show && (
-                                <MonthPicker
-                                    onChange={onValueChange}
-                                    value={date || new Date()}
-                                    locale="en"
-                                />
-                            )}
-                        </View> */}
-
-                        {/* <View>
-                            <ButtonPaper
-                                onPress={() => getDemandReportData()}
-                                mode="contained-tonal"
-                                buttonColor={theme.colors.secondary}
-                                textColor={theme.colors.onSecondary}
-                                loading={isLoading}
-                                disabled={isDisabled}
-                            >
-                                SUBMIT
-                            </ButtonPaper>
-                        </View> */}
-
-                        {/* {reportData?.length > 0 && ( */}
+                       
                         <>
                         
-                    {/* <View>
-                    <Text>{JSON.stringify(filteredReportData[0], null, 2)} // {JSON.stringify(weekOfRecovery, null, 2)}</Text>
-                </View> */}
+                        {/* <View>
+                        <Text>{JSON.stringify(filteredReportData[0], null, 2)} // {JSON.stringify(weekOfRecovery, null, 2)}</Text>
+                        </View> */}
 
                         <View
                             style={{
@@ -859,6 +827,9 @@ function DemandReport() {
                                         Week of Recovery
                                     </DataTable.Title>
                                     )}
+                                    <DataTable.Title textStyle={titleTextStyle}>
+                                        Contact Details
+                                    </DataTable.Title>
                                 </DataTable.Header>
 
 
@@ -924,6 +895,31 @@ function DemandReport() {
                                                 {item.week_no}
                                             </DataTable.Cell>
                                             )}
+
+                                            <DataTable.Cell textStyle={titleTextStyle}>
+                                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                                <TouchableOpacity
+                                                style={styles.iconBtn}
+                                                onPress={() => handleCall(item.client_mobile)}
+                                                >
+                                                <MaterialCommunityIcons
+                                                name="phone"
+                                                size={22}
+                                                color="#2e7d32"
+                                                />
+                                                </TouchableOpacity>
+
+                                                <TouchableOpacity style={styles.iconBtn}
+                                                onPress={() => handleWhatsApp(item.client_mobile)}>
+                                                <MaterialCommunityIcons
+                                                name="whatsapp"
+                                                size={22}
+                                                color="#25D366"
+                                                />
+                                                </TouchableOpacity>
+                                                </View>
+
+                                            </DataTable.Cell>
                                             
 
                                         </DataTable.Row>
@@ -987,3 +983,11 @@ function DemandReport() {
 
 
 export default DemandReport
+
+const styles = StyleSheet.create({
+
+    iconBtn: {
+        padding: 6, marginRight: 15, 
+    },
+
+});

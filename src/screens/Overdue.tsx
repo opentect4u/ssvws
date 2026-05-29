@@ -8,6 +8,8 @@ import {
     FlatList,
     Linking,
     ToastAndroid,
+    KeyboardAvoidingView,
+    TouchableWithoutFeedback,
 } from 'react-native';
 
 import {
@@ -42,6 +44,8 @@ import { fp, hp, isTablet, wp } from '../utils/responsive';
 import { COLORS, SIZES } from '../config/theme';
 import LoadingOverlay from '../components/LoadingOverlay';
 import InputPaper from '../components/InputPaper';
+
+import { Keyboard,} from 'react-native';
 
 const overdueData = [
     {
@@ -565,7 +569,7 @@ const filteredAccounts = useMemo(() => {
                             <MaterialCommunityIcons
                                 name="whatsapp"
                                 size={22}
-                                color="#25D366"
+                                color="#25D366" 
                             />
                         </TouchableOpacity>
 
@@ -1035,11 +1039,26 @@ const filteredAccounts = useMemo(() => {
 
                 </View>
 
-                <ScrollView
-                    showsVerticalScrollIndicator={false}
+                {/* <KeyboardAvoidingView
+                style={{ flex: 1 }}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                keyboardVerticalOffset={120}
+                >
+                <TouchableWithoutFeedback onPress={Keyboard.dismiss}> */}
+
+                {/* <ScrollView
+                    showsVerticalScrollIndicator={true}
                     contentContainerStyle={{
                         paddingBottom: 20,
                     }}
+                > */}
+
+                <ScrollView
+                showsVerticalScrollIndicator={true}
+                keyboardShouldPersistTaps="handled"
+                contentContainerStyle={{
+                paddingBottom: 160, // increase bottom padding
+                }}
                 >
 
                     {/* Member TAB */}
@@ -1079,6 +1098,10 @@ const filteredAccounts = useMemo(() => {
                         
 
                         <View style={{ marginTop: 20 }}>
+
+                        {/* <View>
+                        <Text>{JSON.stringify(selectedAccount?.loan_details[0], null, 2)} </Text>
+                        </View> */}
 
                             <View style={styles.detailRow}>
                                 <Text style={styles.label}>
@@ -1157,6 +1180,16 @@ const filteredAccounts = useMemo(() => {
 
                                 <Text>
                                     {selectedAccount?.loan_details[0]?.tot_emi}
+                                </Text>
+                            </View>
+
+                            <View style={styles.detailRow}>
+                                <Text style={styles.label}>
+                                    Last Payment Date
+                                </Text>
+
+                                <Text>
+                                    {selectedAccount?.loan_details[0]?.last_payment_dt}
                                 </Text>
                             </View>
 
@@ -1434,6 +1467,8 @@ const filteredAccounts = useMemo(() => {
                     )}
 
                 </ScrollView>
+                {/* </TouchableWithoutFeedback>
+                </KeyboardAvoidingView> */}
             </>
         )}
         {/* {selectedAccount && selectedAccount.length < 1 && (
