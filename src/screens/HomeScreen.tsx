@@ -26,6 +26,9 @@ import DeviceInfo from 'react-native-device-info'
 import { AppStore } from '../context/AppContext'
 import useCurrentRouteName from '../hooks/useCurrentRoute'
 import useCheckOpenCloseDate from '../components/useCheckOpenCloseDate'
+import { PermissionsAndroid, Platform } from 'react-native';
+
+import GetLocation from 'react-native-get-location';
 
 const statusDataRadio = [
   { label: "Today", value: "T" },
@@ -45,7 +48,7 @@ const HomeScreen = () => {
     // const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
     // const [isLocationMocked, setIsLocationMocked] = useState(() => false)
     const [branchAssign, setBranchAssign] = useState(loginStore?.branch_name ?? "")
-    const { location, error } = useGeoLocation()
+    
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
     const { handleLogout } = useContext<any>(AppStore)
     const [refreshing, setRefreshing] = useState(() => false)
@@ -79,71 +82,53 @@ const HomeScreen = () => {
         console.log('home',loginStore?.token)
     }, [navigation])
 
-    // useEffect(() => {
-    //     console.log('handleCheckMockLocation');
-        
-    // }, [isFocused])
-
     
 
-    // useEffect(() => {
-    //     // convertArrayIntoList();
-    // },[])
-    // const convertArrayIntoList = () => {
-    //     try{
-    //           if(loginStore?.id === 2){
-    //             const branchStrore = JSON.parse(branchStorage?.getString("branch-data") ?? "")
-    //             const arr = branchStrore.map((item, index) => item.name).join(', ')
-    //            setBranchAssign(arr);
-    //           }
-    //           else{
-    //             setBranchAssign(loginStore?.branch_name ?? "");
-    //           }
-    //     }
-    //     catch(err){
-    //         console.log("Error in converting array into list", err);
+    
+    const { location, error, fetchLocation  } = useGeoLocation()
 
-    //     }
-    // }
-    // const onScroll = ({ nativeEvent }) => {
-    //     const currentScrollPosition = Math.floor(nativeEvent?.contentOffset?.y) ?? 0
 
-    //     setIsExtended(currentScrollPosition <= 0)
-    // }
+    const fetchLocation_ = async () => {
+            try {
+                const currentLocation = await GetLocation.getCurrentPosition({
+                    enableHighAccuracy: true,
+                    timeout: 60000,
+                });
+                // setLocation({
+                //     latitude: currentLocation.latitude,
+                //     longitude: currentLocation.longitude,
+                // });
 
-    // const handleCheckMockLocation = async () => {
-    //     await RNMockLocationDetector.checkMockLocationProvider().then(res => {
-    //         console.log("MOCKKKKKKK", res)
-    //         setIsLocationMocked(res)
-
-    //         // if (res === true) {
-    //         //     Alert.alert("Mock Location Detected", "Please turn off Mock Location from Developer Options.", [{
-    //         //         text: "EXIT",
-    //         //         onPress: () => { BackHandler.exitApp() }
-    //         //     }])
-    //         // }
-    //     })
-    // }
-
-    // useEffect(() => {
-    //     handleCheckMockLocation()
-    // }, [isFocused])
-
-    useEffect(() => {
-        if (error) {
-            Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
+                console.log('successssssss', currentLocation.latitude, currentLocation.longitude);
+            } catch (err) {
+                console.log(err.message, 'errorerrore');
+                // setError(err.message);
+                Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
                 text: "Go to Settings",
                 onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
-            }])
-        }
-    }, [isFocused, error])
+                }])
 
-    // useEffect(()=>{
-    //         console.log('geolocationFetchedAddress' + geolocationFetchedAddress)
-    // },[geolocationFetchedAddress])
+            }
+        };
 
-    // console.log("LOcAtion", location)
-    // console.log("LOcAtion ERRR", error)
+    useEffect(() => {
+    if (isFocused) {
+        fetchLocation_(); 
+    }
+    }, [isFocused]);
+
+    // Old Function 
+    // useEffect(() => {
+    //     console.log(error, 'successssssss__home', location);
+    //     // if (error) {
+    //     if (!location?.latitude && !location?.longitude) {
+    //         Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
+    //             text: "Go to Settings",
+    //             onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
+    //         }])
+    //     }
+    // }, [isFocused, error])
+
 
     const fetchGeoLocaltionAddress = async () => {
         console.log("REVERSE GEO ENCODING API CALLING...")

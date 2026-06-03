@@ -47,55 +47,7 @@ import InputPaper from '../components/InputPaper';
 
 import { Keyboard,} from 'react-native';
 
-const overdueData = [
-    {
-        loanId: 'LN1001',
-        custName: 'Rahul Roy',
-        accTypeDesc: 'Crop Loan',
-        ovdPrn: 12000,
-        outstandingPrn: 55000,
-        disbAmt: 80000,
-        emi: 2500,
-        instlNo: 24,
-        category: 'SMA0',
-        phone: '9876543210',
-        disbDt: '2025-01-12',
-        loanDueDt: '2026-03-15',
-        remarks: 'Customer promised payment next week',
-    },
-    {
-        loanId: 'LN1002',
-        custName: 'Sourav Das',
-        accTypeDesc: 'Gold Loan',
-        ovdPrn: 8000,
-        outstandingPrn: 30000,
-        disbAmt: 50000,
-        emi: 1800,
-        instlNo: 18,
-        category: 'SMA1',
-        phone: '9123456780',
-        disbDt: '2024-11-20',
-        loanDueDt: '2026-01-10',
-        remarks: 'Phone switched off',
-    },
-    {
-        loanId: 'LN1003',
-        custName: 'Priya Sen',
-        accTypeDesc: 'SHG Loan',
-        ovdPrn: 22000,
-        outstandingPrn: 78000,
-        disbAmt: 100000,
-        emi: 4200,
-        instlNo: 36,
-        category: 'SMA2',
-        phone: '9007007000',
-        disbDt: '2024-09-10',
-        loanDueDt: '2025-12-25',
-        remarks: 'Visit required',
-    },
-];
 
-// const categories = ['SMA0', 'SMA1', 'SMA2'];
 
 const OVERDUE_CATEGORIES = [
     { label: '6', value: '6' },
@@ -135,29 +87,9 @@ const Overdue = () => {
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
     
 
-    // const [memberLoanList, setMemberLoanList] = useState<any[]>([]);
-// const [page, setPage] = useState(1);
 
-// const [limit] = useState(20);
+    const [hasMore, setHasMore] = useState(true);
 
-// const [loading, setLoading] = useState(false);
-
-// const [loadingMore, setLoadingMore] = useState(false);
-
-const [hasMore, setHasMore] = useState(true);
-
-    // const toggleCategory = (value: string) => {
-
-    //     setSelectedCategories(prev => {
-
-    //         if (prev.includes(value)) {
-
-    //             return prev.filter(item => item !== value);
-    //         }
-
-    //         return [...prev, value];
-    //     });
-    // };
 
     const toggleCategory = (value: string) => {
 
@@ -307,22 +239,7 @@ const [hasMore, setHasMore] = useState(true);
     }
     }, [isFocused])
 
-    // const filteredAccounts = useMemo(() => {
-
-    //     return overdueData.filter(item => {
-
-    //         const searchMatch =
-    //             item.custName.toLowerCase().includes(search.toLowerCase()) ||
-    //             item.loanId.toLowerCase().includes(search.toLowerCase());
-
-    //         const categoryMatch =
-    //             selectedCategories.length === 0 ||
-    //             selectedCategories.includes(item.category);
-
-    //         return searchMatch && categoryMatch;
-    //     });
-
-    // }, [search, selectedCategories]);
+  
 
 const filteredAccounts = useMemo(() => {
 
@@ -346,64 +263,7 @@ const filteredAccounts = useMemo(() => {
 }, [search, memberLoanList]);
 
 
-// const filteredAccounts = useMemo(() => {
 
-//     return memberLoanList.filter((item: any) => {
-
-//         const searchMatch =
-//             item?.member_name
-//                 ?.toLowerCase()
-//                 ?.includes(search.toLowerCase()) ||
-
-//             item?.group_name
-//                 ?.toLowerCase()
-//                 ?.includes(search.toLowerCase()) ||
-
-//             String(item?.group_code)
-//                 ?.toLowerCase()
-//                 ?.includes(search.toLowerCase());
-
-//         const overdueMonth =
-//             Number(item?.overdue_month || 0);
-
-//         let categoryMatch = true;
-
-//         if (selectedCategories.length > 0) {
-
-//             categoryMatch = selectedCategories.some(category => {
-//                 console.log(category, 'categorycategorycategory');
-                
-//                 // <= 6 MONTHS
-//                 if (category === '6') {
-//                     return overdueMonth <= 6;
-//                 }
-
-//                 // > 6 AND <= 12
-//                 if (category === '12') {
-//                     return overdueMonth <= 12;
-//                         // overdueMonth <= 12;
-//                 }
-
-//                 // > 12 AND <= 24
-//                 if (category === '24') {
-//                     return overdueMonth <= 24
-//                         // overdueMonth <= 24;
-//                 }
-
-//                 // > 24
-//                 if (category === '25') {
-//                     return overdueMonth >= 25;
-//                 }
-
-//                 return false;
-//             });
-//         }
-
-//         return searchMatch && categoryMatch;
-
-//     });
-
-// }, [search, memberLoanList, selectedCategories]);
 
 
     const handleView = async (item: any) => {
@@ -463,11 +323,6 @@ const filteredAccounts = useMemo(() => {
 
         Linking.openURL(`tel:${phone}`);
     };
-
-    // const handleWhatsApp = (phone: string) => {
-
-    //     Linking.openURL(`tel:${phone}`);
-    // };
 
 
     const handleWhatsApp = (phone?: string) => {

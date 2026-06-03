@@ -8,7 +8,8 @@ const useGeoLocation = () => {
     });
     const [error, setError] = useState(null);
 
-    const fetchLocation = async () => {
+    useEffect(() => {
+        const fetchLocation = async () => {
             try {
                 const currentLocation = await GetLocation.getCurrentPosition({
                     enableHighAccuracy: true,
@@ -18,20 +19,15 @@ const useGeoLocation = () => {
                     latitude: currentLocation.latitude,
                     longitude: currentLocation.longitude,
                 });
-
-                console.log(error, 'successssssss', currentLocation.latitude, currentLocation.longitude);
             } catch (err) {
-                console.log(err.message, 'errorerrore');
                 setError(err.message);
             }
         };
 
-    useEffect(() => {
-        // console.log(error, 'errorerrorerrorerrorerrorerrore', location, error);
         fetchLocation();
     }, []);
 
-    return { location, error, fetchLocation };
+    return { location, error };
 };
 
 export default useGeoLocation;
