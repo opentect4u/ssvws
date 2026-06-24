@@ -138,6 +138,7 @@ const { prev_loan_transRouter } = require("./router/report/branch_report/web/pre
 const { disb_rejectRouter } = require("./router/admin/loan/disb_rejectionRouter");
 const { initSocket } = require("./model/socketModel");
 const { advance_collRouter } = require("./router/report/branch_report/web/advance_collRouter");
+const { receipt_summaryRouter } = require("./router/report/branch_report/web/receipt_summaryRouter");
 
 
 // app.use(authCheckForLogin);
@@ -195,6 +196,7 @@ app.use('/',authenticateToken,groupRouter)
 app.use('/',authenticateToken,prev_loan_transRouter)
 app.use('/',authenticateToken,disb_rejectRouter)
 app.use('/',authenticateToken,advance_collRouter)
+app.use('/',authenticateToken,receipt_summaryRouter)
 app.use('/activity_log', authenticateToken, require('./router/admin/activeLocationLog').actLocLogRouter);
 app.use('/app_demand', authenticateToken, require('./router/api/demandReportRouter').demandReportRouter);
 app.use('/app_coll', authenticateToken, require('./router/api/collectionReportRouter').collReportRouter);
