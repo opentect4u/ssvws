@@ -291,9 +291,11 @@ const finalPromiseAmt = promise_amt ? `'${promise_amt}'` : 'NULL';
 
 var table_name = "td_visit_operation",
 fields = "(branch_code, datetime_visit, group_code, member_code, loan_id, od_date, od_amt_grp, od_amt_mem, outstanding_gp, outstanding_mem, upload_img, promise_date, promise_amt, remarks,created_by, visit_lat, visit_long)",
-values = `('${branch_code}','${datetime}','${group_code}','${member_code}','${loan_id}','${od_date}','${od_amt_grp}','${od_amt_mem}','${outstanding_gp}','${outstanding_mem}','${upload_img}','${finalPromiseDate}','${finalPromiseAmt}','${remarks.replace(/'/g, "''")}','${created_by}','${visit_lat}','${visit_long}')`,
+values = `('${branch_code}','${datetime}','${group_code}','${member_code}','${loan_id}','${od_date}','${od_amt_grp}','${od_amt_mem}','${outstanding_gp}','${outstanding_mem}','${upload_img}',${finalPromiseDate},${finalPromiseAmt},'${remarks.replace(/'/g, "''")}','${created_by}','${visit_lat}','${visit_long}')`,
 whr = null,
 flag =  0;
+console.log("Fields:", fields);
+console.log("Values:", values);
 var visit_data = await db_Insert(table_name, fields, values, whr, flag);
 
 if(visit_data.suc === 1 && visit_data.msg.length > 0){
@@ -302,6 +304,8 @@ fields1 = "(branch_code, datetime_plot, opt_type, plot_lat, plot_long, created_b
 values1 = `('${branch_code}', '${datetime}', 'V', '${visit_lat}','${visit_long}','${created_by}')`,
 whr1= null,
 flag1 =  0;
+console.log("Field:", fields);
+console.log("Value:", values);
 var visit_plot_data = await db_Insert(table_name1, fields1, values1, whr1, flag1);   
 }
 return res.send({
