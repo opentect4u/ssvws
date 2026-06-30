@@ -1,0 +1,222 @@
+import React, { useContext, useEffect, useState } from 'react'
+
+import { StyleSheet, SafeAreaView, ScrollView, View, ToastAndroid } from 'react-native'
+import { usePaperColorScheme } from '../theme/theme'
+import { SCREEN_HEIGHT } from 'react-native-normalize'
+import HeadingComp from '../components/HeadingComp'
+import { Divider, Icon, IconButton, List, Searchbar, Text } from 'react-native-paper'
+import axios from 'axios'
+import { ADDRESSES } from '../config/api_list'
+import { CommonActions, useIsFocused, useNavigation } from '@react-navigation/native'
+import navigationRoutes from '../routes/routes'
+import { loginStorage } from '../storage/appStorage'
+import RadioComp from '../components/RadioComp'
+import { AppStore } from '../context/AppContext'
+
+const SearchApprovedLoansScreen = () => {
+    const theme = usePaperColorScheme()
+    const navigation = useNavigation()
+    const isFocused = useIsFocused()
+
+    const loginStore = JSON.parse(loginStorage?.getString("login-data") ?? "")
+
+    const [loading, setLoading] = useState(() => false)
+    const { handleLogout } = useContext<any>(AppStore)
+    const [search, setSearch] = useState(() => "")
+    const [formsData, setFormsData] = useState<any[]>(() => [])
+    // const [isApproved, setIsApproved] = useState<string>(() => "U")
+
+    const onChangeSearch = (query: string) => {
+        setSearch(query)
+    }
+
+    // useEffect(() => {
+    //     setFormsData(() => [])
+    // }, [isApproved])
+
+    useEffect(() => {
+        setSearch("")
+        setFormsData(() => [])
+    }, [isFocused])
+
+    const handleSearch = async () => {
+        setLoading(true)
+
+        const creds = {
+            "branch_code": loginStore?.brn_code,
+            "loan_id": search,
+            "approval_status": "A"
+        }
+        // console.log("MMMMMMMMMMMMMMMMMMMMMMMM", creds)
+
+        await axios.post(`${ADDRESSES.VIEW_LOAN_TNX}`, creds, {
+            headers: {
+                Authorization: loginStore?.token, // example header
+                "Content-Type": "application/json", // optional
+            }
+        }
+        
+        ).then(res => {
+            // console.log("MMMMMMMMMMMMMMMMMMMMMMMM", res?.data?.suc)
+            if (res?.data?.suc === 1) {
+                setFormsData(res?.data?.msg)
+                console.log("===++=++====", res?.data)
+            }
+            else{
+                handleLogout()
+            }
+        }).catch(err => {
+            ToastAndroid.show("Some error while searching loans!", ToastAndroid.SHORT)
+        })
+        setLoading(false)
+    }
+
+    const handleFormListClick = (item: any, approvalStat: string) => {
+        console.log("HIIIII")
+        navigation.dispatch(CommonActions.navigate({
+            name: navigationRoutes.recoveryMemberScreen,
+            params: {
+                member_details: item,
+                group_details: {
+                    status: approvalStat
+                }
+            }
+        }))
+    }
+
+    return (
+        <SafeAreaView>
+            <ScrollView style={{
+                backgroundColor: theme.colors.background,
+                minHeight: SCREEN_HEIGHT,
+                height: 'auto',
+            }} keyboardShouldPersistTaps="handled">
+                <HeadingComp title="Approved Loans" subtitle="Find any user to see his/her loan details" isBackEnabled />
+                <View style={{
+                    paddingHorizontal: 20
+                }}>
+                    {/* <View style={{
+                        padding: 5,
+                        backgroundColor: theme.colors.errorContainer,
+                        borderTopLeftRadius: 20,
+                        borderBottomRightRadius: 20,
+                        marginBottom: 10
+                    }}>
+                        <RadioComp
+                            color={theme.colors.onErrorContainer}
+                            radioButtonColor={theme.colors.error}
+                            title=""
+                            icon="inbox-multiple"
+                            dataArray={[
+                                {
+                                    optionName: "Un-approved",
+                                    optionState: isApproved,
+                                    currentState: "U",
+                                    optionSetStateDispathFun: (value) => setIsApproved(value)
+                                },
+                                {
+                                    optionName: "Approved",
+                                    optionState: isApproved,
+                                    currentState: "A",
+                                    optionSetStateDispathFun: (value) => setIsApproved(value)
+                                }
+                            ]}
+                        />
+                    </View> */}
+                    <View style={{
+                        flexDirection: "row",
+                        justifyContent: "space-evenly",
+                        alignItems: "center",
+                        gap: 5
+                    }}>
+
+                        <Searchbar
+                            autoFocus
+                            placeholder={"Search by Loan ID"}
+                            onChangeText={onChangeSearch}
+                            value={search}
+                            elevation={search ? 2 : 0}
+                            keyboardType={"default"}
+                            maxLength={30}
+                            style={{
+                                backgroundColor: theme.colors.tertiaryContainer,
+                                color: theme.colors.onTertiaryContainer,
+                                width: "84%",
+                                paddingVertical: 1,
+                                alignItems: "center",
+                                alignSelf: "center"
+                            }}
+                            loading={loading ? true : false}
+                            onClearIconPress={() => {
+                                setSearch(() => "")
+                                setFormsData(() => [])
+                            }}
+                        />
+
+                        {/* <ButtonPaper icon={"text-search"} mode='elevated' onPress={handleSearch} style={{
+                            marginTop: 10
+                        }}>
+                            Search
+                        </ButtonPaper> */}
+                        <IconButton icon={"magnify"} mode='contained' onPress={() => search && handleSearch()} size={35} style={{
+                            borderTopLeftRadius: 10
+                        }} />
+                    </View>
+                </View>
+
+                <View style={{
+                    padding: 20,
+                    paddingBottom: 120
+                }}>
+                    {formsData?.map((item, i) => (
+                        <React.Fragment key={i}>
+                            <List.Item
+                                titleStyle={{
+                                    color: theme.colors.primary,
+                                }}
+                                descriptionStyle={{
+                                    color: theme.colors.secondary,
+                                }}
+                                key={i}
+                                title={`${item?.client_name}`}
+                                description={
+                                    <View>
+                                        <Text>EMI: {item?.tot_emi}/-</Text>
+                                        <Text>Outstanding - {item?.outstanding}/-</Text>
+                                    </View>
+                                }
+                                onPress={() => handleFormListClick(item, item?.status)}
+                                left={props => <List.Icon {...props} icon="form-select" />}
+                            // console.log("------XXX", item?.branch_code, item?.form_no, item?.member_code)
+                            // right={props => (
+                            //     <IconButton
+                            //         icon="trash-can-outline"
+                            //         onPress={() => {
+                            //             setSelectedForm({
+                            //                 form_no: item?.form_no,
+                            //                 branch_code: item?.branch_code,
+                            //                 member_code: item?.member_code
+                            //             });
+                            //             setVisible(true);
+                            //         }}
+                            //         size={28}
+                            //         iconColor={theme.colors.error}
+                            //         style={{
+                            //             alignSelf: 'center'
+                            //         }}
+                            //     />
+                            // )}
+                            />
+                            <Divider />
+                        </React.Fragment>
+                    ))}
+                </View>
+            </ScrollView>
+            {/* {loading && <LoadingOverlay />} */}
+        </SafeAreaView>
+    )
+}
+
+export default SearchApprovedLoansScreen
+
+const styles = StyleSheet.create({})

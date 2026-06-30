@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 
-import { Alert, BackHandler, Dimensions, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, View } from 'react-native'
+import { Alert, BackHandler, Dimensions, PermissionsAndroid, Platform, SafeAreaView, ScrollView, StyleSheet, ToastAndroid, View } from 'react-native'
 import { ActivityIndicator, IconButton, MD2Colors, Text, TextInput } from 'react-native-paper'
 import ButtonPaper from '../components/ButtonPaper'
 import InputPaper from '../components/InputPaper'
@@ -18,6 +18,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 // ✅ Correct Firebase import
 import messaging from '@react-native-firebase/messaging'
 
+
+import Geolocation from 'react-native-geolocation-service';
+import { useIsFocused } from '@react-navigation/native'
 
 
 const LoginScreen = () => {
@@ -66,6 +69,10 @@ const LoginScreen = () => {
 
     // ✅ Firebase State
     const [fcmToken, setFcmToken] = useState(() => "");
+
+    const [Location_, setLocation] = useState({})
+    const [loading, setLoading] = useState(() => false)
+    const isFocused = useIsFocused()
 
     
 
@@ -248,6 +255,58 @@ const LoginScreen = () => {
 //     fetchLocations();
 //   }, []);
 
+
+
+// const requestLocationPermission = async () => {
+//         if (Platform.OS === 'ios') {
+//             const auth = await Geolocation.requestAuthorization('whenInUse');
+//             return auth === 'granted';
+//         }
+
+//         if (Platform.OS === 'android') {
+//             const granted = await PermissionsAndroid.request(
+//                 PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+//             );
+//             return granted === PermissionsAndroid.RESULTS.GRANTED;
+//         }
+
+//         return false;
+//     };
+
+//     const getLocation__ = async () => {
+//         setLoading(true);
+
+//         const hasPermission = await requestLocationPermission();
+ 
+//         if (!hasPermission) {
+//             ToastAndroid.show('Location permission denied', ToastAndroid.SHORT);
+//             setLoading(false);
+//             return;
+//         }
+ 
+//         Geolocation.getCurrentPosition(
+//             (position) => {
+//                 const { latitude, longitude } = position.coords;
+//                 setLocation({ latitude, longitude });
+//                 // getAddressFromCoords(latitude, longitude);
+//                 setLoading(false);
+//                 ToastAndroid.show('Location and Address captured!', ToastAndroid.SHORT);
+//             },
+//             (error) => {
+//                 // getLocation__();
+//                 console.log('kkkkkkkkkkkkkkkkkkk', error.code, error.message, 'kkkkkkkkkkkkkkkkkkk');
+//                 setLoading(false);
+//                 Alert.alert('Error', 'Could not get location. Make sure GPS is on.');
+//             },
+//             { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+//         );
+//     };
+
+//     useEffect(() => {
+//         if (isFocused) {
+//             getLocation__();
+//         }
+//     }, [isFocused]);
   
 
     return (

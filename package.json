@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@react-native-community/blur": "^4.4.1",
-    "@react-native-community/geolocation": "^3.3.0",
     "@react-native-community/netinfo": "^11.4.0",
     "@react-native-firebase/app": "^18.9.0",
     "@react-native-firebase/messaging": "^18.9.0",
@@ -30,7 +29,6 @@
     "react-native-element-dropdown": "^2.12.2",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.24.0",
-    "react-native-get-location": "^5.0.0",
     "react-native-image-crop-picker": "^0.51.1",
     "react-native-image-viewing": "^0.2.2",
     "react-native-mmkv": "^2.11.0",

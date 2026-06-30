@@ -22,6 +22,8 @@ import dayjs from 'dayjs'
 import { AppStore } from '../../context/AppContext'
 import ViewShot from 'react-native-view-shot';
 
+import Geolocation from 'react-native-geolocation-service';
+
 const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const theme = usePaperColorScheme()
     const navigation = useNavigation()
@@ -33,11 +35,6 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
     const [errMsg, setErrMsg] = useState(() => "")
     const { handlePrint, viewShotRef } = useEscPosPrint()
-
-    // console.log("LOGIN DATAAA =============", loginStore)
-    // console.log("4444444444444444444ffffffffffffffff", fetchedData)
-    // console.log("tr_dt", fetchedData.memb_dtls[0].last_trn_dt)
-    // console.log("membbbbbbbbbbbbb", fetchedData.memb_dtls[0])
 
     const [loading, setLoading] = useState(() => false)
 
@@ -69,7 +66,7 @@ const RecoveryGroupForm = ({ fetchedData, approvalStatus = "U" }) => {
     const [openDate2, setOpenDate2] = useState(() => false)
     // const formattedTnxDate = formattedDate(formData?.txnDate)
     const [canTxnCheckFlag, setCanTxnCheckFlag] = useState<"D" | "F">(() => "F")
-const { handleLogout } = useContext<any>(AppStore)
+    const { handleLogout } = useContext<any>(AppStore)
     const groupTypes = [
         {
             title: "SHG",
@@ -87,23 +84,83 @@ const { handleLogout } = useContext<any>(AppStore)
         }
     ]
 
+    const [Location_, setLocation_] = useState([])
+    const [locationStatus, setLocationStatus] = useState<boolean>(() => false)
+
+
+    const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+    const auth = await Geolocation.requestAuthorization('whenInUse');
+    return auth === 'granted';
+    }
+
+    if (Platform.OS === 'android') {
+    const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+
+    return false;
+    };
+
+    const getLocation__ = async () => {
+    setLoading(true);
+    setLocationStatus(false)
+
+    const hasPermission = await requestLocationPermission();
+
+    if (!hasPermission) {
+    ToastAndroid.show('Location permission denied', ToastAndroid.SHORT);
+    setLoading(false);
+    return;
+    }
+
+    Geolocation.getCurrentPosition(
+    (position) => {
+    const { latitude, longitude } = position.coords;
+    setLocation_([{ latitude, longitude }]);
+    setLocationStatus(true)
+    setLoading(false);
+    ToastAndroid.show('Location and Address captured!', ToastAndroid.SHORT);
+    }, 
+    (error) => {
+    console.log(error.code, error.message);
+    setLocationStatus(false)
+    // getLocation__();
+    setLocation_([]); 
+    setLoading(false);
+    // Alert.alert('Error', 'Could not get location. Make sure GPS is on.');
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+    };
+
+    useEffect(() => {
+    if (isFocused) {
+    getLocation__();
+    }
+    }, [isFocused]);
+
     const handleFormChange = (field: string, value: any) => {
         setFormData((prev) => ({
             ...prev,
             [field]: value,
         }))
     }
-    useEffect(() => {
-        console.log("Recovery Group Form useEffect called")
-    }, [])
-    useEffect(() => {
-        if (error) {
-            Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
-                text: "Go to Settings",
-                onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
-            }])
-        }
-    }, [isFocused, error])
+
+
+    // useEffect(() => {
+    //     console.log("Recovery Group Form useEffect called")
+    // }, [])
+    // useEffect(() => {
+    //     if (error) {
+    //         Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
+    //             text: "Go to Settings",
+    //             onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
+    //         }])
+    //     }
+    // }, [isFocused, error])
 
     // console.log("LOcAtion", location)
     // console.log("LOcAtion ERRR", error)
@@ -135,13 +192,13 @@ const { handleLogout } = useContext<any>(AppStore)
         // })
     }
 
-    useEffect(() => {
-        console.log("APPROVAL STATUS", approvalStatus)
-        if (location?.latitude && location.longitude && approvalStatus === "A") {
-            console.log("LOCATION CHANGED, FETCHING GEO ADDRESS...")
-            // fetchGeoLocaltionAddress()
-        }
-    }, [location])
+    // useEffect(() => {
+    //     console.log("APPROVAL STATUS", approvalStatus)
+    //     if (location?.latitude && location.longitude && approvalStatus === "A") {
+    //         console.log("LOCATION CHANGED, FETCHING GEO ADDRESS...")
+    //         // fetchGeoLocaltionAddress()
+    //     }
+    // }, [location])
 
     const requestBluetoothPermissions = async () => {
         if (Platform.OS === 'android') {
@@ -428,6 +485,11 @@ const { handleLogout } = useContext<any>(AppStore)
     }, [memberDetailsArray, formData.txnDate])
 
     const sendRecoveryEMI = async () => {
+
+        if(Location_.length === 0){
+            return getLocation__();
+        }
+
         if (hasBeforeUpnapproveTransDate) {
             ToastAndroid.show(`There are unapproved ${errMsg} before this date. Please check and try again.`, ToastAndroid.SHORT)
             return;
@@ -455,8 +517,10 @@ const { handleLogout } = useContext<any>(AppStore)
             "branch_code": loginStore?.brn_code,
             "created_by": loginStore?.emp_id,
             "modified_by": loginStore?.emp_id,
-            "trn_lat": location.latitude,
-            "trn_long": location.longitude,
+            // "trn_lat": location.latitude,
+            // "trn_long": location.longitude,
+            "trn_lat": Location_[0]?.latitude,
+            "trn_long": Location_[0]?.longitude,
             // "trn_addr": geolocationFetchedAddress,
             // "trn_lat": 0,
             // "trn_long": 0,
@@ -470,7 +534,7 @@ const { handleLogout } = useContext<any>(AppStore)
             "recovdtls": transformedObj
         }
 
-        console.log("PAYLOAD---RECOVERY", creds, 'PPPPPPPPPPPPPPP')
+        // console.log("PAYLOAD---RECOVERY", creds, 'PPPPPPPPPPPPPPP', Location_.length)
         // return
         
         await axios.post(ADDRESSES.LOAN_RECOVERY_EMI, creds, {

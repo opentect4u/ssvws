@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import GetLocation from 'react-native-get-location';
+// import GetLocation from 'react-native-get-location';
 
 const useGeoLocation = () => {
     const [location, setLocation] = useState({
@@ -10,16 +10,16 @@ const useGeoLocation = () => {
 
     const fetchLocation = async () => {
             try {
-                const currentLocation = await GetLocation.getCurrentPosition({
-                    enableHighAccuracy: true,
-                    timeout: 60000,
-                });
-                setLocation({
-                    latitude: currentLocation.latitude,
-                    longitude: currentLocation.longitude,
-                });
+                // const currentLocation = await GetLocation.getCurrentPosition({
+                //     enableHighAccuracy: true,
+                //     timeout: 60000,
+                // });
+                // setLocation({
+                //     latitude: currentLocation.latitude,
+                //     longitude: currentLocation.longitude,
+                // });
 
-                console.log(error, 'successssssss', currentLocation.latitude, currentLocation.longitude);
+                // console.log(error, 'successssssss', currentLocation.latitude, currentLocation.longitude);
             } catch (err) {
                 console.log(err.message, 'errorerrore');
                 setError(err.message);

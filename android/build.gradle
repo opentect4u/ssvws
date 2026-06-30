@@ -23,3 +23,14 @@ buildscript {
 }
 
 apply plugin: "com.facebook.react.rootproject"
+
+// Force consistent Google Play services versions to avoid runtime class/interface mismatches
+configurations.all {
+    resolutionStrategy.eachDependency { details ->
+        if (details.requested.group == 'com.google.android.gms') {
+            if (details.requested.name.startsWith('play-services-')) {
+                details.useVersion '18.0.0'
+            }
+        }
+    }
+}

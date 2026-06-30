@@ -28,7 +28,8 @@ import useCurrentRouteName from '../hooks/useCurrentRoute'
 import useCheckOpenCloseDate from '../components/useCheckOpenCloseDate'
 import { PermissionsAndroid, Platform } from 'react-native';
 
-import GetLocation from 'react-native-get-location';
+// import GetLocation from 'react-native-get-location';
+import Geolocation from 'react-native-geolocation-service';
 
 const statusDataRadio = [
   { label: "Today", value: "T" },
@@ -75,6 +76,8 @@ const HomeScreen = () => {
     const [clockInStatus, setClockInStatus] = useState<string>(() => "")
     const [checkIsAttandanceStatusPending, setAttanadanceStatusPending] = useState<boolean>(() => true)
     // const [openDtCloseDt, setOpenDtCloseDt] = useState(null)
+    const [Location_, setLocation_] = useState([])
+    const [locationStatus, setLocationStatus] = useState<boolean>(() => false)
 
 
     useEffect(() => {
@@ -82,40 +85,37 @@ const HomeScreen = () => {
         console.log('home',loginStore?.token)
     }, [navigation])
 
-    
-
-    
     const { location, error, fetchLocation  } = useGeoLocation()
 
 
-    const fetchLocation_ = async () => {
-            try {
-                const currentLocation = await GetLocation.getCurrentPosition({
-                    enableHighAccuracy: true,
-                    timeout: 60000,
-                });
-                // setLocation({
-                //     latitude: currentLocation.latitude,
-                //     longitude: currentLocation.longitude,
-                // });
+    // const fetchLocation_ = async () => {
+    //         try {
+    //             const currentLocation = await GetLocation.getCurrentPosition({
+    //                 enableHighAccuracy: true,
+    //                 timeout: 60000,
+    //             });
+    //             // setLocation({
+    //             //     latitude: currentLocation.latitude,
+    //             //     longitude: currentLocation.longitude,
+    //             // });
 
-                console.log('successssssss', currentLocation.latitude, currentLocation.longitude);
-            } catch (err) {
-                console.log(err.message, 'errorerrore');
-                // setError(err.message);
-                Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
-                text: "Go to Settings",
-                onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
-                }])
+    //             console.log('successssssss', currentLocation.latitude, currentLocation.longitude);
+    //         } catch (err) {
+    //             console.log(err.message, 'errorerrore');
+    //             // setError(err.message);
+    //             Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
+    //             text: "Go to Settings",
+    //             onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
+    //             }])
 
-            }
-        };
+    //         }
+    //     };
 
-    useEffect(() => {
-    if (isFocused) {
-        fetchLocation_(); 
-    }
-    }, [isFocused]);
+    // useEffect(() => {
+    // if (isFocused) {
+    //     fetchLocation_(); 
+    // }
+    // }, [isFocused]);
 
     // Old Function 
     // useEffect(() => {
@@ -128,6 +128,62 @@ const HomeScreen = () => {
     //         }])
     //     }
     // }, [isFocused, error])
+
+
+    const requestLocationPermission = async () => {
+            if (Platform.OS === 'ios') {
+                const auth = await Geolocation.requestAuthorization('whenInUse');
+                return auth === 'granted';
+            }
+    
+            if (Platform.OS === 'android') {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                );
+                return granted === PermissionsAndroid.RESULTS.GRANTED;
+            }
+    
+            return false;
+        };
+    
+        const getLocation__ = async () => {
+            setLoading(true);
+            setLocationStatus(false)
+    
+            const hasPermission = await requestLocationPermission();
+     
+            if (!hasPermission) {
+                ToastAndroid.show('Location permission denied', ToastAndroid.SHORT);
+                setLoading(false);
+                return;
+            }
+     
+            Geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setLocation_([{ latitude, longitude }]);
+                    setLocationStatus(true)
+                    // getAddressFromCoords(latitude, longitude);
+                    // handleClockIn()
+                    setLoading(false);
+                    ToastAndroid.show('Location and Address captured!', ToastAndroid.SHORT);
+                }, 
+                (error) => {
+                    console.log(error.code, error.message);
+                    setLocationStatus(false)
+                    setLocation_([]);
+                    setLoading(false);
+                    Alert.alert('Error', 'Could not get location. Make sure GPS is on.');
+                },
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+            );
+        };
+    
+        useEffect(() => {
+            if (isFocused) {
+                getLocation__();
+            }
+        }, [isFocused]);
 
 
     const fetchGeoLocaltionAddress = async () => {
@@ -196,6 +252,18 @@ const HomeScreen = () => {
         }, 2000)
     }, [])
 
+    const handleClockIn_Check = async () =>{
+        console.log(Location_, 'LocationLocationLocation', Object.keys(Location_).length === 0);
+        if (Object.keys(Location_).length === 0){
+         getLocation__()
+        }
+        // if(locationStatus){
+        // handleClockIn()
+        // }
+        // getLocation__();
+        
+    }
+
     const handleClockIn = async () => {
         setAttanadanceStatusPending(true);
         const check = { emp_id: loginStore?.emp_id, }
@@ -209,9 +277,13 @@ const HomeScreen = () => {
             if (res_dtls?.data?.suc === 0) {
                 handleLogout()
             }
+
             else{
+                console.log(Location_[0], 'Location_Location_Location_');
+                
+                // return;
             if (res_dtls?.data?.fetch_emp_logged_dt?.msg[0]?.clock_status !== "O") {
-                axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+                axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${Location_[0]?.latitude},${Location_[0]?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
                     .then(res => {
                         const creds = {
                             emp_id: loginStore?.emp_id,
@@ -259,6 +331,10 @@ const HomeScreen = () => {
     /**** NEW VERSION (DONE BY SUMAN MITRA) */
     const handleClockOut = async () => {
         setAttanadanceStatusPending(true);
+
+        console.log(Location_[0], 'Location_Location_Location_ Out');
+        // return;
+
         await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
             .then(res => {
                 const creds = {
@@ -736,6 +812,7 @@ const HomeScreen = () => {
                     <View>
                                 <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`DATE & TIME:`} {`${choosenDate.toLocaleDateString("en-GB")} ${currentTime.toLocaleTimeString("en-GB")}`}</Text>
                                 {/* <Text variant='titleSmall' style={{ color: theme.colors.secondary }}>{`${choosenDate.toLocaleDateString("en-GB")} ${currentTime.toLocaleTimeString("en-GB")}`}</Text> */}
+                        {/* <Text>{JSON.stringify(locationStatus)} // {JSON.stringify(Location_)}</Text>    */}
                             </View>
                             </View>
                             </View>
@@ -769,14 +846,22 @@ const HomeScreen = () => {
                             onPress={
                                 () => {
                                     // !geolocationFetchedAddress && fetchGeoLocaltionAddress()
-                                    Alert.alert("Clock In", `Are you sure you want to Clock In?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
+                                    if(locationStatus === true){
+                                        Alert.alert("Clock In", `Are you sure you want to Clock In?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
                                         { "text": "Cancel", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" },
                                         { "text": "CLOCK IN", "onPress": async () => await handleClockIn() }
+                                        // { "text": "CLOCK IN", "onPress": async () => await handleClockIn_Check() }
                                     ])
+                                    } 
+                                    if(locationStatus === false){
+                                    getLocation__();
+                                    }
+                                    
                                 }
                             }
                             mode='elevated'
-                            buttonColor={MD2Colors.green600}
+                            // buttonColor={MD2Colors.green600}
+                            buttonColor={locationStatus ? MD2Colors.green600 : MD2Colors.grey500}
                             textColor={MD2Colors.green50}
                             style={{
                                 borderRadius: 0,
@@ -784,9 +869,10 @@ const HomeScreen = () => {
                                 borderBottomLeftRadius: 15,
                                 padding: 5,
                             }}
+
                             loading={checkIsAttandanceStatusPending}
                             disabled={checkIsAttandanceStatusPending}>
-                            {!checkIsAttandanceStatusPending && "Clock In"}
+                            {!checkIsAttandanceStatusPending && locationStatus === true ? "Clock In" : "Turn on GPS to Clock In"}
                         </ButtonPaper>
 
                         {/* <ButtonPaper
@@ -838,13 +924,25 @@ const HomeScreen = () => {
                             <ButtonPaper
                                 icon={"clock-out"}
                                 onPress={
-                                    () => Alert.alert("Clock Out", `Are you sure you want to Clock Out?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
+                                    () => {
+                                        // Alert.alert("Clock Out", `Are you sure you want to Clock Out?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
+                                        // { "text": "Cancel", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" },
+                                        // { "text": "CLOCK OUT", "onPress": async () => await handleClockOut() }
+                                        // ])
+
+                                        if(locationStatus === true){
+                                        Alert.alert("Clock Out", `Are you sure you want to Clock Out?\nTime: ${currentTime.toLocaleTimeString("en-GB")}`, [
                                         { "text": "Cancel", "onPress": () => console.log("Cancel Pressed"), "style": "cancel" },
                                         { "text": "CLOCK OUT", "onPress": async () => await handleClockOut() }
-                                    ])
+                                        ])
+                                        } 
+                                        if(locationStatus === false){
+                                        getLocation__();
+                                        }
+                                }
                                 }
                                 mode='elevated'
-                                buttonColor={MD2Colors.pink600}
+                                buttonColor={locationStatus ? MD2Colors.pink600 : MD2Colors.grey500}
                                 textColor={MD2Colors.pink50}
                                 style={{
                                     borderRadius: 0,
@@ -853,7 +951,7 @@ const HomeScreen = () => {
                                 }}
                                 loading={checkIsAttandanceStatusPending}
                                 disabled={checkIsAttandanceStatusPending}
-                            >{!checkIsAttandanceStatusPending && "Clock Out"}</ButtonPaper>
+                            >{!checkIsAttandanceStatusPending &&  locationStatus === true ? "Clock Out" : "Turn on GPS to Clock Out"}</ButtonPaper>
                             <View style={{
                                 // dashed border outside inside text
                                 borderWidth: 1,

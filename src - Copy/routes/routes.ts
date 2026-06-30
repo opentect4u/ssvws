@@ -1,0 +1,53 @@
+import DemandNavigation from "../navigation/DemandNavigation"
+
+const navigationRoutes = {
+    login: "Login",
+    register: "Register",
+    createPinScreen: "CreatePinScreen",
+    homeNavigation: "HomeNavigation",
+    homeScreen: "HomeScreen",
+    grtNavigation: "GRTNavigation",
+    grtFormScreen: "GRTFormScreen",
+    groupNavigation: "GroupNavigation",
+    groupFormScreen: "GroupFormScreen",
+    bottomNavigationPaper: "BottomNavigationPaper",
+    reportsNavigation: "ReportsNavigation",
+    reportsChooseScreen: "ReportsChooseScreen",
+    demandReport: "DemandReport",
+    recoveryReportScreen: "RecoveryReportScreen",
+    groupwiseRecovery: "GroupwiseRecovery",
+    disbursementReportScreen: "DisbursementReportScreen",
+    loanRecoveryNavigation: "LoanRecoveryNavigation",
+    DemandNavigation: "DemandNavigation",
+    searchLoanRecoveryScreen: "SearchLoanRecoveryScreen",
+    recoveryGroupScreen: "RecoveryGroupScreen",
+    recoveryGroupScreenResult: "RecoveryGroupScreenResult",
+    recoveryMemberScreen: "RecoveryMemberScreen",
+    searchNavigation: "SearchNavigation",
+    searchByGroupScreen: "SearchByGroupScreen",
+    coGroupFormExtendedScreen: "COGroupFormExtendedScreen",
+    searchByMemberScreen: "SearchByMemberScreen",
+    searchByCOScreen: "SearchByCOScreen",
+    searchTransactionChooseScreen: "SearchTransactionChooseScreen",
+    searchApprovedLoansScreen: "SearchApprovedLoansScreen",
+    searchUnapprovedLoansScreen: "SearchUnapprovedLoansScreen",
+    availableFormsScreen: "AvailableFormsScreen",
+    formsAgainstCOScreen: "FormsAgainstCOScreen",
+    memberDetailsAllFormScreen: "MemberDetailsAllFormScreen",
+    searchScreen: "SearchScreen",
+    settingsNavigation: "SettingsNavigation",
+    overdue: "Overdue",
+    settingsScreen: "SettingsScreen",
+    printerConnectScreen: "PrinterConnectScreen",
+    noInternetScreen: "NoInternetScreen",
+
+    attendanceReportScreen: "AttendanceReportScreen",
+    paymentStatusReportScreen: "PaymentStatusReport",
+
+    bmPendingLoansNavigation: "BMPendingLoansNavigation",
+    bmPendingLoansScreen: "BMPendingLoansScreen",
+    bmPendingLoanFormScreen: "BMPendingLoanFormScreen",
+    duplicateReceiptScreen: "DuplicateReceiptScreen"
+}
+
+export default navigationRoutes

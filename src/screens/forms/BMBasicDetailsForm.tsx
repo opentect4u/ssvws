@@ -1,6 +1,6 @@
 import React, { forwardRef, useContext, useEffect, useImperativeHandle, useRef, useState } from 'react'
 
-import { StyleSheet, SafeAreaView, View, Alert, ToastAndroid, Linking, Dimensions, StatusBar } from 'react-native'
+import { StyleSheet, SafeAreaView, View, Alert, ToastAndroid, Linking, Dimensions, StatusBar, Platform, PermissionsAndroid } from 'react-native'
 import { ActivityIndicator, Divider, Icon, IconButton, List, Text, useTheme } from "react-native-paper"
 import { formattedDate } from "../../utils/dateFormatter"
 import InputPaper from "../../components/InputPaper"
@@ -21,6 +21,9 @@ import { Camera, useCameraDevice, useCameraDevices, useCameraFormat, useCameraPe
 import ImageView from "react-native-image-viewing";
 import { BASE_URL } from '../../config/config'
 import { AppStore } from '../../context/AppContext'
+
+import Geolocation from 'react-native-geolocation-service';
+
 interface BMBasicDetailsFormProps {
     formNumber?: any
     branchCode?: any
@@ -58,7 +61,7 @@ const { handleLogout } = useContext<any>(AppStore)
     const navigation = useNavigation()
     const isFocused = useIsFocused()
 
-    const { location, error } = useGeoLocation()
+    // const { location, error } = useGeoLocation()
     const [geolocationFetchedAddress, setGeolocationFetchedAddress] = useState(() => "")
     const [bggeolocationFetchedAddress, setBgGeolocationFetchedAddress] = useState(() => "")
     // console.log("****************", formNumber, branchCode, flag, approvalStatus)
@@ -122,6 +125,9 @@ const { handleLogout } = useContext<any>(AppStore)
     const formattedGrtDate = formattedDate(formData?.grtDate)
     // const formattedGrtDate = loginStore?.transaction_date
 
+    const [Location_, setLocation_] = useState([])
+    const [locationStatus, setLocationStatus] = useState<boolean>(() => false)
+
     const isToday = (someDate: Date) => {
         const today = new Date()
         return (
@@ -131,25 +137,80 @@ const { handleLogout } = useContext<any>(AppStore)
         )
     }
 
+
+    const requestLocationPermission = async () => {
+    if (Platform.OS === 'ios') {
+    const auth = await Geolocation.requestAuthorization('whenInUse');
+    return auth === 'granted';
+    }
+
+    if (Platform.OS === 'android') {
+    const granted = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    );
+    return granted === PermissionsAndroid.RESULTS.GRANTED;
+    }
+
+    return false;
+    };
+
+    const getLocation__ = async () => {
+    setLoading(true);
+    setLocationStatus(false)
+
+    const hasPermission = await requestLocationPermission();
+
+    if (!hasPermission) {
+    ToastAndroid.show('Location permission denied', ToastAndroid.SHORT);
+    setLoading(false);
+    return;
+    }
+
+    Geolocation.getCurrentPosition(
+    (position) => {
+    const { latitude, longitude } = position.coords;
+    setLocation_([{ latitude, longitude }]);
+    setLocationStatus(true)
+    setLoading(false);
+    ToastAndroid.show('Location and Address captured!', ToastAndroid.SHORT);
+    }, 
+    (error) => {
+    console.log(error.code, error.message);
+    setLocationStatus(false)
+    // getLocation__();
+    setLocation_([]); 
+    setLoading(false);
+    // Alert.alert('Error', 'Could not get location. Make sure GPS is on.');
+    },
+    { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+    };
+
     useEffect(() => {
-        if (error) {
-            Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
-                text: "Go to Settings",
-                onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
-            }])
-        }
-    }, [isFocused, error])
+    if (isFocused) {
+    getLocation__();
+    }
+    }, [isFocused]);
+
+    // useEffect(() => {
+    //     if (error) {
+    //         Alert.alert("Turn on Geolocation", "Give access to Location or Turn on GPS from app settings.", [{
+    //             text: "Go to Settings",
+    //             onPress: () => { navigation.dispatch(CommonActions.goBack()); Linking.openSettings() }
+    //         }])
+    //     }
+    // }, [isFocused, error])
     
-    useEffect(() => {
-        console.log("LOCATION EFFECT CALLING...",loginStore?.token)
-    },[])
+    // useEffect(() => {
+    //     console.log("LOCATION EFFECT CALLING...",loginStore?.token)
+    // },[])
 
     // console.log("LOcAtion", location)
     // console.log("LOcAtion ERRR", error)
 
     const fetchGeoLocaltionAddress = async () => {
         console.log("REVERSE GEO ENCODING API CALLING...")
-        await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`).then(res => {
+        await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${Location_[0]?.latitude},${Location_[0]?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`).then(res => {
             setGeolocationFetchedAddress(res?.data?.results[0]?.formatted_address)
         })
         // let config = {
@@ -175,12 +236,12 @@ const { handleLogout } = useContext<any>(AppStore)
     }
 
     //! IMP: Temporarily stopped for debug mode, enable on production
-    useEffect(() => {
-        //  console.log(approvalStatus, 'APPROVAL STATUS');    
-        if (location?.latitude && location.longitude && approvalStatus === "U") {
-            // fetchGeoLocaltionAddress()
-        }
-    }, [location])
+    // useEffect(() => {
+    //     //  console.log(approvalStatus, 'APPROVAL STATUS');    
+    //     if (location?.latitude && location.longitude && approvalStatus === "U") {
+    //         // fetchGeoLocaltionAddress()
+    //     }
+    // }, [location])
 
     useEffect(() => {
         checkCameraPermission();
@@ -778,8 +839,7 @@ const { handleLogout } = useContext<any>(AppStore)
 
     const handleUpdateBasicDetails = async () => {
         // console.log("handleUpdateBasicDetails called - " + geolocationFetchedAddress);
-        // console.log('ggggggggggggggggggggggggggg');
-        
+        // console.log('ggggggggggggggggggggggggggg', Location_[0]);
         // return
 
         const creds_ = {
@@ -810,8 +870,8 @@ const { handleLogout } = useContext<any>(AppStore)
             other_education: formData.otherEducation,
             dob: formattedDob,
             grt_date: formattedGrtDate,
-            bm_lat_val: location?.latitude,
-            bm_long_val: location?.longitude,
+            bm_lat_val: Location_[0]?.latitude,
+            bm_long_val: Location_[0]?.longitude,
             bm_gps_address: bggeolocationFetchedAddress,
             modified_by: loginStore?.emp_id,
         }
@@ -830,7 +890,7 @@ const { handleLogout } = useContext<any>(AppStore)
         );
         if (approvalStatus === "U") {
             // setLoading(true);
-            await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+            await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${Location_[0]?.latitude},${Location_[0]?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
                 .then((res) => {
 
                     // console.log('>>>>', creds, "REVERSE GEO ENCODING RES =============", res?.data?.results[0])
@@ -871,6 +931,7 @@ const { handleLogout } = useContext<any>(AppStore)
                     })
                 }).catch(err => {
                     ToastAndroid.show("Error Fetching Location!!", ToastAndroid.SHORT)
+                    getLocation__();
                 })
         }
         else {
@@ -906,12 +967,12 @@ const { handleLogout } = useContext<any>(AppStore)
 
     const handleSubmitBasicDetails = async () => {
 
-        // console.log('tttttttttttttttttttttttttttttttt', approvalStatus);
+        // console.log('tttttttttttttttttttttttttttttttt', location);
         // return
 
         setLoading(true)
         if (approvalStatus === "U") {
-            await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${location?.latitude},${location?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
+            await axios.get(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${Location_[0]?.latitude},${Location_[0]?.longitude}&key=AIzaSyDdA5VPRPZXt3IiE3zP15pet1Nn200CRzg`)
                 .then(res => {
                     submitBasicDetails(res?.data?.results[0]?.formatted_address);
                 }).catch(err => {
@@ -951,8 +1012,8 @@ const { handleLogout } = useContext<any>(AppStore)
                 other_education: formData.otherEducation,
                 dob: formattedDob,
                 grt_date: formattedGrtDate,
-                co_lat_val: location?.latitude,
-                co_long_val: location?.longitude,
+                co_lat_val: Location_[0]?.latitude,
+                co_long_val: Location_[0]?.longitude,
                 co_gps_address: addr,
                 created_by: loginStore?.emp_id,
             };
@@ -975,7 +1036,7 @@ const { handleLogout } = useContext<any>(AppStore)
             })
             fb.append('files', formData?.uploadImg)
 
-            
+            console.log(fb, 'kkkkkkkkkkkkkkkkkkkk');
             
             axios.post(ADDRESSES.SAVE_BASIC_DETAILS, fb, {
                 headers: {
@@ -984,6 +1045,7 @@ const { handleLogout } = useContext<any>(AppStore)
                 }
             }).then(response => {
                 // console.log(response?.data, 'kkkkkkkkkkkkkkkkkkkk');
+
                 setLoading(false);
                 if (response?.data?.suc == 1) {
                     Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
@@ -1021,73 +1083,6 @@ const { handleLogout } = useContext<any>(AppStore)
                 else {
                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
                 }
-
-                // if(response?.data?.suc == 1){
-                //     console.log('dsfdssdfsfs : ', response?.data?.member_code)
-                //         console.log(formData?.uploadImg);
-                //         const fb = new FormData();
-                //         fb.append('files',formData?.uploadImg);
-                //         fb.append('form_no',response?.data?.form_no);
-                //         fb.append('member_code',response?.data?.member_code);
-                //         fb.append('created_by',loginStore?.emp_id);
-                //         fb.append('branch_code',loginStore?.brn_code);
-                //         axios.post(
-                //             ADDRESSES.UPLOAD_GRT_IMAGE,
-                //             fb,
-                //             {
-                //                 headers: {
-                //                 'Content-Type': 'multipart/form-data',
-                //                 },
-                //             }
-                //         ).then(res =>{
-                //                      setLoading(false);
-                //                 console.log(res);
-                //                 console.log(res?.data , 'asadads')
-                //                 if(res?.data?.suc == 1){
-                //                     Alert.alert("Success", `Basic Details Saved!\nMember Code: ${response?.data?.member_code}`)
-                //                     setFormData({
-                //                         clientName: "",
-                //                         clientEmail: "",
-                //                         clientGender: "",
-                //                         clientMobile: "",
-                //                         guardianName: "",
-                //                         husbandName: "",
-                //                         nomineeName: "",
-                //                         guardianMobile: "",
-                //                         clientAddress: "",
-                //                         clientPin: "",
-                //                         aadhaarNumber: "",
-                //                         panNumber: "",
-                //                         voterId: "",
-                //                         religion: "",
-                //                         otherReligion: "",
-                //                         caste: "",
-                //                         otherCaste: "",
-                //                         education: "",
-                //                         otherEducation: "",
-                //                         groupCode: "",
-                //                         groupCodeName: "",
-                //                         dob: new Date(),
-                //                         grtDate: new Date(),
-                //                         previewImg:"",
-                //                         uploadImg:null
-                //                     })
-                //                     setMemberCodeShowHide(false)
-                //                     onSubmit()
-                //                 }
-                //                 else{
-                //                     ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
-                //                     setLoading(false);
-                //                 }
-                //         }).catch(err =>{
-                //             ToastAndroid.show(err?.message, ToastAndroid.SHORT);
-                //             setLoading(false);
-                //         })
-                // }
-                // else{
-                //              ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT);
-                //           setLoading(false);
-                // }
 
             }).catch(err => {
                 ToastAndroid.show("Some error occurred while submitting basic details", ToastAndroid.SHORT)
@@ -1144,53 +1139,9 @@ const { handleLogout } = useContext<any>(AppStore)
 
     }
 
-    // const renderLoader = () => loading && <LoadingOverlay />;
+    
 
-    // const validateForm = () => {
-    //     const isValid = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.panNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || !geolocationFetchedAddress || approvalStatus !== "U" || branchCode !== loginStore?.brn_code; // Add your validation logic here
-
-    //     setIsFormValid(isValid); // Inform parent if the form is valid or not
-    //     console.log("KKSKSKSKKSKSKS", isValid)
-    //     return isValid
-    // };
-
-    // const handleSubmit = () => {
-    //     // Alert.alert("Submit Basic Details", "Are you sure you want to update this?", [
-    //     //     { text: "No", onPress: () => null },
-    //     //     { text: "Yes", onPress: () => { flag === "BM" ? handleUpdateBasicDetails() : handleSubmitBasicDetails() } },
-    //     // ])
-    //     if (validateForm()) {
-    //         if (flag === "BM") {
-    //             handleUpdateBasicDetails()
-    //         } else {
-    //             handleSubmitBasicDetails()
-    //         }
-    //     }
-    // }
-
-    // useEffect(() => {
-    //     if (onSubmitRef) {
-    //         onSubmitRef.current = handleSubmit;
-    //     }
-
-    //     // Trigger validation on mount and whenever formData changes
-    //     validateForm();
-    // }, [formData]);
-
-    // useEffect(() => {
-    //     if (onSubmitRef) {
-    //         onSubmitRef.current = handleSubmit;
-    //     }
-    // }, [onSubmitRef]);
-
-    // console.log("~~~~~~~~~~~~~~~~~", branchCode, loginStore?.brn_code)
-    // console.log("FORM DATA ============>>>", branchCode, formData)
-
-
-    // Compute the disabled condition exactly as used for the UPDATE button.
-    // const updateDisabled =
-    //     loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || !geolocationFetchedAddress || disableCondition(approvalStatus, branchCode);
-
+   
     const updateDisabled = loading || !formData.clientMobile || !formData.aadhaarNumber || !formData.clientName || !formData.guardianName || !formData.clientAddress || !formData.clientPin || !formData.dob || !formData.religion || !formData.caste || !formData.education || (!formData.uploadImg && flag == 'CO') || disableCondition(approvalStatus, branchCode);
 
     // Inform parent about the current disabled state.

@@ -70,6 +70,9 @@ dependencies {
     // Firebase dependencies
     implementation 'com.google.android.gms:play-services-auth:20.3.0'
     implementation 'com.google.android.gms:play-services-auth-api-phone:18.0.1'
+    // Location services required by react-native-geolocation-service
+    // Use a version compatible with the native module to avoid class/interface mismatches
+    implementation 'com.google.android.gms:play-services-location:18.0.0'
 
     implementation project(':react-native-vector-icons')
 
