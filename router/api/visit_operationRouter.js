@@ -325,12 +325,12 @@ msg: "Visit operation data saved successfully",
 // FETCH LIST IN CO,BM AND HO LEVEL
 visit_operationRouter.post("/fetch_list_save_visit_operation", async (req, res) => {
 try{
-const {id,branch_code,emp_id,from_dt,to_dt} = req.body;
+const {id,branch_code,co_id,emp_id,from_dt,to_dt} = req.body;
 console.log(req.body,'fetch_web');
 
 var select = "a.branch_code,a.group_code,b.group_name,a.member_code,c.client_name AS member_name,a.loan_id",
 table_name = "td_visit_operation a LEFT JOIN md_group b ON a.branch_code = b.branch_code AND a.group_code = b.group_code LEFT JOIN md_member c ON a.branch_code = c.branch_code AND a.member_code = c.member_code",
-whr = `DATE(a.datetime_visit) BETWEEN '${from_dt}' AND '${to_dt}'`;
+whr = `DATE(a.datetime_visit) BETWEEN '${from_dt}' AND '${to_dt}' AND b.co_id IN (${co_id})`;
 if (id === '1') {
 whr += ` AND a.branch_code = '${branch_code}' AND a.created_by = '${emp_id}'`;
 }
